@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'success' => '处理成功。',
+    'failed' => '处理失败。',
+    'error_occurred' => '发生错误。',
+    'not_found' => '找不到请求的资源。',
+    'unauthorized' => '需要登录认证。',
+    'forbidden' => '没有权限。',
+    'validation_failed' => '输入值校验失败。',
+    'created' => '已创建。',
+    'updated' => '已修改。',
+    'deleted' => '已删除。',
+    'saving' => '保存中...',
+    'deleting' => '删除中...',
+    'processing' => '处理中...',
+    'system' => '系统',
+    'yes' => '是',
+    'no' => '否',
+    'unknown' => '未知',
+    'errors' => [
+        'github_url_empty' => 'GitHub URL 为空。',
+        'github_url_invalid' => 'GitHub URL 格式无效。',
+        'github_api_failed' => '调用 GitHub API 失败。',
+        'github_download_failed' => '从 GitHub 下载失败。',
+        'github_archive_download_failed' => '下载归档文件失败。(:url)',
+        'zip_file_not_found' => '找不到 ZIP 文件。',
+        'zip_open_failed' => '无法打开 ZIP 文件。',
+    ],
+    'validation_error' => '输入值校验错误',
+    'changelog_validation' => [
+        'source_in' => '来源必须为 active、bundled、github 之一。',
+        'version_format' => ':attribute 格式不正确。（例：1.0.0、1.0.0-beta.1）',
+        'to_version_required' => '指定起始版本时，结束版本也为必填项。',
+    ],
+];

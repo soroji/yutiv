@@ -1,0 +1,11 @@
+{
+  "template_not_found": "没有已启用的模板",
+  "layout_load_failed": "布局加载失败",
+  "layout_load_failed_with_id": "布局（{layoutId}）加载失败",
+  "component_load_failed": "组件加载失败",
+  "component_load_failed_with_name": "组件（{componentName}）加载失败",
+  "translation_load_failed": "多语言文件加载失败",
+  "translation_load_failed_with_locale": "{locale} 多语言文件加载失败",
+  "template_init_error": "初始化模板引擎时发生错误",
+  "network_request_failed": "请求发送失败。请检查网络连接后重试。"
+}

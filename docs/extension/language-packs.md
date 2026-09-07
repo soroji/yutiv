@@ -574,6 +574,113 @@ php artisan language-pack:install https://example.com/my-lang-pack-zh.zip --sour
 
 설치 후 `language-pack:list` 로 확인. 다른 로케일 패키지와 동일하게 활성/비활성/제거가 가능하며, 의존성 검증(`core_locale_missing` 등) 도 동일하게 적용된다.
 
+## 공식 중국어 간체 번들 언어팩 (g7-core-zh-CN)
+
+G7 는 중국어 간체(`zh-CN`) 코어 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종**이며, 템플릿/모듈/플러그인 zh-CN 팩은 아직 없다. 코어 트리를 건드리지 않는 외부 패키지형이므로 **코어 코드 변경 0** 이다.
+
+### 패키지 구성
+
+| scope | 식별자 | target_identifier |
+|---|---|---|
+| core | `g7-core-zh-CN` | (null) |
+
+### locale 코드
+
+`zh-CN` 을 사용한다. `zh_CN`(언더스코어)·`zh-cn`(소문자 region) 은 `LanguagePackManifestValidator` 의 BCP-47 패턴에서 거부되고, `zh-Hans` 계열은 `LanguagePackBundledRegistrar` 의 locale 디렉토리 스캔 패턴(`/^[a-z]{2,3}(-[A-Z]{2})?$/`) 을 통과하지 못한다. 코어는 이미 `zh-CN` 을 인지한다 — `LanguagePackBundledRegistrar::resolveNativeName()` 의 `'zh-CN', 'zh' => '中文'`, `config/app.php` 의 `locale_country_fallback` 에 `'zh' => 'CN'`.
+
+번체 중국어를 추가할 경우 슬롯 키가 `(scope, target_identifier, locale)` 튜플이므로 `zh-TW` 는 `zh-CN` 과 다른 슬롯이 되어 동시 설치·동시 활성이 가능하다.
+
+### 입력 → 산출 매핑
+
+| 패키지 | ko 원문 소스 | 산출 위치 |
+|---|---|---|
+| `g7-core-zh-CN` backend | `lang/ko/*.php` (40개) | `backend/zh-CN/*.php` (40개) |
+| `g7-core-zh-CN` frontend | `lang/ko.json` + `lang/partial/ko/*.json` | `frontend/zh-CN.json` + `frontend/partial/{errors,layout_editor}.json` |
+| `g7-core-zh-CN` seed | `config/core.php` (permissions/roles/menus/notification_definitions/identity_messages) | `seed/{permissions,roles,menus,notifications,identity_messages}.json` |
+
+패키지 총 50개 파일 (매니페스트 1 + CHANGELOG 1 + backend 40 + frontend 3 + seed 5) 로, `g7-core-ja` 와 경로가 1:1 대응한다.
+
+`frontend/zh-CN.json` 의 `$partial` 경로는 원본의 `partial/ko/{name}.json` 에서 로케일 세그먼트를 제거한 `partial/{name}.json` 형태로 정규화한다 (ja 팩과 동일 규칙).
+
+### 번역 규칙
+
+일본어 팩과 동일한 보존 규칙을 적용하되, 의미의 기준은 **한국어 원본**이다 (일본어 팩은 구조·매니페스트 형식의 참조용이며 재번역 소스가 아니다).
+
+- 키(key)·키 순서·자료형·배열 중첩 구조 변형 금지 — value 만 번역
+- placeholder 보존: `:attribute`, `:count`, `{current}`, `{{query.page}}`, `%s`
+- 접두/접미 결합형 placeholder 는 붙여 쓴 형태 그대로 유지: `v:version`, `v:from → v:to`, `:maxMB`, `:sizeMB` (Laravel `str_replace` 가 그대로 치환한다)
+- HTML 태그·속성·인라인 CSS·URL 보존 (알림/본인인증 메일 본문의 `<table role="presentation">`, `<a href="{action_url}" style="…">` 등)
+- 이모지 보존: `📊` `🖥` `📱` `📲` `📐` `☀` `🌙` `🔍` `⏎` `🌐`
+- 선행 공백·개행 수 보존 (`'  - :target（来源：:source）'` 의 들여쓰기 2칸 등)
+- 명령·코드 문자열은 번역하지 않는다: `php artisan config:clear`, `search:index --repair`, `socks5h://127.0.0.1:1080`
+- 한글 미포함 value(영문/숫자/기호만) 는 번역 스킵 → 원문 유지
+- 중국어 문장부호는 전각(`，。（）：`) 을 쓰되, placeholder 바로 앞에서는 전각 콜론 + ASCII placeholder 로 표기한다 (`要求：:constraint`) — `::constraint` 형태는 만들지 않는다
+- URL 뒤에 전각 괄호·구두점을 바로 붙이지 않는다 (링크 인식 경계가 모호해진다) — URL 을 문장 끝에 두거나 공백으로 분리한다
+
+### 용어집
+
+`g7-core-zh-CN` 이 고정한 코어 용어집. 후속 zh-CN 패키지(템플릿/모듈/플러그인)는 이 표기를 승계한다.
+
+| 한국어 | 중국어 간체 |
+|---|---|
+| 관리자 | 管理员 |
+| 사용자 | 用户 |
+| 설정 | 设置 |
+| 환경설정 | 系统设置 |
+| 권한 | 权限 |
+| 역할 | 角色 |
+| 알림 | 通知 |
+| 언어팩 | 语言包 |
+| 모듈 | 模块 |
+| 플러그인 | 插件 |
+| 템플릿 | 模板 |
+| 테마 | 主题 |
+| 코어 | 核心 |
+| 레이아웃 | 布局 |
+| 첨부파일 | 附件 |
+| 스케줄 | 计划任务 |
+| 본인인증 | 实名认证 |
+| 프로바이더(IDV) | 服务商 |
+| 활성화 / 비활성화 | 启用 / 停用 |
+| 비회원 | 游客 |
+| 결제 | 支付 |
+| 환불 | 退款 |
+
+판단이 갈린 항목:
+
+- **회원가입 / 회원 탈퇴 → `注册` / `注销账号`** (`会员` 미사용). 코어의 「회원」은 전부 복합어이고 코어는 `사용자`(→`用户`)로 일원화되어 있어, `会员` 을 함께 쓰면 같은 대상에 두 용어가 생긴다. 등급 회원 개념이 있는 이커머스 팩에서 도입을 검토한다.
+- **언어명 목록** (`user.language`, `layout_editor.locale`) — CJK 언어명은 중국어 역어(`韩语`/`日语`), 라틴 문자 표기는 원문 유지(`English`/`Tiếng Việt`).
+
+### 정적 검사
+
+zh-CN 팩은 다음 두 경로로 검증한다.
+
+| 도구 | 성격 | 검사 내용 |
+|---|---|---|
+| `tests/Unit/Services/LanguagePack/BundledSimplifiedChinesePackTest.php` | PHPUnit (프로덕션 클래스 실호출) | manifest validator 통과 · 필드 사양 · 콘텐츠 파일 존재 · `LanguagePackPhpArrayValidator` 통과 · ko 키 대칭 · 한글 잔존 0 · `$partial` 실재 |
+| `tests/Translations/zh-CN-core-parity-check.php` | standalone CLI (vendor·Laravel 불필요) | 파일 인벤토리 · 키 누락/초과 · 키 순서 · 자료형 · placeholder · HTML · URL · 빈 값 · 개행 수 · 한글/가나 잔존 · UTF-8/BOM/CRLF · `$partial` 경로 |
+
+`BundledJapanesePacksTest` 는 검사 대상을 상수 배열로 나열하므로 새 로케일 팩을 자동으로 포함하지 않는다. **로케일 팩을 추가할 때는 대응하는 정적 검사도 함께 추가**해야 한다 — 누락되어도 오류가 나지 않아 릴리즈까지 통과한다.
+
+### 설치 및 활성화
+
+```bash
+# 번들 소스로 설치 (자동 활성)
+php artisan language-pack:install g7-core-zh-CN --source=bundled
+
+# 확인
+php artisan language-pack:list --scope=core
+
+# 콘텐츠 수정 후 설치본 재반영 (프론트엔드 빌드 불필요)
+php artisan language-pack:update g7-core-zh-CN --force
+```
+
+`supported_locales` / `translatable_locales` / `locale_names` 는 활성화 시 `LanguagePackServiceProvider::refreshSupportedLocales()` 가 자동 갱신하므로 `config/app.php` 를 편집하지 않는다.
+
+### 기존 ko/en 변경 시 zh-CN 동기화 의무
+
+코어의 ko 또는 en 다국어 키를 추가/수정/제거할 때마다 `lang-packs/_bundled/g7-core-zh-CN/` 의 키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역 fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치(`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 `zh-CN-core-parity-check.php` 로 확인한다.
+
 ## 의존성 검증 — 설치 차단 사유 (UI 인라인 안내)
 
 미설치 번들 행과 설치 모달은 다음 4가지 사유로 설치 차단을 표시한다 (`LanguagePackService::resolveInstallBlockedReason()` 가 단일 SSoT). 모듈/플러그인 시스템과 동일 강도.

@@ -1,0 +1,38 @@
+{
+  "admin-dashboard": {
+    "name": "仪表盘"
+  },
+  "admin-settings": {
+    "name": "系统设置"
+  },
+  "admin-notification-logs": {
+    "name": "通知发送记录"
+  },
+  "admin-identity-logs": {
+    "name": "实名认证记录"
+  },
+  "admin-activity-logs": {
+    "name": "活动日志"
+  },
+  "admin-menus": {
+    "name": "菜单管理"
+  },
+  "admin-users": {
+    "name": "用户管理"
+  },
+  "admin-roles": {
+    "name": "权限管理"
+  },
+  "admin-modules": {
+    "name": "模块管理"
+  },
+  "admin-plugins": {
+    "name": "插件管理"
+  },
+  "admin-templates": {
+    "name": "模板管理"
+  },
+  "admin-schedules": {
+    "name": "计划任务管理"
+  }
+}

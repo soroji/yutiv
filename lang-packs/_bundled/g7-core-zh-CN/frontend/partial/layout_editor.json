@@ -1,0 +1,1361 @@
+{
+  "chrome": {
+    "toolbar": {
+      "toggle_route_tree": "折叠/展开路由树",
+      "undo": "撤销",
+      "redo": "重做",
+      "template_route_separator": " ▸ ",
+      "locale_switcher_label": "内容语言",
+      "add_element": "添加元素",
+      "device_desktop": "桌面端",
+      "device_tablet": "平板",
+      "device_mobile": "手机",
+      "zoom_out": "缩小",
+      "zoom_in": "放大",
+      "zoom_reset": "原始大小",
+      "page_settings": "页面设置",
+      "preview": "预览",
+      "previewing": "正在打开…",
+      "version_history": "版本记录",
+      "edit_code": "编辑代码",
+      "save": "保存",
+      "saving": "保存中…",
+      "exit": "退出",
+      "exit_base_edit": "退出公共布局编辑",
+      "exit_modal_edit": "退出弹窗编辑",
+      "exit_extension_edit": "退出扩展编辑",
+      "exit_iteration_item_edit": "退出循环项编辑",
+      "mode_badge": {
+        "base": "正在编辑公共布局",
+        "modal": "正在编辑弹窗",
+        "extension": "正在编辑扩展",
+        "iteration_item": "正在编辑循环项"
+      },
+      "images": "图片",
+      "translations": "多语言",
+      "data_sources": "数据",
+      "reset": "重置",
+      "switch_template": "切换到其他模板"
+    },
+    "route_tree": {
+      "panel_title": "页面 / 路由",
+      "search_placeholder": "按名称·路由搜索…",
+      "search_clear": "清除搜索词",
+      "search_no_results": "没有搜索结果",
+      "group": {
+        "base": "公共布局",
+        "template": "模板",
+        "module": "模块：{name}",
+        "plugin": "插件：{name}",
+        "modal": "弹窗",
+        "extension": "扩展注入"
+      },
+      "connected": {
+        "modals": "此页面的弹窗（{count}）",
+        "extensions": "注入的扩展（{count}）"
+      },
+      "badge": {
+        "hidden": "隐藏",
+        "redirect": "重定向",
+        "shared_layout": "{count} 个路由共用",
+        "modified": "已变更",
+        "version_tooltip": "当前保存版本 v{version}",
+        "extension_point": "扩展点",
+        "overlay": "覆盖层",
+        "priority": "p:{priority}",
+        "inactive": "已停用"
+      },
+      "empty": "没有可显示的路由"
+    },
+    "fab": {
+      "label": "编辑布局",
+      "tooltip": "在布局编辑器中打开此页面"
+    },
+    "denied": {
+      "title": "没有布局编辑权限",
+      "message": "使用此功能需要管理员权限。",
+      "go_login": "去登录",
+      "go_home": "回到首页"
+    },
+    "dirty_guard": {
+      "title": "有尚未保存的更改",
+      "message": "是否不保存更改直接退出？",
+      "stay": "继续编辑",
+      "discard": "放弃更改"
+    },
+    "canvas": {
+      "placeholder": "画布区域 — 将在 Phase 2 中填充"
+    },
+    "reset_guard": {
+      "title": "将重置此页面",
+      "message": "放弃此页面的更改，恢复到最后一次保存的状态。"
+    }
+  },
+  "preview": {
+    "empty": "请在左侧选择要编辑的路由",
+    "empty_layout": "此布局没有可显示的组件",
+    "loading": "正在加载布局...",
+    "error": "布局加载失败：{error}",
+    "assets_loading": "正在加载目标模板的资源...",
+    "assets_error": "目标模板资源加载失败：{error}",
+    "sample_data_badge": "示例数据",
+    "extension_no_injection_title": "此页面没有可编辑的元素",
+    "extension_no_injection_desc": "此扩展未向该页面添加可视化编辑的元素。请使用代码编辑。",
+    "extension_gated_title": "在当前状态下看不到可编辑的元素",
+    "extension_gated_desc": "此扩展所在的区域仅在特定页面状态下出现。由于编辑设置中未定义该状态，无法进行可视化编辑。请使用代码编辑。",
+    "extension_gated_desc_with_states": "此扩展所在的区域仅在特定页面状态下出现。在顶部的状态选择中切换到相应状态即可编辑。",
+    "slot_area_label": "内容区域"
+  },
+  "version_history": {
+    "title": "版本记录",
+    "close": "关闭",
+    "loading": "正在加载版本列表…",
+    "empty": "没有已保存的版本。",
+    "restore": "恢复",
+    "restoring": "恢复中…",
+    "restore_confirm": "是否恢复到此版本？当前正在编辑的更改将会丢失。",
+    "restore_not_found": "找不到该版本。请刷新列表。",
+    "latest": "最新",
+    "added": "+{count} 行",
+    "removed": "-{count} 行",
+    "chars": "（{diff} 字）",
+    "saved_by": "保存者：{name}",
+    "unknown_author": "未知",
+    "compare": "比较",
+    "comparing": "比较中…",
+    "diff_title": "v{old} → v{new} 的变更内容",
+    "diff_back": "列表",
+    "diff_identical": "两个版本的内容相同。",
+    "diff_too_large": "变更内容过大，无法显示。",
+    "load_more": "查看更多"
+  },
+  "preview_action": {
+    "no_document": "尚未选择要预览的布局。"
+  },
+  "access_error": {
+    "required_permission_label": "所需权限：",
+    "detail_summary": "详细错误信息",
+    "action": {
+      "sign_in": "前往登录",
+      "go_home": "回到管理首页",
+      "go_admin_home": "回到管理首页",
+      "retry": "重试"
+    },
+    "unauthorized": {
+      "title": "需要登录",
+      "message": "会话已过期或登录状态已失效。稍后将跳转到登录页面。"
+    },
+    "forbidden": {
+      "title": "没有访问此布局的权限",
+      "message": "当前账号没有编辑此页面的权限。请向管理员申请授权，或使用其他账号重新登录。"
+    },
+    "not_found": {
+      "title": "找不到布局",
+      "message": "您请求的布局不存在或已被删除。请重新选择路由。"
+    },
+    "server_error": {
+      "title": "服务器发生问题",
+      "message": "加载布局时发生服务器错误。请稍后重试。"
+    },
+    "network": {
+      "title": "请检查网络连接",
+      "message": "无法连接到服务器。请检查网络状态后重试。"
+    },
+    "unknown": {
+      "title": "布局加载失败",
+      "message": "发生了意外问题。请重试或联系管理员。"
+    }
+  },
+  "device": {
+    "group_label": "设备预览",
+    "desktop": "🖥 桌面端",
+    "tablet": "📱 平板",
+    "mobile": "📲 手机",
+    "portable": "📱 手机+平板",
+    "custom": "📐 自定义",
+    "custom_width_label": "宽度"
+  },
+  "zoom": {
+    "label": "缩放",
+    "aria_label": "画布缩放滑块"
+  },
+  "palette": {
+    "title": "添加元素",
+    "search_placeholder": "搜索元素…",
+    "group": {
+      "design": "设计元素",
+      "db": "数据库元素"
+    },
+    "category": {
+      "all": "全部",
+      "other": "其他",
+      "fallback": {
+        "basic": "基础元素",
+        "composite": "组合元素",
+        "layout": "布局"
+      }
+    },
+    "empty": "此位置没有可添加的元素",
+    "spec_missing": "此模板没有可视化编辑规格。添加元素功能已停用。",
+    "default_node_missing_badge": "无默认规格",
+    "requires_default_node_missing": "此组件需要模板定义默认样式后才能添加。请定义 editor-spec.json 中的 componentPalette.entries.<名称>.defaultNode。",
+    "table": {
+      "label": "表格",
+      "header_1": "标题",
+      "header_2": "内容",
+      "cell": "内容"
+    },
+    "select": {
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2"
+    }
+  },
+  "insertion": {
+    "above": "在上方添加",
+    "below": "在下方添加",
+    "left": "在左侧添加",
+    "right": "在右侧添加"
+  },
+  "context_menu": {
+    "edit_props": "属性设置",
+    "duplicate": "复制组件",
+    "delete": "删除",
+    "separate_branch": "拆分为此设备专用",
+    "merge_branch": "取消设备专用拆分",
+    "separate_branch_device": "将此区域拆分为 {device} 专用",
+    "merge_branch_device": "取消 {device} 专用拆分",
+    "separate_branch_hint": "当您希望仅在此设备上使用不同的构成（元素）时使用。若只需改变颜色、间距等样式，请使用［属性 > 样式］选项卡。",
+    "merge_branch_hint": "移除为此设备单独拆分的构成，恢复为默认构成。",
+    "device_desktop": "桌面端",
+    "device_tablet": "平板",
+    "device_mobile": "手机",
+    "device_portable": "手机+平板",
+    "device_custom": "{range}"
+  },
+  "overlay": {
+    "edit_common_layout": "编辑公共布局",
+    "edit_extension": "编辑扩展",
+    "edit_iteration_item": "编辑循环项",
+    "edit_destination_route": "→ 编辑此页面",
+    "cannot_drop_here": "无法放置在此处",
+    "locked_data_bound": "数据区域无法直接编辑",
+    "select_parent": "选择父级元素（↑）",
+    "branch_mobile": "手机构成",
+    "branch_tablet": "平板构成",
+    "branch_desktop": "桌面端构成",
+    "branch_custom": "{range} 构成",
+    "branch_boundary_denied": "无法在不同设备的构成之间移动",
+    "jump_device": "跳转到 {device} 构成",
+    "jump_device_hint": "此区域为 {device} 定义了单独的构成。点击后将切换到该设备视图进行编辑。",
+    "inherit_banner": "存在从公共布局继承的加载画面设置。您可以在下方按此页面的需要进行调整。",
+    "enabled_label": "显示加载画面",
+    "enabled_hint": "开启或关闭数据加载期间显示的加载画面。",
+    "on": "开",
+    "off": "关",
+    "scope_label": "覆盖范围",
+    "scope_full": "整个页面",
+    "scope_region": "特定区域",
+    "target_label": "目标区域",
+    "fallback_label": "备用区域",
+    "fallback_hint": "当找不到目标区域时改为覆盖的区域。",
+    "style_label": "显示方式",
+    "style_opaque": "纯色遮挡",
+    "style_blur": "模糊",
+    "style_fade": "渐显",
+    "style_skeleton": "骨架屏",
+    "style_spinner": "旋转指示",
+    "anim_wave": "波浪",
+    "anim_pulse": "闪烁",
+    "anim_none": "无",
+    "skeleton_component": "骨架形状",
+    "skeleton_animation": "动画效果",
+    "skeleton_count": "重复个数",
+    "spinner_component": "旋转形状",
+    "spinner_text": "提示文字",
+    "waitfor_label": "等待的数据",
+    "waitfor_hint": "在所选数据全部接收完成前保持加载画面。",
+    "waitfor_empty": "没有可等待的数据。",
+    "reset_inherit": "全部恢复默认值",
+    "inherited_badge": "已继承",
+    "overridden_badge": "已在此页面修改",
+    "override_field": "仅修改此页面",
+    "loading_picker": {
+      "none": "不选择",
+      "select": "选择",
+      "search": "搜索形状…",
+      "empty": "没有可选择的形状。"
+    }
+  },
+  "save": {
+    "success": "布局已保存",
+    "in_progress": "保存中…",
+    "validation_failed": "校验失败",
+    "blocked_inactive_extension": "由于新增了已停用的扩展组件，无法保存",
+    "network_error_title": "保存时发生网络错误",
+    "guard_no_document": "尚未加载要保存的布局文档",
+    "concurrent": {
+      "title": "其他用户已先行保存",
+      "message": "此布局已被其他管理员先行保存。是否加载最新版本？",
+      "version_info": "最新版本：{current} / 我的版本：{yours}",
+      "load_latest": "加载最新版",
+      "view_my_changes": "查看我的更改",
+      "cancel": "取消"
+    },
+    "conflict": "由于其他位置已先行保存，发生了冲突。"
+  },
+  "control": {
+    "use": "使用",
+    "default": "默认",
+    "color_hex_placeholder": "#000000 / 无",
+    "tag_add": "+ 添加",
+    "background_image": {
+      "upload": "上传图片",
+      "clear": "移除",
+      "mode_fill": "填充",
+      "mode_fit": "适应",
+      "mode_tile": "平铺",
+      "upload_failed": "图片上传失败"
+    },
+    "dimension": {
+      "placeholder": "例：320px、50%、24rem、auto"
+    },
+    "spacing": {
+      "mode_all": "统一",
+      "mode_sides": "单独",
+      "all": "全部",
+      "x": "左右",
+      "y": "上下",
+      "top": "上",
+      "right": "右",
+      "bottom": "下",
+      "left": "左"
+    }
+  },
+  "recipe": {
+    "custom_input": "手动输入…",
+    "pick_from_list": "从列表中选择",
+    "page_placeholder": "跳转路径（例：/board）",
+    "datasource_placeholder": "数据名称",
+    "state_key_placeholder": "状态键",
+    "modal_placeholder": "选择要打开的弹窗",
+    "i18n_text_placeholder": "要显示的文字"
+  },
+  "action": {
+    "no_events": "此元素无法设置动作",
+    "no_recipes": "此模板没有可用的动作",
+    "add_action": "+ 添加动作",
+    "remove": "移除动作",
+    "advanced_action": "手动编写的动作",
+    "advanced_preserved": "这是在代码编辑器中编写的动作（已保留）",
+    "event": {
+      "onClick": "点击时",
+      "onHover": "鼠标悬停时",
+      "onChange": "值变化时",
+      "onSubmit": "提交时",
+      "onClose": "关闭时",
+      "onFilesChange": "文件变化时",
+      "onPageChange": "翻页时",
+      "onReact": "响应时",
+      "onTabChange": "切换选项卡时",
+      "onUploadSuccess": "上传成功时",
+      "onUploadError": "上传失败时",
+      "onButtonClick": "点击按钮时",
+      "onDismiss": "关闭时",
+      "onItemAdd": "添加项目时",
+      "onItemClick": "点击项目时",
+      "onItemRemove": "删除项目时",
+      "onLanguageChange": "切换语言时",
+      "onLayoutEditClick": "点击布局编辑时",
+      "onLogoutClick": "点击退出登录时",
+      "onOrderChange": "变更排序时",
+      "onProfileClick": "点击个人资料时",
+      "onReset": "重置时",
+      "onRowClick": "点击行时",
+      "onSelect": "选择时",
+      "onSelectionChange": "选择变化时",
+      "onToggle": "展开或折叠时",
+      "onComponentEvent": "发生特定事件时"
+    },
+    "advanced": "高级",
+    "add_search": "搜索动作…",
+    "add_no_match": "没有匹配的动作。",
+    "view_code": "查看代码",
+    "source_core": "核心",
+    "source_module": "模块",
+    "source_plugin": "插件",
+    "source_template": "模板",
+    "source_base": "公共",
+    "source_route": "此页面",
+    "summary_missing_required": "必填的值尚未填写。",
+    "group": {
+      "state": "状态管理",
+      "nav": "页面跳转",
+      "notify": "通知·弹窗",
+      "data": "数据",
+      "locale": "语言",
+      "etc": "其他",
+      "flow": "流程控制",
+      "error": "错误处理",
+      "extension": "扩展动作"
+    }
+  },
+  "visibility": {
+    "no_recipes": "此模板没有可用的显示条件",
+    "show_when": "显示此元素的条件",
+    "and": "并且",
+    "or": "或者",
+    "remove": "移除条件",
+    "preview": "预览",
+    "clear": "清除条件",
+    "advanced_preserved": "这是在代码编辑器中编写的条件（已保留）"
+  },
+  "flex": {
+    "container_title": "弹性盒子",
+    "item_title": "在弹性盒子中",
+    "direction": "方向",
+    "justify": "子元素对齐（主轴）",
+    "align": "子元素对齐（交叉轴）",
+    "wrap": "允许换行",
+    "gap": "子元素间距",
+    "item_grow": "拉伸",
+    "item_align": "单独对齐",
+    "item_order": "顺序",
+    "make_flex": "设为弹性盒子",
+    "unmake_flex": "取消弹性盒子",
+    "not_flex": "此元素不是弹性盒子"
+  },
+  "property_modal": {
+    "title": "编辑属性：{name}",
+    "settings_title": "{name} 设置",
+    "element": "元素",
+    "close": "关闭",
+    "delete_element": "删除此元素",
+    "no_editable_props": "此元素没有可编辑的属性",
+    "injected_props": {
+      "title": "扩展注入的属性",
+      "help": "基础属性适用于所有页面，扩展注入的属性仅在该扩展启用时生效。",
+      "origin": "由 {source} 注入",
+      "save_target": "保存时：将记录到该扩展行中。",
+      "save_button": "保存到 {source}",
+      "saving": "保存中…",
+      "saved": "已保存。",
+      "invalid_json": "JSON 格式不正确。"
+    },
+    "tab_deferred": "此选项卡将在下一阶段支持",
+    "advanced_deferred": "此高级属性将在下一阶段支持",
+    "unsupported_widget": "不支持的控件",
+    "value_conflict": "重复值",
+    "settings_group": "组 {index}",
+    "advanced_badge": "此元素包含在代码编辑器中编写的高级设置",
+    "branch_badge": "此元素属于 {device} 专用构成 — 在其他设备上会显示不同的构成。",
+    "advanced_preserved_title": "在代码编辑中编写的高级设置 {count} 项（已保留）",
+    "advanced_kind_developer": "开发者属性",
+    "advanced_kind_expression": "复杂表达式",
+    "tab": {
+      "settings": "设置",
+      "props": "属性",
+      "style": "样式",
+      "action": "动作",
+      "visibility": "显示条件",
+      "translation": "翻译",
+      "advanced": "高级"
+    },
+    "advanced": {
+      "permissions": "显示权限",
+      "blur_until_loaded": "加载数据时模糊显示",
+      "blur_hint": "数据加载中模糊显示",
+      "comment": "备注"
+    },
+    "scope": {
+      "scheme_light": "浅色",
+      "scheme_dark": "深色",
+      "device_base": "默认值",
+      "device_desktop": "PC",
+      "device_tablet": "平板",
+      "device_mobile": "手机",
+      "device_portable": "手机+平板",
+      "add_custom": "自定义尺寸",
+      "custom_min": "最小",
+      "custom_max": "最大",
+      "custom_priority_note": "自定义范围的优先级高于 PC／平板／手机。",
+      "custom_invalid": "范围无效（最小 ≤ 最大，且为数字）。",
+      "reset_to_base": "重置为默认值"
+    },
+    "dark_code_only": "此颜色在深色模式下只能通过代码模式编辑",
+    "dark_preset_only": "在深色模式下，选择面板中的预设颜色即可应用（手动输入的自由值仅适用于浅色模式）"
+  },
+  "core_props": {
+    "id": {
+      "label": "元素 ID",
+      "placeholder": "例：main-content",
+      "add_data": "数据",
+      "binding_hint": "在循环列表中将索引或行键连接为数据后，每个项目都会生成唯一的 ID（例：item_{{$idx}}）"
+    },
+    "dataKey": {
+      "placeholder": "例：form",
+      "hint": "用于将各输入框归为一组的名称。可使用 _global. 或 _isolated. 前缀连接到全局／隔离区域。",
+      "bound_degraded": "此值在代码编辑器中设置。",
+      "label": "表单数据连接点"
+    },
+    "isolatedState": {
+      "label": "隔离区域",
+      "initial_label": "隔离初始值",
+      "off_hint": "当您希望此区域拥有独立状态时开启。"
+    },
+    "isolatedScopeId": {
+      "label": "区域名称",
+      "placeholder": "例：cart-scope",
+      "search": "搜索区域名称…",
+      "duplicate": "其他位置也存在同名区域。两个区域会共用状态。"
+    }
+  },
+  "icon_picker": {
+    "search_placeholder": "搜索图标",
+    "none": "无",
+    "no_results": "没有搜索结果",
+    "free_input_hint": "请直接输入图标名称"
+  },
+  "list_editor": {
+    "add": "添加项目",
+    "remove": "删除",
+    "move_up": "上移",
+    "move_down": "下移",
+    "empty": "没有项目",
+    "item": "项目",
+    "edit_translation": "编辑翻译",
+    "option_value": "值",
+    "option_label": "标签",
+    "bound_degraded": "这是连接到数据的列表（代码编辑）",
+    "items_title": "项目",
+    "item_text": "项目文本",
+    "item_label": "标签",
+    "item_placeholder": "提示文字",
+    "new_item": "新项目",
+    "add_child": "添加 {component}",
+    "no_child_component": "尚未指定要添加的子组件"
+  },
+  "array_editor": {
+    "items_title": "项目列表",
+    "item": "项目",
+    "add": "添加 {item}",
+    "remove": "删除",
+    "move_up": "上移",
+    "move_down": "下移",
+    "empty": "没有项目",
+    "icon_placeholder": "图标名称（例：user、cog）",
+    "bound_degraded": "这是连接到数据的列表（代码编辑）",
+    "no_array_prop": "尚未指定要编辑的数组属性",
+    "number_list_placeholder": "以逗号分隔的数字（例：10, 20, 30）"
+  },
+  "cell_tree_editor": {
+    "columns_title": "列的列表",
+    "id_placeholder": "列标识符",
+    "expand_cells": "编辑单元格内容",
+    "collapse_cells": "收起单元格内容",
+    "add_column": "添加 {item}"
+  },
+  "table_editor": {
+    "title": "编辑表格",
+    "add_row": "添加行",
+    "add_col": "添加列",
+    "remove_row": "删除行",
+    "remove_col": "删除列",
+    "merge_cells": "合并单元格",
+    "unmerge_cells": "取消合并",
+    "cell_border": "单元格边框",
+    "cell_class_placeholder": "例：border border-gray-300",
+    "move_row_up": "行上移",
+    "move_row_down": "行下移",
+    "move_col_left": "列左移",
+    "move_col_right": "列右移",
+    "move_blocked_section": "无法跨越表头／表体的边界移动",
+    "header_row": "表头行",
+    "cell_text": "单元格文本",
+    "cell_i18n_label": "所选单元格多语言",
+    "structural_cell": "结构单元格（在画布中编辑）",
+    "grid_invalid": "表格结构不一致（请检查单元格合并／空缺）",
+    "select_hint": "点击单元格＝选择，Shift+点击＝选择区域后合并",
+    "cell_fill": "单元格背景色",
+    "cell_fill_none": "无（透明）",
+    "cell_fill_custom": "自选颜色",
+    "cell_padding": "单元格内边距",
+    "cell_padding_custom": "自定义",
+    "cell_color": "单元格颜色",
+    "dark_free_color_hint": "深色模式只能指定预设颜色（自由颜色仅适用于浅色模式）"
+  },
+  "table_inplace": {
+    "select_cell": "选择单元格",
+    "add_row": "添加行",
+    "add_col": "添加列",
+    "remove_row": "删除行",
+    "remove_col": "删除列",
+    "move_row_up": "行上移",
+    "move_row_down": "行下移",
+    "move_col_left": "列左移",
+    "move_col_right": "列右移",
+    "merge": "合并",
+    "unmerge": "取消",
+    "select_all": "全选",
+    "border_apply_count": "应用到 {count} 个单元格",
+    "merge_right": "与右侧单元格合并",
+    "merge_down": "与下方单元格合并",
+    "border_apply_all": "应用到整个表格",
+    "select_cell_hint": "在画布中点击单元格后，会出现合并·边框工具。",
+    "merge_range": "合并区域",
+    "range_selected": "已选择 {count} 个单元格",
+    "custom_color": "自选"
+  },
+  "attachment_manager": {
+    "title": "管理此布局的图片",
+    "recent": "最近上传",
+    "manage_link": "图片管理",
+    "upload": "上传图片",
+    "use_as_bg": "背景",
+    "delete": "删除",
+    "delete_confirm": "是否删除此图片？该操作无法撤销。",
+    "empty": "此布局尚未上传任何图片。",
+    "loading": "加载中…",
+    "close": "关闭"
+  },
+  "translation_manager": {
+    "title": "管理此布局的多语言键",
+    "filter_label": "状态筛选",
+    "filter_all": "全部",
+    "filter_active": "使用中",
+    "filter_orphaned": "未使用",
+    "badge_orphaned": "未使用／已断开连接",
+    "badge_live_in_use": "当前画布使用中",
+    "badge_live_unused": "当前画布未使用",
+    "select_aria": "选择 {key}",
+    "delete_selected": "删除所选（{count}）",
+    "purge_orphaned": "删除全部未使用（{count}）",
+    "delete_confirm": "是否删除所选的 {count} 个多语言键？该操作无法撤销。",
+    "conflict": "其他位置已先行修改。请刷新后重试。",
+    "save": "保存",
+    "saving": "保存中…",
+    "delete": "删除",
+    "empty": "此布局尚未生成多语言键。",
+    "loading": "加载中…",
+    "close": "关闭"
+  },
+  "data_sources": {
+    "title": "数据源",
+    "description": "添加、编辑和删除此页面加载的数据源。定义数据源后，即可在组件的数据连接中选择。",
+    "add": "添加数据源",
+    "edit": "编辑",
+    "remove": "删除",
+    "close": "关闭",
+    "empty": "此页面尚未定义数据源。",
+    "no_label": "未指定显示名称（label_key）",
+    "inherited_title": "继承的数据源（只读）",
+    "source": {
+      "module": "模块",
+      "plugin": "插件"
+    },
+    "form": {
+      "add_title": "添加数据源",
+      "edit_title": "编辑数据源",
+      "save": "保存",
+      "cancel": "取消"
+    },
+    "field": {
+      "id": "ID",
+      "label_key": "显示名称",
+      "label_key_placeholder": "例：商品列表",
+      "label_key_hint": "在搜索型数据选择器中显示的易读名称。输入纯文本会自动生成多语言键，可通过 🌐 按钮编辑各语言的值。",
+      "type": "类型",
+      "endpoint": "端点",
+      "method": "HTTP 方法",
+      "auth_mode": "认证模式",
+      "loading_strategy": "加载策略",
+      "auto_fetch": "页面加载时自动调用",
+      "params": "请求参数",
+      "params_hint": "值中可以使用 {{query.page}} 这样的绑定表达式。",
+      "params_empty": "请添加要一并发送给 API 的值。例：page、per_page、搜索词等。",
+      "params_preview": "将发送的值预览",
+      "params_mode_block": "以区块方式",
+      "params_mode_code": "以代码方式",
+      "param_key_placeholder": "参数名称",
+      "param_add": "添加参数",
+      "fallback": "默认值",
+      "fallback_add": "添加默认值",
+      "fallback_add_field": "添加项目",
+      "fallback_clear": "移除默认值",
+      "fallback_empty": "在数据加载前或加载失败时改为显示的值。例：为 data 设置空列表（[]）。",
+      "fallback_key_placeholder": "字段名称（例：data）",
+      "fallback_preview": "默认值预览",
+      "content_type": "内容类型",
+      "refetch_on_mount": "再次进入时重新加载",
+      "channel": "频道",
+      "event": "事件",
+      "channel_type": "频道类型",
+      "target_source": "目标数据源",
+      "on_receive": "收到消息时的动作"
+    },
+    "ds_type": {
+      "api": "API 调用",
+      "static": "静态数据",
+      "route_params": "路径参数",
+      "query_params": "查询参数",
+      "websocket": "WebSocket"
+    },
+    "auth_mode": {
+      "none": "无（公开）",
+      "optional": "可选（有令牌则发送）",
+      "required": "必需（无令牌则失败）"
+    },
+    "loading_strategy": {
+      "progressive": "渐进式",
+      "blocking": "阻塞",
+      "background": "后台"
+    },
+    "error": {
+      "id_required": "请输入 ID。",
+      "id_invalid": "ID 只能使用字母、数字和下划线，且不能以数字开头。",
+      "id_duplicate": "ID '{id}' 已被使用。",
+      "params_json": "请求参数不是正确的 JSON 格式。",
+      "params_object": "请求参数必须为对象（JSON）格式。",
+      "fallback_json": "默认值（fallback）不是正确的 JSON 格式。"
+    },
+    "global_headers": "全局标头",
+    "global_headers_empty": "没有已设置的全局标头。",
+    "global_headers_hint": "全局标头只能在代码编辑器中修改。",
+    "scripts": "外部脚本",
+    "scripts_empty": "没有已添加的外部脚本。",
+    "scripts_hint": "外部脚本只能在代码编辑器中修改。",
+    "section": {
+      "websocket": "实时（WebSocket）设置",
+      "on_success": "成功时的动作",
+      "on_error": "失败时的动作",
+      "error_handling": "按错误码处理",
+      "load_condition": "加载条件"
+    },
+    "add_error_code": "+ 添加错误码"
+  },
+  "toolbar": {
+    "color_scheme_group": "配色主题",
+    "color_scheme_light": "☀ 浅色",
+    "color_scheme_dark": "🌙 深色",
+    "state": "状态："
+  },
+  "locale": {
+    "ko": "韩语",
+    "en": "English",
+    "ja": "日语",
+    "zh": "中文",
+    "vi": "Tiếng Việt"
+  },
+  "inline_edit": {
+    "aria_label": "文本内联编辑",
+    "toolbar_label": "文本格式",
+    "new_key_hint": "确认后将生成多语言键",
+    "existing_key_hint": "多语言 — 仅修改当前语言的值",
+    "open_translations": "编辑所有语言",
+    "empty_warning": "请输入内容",
+    "format": {
+      "fontWeight": "加粗",
+      "fontBold": "加粗",
+      "fontStyle": "倾斜",
+      "fontItalic": "倾斜",
+      "textDecoration": "下划线",
+      "textUnderline": "下划线",
+      "textAlign": "对齐",
+      "fontSize": "字号",
+      "textColor": "文字颜色"
+    },
+    "prompt": {
+      "fontSize": "请输入字号（例：16px、1.2rem）",
+      "textColor": "请输入文字颜色（例：#2563eb）"
+    }
+  },
+  "translation": {
+    "key_label": "多语言键",
+    "needs_translation": "需要翻译",
+    "not_a_key": "此元素不是多语言键。在画布中双击文本进行内联编辑即可生成键。",
+    "loading": "加载中…",
+    "load_failed": "多语言值加载失败",
+    "save": "保存",
+    "saving": "保存中…",
+    "saved": "已保存",
+    "save_failed": "保存失败",
+    "conflict": "其他用户已先行修改。请刷新后重试。",
+    "token_mismatch": "不能修改或删除翻译值中的数据连接（{{ }}）。数据连接请在［属性］选项卡中修改。",
+    "placeholder_mismatch": "不能删除或修改翻译值中的数据占位符（如 {p0}）。句子可以自由翻译，但请保留占位符。",
+    "placeholder_locked": "数据标签不能像文字那样删除。位置可通过拖动调整，解除连接请在［属性］选项卡中操作。"
+  },
+  "prop_i18n": {
+    "placeholder": "请输入文字",
+    "edit_languages": "按语言编辑",
+    "bound_code_only": "已绑定（代码编辑）",
+    "create_first": "先输入当前语言的值即可生成多语言键，然后就能按语言分别编辑。"
+  },
+  "value_tree": {
+    "show_source": "查看原始表达式",
+    "raw_code_only": "在代码中修改",
+    "segmented_hint": "这是由多个片段拼接而成的值。您可以添加、删除片段，或用手柄调整顺序。",
+    "drag_reorder": "拖动调整顺序",
+    "change_data": "更换数据",
+    "edit": "修改",
+    "done": "完成",
+    "collapse": "收起",
+    "to_expression": "改为表达式",
+    "to_plain": "改为普通名称",
+    "to_plain_lead": "将删除表达式，仅保留以下值：",
+    "to_plain_warn": "其他条件、分支和数据连接将全部删除且无法撤销。",
+    "to_plain_ok": "恢复为此值",
+    "to_plain_cancel": "取消",
+    "raw_expression_hint": "该值已写成表达式，无法展开为易读编辑形式。表达式本身可在上方直接修改，更复杂的编辑请使用顶部的［代码编辑］。",
+    "segment": {
+      "text": "固定文字",
+      "expression": "随条件变化的部分",
+      "fallback": "无值时替代",
+      "data": "数据",
+      "remove": "删除此片段",
+      "data_pick_hint": "请搜索并选择要显示的数据。",
+      "data_no_candidates": "此页面没有可连接的数据。"
+    },
+    "cond": {
+      "label": "条件",
+      "code_only": "在代码中修改",
+      "field_placeholder": "基准值（例：编辑模式）",
+      "value_placeholder": "用于比较的值",
+      "when_true": "满足此条件时",
+      "when_false": "其他情况",
+      "op_truthy": "有值时",
+      "op_falsy": "无值时",
+      "op_eq": "等于",
+      "op_neq": "不等于",
+      "op_gt": "大于",
+      "op_lt": "小于",
+      "op_gte": "大于等于",
+      "op_lte": "小于等于"
+    },
+    "fallback": {
+      "primary": "基础值",
+      "when_empty": "无值时替代",
+      "when_falsy": "为空时替代"
+    },
+    "concat": {
+      "hint": "按顺序拼接多个值。",
+      "part": "第 {n} 个片段"
+    }
+  },
+  "shortcuts": {
+    "title": "快捷键",
+    "close": "关闭",
+    "or": "或",
+    "footnote": "当焦点位于输入框或弹窗时，快捷键不会生效。",
+    "group": {
+      "clipboard": "剪贴板",
+      "element": "元素",
+      "history": "撤销",
+      "view": "视图/工具",
+      "document": "文档"
+    },
+    "action": {
+      "copy": "复制",
+      "cut": "剪切",
+      "paste": "粘贴（可跨布局）",
+      "open_props": "打开属性面板",
+      "delete": "删除",
+      "select_parent": "选择父级元素",
+      "deselect": "取消选择",
+      "add_element": "添加元素",
+      "undo": "撤销",
+      "redo": "重做",
+      "edit_code": "编辑代码",
+      "preview": "预览",
+      "translations": "多语言页面",
+      "help": "快捷键一览",
+      "reset": "重置",
+      "save": "保存",
+      "exit": "退出"
+    }
+  },
+  "binding": {
+    "section_title": "数据连接",
+    "search": "搜索数据",
+    "search_placeholder": "按名称·路径搜索…",
+    "no_results": "没有匹配的数据",
+    "not_connected": "未连接",
+    "clear": "解除",
+    "complex": "复合绑定（代码编辑）",
+    "required": "必填",
+    "item_fields": "项目字段",
+    "shape_scalar": "单值",
+    "shape_array": "数组",
+    "shape_object": "对象",
+    "iteration_title": "循环数据连接",
+    "iteration_label": "循环数据源",
+    "iteration_hint": "这是此区域要循环的数组数据。一个项目会按内部结构渲染，并按数据条数重复。",
+    "iteration_item_var": "项目变量",
+    "iteration_index_var": "序号变量"
+  },
+  "inline_binding": {
+    "section_title": "文本数据连接",
+    "none": "此文本没有连接的数据",
+    "search": "搜索数据",
+    "search_placeholder": "按名称·路径搜索…",
+    "no_results": "没有匹配的数据",
+    "clear": "解除",
+    "complex": "复合绑定（代码编辑）",
+    "append_hint": "在文本末尾插入数据",
+    "insert_data": "数据",
+    "param_hint": "此文字请在［翻译］选项卡中编辑句子（数据标签的位置可拖动调整），在这里则可以更换、新增或解除所连接的数据源。"
+  },
+  "host_picker": {
+    "title": "选择代表性宿主布局",
+    "description": "此扩展会注入到多个页面。请选择在哪个页面上进行编辑。保存的更改会反映到该扩展注入的所有页面。",
+    "description_with_label": "“{label}”扩展会注入到多个页面。请选择在哪个页面上进行编辑。"
+  },
+  "computed": {
+    "empty": "没有已设置的自动计算值。",
+    "add": "添加值",
+    "group_common": "常用",
+    "group_more": "其他",
+    "source_base": "公共",
+    "source_overridden": "已在此页面覆盖",
+    "overridden_hint": "此页面正在覆盖公共布局中的值。",
+    "override_notice": "仅在此页面修改公共布局中的值。",
+    "revert": "恢复为公共值",
+    "custom_open": "手动创建",
+    "custom_add": "添加",
+    "custom_step1": "对哪些数据",
+    "custom_step2": "做什么",
+    "custom_step3": "结果名称",
+    "custom_sum_field": "要求和的字段（例：price）",
+    "custom_value_field": "用作值的字段",
+    "custom_label_field": "要显示的字段",
+    "custom_prop": "要获取的属性（可选）",
+    "custom_candidates": "候选值（以逗号分隔）",
+    "custom_fallback": "无值时的默认值",
+    "cond_add": "添加条件",
+    "cond_field": "字段",
+    "cond_value": "值",
+    "key_duplicate": "该名称已被使用。",
+    "kind_string": "文本",
+    "kind_number": "数字",
+    "kind_boolean": "是·否",
+    "op_count": "统计个数",
+    "op_sum": "求和",
+    "op_filter": "按条件筛选",
+    "op_to_options": "转换为选项",
+    "op_nth": "取第 N 个",
+    "op_first_of": "取第一个有值的",
+    "op_literal": "固定值",
+    "preview_label": "结果",
+    "preview_error": "无法计算此值（但仍可保存）。",
+    "effect_preview": "满足此条件时的页面",
+    "list_more": "另外 {count} 个",
+    "value_none": "无",
+    "type_number": "数字",
+    "type_string": "文本",
+    "type_boolean": "是·否",
+    "type_list": "列表",
+    "type_object": "对象",
+    "type_null": "无"
+  },
+  "init_actions": {
+    "empty": "没有已添加的页面动作。",
+    "empty_self": "此页面没有已添加的动作。",
+    "group_base": "公共布局动作",
+    "group_self": "此页面动作",
+    "edit": "编辑",
+    "remove": "删除",
+    "drag_reorder": "拖动调整顺序",
+    "locked_parent": "公共项目",
+    "base_readonly_hint": "公共布局动作需在公共（base）布局的页面设置中修改。",
+    "merge_order": "先执行公共布局动作，随后执行此页面的动作。",
+    "cond_badge": "条件",
+    "if_label": "执行条件",
+    "if_placeholder": "例：{{user?.uuid}}（仅当条件为真时执行）",
+    "advanced_param_hint": "此值在代码编辑器中设置。"
+  },
+  "action_param": {
+    "key_placeholder": "名称",
+    "value_placeholder": "值（可用数据连接·表达式）",
+    "add_pair": "添加值",
+    "number_placeholder": "数字或数据连接"
+  },
+  "initstate": {
+    "legacy_state": "存在以旧方式保存的初始值。编辑后将整理为新方式。",
+    "section_local": "此页面初始值",
+    "section_global": "全局初始值",
+    "section_isolated": "隔离区域初始值",
+    "section_isolated_desc": "这是各组件隔离区域的初始值。",
+    "isolated_dynamic_hint": "隔离区域也可能在使用页面的过程中创建。",
+    "isolated_orphan": "没有组件使用该名称的隔离区域。",
+    "no_values": "没有已设置的值。",
+    "value_name": "值名称",
+    "value_kind": "值类型",
+    "add_value": "添加值",
+    "revert": "恢复",
+    "subkey_name": "下级名称",
+    "add_subkey": "添加下级值",
+    "add_item": "添加项目",
+    "kind_string": "文本",
+    "kind_number": "数字",
+    "kind_boolean": "是·否",
+    "kind_null": "无",
+    "kind_list": "列表",
+    "kind_object": "对象",
+    "name_required": "请输入值名称。",
+    "name_duplicate": "已存在同名的值。",
+    "name_invalid": "值名称必须以字母开头，且只能使用字母、数字和 _。"
+  },
+  "action_chip": {
+    "response_data": "响应数据",
+    "response_message": "响应消息",
+    "error_status": "错误状态码",
+    "error_message": "错误消息",
+    "error_errors": "校验错误列表",
+    "error_data": "错误响应数据",
+    "error_status_text": "错误状态文本",
+    "payload_data": "接收的数据"
+  },
+  "error": {
+    "intro": "按状态码设定要显示的页面或要执行的动作。",
+    "degrade": "此模板不支持易读编辑。请在代码编辑器中设置。",
+    "message_placeholder": "要显示的消息（可用 🔍 插入错误信息）",
+    "handler_none": "不设置",
+    "handler_showErrorPage": "显示错误页面",
+    "handler_navigate": "跳转到其他页面",
+    "handler_openModal": "打开弹窗",
+    "handler_toast": "弹出提示",
+    "handler_setState": "变更状态",
+    "handler_sequence": "依次执行多个动作",
+    "handler_parallel": "同时执行多个动作",
+    "target_content": "仅内容区域",
+    "target_full": "整个页面",
+    "setstate_key": "状态名称"
+  },
+  "target_picker": {
+    "canvas_pick_hint": "请在页面中点击要连接的元素",
+    "cancel": "取消",
+    "select_area": "选择区域",
+    "id_placeholder": "请输入元素 ID 或选择区域",
+    "none": "不选择",
+    "minimized_hint": "请在画布中点击要连接的元素",
+    "needs_id": "连接需要 ID"
+  },
+  "page_settings": {
+    "title": "{name} 设置",
+    "close": "关闭",
+    "advanced_summary": "包含在代码编辑器中编写的高级设置 {count} 项",
+    "tab": {
+      "meta": "基本信息",
+      "seo": "搜索引擎",
+      "init": "页面动作",
+      "overlay": "加载画面",
+      "computed": "自动计算",
+      "state": "初始状态",
+      "error": "错误处理",
+      "data": "数据"
+    },
+    "banner": {
+      "inline_hint": "⏎ 保存 · Esc 取消",
+      "dblclick_hint": "双击进行编辑",
+      "advanced": "高级",
+      "open_settings": "打开页面设置"
+    },
+    "meta": {
+      "title": "页面名称",
+      "description": "页面说明",
+      "icon": "菜单图标",
+      "icon_placeholder": "例：fa-solid fa-house",
+      "editor_label": "编辑器树名称（可选）",
+      "editor_label_hint": "在编辑器左侧页面列表中显示的名称。留空则使用页面名称。",
+      "permissions": "页面访问权限",
+      "permissions_hint": "只有拥有所选权限的用户才能查看此页面。留空表示不限制。",
+      "dynamic_hint": "动态标题"
+    },
+    "computed": {
+      "heading": "设定由数据自动计算得出的值。可在标题、显示条件等处引用。"
+    },
+    "init_actions": {
+      "heading": "设定页面首次打开时依次执行的动作。"
+    },
+    "initstate": {
+      "heading": "设定页面打开时预先填入的初始值。"
+    },
+    "error": {
+      "heading": "设定加载数据出错时的处理方式。"
+    },
+    "seo": {
+      "title": "搜索标题",
+      "description": "搜索说明",
+      "enabled": "对搜索引擎公开",
+      "disabled_note": "此页面不会对搜索引擎公开。开启后即可使用以下设置。",
+      "page_type": "页面类型",
+      "page_type_none": "不选择",
+      "page_type_free_placeholder": "手动输入页面类型",
+      "page_type_free_note": "由于没有可对接的类型，改为手动输入。",
+      "page_type_free": "手动输入",
+      "extensions": "扩展 SEO 对接",
+      "add_extension": "添加扩展",
+      "no_extension_candidate": "没有可对接的扩展。",
+      "defaults_precondition": "若要获取默认值，请先填写以下项目。",
+      "missing_extensions": "请选择对接扩展。",
+      "missing_page_type": "请选择页面类型。",
+      "toggle_setting": "公开开关设置对接",
+      "toggle_setting_search": "搜索设置…",
+      "data_sources": "SEO 对接数据",
+      "data_sources_hint": "请选择搜索引擎变量·结构化数据将引用的数据。",
+      "data_sources_empty": "此页面尚未定义数据。",
+      "priority": "优先级（sitemap）",
+      "changefreq": "更新频率",
+      "use_default": "使用默认值",
+      "revert_default": "恢复",
+      "value_placeholder": "输入值（可用数据连接）",
+      "og_section": "Open Graph（社交分享）",
+      "og_type": "类型（og:type）",
+      "og_title": "标题",
+      "og_description": "说明",
+      "og_image": "图片",
+      "og_image_alt": "图片替代文本",
+      "og_image_adv": "高级图片选项（高度·格式·安全 URL）",
+      "og_image_height": "图片高度（px）",
+      "og_image_type": "图片格式（例：image/png）",
+      "og_image_secure_url": "图片安全 URL（https）",
+      "og_site_name": "站点名称",
+      "og_locale": "语言",
+      "og_extra": "其他属性",
+      "og_locked": "已被过滤器固定",
+      "og_intro": "留空的栏位会使用核心·扩展设定的默认值（会标注来源）。填写后将以此页面的值覆盖。",
+      "og_source_core": "核心设置",
+      "og_source_filter": "已应用过滤器",
+      "og_source_inherited": "公共布局",
+      "og_source_module": "扩展提供",
+      "auto_chip_source": "扩展提供",
+      "auto_chip_replace": "更换为其他数据",
+      "tw_section": "Twitter 卡片",
+      "tw_fallback_note": "留空则直接使用 Open Graph 的值。",
+      "tw_card": "卡片类型",
+      "tw_site": "站点账号",
+      "tw_creator": "作者账号",
+      "tw_title": "标题",
+      "tw_description": "说明",
+      "tw_image": "图片",
+      "tw_image_alt": "图片替代文本",
+      "tw_extra": "其他属性",
+      "extra_property": "属性（property）",
+      "extra_name": "名称（name）",
+      "extra_content": "值",
+      "add_extra": "添加属性",
+      "remove": "删除",
+      "structured_data": "结构化数据",
+      "sd_mode": "手动指定结构化数据",
+      "sd_manual_toggle": "手动指定",
+      "sd_filter_locked": "已被过滤器固定",
+      "sd_filter_locked_note": "过滤器正在代为填充结构化数据，因此这里无法修改。",
+      "sd_auto_title": "自动生成（模块提供）",
+      "sd_auto_empty": "没有自动生成的结构化数据。",
+      "sd_replace_pre_warn": "开启手动指定后，自动生成的内容将全部消失并替换为以下内容。",
+      "sd_replace_warn": "此内容将完全替换自动生成的结构化数据。",
+      "sd_type": "@type（结构类型）",
+      "sd_prop_key": "属性路径（例：offers.price）",
+      "sd_prop_value": "值",
+      "sd_add_prop": "添加属性",
+      "sd_seed_from_module": "加载模块自动值",
+      "sd_empty_note": "值为空的属性在保存时会被排除。",
+      "sd_has_empty": "存在值为空的项目。",
+      "vars": "动态变量",
+      "vars_precondition": "先选择对接扩展和页面类型后，才会显示可用的变量。",
+      "vars_auto_group": "自动填充（只读）",
+      "vars_auto": "自动",
+      "vars_data_group": "填入值",
+      "vars_custom_group": "手动添加",
+      "vars_required_empty": "这是必填变量。请输入值。",
+      "vars_add": "添加变量",
+      "vars_add_name": "变量名称",
+      "vars_value_hint": "变量可在标题、说明和结构化数据中以 {大括号 名称} 的形式引用。",
+      "vars_name_reserved": "{name} 与自动填充变量的名称重复。",
+      "vars_name_duplicate": "{name} 是已添加过的变量。",
+      "vars_name_not_provided": "{name} 是任何扩展都未提供的变量。",
+      "bot_preview_title": "搜索爬虫预览",
+      "bot_preview_refresh": "刷新",
+      "bot_preview_disabled": "此页面不会对搜索引擎公开。",
+      "bot_preview_mode_code": "代码",
+      "bot_preview_mode_render": "渲染",
+      "bot_preview_empty": "没有可显示的内容。",
+      "bot_preview_sample_note": "以示例数据和保存前的设置为准进行展示。"
+    }
+  },
+  "action_recipe": {
+    "set_state": {
+      "label": "填充/变更页面状态",
+      "param_target": "目标（本地/全局）",
+      "param_state": "状态值",
+      "param_merge": "与现有值合并"
+    },
+    "load_local": {
+      "label": "加载已保存的设置",
+      "param_key": "存储键",
+      "param_state_key": "存放的状态键",
+      "param_default": "默认值"
+    },
+    "save_local": {
+      "label": "保存设置",
+      "param_key": "存储键",
+      "param_value": "要保存的值"
+    },
+    "navigate": {
+      "label": "跳转到其他页面",
+      "param_path": "要跳转的页面",
+      "param_query": "查询值",
+      "param_merge_query": "保留现有查询",
+      "param_scroll": "滚动位置",
+      "param_replace": "替换历史记录",
+      "param_overlay_target": "跳转期间显示加载的区域"
+    },
+    "open_window": {
+      "label": "在新窗口中打开",
+      "param_target": "要打开的页面",
+      "param_window_target": "窗口方式（新窗口/当前窗口）"
+    },
+    "navigate_back": {
+      "label": "后退"
+    },
+    "navigate_forward": {
+      "label": "前进"
+    },
+    "replace_url": {
+      "label": "仅更改 URL",
+      "param_path": "页面",
+      "param_query": "查询值"
+    },
+    "toast": {
+      "label": "显示提示消息",
+      "param_message": "消息",
+      "param_type": "类型（信息/成功/警告/错误）",
+      "param_duration": "显示时长（ms）",
+      "param_icon": "图标"
+    },
+    "open_modal": {
+      "label": "打开提示窗",
+      "param_target": "要打开的提示窗"
+    },
+    "close_modal": {
+      "label": "关闭提示窗"
+    },
+    "show_alert": {
+      "label": "显示浏览器提示",
+      "param_message": "消息"
+    },
+    "set_error": {
+      "label": "设置错误状态",
+      "param_message": "消息",
+      "param_state_target": "目标（本地/全局）"
+    },
+    "refetch": {
+      "label": "刷新列表",
+      "param_data_source": "数据源",
+      "param_sync": "同步执行"
+    },
+    "append_data": {
+      "label": "向列表追加数据",
+      "param_data_source": "数据源",
+      "param_data_path": "数据路径",
+      "param_new_data": "要追加的数据"
+    },
+    "update_data": {
+      "label": "替换列表数据",
+      "param_data_source": "数据源",
+      "param_data": "新数据",
+      "param_merge": "与现有合并"
+    },
+    "scroll": {
+      "label": "滚动到指定位置",
+      "param_selector": "目标选择器",
+      "param_behavior": "滚动方式（平滑/立即）",
+      "param_block": "对齐位置"
+    },
+    "login": {
+      "label": "执行登录",
+      "param_body": "登录信息"
+    },
+    "logout": {
+      "label": "执行退出登录",
+      "param_target": "跳转位置"
+    },
+    "set_locale": {
+      "label": "切换语言",
+      "param_target": "语言"
+    },
+    "emit_event": {
+      "label": "发送组件事件",
+      "param_event": "事件名称",
+      "param_data": "传递数据"
+    },
+    "api_call": {
+      "label": "发送到服务器并处理结果",
+      "param_target": "请求地址",
+      "param_method": "方式（GET/POST 等）",
+      "param_body": "要发送的数据",
+      "param_query": "查询值",
+      "param_identity_target_email": "实名认证目标邮箱",
+      "param_identity_target_phone": "实名认证目标手机号",
+      "param_on_success": "成功时的动作",
+      "param_on_error": "失败时的动作"
+    },
+    "conditions": {
+      "label": "按条件分支",
+      "param_branches": "分支列表",
+      "param_if": "执行条件",
+      "param_then": "要执行的动作",
+      "branch_when": "条件",
+      "branch_else": "其他",
+      "add_branch": "添加分支",
+      "remove_branch": "删除分支",
+      "move_up": "上移",
+      "move_down": "下移"
+    },
+    "sequence": {
+      "label": "依次执行多个动作",
+      "param_actions": "动作列表"
+    },
+    "parallel": {
+      "label": "同时执行多个动作",
+      "param_actions": "动作列表"
+    },
+    "switch": {
+      "label": "按值分支",
+      "param_value": "判断的值",
+      "param_cases": "各情况的动作"
+    },
+    "suppress": {
+      "label": "不做任何事（抑制错误）"
+    }
+  },
+  "action_list": {
+    "drag_reorder": "拖动调整顺序",
+    "remove": "删除",
+    "unknown": "未知动作",
+    "view_code": "查看代码"
+  },
+  "error_rows": {
+    "default": "默认（其他所有错误）",
+    "clear": "清除设置",
+    "no_action": "不设置",
+    "default_warning": "适用于上方未指定的所有错误，并会覆盖模板的默认行为。",
+    "source_self": "在此页面设置",
+    "source_inherited": "从公共布局继承",
+    "source_template": "模板默认",
+    "source_none": "模板默认",
+    "revert": "已恢复",
+    "override_here": "在此页面覆盖",
+    "override_inherited": "修改此值后仅对本页面生效，并覆盖父级设置。",
+    "override_template": "此动作已在整个模板中设置。在此修改后仅对本页面生效，并覆盖模板设置。"
+  },
+  "modal": {
+    "minimized_default": "页面设置",
+    "restore": "还原"
+  },
+  "json_block": {
+    "mode_code": "以代码方式",
+    "mode_block": "以区块方式",
+    "invalid": "不是正确的 JSON 格式。",
+    "must_be_object": "必须为对象（JSON）格式。例：{ \"名称\": 值 }",
+    "invalid_keys": "值名称必须以字母开头，且只能使用字母、数字和 _：{keys}"
+  }
+}

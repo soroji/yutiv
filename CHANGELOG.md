@@ -4,6 +4,12 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [Unreleased]
+
+### Added
+
+- 중국어 간체(Simplified Chinese) 코어 언어팩(`g7-core-zh-CN`)이 추가되었습니다. 설치·활성화하면 관리자 화면과 사용자 화면의 코어 문구·검증 메시지·오류 안내가 간체 중국어로 표시됩니다.
+
 ## [7.0.9] - 2026-08-24
 
 ### Added

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'definition_list_success' => '已获取 IDV 消息定义列表。',
+    'definition_list_failed' => '获取 IDV 消息定义列表失败。',
+    'definition_show_success' => '已获取 IDV 消息定义详情。',
+    'definition_show_failed' => '获取 IDV 消息定义详情失败。',
+    'definition_created' => 'IDV 消息定义已创建。',
+    'definition_create_failed' => '创建 IDV 消息定义失败。',
+    'definition_updated' => 'IDV 消息定义已修改。',
+    'definition_update_failed' => '修改 IDV 消息定义失败。',
+    'definition_toggled' => 'IDV 消息定义的启用状态已变更。',
+    'definition_toggle_failed' => '变更 IDV 消息定义的启用状态失败。',
+    'definition_reset' => 'IDV 消息定义已恢复为默认值。',
+    'definition_reset_failed' => '恢复 IDV 消息定义默认值失败。',
+    'definition_deleted' => 'IDV 消息定义已删除。',
+    'definition_delete_failed' => '删除 IDV 消息定义失败。',
+    'definition_delete_forbidden' => '无法删除由系统预置的默认消息定义。',
+    'template_updated' => 'IDV 消息模板已修改。',
+    'template_update_failed' => '修改 IDV 消息模板失败。',
+    'template_toggled' => 'IDV 消息模板的启用状态已变更。',
+    'template_toggle_failed' => '变更 IDV 消息模板的启用状态失败。',
+    'template_reset' => 'IDV 消息模板已恢复为默认值。',
+    'template_reset_failed' => '恢复 IDV 消息模板默认值失败。',
+    'template_preview_success' => '已生成 IDV 消息模板预览。',
+    'template_preview_failed' => '生成 IDV 消息模板预览失败。',
+];

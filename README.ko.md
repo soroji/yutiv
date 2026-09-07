@@ -417,6 +417,7 @@ cp .env.example .env
 | 식별자 | 설명 |
 | ------ | ---- |
 | **g7-core-ja** | 코어 일본어 |
+| **g7-core-zh-CN** | 코어 중국어 간체 |
 | **g7-module-sirsoft-board-ja** | 게시판 모듈 일본어 |
 | **g7-module-sirsoft-ecommerce-ja** | 이커머스 모듈 일본어 |
 | **g7-module-sirsoft-page-ja** | 페이지 모듈 일본어 |

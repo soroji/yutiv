@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'not_found' => '找不到已启用的主题。',
+    'retrieved' => '已成功获取主题信息。',
+    'list_retrieved' => '已成功获取主题列表。',
+    'config_retrieved' => '已成功获取主题设置。',
+    'assets_retrieved' => '已成功获取主题资源信息。',
+    'assets_failed' => '获取主题资源信息失败。',
+    'asset_list_retrieved' => '已成功获取主题资源列表。',
+    'list_failed' => '获取主题列表失败。',
+    'installed' => '主题已成功安装。',
+    'install_failed' => '主题安装失败。',
+    'install_error' => '主题安装过程中发生错误。',
+    'activated' => '主题已成功启用。',
+    'activate_failed' => '主题启用失败。',
+    'activate_error' => '主题启用过程中发生错误。',
+    'deactivated' => '主题已成功停用。',
+    'deactivate_failed' => '主题停用失败。',
+    'deactivate_error' => '主题停用过程中发生错误。',
+    'uninstalled' => '主题已成功卸载。',
+    'uninstall_failed' => '主题卸载失败。',
+    'uninstall_error' => '主题卸载过程中发生错误。',
+    'active_theme_retrieved' => '已成功获取已启用主题的信息。',
+    'active_theme_failed' => '获取已启用主题的信息失败。',
+];

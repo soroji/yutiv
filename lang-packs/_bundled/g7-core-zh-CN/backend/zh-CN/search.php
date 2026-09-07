@@ -1,0 +1,63 @@
+<?php
+
+return [
+    'empty_keyword' => '请输入搜索词。',
+    'results_found' => '找到 :count 条搜索结果。',
+    'results_found_at_least' => '找到 :count 条以上的搜索结果。',
+    'result_cap_notice' => '匹配项超过 :cap 条，未精确统计总数。您仍可继续翻到下一页。',
+    'refine_query_hint' => '输入更具体的搜索词即可查看精确的总数和最后一页。',
+    'no_results' => '没有搜索结果。',
+    'view_more' => '查看更多',
+    'validation' => [
+        'q_min' => '搜索词请至少输入 2 个字符。',
+        'q_max' => '搜索词最多可输入 200 个字符。',
+        'page_integer' => '页码必须为数字。',
+        'page_min' => '页码必须大于或等于 1。',
+        'page_max' => '页码必须小于或等于 :max。请输入更具体的搜索词。',
+        'per_page_integer' => '每页条数必须为数字。',
+        'per_page_min' => '每页条数必须大于或等于 1。',
+        'per_page_max' => '每页条数最多为 100。',
+    ],
+    'index' => [
+        'status' => [
+            'healthy' => '正常',
+            'degraded' => '部分',
+            'stale' => '索引缺失',
+            'skipped' => '无法判定',
+        ],
+        'no_maintainer' => '当前搜索引擎（:driver）不提供索引检查。当引擎提供方注册检查功能后，本页面会一并支持。',
+        'unavailable' => '无法检查当前搜索引擎（:driver）的索引。',
+        'no_targets' => '搜索引擎（:driver）中没有可检查的索引。',
+        'driver_label' => '搜索引擎：:driver',
+        'col' => [
+            'index' => '索引',
+            'status' => '判定',
+            'measurement' => '测量',
+        ],
+        'counts' => '正常 :healthy · 部分 :degraded · 索引缺失 :stale · 无法判定 :skipped  （共 :total）',
+        'rebuild_targets' => '待重建 :count 个',
+        'rebuild_cost_warning' => '重建期间，目标索引会被锁定或重新建立索引。在运行中的站点上请于维护时间执行。',
+        'rebuild_confirm' => '是否重建以上索引？',
+        'rebuild_after_bulk_confirm' => '批量更新后是否重建搜索索引？（默认：否 — 若站点正在运行，请于维护时间单独执行）',
+        'rebuild_skipped' => '已跳过重建。',
+        'stale_hint' => '存在索引缺失的索引。请使用 `php artisan search:index --repair` 重建。',
+        'stale_after_update' => '有 :count 个搜索索引缺失，相应的搜索将不会返回结果。',
+        'rebuilt_item' => '已重建：:index',
+        'rebuild_failed_item' => '重建失败：:index — :error',
+        'still_stale_item' => '重建后索引仍然缺失：:index',
+        'degraded_hint' => '“部分”可能源于引擎的分词处理特性，不属于自动重建对象。如有需要请单独确认。',
+        'report' => [
+            'nothing_to_do' => '检查 :count 个 · 无需重建',
+            'rebuilt' => '检查 :inspected 个 · 重建 :repaired 个 · 失败 :failed 个 · 残留 :remaining 个',
+        ],
+        'fulltext' => [
+            'unsupported_driver' => '当前数据库驱动不支持 FULLTEXT（将以 LIKE 搜索方式运行，无可检查对象）。',
+            'self_match' => ':found/:probed 行匹配到自身',
+            'skip' => [
+                'no_single_pk' => '没有单列主键，无法按行判定',
+                'no_rows' => '索引列中没有含内容的行',
+                'no_tokens' => '无法从样本行中生成搜索词元（内容过短）',
+            ],
+        ],
+    ],
+];

@@ -1,0 +1,18 @@
+{
+  "admin": {
+    "name": "管理员",
+    "description": "可以访问系统所有功能的最高管理员。"
+  },
+  "manager": {
+    "name": "经理",
+    "description": "拥有内容及用户管理权限的管理员。"
+  },
+  "user": {
+    "name": "普通用户",
+    "description": "基础用户角色。"
+  },
+  "guest": {
+    "name": "游客",
+    "description": "未认证的用户角色。管理员可以为其授予权限。"
+  }
+}
