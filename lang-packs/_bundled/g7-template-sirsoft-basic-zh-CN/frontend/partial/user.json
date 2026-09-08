@@ -1,0 +1,177 @@
+{
+  "base_layout_title": "Gnuboard7",
+  "base_layout_description": "Gnuboard7 社区",
+  "menu": "菜单",
+  "search_placeholder": "请输入搜索词",
+  "profile": {
+    "page_title": "用户资料",
+    "posts_page_title": "发帖",
+    "user_not_found": "找不到该用户。",
+    "joined_at": "注册日期：",
+    "posts_count": "帖子",
+    "comments_count": "评论",
+    "recent_posts": "最新帖子",
+    "posts_suffix": "的发帖",
+    "total_posts": "共 {{count}} 个",
+    "no_posts": "没有发表过的帖子。",
+    "view_all": "查看全部",
+    "back_to_profile": "资料",
+    "post_board": "版块",
+    "post_title": "标题",
+    "post_views": "浏览",
+    "post_date": "发表日期",
+    "badge_blinded": "已屏蔽"
+  },
+  "nav": {
+    "home": "首页",
+    "popular": "热门",
+    "boards": "版块",
+    "shop": "购物",
+    "products": "商品",
+    "cart": "购物车",
+    "mypage": "我的页面"
+  },
+  "footer": {
+    "info": "信息",
+    "about": "公司介绍",
+    "faq": "常见问题",
+    "contact": "联系我们",
+    "policy": "政策",
+    "terms": "使用条款",
+    "privacy": "隐私政策",
+    "refund": "取消/退货/换货"
+  },
+  "page": {
+    "page_title": "页面",
+    "not_found_title": "找不到页面",
+    "not_found_description": "您请求的页面不存在或已被删除。",
+    "back_to_home": "返回首页",
+    "admin_edit": "修改",
+    "status_active": "实施中",
+    "published_at": "发布日期",
+    "create_page": "创建页面",
+    "attachments": "附件",
+    "download": "下载",
+    "preview_banner": "正在预览未发布的页面"
+  },
+  "mypage": {
+    "page_title": "我的页面",
+    "profile_title": "我的信息",
+    "profile_edit_title": "修改我的信息",
+    "change_password_title": "变更密码",
+    "orders_title": "订单记录",
+    "order_detail_title": "订单详情",
+    "mileage_title": "积分",
+    "wishlist_title": "收藏列表",
+    "addresses_title": "收货地址管理",
+    "notifications_title": "通知",
+    "board_title": "版块活动",
+    "inquiries_title": "商品咨询记录"
+  },
+  "identity": {
+    "challenge": {
+      "title": "实名认证",
+      "code_title": "输入验证码",
+      "code_subtitle": "请输入已发送的 6 位验证码。",
+      "code_placeholder": "验证码",
+      "verify": "确认",
+      "resend": "重新发送验证码",
+      "resend_cooldown": "重新发送（{{seconds}} 秒后）",
+      "resend_success": "已重新发送验证码。",
+      "remaining_time": "剩余时间：{{minutes}}:{{seconds}}",
+      "remaining_attempts": "剩余尝试：{{count}} 次",
+      "expired": "时间已过期。请点击重新发送。",
+      "link_title": "需要进行邮箱确认",
+      "link_subtitle": "请点击邮件中发送的链接完成实名认证。",
+      "resend_link": "重新发送邮件",
+      "check_spam": "如果没有收到邮件，请检查垃圾邮件箱。",
+      "external_title": "正在跳转到外部实名认证",
+      "external_subtitle": "稍后将自动跳转到实名认证服务。",
+      "manual_redirect": "手动跳转",
+      "error_generic": "认证失败。请重试。"
+    }
+  },
+  "home": {
+    "page_title": "首页"
+  },
+  "auth": {
+    "login_title": "登录",
+    "register_title": "注册",
+    "forgot_password_title": "找回密码",
+    "reset_password_title": "重置密码"
+  },
+  "board": {
+    "boards_title": "版块列表",
+    "popular_title": "热门帖子",
+    "list_title": "版块",
+    "show_title": "帖子",
+    "write_title": "写帖子",
+    "edit_title": "修改帖子"
+  },
+  "shop": {
+    "list_title": "商品列表",
+    "show_title": "商品详情",
+    "category_title": "分类",
+    "cart_title": "购物车",
+    "checkout_title": "填写订单",
+    "order_complete_title": "下单完成",
+    "guest_order_form_title": "非会员订单查询",
+    "guest_order_show_title": "非会员订单详情"
+  },
+  "search": {
+    "page_title": "搜索"
+  },
+  "errors": {
+    "not_found_title": "404 — 页面不存在",
+    "forbidden_title": "403 — 禁止访问",
+    "server_error_title": "500 — 服务器错误"
+  },
+  "modal_label": {
+    "auth": {
+      "privacyModal": "隐私政策",
+      "termsModal": "使用条款"
+    },
+    "shop_detail": {
+      "coupon_download_confirm_modal": "优惠券领取确认",
+      "inquiry_delete_modal": "商品咨询删除确认",
+      "login_required_modal": "需要登录提示",
+      "qna_reply_modal": "商品咨询回复",
+      "qna_write_modal": "商品咨询撰写",
+      "review_image_modal": "查看评价图片",
+      "cart_added_modal": "加入购物车完成"
+    },
+    "board_form": {
+      "password_verify_modal": "确认密码"
+    },
+    "board_show": {
+      "board_delete_modal": "帖子/评论删除",
+      "board_report_modal": "帖子/评论举报",
+      "board_guest_password_modal": "非会员密码确认"
+    },
+    "mypage_addresses": {
+      "addressModal": "收货地址登记/修改",
+      "confirmDeleteAddressModal": "收货地址删除确认",
+      "confirmOverwriteModal": "收货地址覆盖确认"
+    },
+    "shop": {
+      "addressManageModal": "收货地址管理",
+      "cart_delete_confirm_modal": "购物车删除确认",
+      "cart_option_change_modal": "购物车选项变更",
+      "cart_unavailable_modal": "不可购买商品提示",
+      "coupon_download_modal": "优惠券领取",
+      "exclusiveCouponConfirm": "不可叠加优惠券使用确认",
+      "tempOrderNotFoundModal": "订单信息不存在提示"
+    },
+    "mypage_orders": {
+      "modal_cancel_order": "订单取消",
+      "changeAddressModal": "收货地址变更",
+      "modal_confirm_purchase": "确认收货",
+      "modal_write_review": "撰写评价"
+    },
+    "mypage_profile": {
+      "withdrawModal": "会员注销确认"
+    },
+    "identity_challenge_modal": "实名认证",
+    "notification_delete_all_confirm_modal": "通知全部删除确认"
+  }
+}

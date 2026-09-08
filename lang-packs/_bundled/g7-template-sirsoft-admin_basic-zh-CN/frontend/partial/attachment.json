@@ -1,0 +1,17 @@
+{
+  "upload_success": "文件已上传。",
+  "upload_failed": "文件上传失败。",
+  "deleted": "文件已删除。",
+  "delete_confirm_title": "删除文件",
+  "delete_confirm_message": "确定要删除该文件吗？",
+  "deleting": "正在删除...",
+  "drop_or_click": "拖动文件或点击上传",
+  "upload_limit": "最多 {{maxFiles}} 个，每个 {{maxSize}}MB",
+  "upload_limit_exceeded": "最多可附加 {{max}} 个。",
+  "attached_count": "已附加 {{count}}/{{max}} 个",
+  "max_size": "最大 {{size}}MB",
+  "drag_to_reorder": "拖动以变更顺序",
+  "reorder_failed": "顺序变更失败。",
+  "primary_image": "主图",
+  "set_as_primary": "设为主图"
+}

@@ -1,0 +1,1176 @@
+{
+  "toolbar": {
+    "bold": "加粗",
+    "italic": "斜体",
+    "underline": "下划线",
+    "strike": "删除线",
+    "code": "代码",
+    "bullet_list": "项目符号",
+    "ordered_list": "编号列表",
+    "blockquote": "引用",
+    "link": "链接",
+    "code_view": "查看代码"
+  },
+  "link_modal": {
+    "title": "插入链接",
+    "insert": "插入"
+  },
+  "control": {
+    "text_align": {
+      "label": "文本对齐",
+      "left": "左对齐",
+      "center": "居中",
+      "right": "右对齐",
+      "justify": "两端对齐"
+    },
+    "font_size": {
+      "label": "字号"
+    },
+    "font_weight": {
+      "label": "字重",
+      "normal": "常规",
+      "semibold": "略粗",
+      "bold": "加粗"
+    },
+    "letter_spacing": {
+      "label": "字间距",
+      "tight": "紧凑",
+      "normal": "普通",
+      "wide": "宽松"
+    },
+    "line_height": {
+      "label": "行距",
+      "tight": "紧凑",
+      "normal": "普通",
+      "relaxed": "宽松"
+    },
+    "text_color": {
+      "label": "文字颜色"
+    },
+    "background_color": {
+      "label": "背景色"
+    },
+    "background_image": {
+      "label": "背景图片"
+    },
+    "color_preset": {
+      "gray_900": "深灰色",
+      "gray_800": "暗灰色",
+      "gray_700": "灰色",
+      "gray_500": "中灰色",
+      "gray_100": "浅灰色",
+      "gray_50": "极浅灰色",
+      "white": "白色",
+      "blue_600": "蓝色",
+      "red_600": "红色",
+      "green_600": "绿色",
+      "gray_300": "亮灰色"
+    },
+    "padding": {
+      "label": "内边距"
+    },
+    "margin": {
+      "label": "外边距"
+    },
+    "width": {
+      "label": "宽度",
+      "full": "全宽",
+      "three_quarter": "3/4",
+      "half": "一半",
+      "quarter": "1/4"
+    },
+    "height": {
+      "label": "高度",
+      "auto": "自动"
+    },
+    "self_align": {
+      "label": "对齐",
+      "start": "起始",
+      "center": "居中",
+      "end": "末尾"
+    },
+    "flex_direction": {
+      "label": "方向",
+      "row": "横向",
+      "column": "纵向"
+    },
+    "flex_justify": {
+      "label": "子元素对齐（主轴）",
+      "start": "起始",
+      "center": "居中",
+      "end": "末尾",
+      "between": "两端分布",
+      "around": "均匀分布"
+    },
+    "flex_align": {
+      "label": "子元素对齐（交叉轴）",
+      "start": "起始",
+      "center": "居中",
+      "end": "末尾",
+      "stretch": "拉伸"
+    },
+    "flex_wrap": {
+      "label": "允许换行",
+      "off": "关闭",
+      "on": "开启"
+    },
+    "flex_gap": {
+      "label": "子元素间距"
+    },
+    "flex_enable": {
+      "label": "设为对齐盒子",
+      "on": "对齐盒子",
+      "off": "普通块"
+    },
+    "flex_item_grow": {
+      "label": "伸展",
+      "fixed": "固定",
+      "fill": "填充",
+      "ratio": "比例"
+    },
+    "flex_item_align": {
+      "label": "单独对齐",
+      "start": "起始",
+      "center": "居中",
+      "end": "末尾",
+      "stretch": "拉伸"
+    },
+    "flex_item_order": {
+      "label": "顺序"
+    },
+    "toggle": {
+      "on": "开启",
+      "off": "关闭"
+    },
+    "box_shadow": {
+      "label": "阴影",
+      "none": "无",
+      "sm": "弱",
+      "md": "普通",
+      "lg": "强",
+      "xl": "更强",
+      "xxl": "极强"
+    },
+    "border_style": {
+      "label": "边框样式",
+      "none": "无",
+      "solid": "实线",
+      "dashed": "虚线",
+      "dotted": "点线"
+    },
+    "border_color": {
+      "label": "边框颜色"
+    },
+    "border_radius": {
+      "label": "圆角",
+      "none": "直角",
+      "sm": "略圆",
+      "md": "普通",
+      "lg": "圆角",
+      "xl": "大圆角",
+      "full": "完全圆角"
+    },
+    "opacity": {
+      "label": "透明度"
+    },
+    "overflow": {
+      "label": "滚动",
+      "auto": "自动",
+      "hidden": "隐藏",
+      "x_auto": "横向自动",
+      "y_auto": "纵向自动",
+      "visible": "显示"
+    },
+    "font_bold": {
+      "label": "加粗"
+    },
+    "font_italic": {
+      "label": "斜体"
+    },
+    "text_underline": {
+      "label": "下划线"
+    },
+    "whitespace": {
+      "label": "换行",
+      "normal": "允许",
+      "nowrap": "不换行",
+      "pre_wrap": "保留空白"
+    },
+    "icon_name": {
+      "label": "图标",
+      "search": "搜索图标"
+    },
+    "img_src": {
+      "label": "图片地址"
+    },
+    "img_alt": {
+      "label": "替代文本"
+    },
+    "link_href": {
+      "label": "链接地址"
+    },
+    "link_target": {
+      "label": "链接目标",
+      "self": "当前窗口",
+      "blank": "新窗口",
+      "parent": "父框架",
+      "top": "顶层框架"
+    },
+    "input_type": {
+      "label": "输入类型",
+      "text": "文本",
+      "email": "邮箱",
+      "password": "密码",
+      "number": "数字",
+      "tel": "电话号码",
+      "url": "URL",
+      "date": "日期",
+      "search": "搜索"
+    },
+    "input_placeholder": {
+      "label": "提示文字"
+    },
+    "input_name": {
+      "label": "字段名"
+    },
+    "input_required": {
+      "label": "必填"
+    },
+    "input_disabled": {
+      "label": "禁用"
+    },
+    "field_label": {
+      "label": "标签"
+    },
+    "field_error": {
+      "label": "错误消息"
+    },
+    "field_helper": {
+      "label": "帮助说明"
+    },
+    "html_for": {
+      "label": "关联对象"
+    },
+    "textarea_rows": {
+      "label": "行数"
+    },
+    "elem_id": {
+      "label": "元素 ID"
+    },
+    "select_placeholder": {
+      "label": "提示文字"
+    },
+    "select_options": {
+      "label": "选项"
+    },
+    "component_size": {
+      "label": "尺寸",
+      "sm": "小",
+      "md": "普通",
+      "lg": "大"
+    },
+    "button_variant": {
+      "label": "按钮样式",
+      "primary": "默认",
+      "secondary": "次要",
+      "danger": "危险",
+      "success": "成功"
+    },
+    "component_disabled": {
+      "label": "禁用"
+    },
+    "av_name": {
+      "label": "名称"
+    },
+    "av_avatar": {
+      "label": "头像图片"
+    },
+    "av_size": {
+      "label": "尺寸",
+      "xs": "极小",
+      "sm": "小",
+      "md": "普通",
+      "lg": "大",
+      "xl": "极大",
+      "2xl": "2XL",
+      "3xl": "3XL",
+      "4xl": "4XL",
+      "5xl": "5XL"
+    },
+    "av_text": {
+      "label": "文本"
+    },
+    "av_withdrawn": {
+      "label": "已注销会员"
+    },
+    "av_guest": {
+      "label": "非会员"
+    },
+    "ui_name": {
+      "label": "名称"
+    },
+    "ui_user_id": {
+      "label": "用户 ID"
+    },
+    "ui_sub_text": {
+      "label": "辅助文本"
+    },
+    "ui_sub_title": {
+      "label": "辅助文本标题"
+    },
+    "ui_guest": {
+      "label": "非会员"
+    },
+    "ui_withdrawn": {
+      "label": "已注销会员"
+    },
+    "ui_show_dropdown": {
+      "label": "显示下拉菜单"
+    },
+    "ui_clickable": {
+      "label": "可点击"
+    },
+    "ui_profile_path": {
+      "label": "资料路径"
+    },
+    "ui_layout": {
+      "label": "排列",
+      "vertical": "纵向",
+      "horizontal": "横向"
+    },
+    "ui_text": {
+      "label": "文本"
+    },
+    "ui_stop_prop": {
+      "label": "阻止事件冒泡"
+    },
+    "hc_is_html": {
+      "label": "HTML 渲染"
+    },
+    "rte_name": {
+      "label": "字段名"
+    },
+    "rte_initial_value": {
+      "label": "初始内容"
+    },
+    "rte_placeholder": {
+      "label": "提示文字"
+    },
+    "rte_image_upload_url": {
+      "label": "图片上传 URL"
+    },
+    "rte_min_height": {
+      "label": "最小高度"
+    },
+    "rte_disabled": {
+      "label": "禁用"
+    },
+    "ec_max_height": {
+      "label": "折叠最大高度"
+    },
+    "ec_expand_text": {
+      "label": "展开文本"
+    },
+    "ec_collapse_text": {
+      "label": "收起文本"
+    },
+    "qs_value": {
+      "label": "初始数量"
+    },
+    "qs_min": {
+      "label": "最小数量"
+    },
+    "qs_max": {
+      "label": "最大数量"
+    },
+    "qs_size": {
+      "label": "尺寸",
+      "sm": "小",
+      "md": "普通",
+      "lg": "大"
+    },
+    "qs_disabled": {
+      "label": "禁用"
+    },
+    "au_src": {
+      "label": "头像 URL"
+    },
+    "au_fallback": {
+      "label": "替代文本"
+    },
+    "au_size": {
+      "label": "尺寸",
+      "sm": "小",
+      "md": "普通",
+      "lg": "大",
+      "xl": "极大",
+      "2xl": "2XL"
+    },
+    "au_upload_endpoint": {
+      "label": "上传端点"
+    },
+    "au_delete_endpoint": {
+      "label": "删除端点"
+    },
+    "au_accept": {
+      "label": "允许的文件格式"
+    },
+    "au_max_size": {
+      "label": "最大文件大小(MB)"
+    },
+    "au_upload_btn": {
+      "label": "上传按钮文本"
+    },
+    "au_delete_btn": {
+      "label": "删除按钮文本"
+    },
+    "au_read_only": {
+      "label": "只读"
+    },
+    "au_confirm_delete": {
+      "label": "删除确认"
+    },
+    "au_delete_confirm_msg": {
+      "label": "删除确认消息"
+    },
+    "au_confirm_upload": {
+      "label": "上传确认"
+    },
+    "au_upload_confirm_msg": {
+      "label": "上传确认消息"
+    },
+    "au_show_delete": {
+      "label": "显示删除按钮"
+    },
+    "slb_mode": {
+      "label": "模式",
+      "login": "登录",
+      "register": "注册"
+    },
+    "slb_variant": {
+      "label": "按钮样式",
+      "full": "完整",
+      "icon": "图标"
+    },
+    "pr_user_reaction": {
+      "label": "我的反应",
+      "like": "点赞",
+      "funny": "好笑",
+      "agree": "有同感",
+      "thanks": "感谢",
+      "wow": "惊讶"
+    },
+    "pr_post_id": {
+      "label": "帖子 ID"
+    },
+    "pr_size": {
+      "label": "尺寸",
+      "sm": "小",
+      "md": "普通",
+      "lg": "大"
+    },
+    "pi_label": {
+      "label": "标签"
+    },
+    "pi_error": {
+      "label": "错误消息"
+    },
+    "pi_show_toggle": {
+      "label": "显示切换按钮"
+    },
+    "pi_show_validation": {
+      "label": "显示校验"
+    },
+    "pi_wrapper_class": {
+      "label": "包装类"
+    },
+    "pi_is_confirm": {
+      "label": "确认字段"
+    },
+    "pi_confirm_target": {
+      "label": "确认对象"
+    },
+    "pc_shop_base": {
+      "label": "商店基础路径"
+    },
+    "grid_cols": {
+      "label": "列数"
+    },
+    "grid_gap": {
+      "label": "间距"
+    },
+    "tcl_left_width": {
+      "label": "左侧宽度"
+    },
+    "tcl_right_width": {
+      "label": "右侧宽度"
+    },
+    "ig_enable_zoom": {
+      "label": "放大"
+    },
+    "ig_enable_slideshow": {
+      "label": "幻灯片播放"
+    },
+    "ig_enable_fullscreen": {
+      "label": "全屏"
+    },
+    "ig_show_counter": {
+      "label": "显示计数器"
+    },
+    "ig_show_download": {
+      "label": "显示下载"
+    },
+    "ig_show_thumbnails": {
+      "label": "显示缩略图"
+    },
+    "pg_max_visible": {
+      "label": "最大显示页数"
+    },
+    "pg_show_first_last": {
+      "label": "首页/末页按钮"
+    },
+    "pg_prev_text": {
+      "label": "上一页文本"
+    },
+    "pg_next_text": {
+      "label": "下一页文本"
+    },
+    "sb_placeholder": {
+      "label": "提示文字"
+    },
+    "sb_show_button": {
+      "label": "显示按钮"
+    },
+    "sb_show_suggestions": {
+      "label": "显示推荐"
+    },
+    "he_multilingual": {
+      "label": "多语言"
+    },
+    "he_is_html": {
+      "label": "HTML 模式"
+    },
+    "he_rows": {
+      "label": "行数"
+    },
+    "he_placeholder": {
+      "label": "提示文字"
+    },
+    "he_label": {
+      "label": "标签"
+    },
+    "he_show_html_toggle": {
+      "label": "显示 HTML 切换"
+    },
+    "he_name": {
+      "label": "字段名"
+    },
+    "he_html_field_name": {
+      "label": "HTML 字段名"
+    },
+    "he_read_only": {
+      "label": "只读"
+    },
+    "tn_active_tab_id": {
+      "label": "活动标签 ID"
+    },
+    "tn_variant": {
+      "label": "样式",
+      "default": "默认",
+      "pills": "胶囊式",
+      "underline": "下划线式"
+    },
+    "tn_mobile_breakpoint": {
+      "label": "移动端断点"
+    },
+    "fu_type": {
+      "label": "附件对象类型"
+    },
+    "fu_collection": {
+      "label": "集合"
+    },
+    "fu_max_files": {
+      "label": "最大文件数"
+    },
+    "fu_max_size": {
+      "label": "最大文件大小"
+    },
+    "fu_accept": {
+      "label": "允许格式"
+    },
+    "fu_auto_upload": {
+      "label": "自动上传"
+    },
+    "fu_confirm_remove": {
+      "label": "删除确认"
+    },
+    "fu_primary_sel": {
+      "label": "选择代表项"
+    },
+    "hdr_site_name": {
+      "label": "站点名称"
+    },
+    "hdr_logo": {
+      "label": "标志图片"
+    },
+    "hdr_shop_base": {
+      "label": "商城基础路径"
+    },
+    "hdr_max_boards": {
+      "label": "标签显示的版块数"
+    },
+    "hdr_current_locale": {
+      "label": "当前语言"
+    },
+    "hdr_notif_title": {
+      "label": "通知标题文本"
+    },
+    "hdr_notif_empty": {
+      "label": "无通知文本"
+    },
+    "hdr_notif_mark_all_read": {
+      "label": "全部标记已读文本"
+    },
+    "hdr_notif_delete_all": {
+      "label": "全部删除文本"
+    },
+    "hdr_notif_unread_only": {
+      "label": "仅未读通知文本"
+    },
+    "ft_site_name": {
+      "label": "站点名称"
+    },
+    "ft_site_description": {
+      "label": "站点说明"
+    },
+    "ft_copyright_text": {
+      "label": "版权文案"
+    },
+    "tt_auto_text": {
+      "label": "自动文本"
+    },
+    "tt_light_text": {
+      "label": "浅色文本"
+    },
+    "tt_dark_text": {
+      "label": "深色文本"
+    },
+    "nc_title_text": {
+      "label": "标题文本"
+    },
+    "nc_empty_text": {
+      "label": "无通知文本"
+    },
+    "nc_mark_all_read_text": {
+      "label": "全部标记已读文本"
+    },
+    "nc_delete_all_text": {
+      "label": "全部删除文本"
+    },
+    "nc_unread_only_text": {
+      "label": "仅未读通知文本"
+    },
+    "nc_unread_only": {
+      "label": "仅显示未读通知"
+    },
+    "nc_dropdown_align": {
+      "label": "下拉对齐",
+      "left": "左侧",
+      "right": "右侧"
+    }
+  },
+  "component": {
+    "h1": "大标题",
+    "h2": "标题",
+    "h3": "小标题",
+    "h4": "更小标题",
+    "p": "段落",
+    "span": "文本",
+    "a": "链接",
+    "button": "按钮",
+    "img": "图片",
+    "div": "区域",
+    "container": "容器",
+    "flex": "横向排列",
+    "grid": "网格排列",
+    "section_layout": "区块",
+    "card": "卡片",
+    "table": "表格",
+    "hr": "分隔线",
+    "ul": "列表",
+    "li": "列表项",
+    "nav": "导航",
+    "three_column_layout": "三栏布局",
+    "product_card": "商品卡片",
+    "image_gallery": "图片库",
+    "pagination": "分页",
+    "search_bar": "搜索栏",
+    "avatar": "头像",
+    "user_info": "用户信息",
+    "html_content": "HTML 内容",
+    "html_editor": "HTML 编辑器",
+    "rich_text_editor": "富文本编辑器",
+    "expandable_content": "展开内容",
+    "tab_navigation": "标签导航",
+    "quantity_selector": "数量选择器",
+    "product_image_viewer": "商品图片查看器",
+    "file_uploader": "文件上传器",
+    "avatar_uploader": "头像上传器",
+    "social_login_buttons": "社交登录按钮",
+    "post_reactions": "帖子反应",
+    "input": "输入字段",
+    "textarea": "多行输入",
+    "select": "选择框",
+    "checkbox": "复选框",
+    "password_input": "密码输入",
+    "label": "标签",
+    "form": "表单",
+    "icon": "图标",
+    "td": "表格单元格",
+    "th": "表头单元格",
+    "header": "站点页眉",
+    "footer": "站点页脚",
+    "theme_toggle": "主题切换",
+    "notification_center": "通知中心"
+  },
+  "action": {
+    "go_to_page": {
+      "label": "跳转到其他页面",
+      "param_url": "要跳转的页面"
+    },
+    "show_message": {
+      "label": "显示提示消息",
+      "param_text": "消息",
+      "param_tone": "种类",
+      "tone_success": "成功",
+      "tone_error": "错误",
+      "tone_info": "提示"
+    },
+    "change_state": {
+      "label": "变更界面状态",
+      "param_key": "状态名称",
+      "param_value": "值"
+    },
+    "refresh_data": {
+      "label": "刷新列表",
+      "param_src": "目标数据"
+    },
+    "call_server_then": {
+      "label": "发送到服务器并处理结果",
+      "param_endpoint": "发送目标",
+      "param_on_success": "成功时",
+      "param_on_error": "失败时"
+    },
+    "set_theme": {
+      "label": "变更主题",
+      "param_target": "主题",
+      "target_auto": "自动",
+      "target_light": "浅色",
+      "target_dark": "深色"
+    },
+    "save_preferred_currency": {
+      "label": "保存偏好货币",
+      "param_currency": "货币"
+    },
+    "set_cart_option": {
+      "label": "变更购物车选项",
+      "param_item_id": "商品 ID",
+      "param_option_key": "选项名称",
+      "param_option_value": "选项值"
+    },
+    "open_cart_delete_modal": {
+      "label": "打开购物车删除确认",
+      "param_item_id": "商品 ID"
+    },
+    "open_cart_option_modal": {
+      "label": "打开购物车选项选择",
+      "param_item_id": "商品 ID"
+    },
+    "recalculate_cart": {
+      "label": "重新计算购物车金额"
+    },
+    "get_display_price": {
+      "label": "获取显示价格",
+      "param_currency": "货币"
+    },
+    "init_theme": {
+      "label": "初始化主题",
+      "param_target": "主题",
+      "target_auto": "自动",
+      "target_light": "浅色",
+      "target_dark": "深色"
+    },
+    "init_cart_key": {
+      "label": "初始化购物车键"
+    },
+    "load_preferred_currency": {
+      "label": "加载偏好货币"
+    },
+    "get_cart_key": {
+      "label": "获取购物车键"
+    },
+    "clear_cart_key": {
+      "label": "清空购物车键"
+    },
+    "save_to_storage": {
+      "label": "保存到浏览器",
+      "param_key": "保存名称",
+      "param_value": "保存值"
+    },
+    "load_from_storage": {
+      "label": "从浏览器加载",
+      "param_key": "保存名称",
+      "param_default": "默认值"
+    },
+    "save_guest_order_token": {
+      "label": "保存非会员订单令牌",
+      "param_token": "订单令牌",
+      "param_order_number": "订单号",
+      "param_expires_at": "过期时刻"
+    }
+  },
+  "computed": {
+    "filter_default": {
+      "label": "填入默认值",
+      "param_local_path": "界面状态路径",
+      "param_query_key": "URL 参数名",
+      "param_fallback": "默认值"
+    },
+    "options_from_api": {
+      "label": "用数据生成选项",
+      "param_source": "数据",
+      "param_filter": "条件",
+      "param_value_field": "值字段",
+      "param_label_field": "标签字段"
+    },
+    "first_of": {
+      "label": "选取先存在的值",
+      "param_candidates": "候选值",
+      "param_fallback": "默认值"
+    },
+    "group_items": {
+      "label": "按基准对项目分组",
+      "param_source": "数据",
+      "param_key_field": "基准字段",
+      "param_value_expr": "值表达式"
+    }
+  },
+  "error": {
+    "show_error_page": {
+      "label": "显示错误提示页面",
+      "param_target": "显示位置"
+    },
+    "navigate": {
+      "label": "跳转到其他页面",
+      "param_path": "要跳转的页面"
+    },
+    "toast": {
+      "label": "显示提示消息",
+      "param_text": "消息"
+    },
+    "open_modal": {
+      "label": "打开模态框",
+      "param_modal_id": "要打开的模态框"
+    },
+    "set_state": {
+      "label": "变更界面状态",
+      "param_target": "对象",
+      "param_state": "状态值",
+      "param_merge": "合并",
+      "param_key": "状态名称",
+      "param_value": "值"
+    },
+    "sequence": {
+      "label": "按顺序执行多个动作",
+      "param_actions": "要执行的动作"
+    },
+    "parallel": {
+      "label": "同时执行多个动作",
+      "param_actions": "要执行的动作"
+    }
+  },
+  "loading": {
+    "page_loading": "加载指示器",
+    "page_skeleton": "骨架屏"
+  },
+  "condition": {
+    "is_logged_in": "是已登录会员时",
+    "is_guest": "是非会员时",
+    "is_admin": "是管理员时",
+    "is_saving": "正在保存时",
+    "not_saving": "不在保存时",
+    "has_changes": "有变更内容时",
+    "has_errors": "有错误时",
+    "no_errors": "没有错误时",
+    "ds_has_data": "有数据时",
+    "ds_empty": "没有数据时",
+    "ds_loading": "正在加载数据时",
+    "ds_error": "数据加载失败时",
+    "field_equals": "与特定值相同时",
+    "field_not_equals": "与特定值不同时",
+    "state_equals": "界面状态为特定值时",
+    "is_edit_mode": "在编辑界面时",
+    "is_create_mode": "在新建界面时",
+    "query_equals": "URL 参数为特定值时",
+    "field_has_error": "特定输入框有错误时",
+    "value_truthy": "有值时",
+    "value_falsy": "没有值时",
+    "list_non_empty": "列表中有项目时",
+    "list_empty": "列表为空时",
+    "num_gt": "数字大于指定值时",
+    "num_gte": "数字大于等于指定值时",
+    "num_lt": "数字小于指定值时",
+    "num_lte": "数字小于等于指定值时",
+    "value_is_true": "值为真（true）时",
+    "value_is_false": "值为假（false）时",
+    "value_not_false": "值不为假（false）时",
+    "value_not_true": "值不为真（true）时",
+    "value_defined": "值已定义时",
+    "value_undefined": "值未定义时",
+    "value_not_null": "值不是 null 时",
+    "value_is_null": "值是 null 时",
+    "field_matches": "两个值相同时",
+    "field_differs": "两个值不同时",
+    "param_src": "数据",
+    "param_field": "字段路径",
+    "param_value": "值",
+    "param_state_key": "状态键",
+    "param_query": "URL 参数名",
+    "param_path": "状态/数据路径",
+    "param_number": "基准数字",
+    "param_field_a": "第一个值路径",
+    "param_field_b": "第二个值路径"
+  },
+  "state": {
+    "login_default": "默认",
+    "login_failed": "登录失败",
+    "search_with_results": "有搜索结果",
+    "search_empty": "没有搜索结果",
+    "notifications_with": "有通知",
+    "notifications_empty": "没有通知",
+    "with_data": "有数据",
+    "empty_data": "无数据",
+    "in_stock": "有库存",
+    "out_of_stock": "库存售罄（销售中）",
+    "cart_with_items": "已加入商品",
+    "cart_empty": "购物车为空",
+    "read_normal": "普通帖子",
+    "read_secret_locked": "私密帖子已锁定",
+    "published": "已发布",
+    "draft_preview": "草稿预览",
+    "profile_password_entry": "确认密码",
+    "profile_actual_edit": "修改信息",
+    "profile_validation_failed": "校验失败",
+    "forgot_default": "输入界面",
+    "forgot_success": "邮件已发送",
+    "reset_token_valid": "令牌正常",
+    "reset_token_error": "令牌错误",
+    "reset_success": "重置完成",
+    "register_default": "输入界面",
+    "register_validation_failed": "校验失败",
+    "register_valid_input": "输入完成（一致）",
+    "challenge_text_code": "输入验证码",
+    "challenge_link": "邮件链接",
+    "challenge_external": "外部认证",
+    "challenge_error": "认证失败",
+    "change_password_form": "输入界面",
+    "change_password_success": "变更完成",
+    "wishlist_with_items": "有收藏商品",
+    "wishlist_empty": "没有收藏商品",
+    "addresses_with": "有收货地址",
+    "addresses_empty": "没有收货地址",
+    "user_active": "正常会员",
+    "user_withdrawn": "已注销会员",
+    "user_posts_with": "有发帖",
+    "user_posts_empty": "没有发帖",
+    "boards_with": "有版块",
+    "boards_empty": "没有版块",
+    "board_create": "撰写新帖",
+    "board_edit": "修改帖子",
+    "board_reply_with_quote": "撰写回复（引用父帖）",
+    "shop_access_denied": "访问受限",
+    "sold_out": "售罄处理",
+    "suspended": "停售",
+    "coming_soon": "即将开售",
+    "product_reviews_tab": "评价标签",
+    "product_qna_tab": "商品咨询标签",
+    "board_activity_my_posts": "我发的帖子",
+    "board_activity_my_comments": "我发的评论",
+    "search_tab_posts": "帖子标签",
+    "search_tab_products": "商品标签",
+    "search_tab_pages": "页面标签",
+    "cart_ordering": "订单处理中",
+    "checkout_summary_details": "金额明细展开",
+    "cart_summary_details": "税额明细展开",
+    "checkout_normal": "正常支付",
+    "checkout_payment_error": "支付错误",
+    "checkout_validation_failed": "输入校验失败",
+    "payment_card": "银行卡支付",
+    "payment_vbank": "虚拟账户",
+    "payment_dbank": "银行汇款",
+    "reorder_pending": "再次购买进行中",
+    "reorder_success_partial": "部分再次购买",
+    "reorder_error": "再次购买失败",
+    "guest_order_form_guest": "非会员（查询表单）",
+    "guest_order_form_member": "会员（我的页面提示）",
+    "address_modal_list": "收货地址列表",
+    "address_modal_form": "收货地址直接输入",
+    "order_show_default": "默认",
+    "order_change_address_manual": "收货地址变更（直接输入）",
+    "user_base_default": "默认",
+    "mobile_menu_open": "移动端菜单展开",
+    "gdpr_cookie_banner_visible": "显示 Cookie 横幅",
+    "identity_challenge_inicis": "实名认证模态框（Inicis）"
+  },
+  "cell_border": {
+    "side_all": "全部",
+    "side_top": "上",
+    "side_bottom": "下",
+    "side_left": "左",
+    "side_right": "右",
+    "width_none": "无",
+    "width_thin": "细",
+    "width_medium": "普通",
+    "width_thick": "粗",
+    "color_gray": "灰色",
+    "color_gray_dark": "深灰色",
+    "color_dark": "黑色",
+    "color_blue": "蓝色",
+    "color_red": "红色"
+  },
+  "cell_fill": {
+    "color_white": "白色",
+    "color_gray": "浅灰色",
+    "color_gray_dark": "灰色",
+    "color_yellow": "黄色",
+    "color_blue": "蓝色",
+    "color_green": "绿色",
+    "color_red": "红色"
+  },
+  "cell_padding": {
+    "step_none": "无",
+    "step_narrow": "窄",
+    "step_normal": "普通",
+    "step_wide": "宽"
+  },
+  "array_item": {
+    "tab": "标签页",
+    "provider": "提供商"
+  },
+  "array_field": {
+    "label": "标签",
+    "id": "ID",
+    "icon": "图标",
+    "badge": "徽章",
+    "disabled": "禁用",
+    "provider": "提供商"
+  },
+  "provider": {
+    "naver": "Naver",
+    "kakao": "Kakao"
+  },
+  "data_prop": {
+    "data": "数据",
+    "chart_data": "图表数据",
+    "tree_data": "树数据",
+    "images": "图片",
+    "menu_items": "菜单项",
+    "items": "项目",
+    "filters": "筛选",
+    "suggestions": "推荐搜索词",
+    "datasets": "数据集",
+    "tabs": "标签页",
+    "breadcrumb_items": "路径项目",
+    "available_locales": "可用语言",
+    "user": "用户",
+    "current_page": "当前页面",
+    "total_pages": "总页数",
+    "reactions": "反应",
+    "product": "商品",
+    "author": "作者",
+    "value": "值",
+    "options": "选项",
+    "selected_tags": "已选标签",
+    "selected_permissions": "已选权限",
+    "header_user": "登录用户",
+    "header_boards": "版块列表",
+    "header_notifications": "通知列表",
+    "header_available_locales": "可用语言",
+    "header_cart_count": "购物车数量",
+    "header_notification_count": "通知数",
+    "footer_social_links": "社交链接",
+    "footer_link_groups": "链接分组",
+    "notification_items": "通知列表",
+    "notification_unread_count": "未读通知数"
+  },
+  "state_label": {
+    "current_user": "当前用户",
+    "current_user_name": "当前用户名称",
+    "current_user_email": "当前用户邮箱",
+    "current_user_id": "当前用户 ID",
+    "current_user_is_admin": "是否为管理员",
+    "site_name": "站点名称",
+    "query_q": "搜索词 (URL)"
+  },
+  "data_source": {
+    "addresses": "收货地址列表",
+    "boardList": "版块列表",
+    "boards": "版块",
+    "cart": "购物车",
+    "cartItems": "购物车商品",
+    "categories": "分类列表",
+    "category": "分类",
+    "challenge": "实名认证请求",
+    "checkoutData": "订单数据",
+    "current_user": "当前用户",
+    "form_data": "表单数据",
+    "form_meta": "表单元数据",
+    "home_boards": "首页版块",
+    "mileage_balance": "积分余额",
+    "mileage_history": "积分记录",
+    "myActivityStats": "我的活动统计",
+    "myComments": "我的评论",
+    "myInquiries": "我的咨询",
+    "myPosts": "我的帖子",
+    "navigation": "上一帖/下一帖",
+    "newProducts": "新品",
+    "notification_unread_count": "未读通知数",
+    "notifications": "通知列表",
+    "order": "订单",
+    "orderData": "订单数据",
+    "orders": "订单列表",
+    "page": "页面",
+    "paymentSettings": "支付设置",
+    "popularPosts": "热门帖子",
+    "popularProducts": "热门商品",
+    "popular_boards": "热门版块",
+    "post": "帖子",
+    "postStats": "帖子统计",
+    "posts": "帖子列表",
+    "privacyContent": "隐私政策内容",
+    "product": "商品",
+    "productDownloadableCoupons": "可领取优惠券",
+    "products": "商品列表",
+    "profile": "资料",
+    "qna": "商品咨询",
+    "recentPosts": "最新帖子",
+    "recentProducts": "最近浏览的商品",
+    "recent_posts": "最新帖子",
+    "refundReasons": "退款事由",
+    "reviewSettings": "评价政策设置",
+    "reviews": "商品评价",
+    "saveShippingAddress": "保存收货地址",
+    "searchResults": "搜索结果",
+    "shippingSettings": "配送设置",
+    "stats": "统计",
+    "termsContent": "使用条款内容",
+    "tokenValidation": "令牌校验",
+    "user": "用户",
+    "userAddresses": "用户收货地址",
+    "userNotifications": "用户通知",
+    "userPosts": "用户帖子",
+    "userProfile": "用户资料",
+    "user_notification_ws": "通知（实时）",
+    "wishlist": "心愿单"
+  }
+}

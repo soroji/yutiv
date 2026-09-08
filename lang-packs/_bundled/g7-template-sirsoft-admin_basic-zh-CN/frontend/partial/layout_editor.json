@@ -1,0 +1,339 @@
+{
+  "palette": {
+    "div": {
+      "label": "盒子"
+    },
+    "container": {
+      "label": "容器",
+      "default_child_text": "请在此处放入内容"
+    },
+    "flex": {
+      "label": "Flex 盒子"
+    },
+    "grid": {
+      "label": "Grid 盒子"
+    },
+    "section_layout": {
+      "label": "区块布局"
+    },
+    "three_column_layout": {
+      "label": "三栏布局"
+    },
+    "section": {
+      "label": "区块"
+    },
+    "span": {
+      "label": "行内文本",
+      "default_text": "文本"
+    },
+    "p": {
+      "label": "段落",
+      "default_text": "请在此处输入段落文本。"
+    },
+    "h1": {
+      "label": "大标题 (H1)",
+      "default_text": "大标题"
+    },
+    "h2": {
+      "label": "中标题 (H2)",
+      "default_text": "中标题"
+    },
+    "h3": {
+      "label": "小标题 (H3)",
+      "default_text": "小标题"
+    },
+    "h4": {
+      "label": "辅助标题 (H4)",
+      "default_text": "辅助标题"
+    },
+    "a": {
+      "label": "链接",
+      "default_text": "点击这里"
+    },
+    "button": {
+      "label": "按钮",
+      "default_text": "按钮"
+    },
+    "img": {
+      "label": "图片",
+      "default_alt": "图片说明"
+    },
+    "icon": {
+      "label": "图标"
+    },
+    "hr": {
+      "label": "分隔线"
+    },
+    "ul": {
+      "label": "项目符号列表",
+      "default_item_text": "列表项"
+    },
+    "ol": {
+      "label": "编号列表",
+      "default_item_text": "列表项"
+    },
+    "li": {
+      "label": "列表项",
+      "default_text": "列表项"
+    },
+    "nav": {
+      "label": "导航",
+      "default_item_text": "菜单"
+    },
+    "code": {
+      "label": "行内代码",
+      "default_text": "code"
+    },
+    "pre": {
+      "label": "代码块",
+      "default_text": "// 代码块"
+    },
+    "card": {
+      "label": "卡片",
+      "default_title": "卡片标题",
+      "default_body": "卡片内容"
+    },
+    "badge": {
+      "label": "徽章",
+      "default_text": "徽章"
+    },
+    "status_badge": {
+      "label": "状态徽章",
+      "default_label": "启用"
+    },
+    "alert": {
+      "label": "提醒",
+      "default_message": "提醒消息"
+    },
+    "empty_state": {
+      "label": "空状态",
+      "default_title": "没有可显示的项目",
+      "default_description": "请添加新项目开始使用。"
+    },
+    "loading_spinner": {
+      "label": "加载指示器"
+    },
+    "page_header": {
+      "label": "页面页眉",
+      "default_title": "页面标题",
+      "default_subtitle": "页面副标题"
+    },
+    "section_header": {
+      "label": "区块页眉",
+      "default_title": "区块标题",
+      "default_description": "区块说明"
+    },
+    "breadcrumb": {
+      "label": "面包屑",
+      "default_item1_label": "首页",
+      "default_item2_label": "当前页面"
+    },
+    "tab_navigation": {
+      "label": "标签页",
+      "default_tab1_label": "标签 1",
+      "default_tab2_label": "标签 2"
+    },
+    "tab_navigation_scroll": {
+      "label": "滚动标签页",
+      "default_tab1_label": "标签 1",
+      "default_tab2_label": "标签 2"
+    },
+    "toggle": {
+      "label": "开关",
+      "default_label": "开关"
+    },
+    "form_field": {
+      "label": "表单字段",
+      "default_label": "字段名"
+    },
+    "input": {
+      "label": "输入框",
+      "default_placeholder": "请在此输入"
+    },
+    "textarea": {
+      "label": "多行输入",
+      "default_placeholder": "请输入多行文本"
+    },
+    "label": {
+      "label": "标签",
+      "default_text": "标签"
+    },
+    "select": {
+      "label": "选择框",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2"
+    },
+    "checkbox": {
+      "label": "复选框",
+      "default_label": "选择"
+    },
+    "radio_group": {
+      "label": "单选组",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2"
+    },
+    "file_input": {
+      "label": "文件输入"
+    },
+    "file_uploader": {
+      "label": "文件上传器",
+      "default_label": "请上传文件"
+    },
+    "html_content": {
+      "label": "HTML 内容",
+      "default_text": "HTML 内容区域"
+    },
+    "html_editor": {
+      "label": "HTML 编辑器",
+      "default_placeholder": "请输入内容"
+    },
+    "data_grid": {
+      "label": "数据网格",
+      "default_column_id_label": "ID",
+      "default_column_name_label": "名称"
+    },
+    "card_grid": {
+      "label": "卡片网格"
+    },
+    "pagination": {
+      "label": "分页"
+    },
+    "search_bar": {
+      "label": "搜索栏",
+      "default_placeholder": "请输入搜索词"
+    },
+    "stat_card": {
+      "label": "统计卡片",
+      "default_title": "统计标题"
+    },
+    "product_card": {
+      "label": "商品卡片",
+      "default_name": "示例商品"
+    },
+    "template_card": {
+      "label": "模板卡片",
+      "default_name": "示例模板",
+      "default_description": "模板说明"
+    },
+    "bar_chart": {
+      "label": "柱状图",
+      "default_label1": "A",
+      "default_label2": "B"
+    },
+    "donut_chart": {
+      "label": "环形图",
+      "default_label1": "A",
+      "default_label2": "B"
+    },
+    "image_gallery": {
+      "label": "图片库",
+      "default_alt1": "图库图片 1",
+      "default_alt2": "图库图片 2"
+    },
+    "group": {
+      "design": "设计",
+      "db": "数据"
+    },
+    "form": {
+      "label": "表单",
+      "default_label_text": "标签",
+      "default_submit_text": "提交"
+    },
+    "table": {
+      "label": "表格"
+    },
+    "accordion": {
+      "label": "折叠面板",
+      "default_body": "折叠面板内容"
+    },
+    "icon_button": {
+      "label": "图标按钮",
+      "default_label": "操作"
+    },
+    "dropdown": {
+      "label": "下拉菜单",
+      "default_label": "菜单",
+      "default_item1_label": "项目 1",
+      "default_item2_label": "项目 2"
+    },
+    "action_menu": {
+      "label": "操作菜单",
+      "default_trigger_label": "操作",
+      "default_item1_label": "修改",
+      "default_item2_label": "删除"
+    },
+    "tag_input": {
+      "label": "标签输入",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2",
+      "default_placeholder": "输入标签"
+    },
+    "searchable_dropdown": {
+      "label": "可搜索下拉菜单",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2",
+      "default_search_placeholder": "搜索"
+    },
+    "rich_select": {
+      "label": "富选择器",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2",
+      "default_placeholder": "请选择"
+    },
+    "tag_select": {
+      "label": "标签选择",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2",
+      "default_placeholder": "请选择"
+    },
+    "icon_select": {
+      "label": "图标选择",
+      "default_placeholder": "选择图标",
+      "default_search_placeholder": "搜索图标"
+    },
+    "chip_checkbox": {
+      "label": "标签式复选框",
+      "default_label": "选项"
+    },
+    "multilingual_input": {
+      "label": "多语言输入",
+      "default_placeholder": "请输入"
+    },
+    "multilingual_tag_input": {
+      "label": "多语言标签输入",
+      "default_placeholder": "输入标签"
+    },
+    "language_selector": {
+      "label": "语言选择器"
+    },
+    "permission_tree": {
+      "label": "权限树"
+    },
+    "category_tree": {
+      "label": "分类树",
+      "sample_node1": "分类",
+      "sample_node2": "下级分类"
+    },
+    "extension_badge": {
+      "label": "扩展徽章",
+      "default_name": "扩展"
+    },
+    "user_profile": {
+      "label": "用户资料",
+      "default_name": "用户"
+    },
+    "filter_group": {
+      "label": "筛选组",
+      "default_title": "筛选"
+    },
+    "sortable_menu_list": {
+      "label": "可排序菜单列表",
+      "sample_item1": "菜单项 1",
+      "sample_item2": "菜单项 2"
+    },
+    "dynamic_field_list": {
+      "label": "动态字段列表",
+      "default_add_label": "添加项目"
+    }
+  }
+}

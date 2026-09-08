@@ -459,7 +459,9 @@ Official language packs you can install alongside the initial setup, so the core
 | **g7-plugin-sirsoft-verification_nhnkcp-ja** | NHN KCP mobile identity verification plugin, Japanese |
 | **g7-plugin-sirsoft-verification_nhnkcp-zh-CN** | NHN KCP mobile identity verification plugin, Simplified Chinese |
 | **g7-template-sirsoft-admin_basic-ja** | Default admin template, Japanese |
+| **g7-template-sirsoft-admin_basic-zh-CN** | Default admin template, Simplified Chinese |
 | **g7-template-sirsoft-basic-ja** | Default user template, Japanese |
+| **g7-template-sirsoft-basic-zh-CN** | Default user template, Simplified Chinese |
 
 > Korean and English are built into the core and bundled extensions and are always active without installation. Any other language can be added freely from a ZIP file or a GitHub URL.
 

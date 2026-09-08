@@ -447,7 +447,9 @@ cp .env.example .env
 | **g7-plugin-sirsoft-verification_nhnkcp-ja** | NHN KCP 휴대폰 본인확인 플러그인 일본어 |
 | **g7-plugin-sirsoft-verification_nhnkcp-zh-CN** | NHN KCP 휴대폰 본인확인 플러그인 중국어 간체 |
 | **g7-template-sirsoft-admin_basic-ja** | 관리자 기본 템플릿 일본어 |
+| **g7-template-sirsoft-admin_basic-zh-CN** | 관리자 기본 템플릿 중국어 간체 |
 | **g7-template-sirsoft-basic-ja** | 사용자 기본 템플릿 일본어 |
+| **g7-template-sirsoft-basic-zh-CN** | 사용자 기본 템플릿 중국어 간체 |
 
 > 한국어/영어는 코어/번들 확장에 내장되어 있으며 설치 없이 항상 활성 상태로 동작합니다. 새 언어는 ZIP 또는 GitHub URL 로 자유롭게 추가할 수 있습니다.
 

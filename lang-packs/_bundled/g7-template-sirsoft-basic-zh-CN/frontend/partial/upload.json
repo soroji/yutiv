@@ -1,0 +1,8 @@
+{
+  "drag_or_click": "拖拽文件或点击上传",
+  "error": {
+    "file_too_large": "文件大小超过 {{max}}MB。",
+    "invalid_type": "不支持的文件格式。",
+    "max_files": "最多只能上传 {{max}} 个文件。"
+  }
+}

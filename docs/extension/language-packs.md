@@ -576,7 +576,7 @@ php artisan language-pack:install https://example.com/my-lang-pack-zh.zip --sour
 
 ## 공식 중국어 간체 번들 언어팩 (g7-*-zh-CN)
 
-G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 모듈 3종 + 플러그인 11종**이며, 템플릿 zh-CN 팩은 아직 없다. 코어·모듈·플러그인 트리를 건드리지 않는 외부 패키지형이므로 **코어·확장 코드 변경 0** 이다.
+G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 모듈 3종 + 플러그인 11종 + 템플릿 2종**이다. 코어·모듈·플러그인·템플릿 트리를 건드리지 않는 외부 패키지형이므로 **코어·확장 코드 변경 0** 이다.
 
 ### 패키지 구성
 
@@ -597,6 +597,8 @@ G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공
 | plugin | `g7-plugin-sirsoft-tosspayments-zh-CN` | `sirsoft-tosspayments` | 7 |
 | plugin | `g7-plugin-sirsoft-verification_kginicis-zh-CN` | `sirsoft-verification_kginicis` | 6 |
 | plugin | `g7-plugin-sirsoft-verification_nhnkcp-zh-CN` | `sirsoft-verification_nhnkcp` | 6 |
+| template | `g7-template-sirsoft-admin_basic-zh-CN` | `sirsoft-admin_basic` | 14 |
+| template | `g7-template-sirsoft-basic-zh-CN` | `sirsoft-basic` | 25 |
 
 ### locale 코드
 
@@ -1087,16 +1089,135 @@ php artisan language-pack:install g7-plugin-sirsoft-daum_postcode-zh-CN --source
 php artisan language-pack:list --scope=plugin
 ```
 
+### 템플릿 팩 (g7-template-sirsoft-*-zh-CN, 2종)
+
+`scope: template` 팩의 첫 zh-CN 사례. 운영 서버에서 설치·활성 상태인 관리자·사용자 기본 템플릿 2종을 대상으로 한다.
+
+| 대상 | 템플릿 버전 | type | 팩 식별자 | 팩 버전 |
+|---|---|---|---|---|
+| `sirsoft-admin_basic` | 1.0.7 | admin | `g7-template-sirsoft-admin_basic-zh-CN` | 1.0.0 |
+| `sirsoft-basic` | 1.1.2 | user | `g7-template-sirsoft-basic-zh-CN` | 1.0.0 |
+
+#### 대상 선정
+
+`templates/_bundled/` 에는 4종이 있으나 zh-CN 팩은 **2종만** 만들었다.
+
+| 템플릿 | zh-CN 팩 | 사유 |
+|---|---|---|
+| `sirsoft-admin_basic` | ✅ | 운영 서버 설치·활성 관리자 템플릿 |
+| `sirsoft-basic` | ✅ | 운영 서버 설치·활성 사용자 템플릿 |
+| `gnuboard7-hello_admin_template` | ❌ | 운영 서버에서 설치·활성 템플릿이 아니며 학습용 샘플이다 |
+| `gnuboard7-hello_user_template` | ❌ | 운영 서버에서 설치·활성 템플릿이 아니며 학습용 샘플이다 |
+
+#### 입력 → 산출 매핑
+
+템플릿은 모듈·플러그인과 자산 배치가 다르다. **backend PHP 번역이 없고** 번역 원본이 `lang/` 아래 JSON 에만 있다.
+
+| 구분 | ko 원문 소스 | 산출 위치 | 파일 수 |
+|---|---|---|---|
+| frontend 엔트리 | `templates/_bundled/{target}/lang/ko.json` | `frontend/zh-CN.json` | 각 1 |
+| frontend partial | `templates/_bundled/{target}/lang/partial/ko/*.json` | `frontend/partial/*.json` | admin_basic 10 · basic 21 |
+| seed | ja 팩 `seed/manifest.json` 계약 (name/description) | `seed/manifest.json` | 각 1 |
+| 메타 | — | `language-pack.json` · `CHANGELOG.md` | 각 2 |
+
+번역 대상 leaf 총계는 **6,377개** (admin_basic 3,718 · basic 2,659) 이며 번역 파일은 **33개**다.
+
+`frontend/zh-CN.json` 의 `$partial` 경로는 원본의 `partial/ko/{name}.json` 에서 로케일 세그먼트를 제거한 `partial/{name}.json` 형태로 정규화한다 (ja 팩·다른 zh-CN 팩과 동일 규칙).
+
+**팩에 `backend/` 디렉토리를 두지 않는다.** 템플릿에는 PHP 번역 원본이 없으므로 만들 근거가 없고, 언어팩의 PHP 는 활성화 시 `require` 되므로 불필요한 실행 표면을 만들지 않는다. `BundledSimplifiedChineseTemplatePacksTest::test_content_files_exist_and_no_backend_directory` 가 이를 계약으로 고정한다.
+
+#### 템플릿 도메인 용어집
+
+코어·모듈·플러그인 팩 용어집을 승계하고, 템플릿 화면에서 새로 등장하는 표기를 아래로 고정한다.
+
+| 한국어 | zh-CN | 비고 |
+|---|---|---|
+| 레이아웃 | 布局 | 레이아웃 편집기 전반 |
+| 위지윅 편집 | 所见即所得编辑 | |
+| 컨테이너 | 容器 | 레이아웃 팔레트 |
+| 플렉스 / 그리드 | Flex / Grid | 컴포넌트 식별자와 1:1 대응이라 원문 유지 |
+| 배지 | 徽章 | |
+| 아코디언 | 折叠面板 | |
+| 드롭다운 | 下拉菜单 | |
+| 스켈레톤 화면 | 骨架屏 | |
+| 블라인드(게시글) | 屏蔽 | |
+| 비밀글 | 私密帖子 | |
+| 비회원 | 非会员 | |
+| 찜 목록 | 收藏列表 | 위시리스트 컴포넌트는 心愿单 |
+| 구매확정 | 确认收货 | |
+| 재주문 | 再次购买 | |
+| 마일리지 | 积分 | 이커머스 팩 표기 승계 |
+| 예치금 | 预存款 | |
+| 무통장입금 / 가상계좌 | 银行汇款 / 虚拟账户 | 이커머스 팩 표기 승계 |
+| 스케줄 | 计划任务 | 관리자 스케줄 관리 |
+| 행위자(로그) | 操作者 | |
+| 프로바이더 | 提供商 | 본인인증 |
+| 강제 시점 / 강제 위치 | 强制时点 / 强制位置 | 본인인증 정책 |
+| 원(통화 단위) | 韩元 | 코어 팩 표기 승계 |
+| 한국어(언어 라벨) | 韩语 | `English` 는 원문 유지 |
+
+#### 보존 대상 (번역하지 않음)
+
+- 컴포넌트 식별자 키(`flex`, `grid`, `data_grid` 등)와 상태 enum(`pending`, `paid`, `shipped` …)
+- 라우트·이벤트 이름 예시: `api.auth.register`, `core.auth.after_register`
+- 경로·파일명: `/storage/logs/`, `laravel.log`, `sitemap.xml`, `module.json`, `template.json`
+- 설정 키와 코드 조각: `opcache.enable=1`, `location ~* \.(js|css|json|png|jpg|jpeg|gif|ico|svg|woff2?)$`, `$ sudo php artisan core:update`
+- 브랜드·기술명: `GitHub`, `Composer`, `Laravel`, `Reverb`, `Redis`, `Memcached`, `Mailgun`, `AWS`, `MaxMind GeoLite2`, `CKEditor`, `Naver`, `Kakao`, `Google`, `Twitter`, `Facebook`, `Slack`
+- URL: `https://www.maxmind.com/en/geolite2/signup`, 이메일 `minsup@sir.kr`
+- 서술용 중괄호 토큰은 값만 번역: `"GnuBoard7 {버전}"` → `"GnuBoard7 {版本}"`, `{변수명}` → `{变量名}` (코드가 치환하는 placeholder 가 아니라 안내 문구다. ja 팩도 동일하게 처리했다)
+
+#### ja 팩과의 차이
+
+| # | 대상 | 차이 | 판단 |
+|---|---|---|---|
+| 1 | 두 팩 전체 | 키 **집합**은 ko 원본과 ja 팩이 완전히 동일 (누락 0 · 잉여 0) | 의도적 차이 선언이 필요 없다 |
+| 2 | admin_basic: `admin.json` · `editor.json` · `layout_editor.json` / basic: `attachment` · `auth` · `board` · `common` · `editor` · `error` · `mypage` · `policy` · `search` · `shop` · `user` | ja 가 ko 와 **키 순서**가 다름 (집합은 동일) | zh-CN 은 **ko 순서**를 따른다. `--style` 에서 정보성 경고로 표면화 |
+| 3 | `countries.json` 의 `KR` | admin_basic 원본은 `한국`, basic 원본은 `대한민국` | 원본 차이를 그대로 반영해 각각 `韩国` · `大韩民国` |
+
+**ja 팩은 이번 작업에서 수정하지 않았다.**
+
+#### 검증
+
+```bash
+# 두 팩 통합 실행 (개별 PASS/FAIL + 전체 위반 건수, 하나라도 실패하면 exit 1)
+php tests/Translations/zh-CN-templates-parity-check.php --verbose --style
+
+# PHPUnit — 프로덕션 validator 실호출 (데이터셋 = 팩 식별자, DB 변경 없음)
+php artisan test --filter=BundledSimplifiedChineseTemplatePacksTest
+```
+
+검사 로직은 `tests/Translations/lib/zh-CN-template-parity-lib.php` 에 모여 있고
+(공용 헬퍼는 `zh-CN-plugin-parity-lib.php` 를 `require_once` 로 재사용한다),
+진입점 `zh-CN-templates-parity-check.php` 는 대상 식별자와 ja 대비 의도적 차이만 선언한다.
+
+`frontend build 불필요` — 언어팩 JSON 은 `MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다. 템플릿의 `lang/**` 는 번들 JS 진입점이 import 하지 않는다.
+
+#### 설치 순서
+
+```bash
+# 1) 코어 zh-CN 팩이 먼저 활성이어야 한다 (depends_on_core_locale: true)
+php artisan language-pack:install g7-core-zh-CN --source=bundled
+
+# 2) 대상 템플릿이 active 여야 한다 (아니면 target_inactive 로 차단)
+php artisan template:list
+
+# 3) 템플릿 팩 설치 (자동 활성) — 서로 의존하지 않으므로 순서는 자유
+php artisan language-pack:install g7-template-sirsoft-admin_basic-zh-CN --source=bundled
+php artisan language-pack:install g7-template-sirsoft-basic-zh-CN --source=bundled
+
+php artisan language-pack:list --scope=template
+```
+
 ### 기존 ko/en 변경 시 zh-CN 동기화 의무
 
-코어·모듈 3종·플러그인 11종의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
+코어·모듈 3종·플러그인 11종·템플릿 2종의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
 (`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-{board,ecommerce,page}-zh-CN/`,
-`lang-packs/_bundled/g7-plugin-sirsoft-*-zh-CN/`) 의
+`lang-packs/_bundled/g7-plugin-sirsoft-*-zh-CN/`, `lang-packs/_bundled/g7-template-sirsoft-{admin_basic,basic}-zh-CN/`) 의
 키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역
 fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치
 (`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 대응 parity 검사기
 (`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`, `zh-CN-ecommerce-parity-check.php`,
-`zh-CN-page-parity-check.php`, `zh-CN-plugins-parity-check.php`) 로 확인한다.
+`zh-CN-page-parity-check.php`, `zh-CN-plugins-parity-check.php`, `zh-CN-templates-parity-check.php`) 로 확인한다.
 
 ## 의존성 검증 — 설치 차단 사유 (UI 인라인 안내)
 

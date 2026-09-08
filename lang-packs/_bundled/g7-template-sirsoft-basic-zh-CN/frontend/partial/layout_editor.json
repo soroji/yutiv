@@ -1,0 +1,182 @@
+{
+  "palette": {
+    "div": {
+      "label": "盒子"
+    },
+    "container": {
+      "label": "容器",
+      "default_child_text": "请在此处放入内容"
+    },
+    "flex": {
+      "label": "Flex 盒子"
+    },
+    "grid": {
+      "label": "Grid 盒子"
+    },
+    "section_layout": {
+      "label": "区块布局"
+    },
+    "three_column_layout": {
+      "label": "三栏布局"
+    },
+    "span": {
+      "label": "行内文本",
+      "default_text": "文本"
+    },
+    "p": {
+      "label": "段落",
+      "default_text": "请在此处输入段落文本。"
+    },
+    "h1": {
+      "label": "大标题 (H1)",
+      "default_text": "大标题"
+    },
+    "h2": {
+      "label": "中标题 (H2)",
+      "default_text": "中标题"
+    },
+    "h3": {
+      "label": "小标题 (H3)",
+      "default_text": "小标题"
+    },
+    "h4": {
+      "label": "辅助标题 (H4)",
+      "default_text": "辅助标题"
+    },
+    "a": {
+      "label": "链接",
+      "default_text": "点击这里"
+    },
+    "button": {
+      "label": "按钮",
+      "default_text": "按钮"
+    },
+    "img": {
+      "label": "图片",
+      "default_alt": "图片说明"
+    },
+    "icon": {
+      "label": "图标"
+    },
+    "hr": {
+      "label": "分隔线"
+    },
+    "ul": {
+      "label": "项目符号列表",
+      "default_item_text": "列表项"
+    },
+    "li": {
+      "label": "列表项",
+      "default_text": "列表项"
+    },
+    "nav": {
+      "label": "导航",
+      "default_item_text": "菜单"
+    },
+    "html_content": {
+      "label": "HTML 内容",
+      "default_text": "HTML 内容区域"
+    },
+    "expandable_content": {
+      "label": "折叠/展开",
+      "default_title": "标题",
+      "default_body": "展开后显示的内容"
+    },
+    "tab_navigation": {
+      "label": "标签页",
+      "default_tab1_label": "标签 1",
+      "default_tab2_label": "标签 2"
+    },
+    "input": {
+      "label": "输入框",
+      "default_placeholder": "请在此输入"
+    },
+    "textarea": {
+      "label": "多行输入",
+      "default_placeholder": "请输入多行文本"
+    },
+    "select": {
+      "label": "选择框",
+      "default_option1_label": "选项 1",
+      "default_option2_label": "选项 2"
+    },
+    "checkbox": {
+      "label": "复选框",
+      "default_label": "选择"
+    },
+    "password_input": {
+      "label": "密码输入",
+      "default_placeholder": "密码"
+    },
+    "label": {
+      "label": "标签",
+      "default_text": "标签"
+    },
+    "file_uploader": {
+      "label": "文件上传器",
+      "default_label": "请上传文件"
+    },
+    "avatar_uploader": {
+      "label": "头像上传器",
+      "default_label": "变更头像"
+    },
+    "html_editor": {
+      "label": "HTML 编辑器",
+      "default_placeholder": "请输入内容"
+    },
+    "rich_text_editor": {
+      "label": "富文本编辑器",
+      "default_placeholder": "请输入内容"
+    },
+    "social_login_buttons": {
+      "label": "社交登录按钮"
+    },
+    "product_card": {
+      "label": "商品卡片",
+      "default_name": "示例商品"
+    },
+    "image_gallery": {
+      "label": "图片库",
+      "default_alt1": "图库图片 1",
+      "default_alt2": "图库图片 2"
+    },
+    "pagination": {
+      "label": "分页"
+    },
+    "search_bar": {
+      "label": "搜索框",
+      "default_placeholder": "请输入搜索词"
+    },
+    "avatar": {
+      "label": "头像",
+      "default_alt": "用户头像"
+    },
+    "user_info": {
+      "label": "用户信息",
+      "default_name": "用户名"
+    },
+    "quantity_selector": {
+      "label": "数量选择器"
+    },
+    "product_image_viewer": {
+      "label": "商品图片查看器",
+      "default_alt": "商品图片"
+    },
+    "post_reactions": {
+      "label": "帖子反应"
+    },
+    "group": {
+      "design": "设计",
+      "db": "数据"
+    },
+    "form": {
+      "label": "表单",
+      "default_label_text": "标签",
+      "default_input_placeholder": "请输入",
+      "default_submit_text": "提交"
+    },
+    "table": {
+      "label": "表格"
+    }
+  }
+}

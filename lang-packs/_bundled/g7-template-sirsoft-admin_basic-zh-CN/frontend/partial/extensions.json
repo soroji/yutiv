@@ -1,0 +1,38 @@
+{
+  "types": {
+    "module": "模块",
+    "plugin": "插件",
+    "template": "模板"
+  },
+  "alerts": {
+    "incompatible_deactivated": "{{type}} \"{{name}}\" 已被自动停用",
+    "incompatible_message": "所需版本：{{required}}，当前已安装：{{installed}}",
+    "recovered_title": "{{type}} \"{{name}}\" 已重新兼容",
+    "recovered_body": "核心升级后已兼容（此前要求：{{previously_required}}）。可以重新启用。",
+    "recovered_success": "扩展已重新启用。",
+    "dismissed": "已关闭提醒。",
+    "auto_deactivated_listed": "这是被自动停用的扩展列表。",
+    "recover_action": "重新启用",
+    "dismiss_action": "关闭提醒"
+  },
+  "badges": {
+    "incompatible": "需要升级核心",
+    "incompatible_tooltip": "需要核心 {{required}} 以上（当前：{{installed}}）",
+    "incompatible_sr": "{{name}} 需要核心 {{required}} 以上，但当前安装的是 {{installed}}，因此无法更新。"
+  },
+  "banner": {
+    "title": "存在因核心兼容性问题而被自动停用的扩展",
+    "item_required": "所需版本：{{required}}",
+    "guide_link": "核心升级指南",
+    "dismiss": "关闭"
+  },
+  "update_modal": {
+    "compat_warning_title": "核心版本兼容性警告",
+    "compat_warning_message": "该 {{type}} 需要核心 {{required}} 以上。（当前：{{installed}}）",
+    "compat_guide_link": "查看核心升级指南",
+    "force_label": "忽略警告并强制更新（不推荐）",
+    "rebuild_search_index_title": "搜索索引",
+    "rebuild_search_index_label": "更新后重新生成缺失索引的搜索索引",
+    "rebuild_search_index_desc": "重新生成期间目标索引会被锁定或重新建立索引。如果站点正在运营中请不要勾选，改为在维护时间另行执行。"
+  }
+}

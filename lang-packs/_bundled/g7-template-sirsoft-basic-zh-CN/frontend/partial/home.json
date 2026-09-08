@@ -1,0 +1,38 @@
+{
+  "welcome": {
+    "title": "欢迎！",
+    "description": "欢迎来到 Gnuboard7 社区。",
+    "login_prompt": "登录后加入社区吧。",
+    "greeting": "您好，{{name}}！"
+  },
+  "welcome_suffix": "，欢迎您的到来",
+  "welcome_description": "在共同成长的社区里分享各种话题吧。",
+  "get_started": "开始使用",
+  "go_to_mypage": "我的页面",
+  "learn_more": "了解更多",
+  "stats": {
+    "total_members": "全部会员",
+    "total_posts": "全部帖子",
+    "today_posts": "今日帖子",
+    "online_users": "在线中",
+    "members": "会员",
+    "posts": "帖子",
+    "comments": "评论",
+    "boards": "版块"
+  },
+  "recent_posts": "最新帖子",
+  "no_posts": "还没有帖子。",
+  "popular_boards": "热门版块",
+  "no_boards": "还没有热门版块。",
+  "shop": "商城",
+  "shop_description": "浏览新鲜商品",
+  "community_guide": "社区指南",
+  "guide_rule_1": "相互尊重地交流",
+  "guide_rule_2": "禁止辱骂和诽谤",
+  "guide_rule_3": "禁止广告/垃圾信息",
+  "shop_promo": {
+    "title": "商城",
+    "description": "来看看各种商品吧",
+    "go_to_shop": "前往购物"
+  }
+}
