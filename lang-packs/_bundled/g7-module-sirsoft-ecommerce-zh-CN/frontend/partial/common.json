@@ -1,0 +1,54 @@
+{
+  "create": "创建",
+  "edit": "编辑",
+  "delete": "删除",
+  "copy": "复制",
+  "cancel": "取消",
+  "confirm": "确认",
+  "save": "保存",
+  "saving": "保存中",
+  "close": "关闭",
+  "refresh": "刷新",
+  "created_at": "创建日期",
+  "updated_at": "修改日期",
+  "active": "启用",
+  "inactive": "停用",
+  "list": "列表",
+  "use": "使用",
+  "not_use": "未使用",
+  "korean": "韩语",
+  "english": "英语",
+  "all": "全部",
+  "min": "最小",
+  "max": "最大",
+  "processing": "处理中...",
+  "deleting": "删除中...",
+  "validation_error": "请确认输入内容",
+  "locale": {
+    "ko": "韩语",
+    "en": "英语"
+  },
+  "date": {
+    "today": "今天",
+    "week": "1 周",
+    "3months": "3 个月",
+    "6months": "6 个月",
+    "1year": "1 年"
+  },
+  "error": {
+    "general": "发生错误。"
+  },
+  "currency": {
+    "won": "韩元"
+  },
+  "currency_label": "货币",
+  "shipping_country_label": "配送国家／地区",
+  "column_selector": "选择列",
+  "column_selector_title": "选择要显示的列",
+  "column_selector_description": "请选择要显示或隐藏的列",
+  "loading": "加载中...",
+  "select_placeholder": "请选择",
+  "selected_count": "已选择 {{count}} 项",
+  "read_only_notice": "您仅有查看权限。如需修改，请联系管理员。",
+  "validation_error_notice": "请确认输入值。部分项目不正确。"
+}

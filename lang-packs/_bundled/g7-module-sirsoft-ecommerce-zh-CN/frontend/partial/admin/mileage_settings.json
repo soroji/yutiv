@@ -1,0 +1,80 @@
+{
+  "title": "积分设置",
+  "description": "设置积分政策。",
+  "view_transactions": "查看积分记录",
+  "basic": {
+    "title": "基本设置",
+    "enabled": "启用积分",
+    "enabled_hint": "启用积分的累积及使用功能。",
+    "earn_rate": "默认累积率",
+    "earn_rate_suffix": "% 累积",
+    "earn_rate_prefix": "购买金额的",
+    "earn_rate_hint": "登记商品时将作为默认值设定。",
+    "earn_trigger": "累积时点",
+    "earn_trigger_confirmed": "确认收货",
+    "earn_trigger_delivered": "已送达",
+    "earn_delay_prefix": "之后",
+    "earn_delay_suffix": "天时累积",
+    "earn_trigger_hint": "默认＝确认收货 / 可选择已送达"
+  },
+  "currency": {
+    "title": "各货币的使用单位",
+    "add": "添加货币",
+    "code": "货币",
+    "default_label": "（默认货币）",
+    "point_value": "每 1 分对应金额",
+    "min_use": "最低使用金额",
+    "min_use_suffix": "分",
+    "use_unit": "使用单位",
+    "use_unit_suffix": "分",
+    "max_use": "最大使用限额",
+    "max_use_percent": "总支付",
+    "max_use_percent_suffix": "%",
+    "max_use_fixed": "最大金额",
+    "delete": "删除",
+    "empty": "尚未登记任何货币规则。",
+    "code_placeholder": "例：USD",
+    "duplicate_currency_error": "该货币已登记。",
+    "max_use_fixed_suffix": "韩元",
+    "earn_rounding": "累积截位",
+    "earn_rounding_hint": "在计算及分摊累积积分时适用",
+    "earn_rounding_units": {
+      "1": "1 分",
+      "10": "10 分",
+      "100": "100 分"
+    },
+    "earn_rounding_methods": {
+      "floor": "向下取整",
+      "round": "四舍五入",
+      "ceil": "向上取整"
+    }
+  },
+  "expiry": {
+    "title": "有效期",
+    "enabled": "启用有效期",
+    "enabled_hint": "超过设定的期限后，未使用的积分将自动失效。",
+    "days": "有效期设置",
+    "days_suffix": "天时失效"
+  },
+  "notification": {
+    "title": "即将失效提醒",
+    "enabled": "启用提醒",
+    "enabled_hint": "向积分即将失效的会员提前发送通知。",
+    "days_before": "发送时点",
+    "days_before_prefix": "有效期到期",
+    "days_before_suffix": "天前",
+    "active_channels": "启用的渠道",
+    "no_channels": "无启用的渠道 — 需在通知设置中启用",
+    "manage_hint": "渠道、模板、接收人在通知设置中管理。",
+    "go_to_notification_settings": "前往通知设置",
+    "channel_mail": "邮件",
+    "channel_database": "通知箱",
+    "template_status_title": "各渠道的发送状态",
+    "template_status_active": "启用",
+    "template_status_inactive": "停用",
+    "template_status_empty": "没有已关联的通知模板。",
+    "template_status_hint": "各渠道的发送与否、模板、接收人在通知设置菜单中管理。"
+  },
+  "save": "保存",
+  "cancel": "取消"
+}

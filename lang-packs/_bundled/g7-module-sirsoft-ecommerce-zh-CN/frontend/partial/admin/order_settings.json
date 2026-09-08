@@ -1,0 +1,51 @@
+{
+  "title": "订单设置",
+  "description": "管理订单相关设置。",
+  "payment_methods": {
+    "title": "支付方式设置",
+    "description": "设置商城中可使用的支付方式。可拖动变更显示顺序。",
+    "method": "支付方式",
+    "min_order_amount": "最低订单金额",
+    "enabled": "是否启用",
+    "pg_hint": "* 安装 PG 公司插件后，将自动登记额外的支付方式。"
+  },
+  "bank_accounts": {
+    "title": "银行汇款账号设置",
+    "description": "设置银行汇款时向客户展示的账户信息。",
+    "add_account": "添加账户",
+    "default": "默认",
+    "bank": "银行",
+    "account_number": "账号",
+    "account_holder": "开户人",
+    "enabled": "是否启用",
+    "delete": "删除",
+    "default_account": "默认账户"
+  },
+  "auto_cancel": {
+    "title": "订单自动取消",
+    "description": "设置银行汇款／虚拟账户支付时的待付款期限。",
+    "days_prefix": "待付款状态的订单，自下单日起（含当日）",
+    "days_suffix": "个工作日后将自动取消。",
+    "hint": "* 到账期限在下单时点确定。"
+  },
+  "cart_expiry": {
+    "title": "购物车有效期",
+    "description": "设置购物车中商品的保留期限。",
+    "days_prefix": "购物车中的商品将在",
+    "days_suffix": "天后自动删除。"
+  },
+  "inventory": {
+    "title": "库存管理",
+    "description": "设置商品库存的扣减及恢复政策。",
+    "deduction_timing": "库存扣减时点",
+    "deduction_suffix": "时扣减商品库存。",
+    "deduction_options": {
+      "order_complete": "下单完成",
+      "payment_complete": "支付完成",
+      "shipping_start": "开始配送"
+    },
+    "restore_on_cancel": "取消订单时恢复库存",
+    "restore_description": "订单被取消时自动恢复已扣减的库存。",
+    "restore_label": "取消订单后恢复商品库存。"
+  }
+}

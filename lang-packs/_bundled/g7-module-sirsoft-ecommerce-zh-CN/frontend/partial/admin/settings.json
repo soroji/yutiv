@@ -1,0 +1,552 @@
+{
+  "title": "商城环境设置",
+  "description": "设置商城的基本环境。",
+  "tabs": {
+    "basic_info": "基本信息",
+    "language_currency": "语言/货币",
+    "seo": "SEO 设置",
+    "order_settings": "订单设置",
+    "claim": "理赔",
+    "shipping": "配送设置",
+    "review_settings": "评价设置",
+    "notification_definitions": "通知设置",
+    "identity_policies": "实名认证政策",
+    "mileage": "积分"
+  },
+  "save_success": "设置已保存。",
+  "save_error": "设置保存失败。",
+  "save_pending_currency": "请先确定（点击勾选按钮）或取消正在添加的货币，然后再保存。",
+  "validation_error": "请确认输入内容。",
+  "basic_info": {
+    "shop_info": {
+      "title": "商城信息",
+      "description": "设置商城的基本信息。",
+      "shop_name": "商城名称",
+      "shop_name_placeholder": "请输入商城名称",
+      "route_path": "路由路径",
+      "no_route": "不使用路由路径。（仅单独运营商城时）"
+    },
+    "business_info": {
+      "title": "工商信息",
+      "description": "填写工商注册信息。",
+      "company_name": "字号（公司名称）",
+      "company_name_placeholder": "请输入公司名称",
+      "business_number": "营业执照号码",
+      "ceo_name": "法定代表人姓名",
+      "ceo_name_placeholder": "请输入法定代表人姓名",
+      "business_type": "行业形态",
+      "business_type_placeholder": "例：批发、零售",
+      "business_category": "经营类目",
+      "business_category_placeholder": "例：电子商务",
+      "address": "营业场所地址",
+      "zipcode": "邮政编码",
+      "search_address": "查找地址",
+      "base_address": "基本地址",
+      "detail_address": "详细地址",
+      "phone": "主要电话号码",
+      "fax": "主要传真号码",
+      "email": "主要 E-mail",
+      "email_id_placeholder": "邮箱账号",
+      "email_domain_placeholder": "域名",
+      "email_domain_direct": "直接输入",
+      "privacy_officer": "个人信息保护负责人",
+      "privacy_officer_placeholder": "个人信息保护负责人姓名",
+      "privacy_officer_email": "个人信息保护负责人 E-mail",
+      "privacy_officer_email_placeholder": "privacy@example.com",
+      "mail_order_number": "通信销售业申报编号",
+      "mail_order_number_placeholder": "第 2024-首尔江南-12345 号",
+      "telecom_number": "增值电信业务经营者编号",
+      "telecom_number_placeholder": "增值电信业务经营者编号",
+      "postcode_plugin_required": "Daum 邮政编码插件尚未安装或处于停用状态。请在 管理员 > 插件 中启用。"
+    },
+    "public_asset_storage": {
+      "title": "公开资源存储",
+      "description": "设置商品、分类、评价图片等本模块完全公开资源的存储磁盘。",
+      "disk": "公开资源磁盘",
+      "follow_core": "遵循核心设置",
+      "help": "如需仅本模块使用其他磁盘，请在此选择。留空则遵循核心环境设置中的公开资源存储设置。"
+    },
+    "inquiry_settings": {
+      "title": "一对一咨询版块设置",
+      "description": "设置商品一对一咨询功能。",
+      "module_not_installed": "启用论坛版块模块后方可使用。"
+    }
+  },
+  "language_currency": {
+    "language_settings": {
+      "title": "默认货币",
+      "description": "设置商城的默认货币。站点语言在通用设置中管理。",
+      "default_currency": "默认货币",
+      "currency_change_warning": "在已登记商品或订单之后将无法变更。"
+    },
+    "exchange_settings": {
+      "title": "汇率/货币设置",
+      "description": "设置默认货币每基准单位的汇率，以及各货币的截位基准。",
+      "add_currency": "添加货币",
+      "currency_code": "货币代码",
+      "currency_name": "货币名称",
+      "currency_symbol": "符号",
+      "symbol_placeholder": "₩",
+      "exchange_rate": "汇率",
+      "base_unit": "基准单位",
+      "base_unit_equals": "单位 =",
+      "base_unit_hint": "该货币为默认货币时，作为汇率输入基准的单位。（例：韩元 = 1,000 / 美元 = 1）",
+      "rounding_unit": "截位单位",
+      "rounding_method": "截位方式",
+      "decimal_places": "小数位数",
+      "locales": "使用语言",
+      "locales_placeholder": "选择语言",
+      "locales_hint": "注册会员时，若浏览器语言与该货币的语言一致，则该货币将被指定为默认支付货币。",
+      "actions": "管理",
+      "delete": "删除",
+      "base_currency": "默认货币",
+      "rounding_units": {
+        "1": "1（个位）",
+        "10": "10（十位）",
+        "100": "100（百位）",
+        "0_1": "0.1（小数点后第一位）",
+        "0_01": "0.01（小数点后第二位）"
+      },
+      "rounding_methods": {
+        "floor": "向下取整",
+        "round": "四舍五入",
+        "ceil": "向上取整"
+      },
+      "default_label": "默认货币",
+      "currencies": {
+        "KRW": "KRW（韩元）",
+        "KRW_default": "KRW（韩元）（默认货币）",
+        "USD": "USD（美元）",
+        "JPY": "JPY（日元）",
+        "CNY": "CNY（人民币）",
+        "EUR": "EUR（欧元）"
+      },
+      "new_currency": {
+        "title": "添加新货币",
+        "code_placeholder": "例：GBP",
+        "name_placeholder": "货币名称"
+      },
+      "edit_currency": {
+        "title": "修改货币"
+      },
+      "edit": "修改",
+      "duplicate_currency_error": "该货币代码已登记。"
+    }
+  },
+  "order_settings": {
+    "default_pg_provider": {
+      "title": "默认 PG 公司设置",
+      "description": "选择用于支付处理的默认 PG 公司。",
+      "not_installed": "安装 PG 插件后即可选择。",
+      "select": "选择 PG 公司"
+    },
+    "payment_methods": {
+      "title": "支付方式设置",
+      "description": "设置要使用的支付方式并指定优先级。",
+      "timing_order_placed": "下单受理时",
+      "timing_payment_complete": "支付完成时",
+      "timing_none": "不扣减库存",
+      "stock_deduction_timing": "库存扣减时点",
+      "mileage_deduction_timing": "积分扣减时点",
+      "mileage_deduction_timing_disabled_hint": "积分使用功能已关闭，扣减时点不生效。",
+      "min_order_amount": "最低订单金额",
+      "is_active": "启用状态",
+      "orphaned_badge": "插件未安装",
+      "orphaned_pg_badge": "指定的 PG 已删除",
+      "remove_orphaned": "删除",
+      "pg_provider": "PG 公司",
+      "pg_use_default": "默认 PG",
+      "pg_not_required": "无需 PG",
+      "pg_not_installed": "PG 未安装",
+      "pg_fixed": "PG 固定",
+      "pg_select_first": "请先选择 PG 公司"
+    },
+    "bank_accounts": {
+      "title": "银行汇款账号设置",
+      "description": "管理用于银行汇款的账户信息。",
+      "manage_banks": "银行管理",
+      "add_account": "添加账户",
+      "bank": "银行",
+      "account_number": "账号",
+      "account_number_placeholder": "请输入账号",
+      "account_holder": "开户人",
+      "account_holder_placeholder": "请输入开户人",
+      "is_default": "默认",
+      "is_active": "使用",
+      "empty": "尚未登记任何账户。"
+    },
+    "bank_management": {
+      "modal_title": "银行管理",
+      "code": "银行代码",
+      "code_placeholder": "例：004",
+      "name": "银行名称",
+      "name_placeholder": "请输入银行名称",
+      "name_ko": "韩语名称",
+      "name_ko_placeholder": "例：国民银行",
+      "name_en": "英文名称",
+      "name_en_placeholder": "例：Kookmin Bank",
+      "add_bank": "添加银行",
+      "confirm": "确认",
+      "delete": "删除",
+      "empty": "尚未登记任何银行。",
+      "saving": "保存中...",
+      "validation_error": "请确认输入内容。"
+    },
+    "cancellable_statuses": {
+      "title": "可取消状态",
+      "description": "设置用户及管理员可以取消订单的订单状态。",
+      "label": "可取消的订单状态",
+      "hint": "只有处于所选状态的订单才能取消。默认值（待下单、待支付、支付完成）始终可取消。",
+      "placeholder": "请选择可取消状态"
+    },
+    "confirmable_statuses": {
+      "title": "可确认收货状态",
+      "description": "设置用户可以确认收货的订单选项状态。",
+      "label": "可确认收货的订单状态",
+      "hint": "只有处于所选状态的订单选项才能确认收货。",
+      "placeholder": "请选择可确认收货状态"
+    },
+    "auto_cancel": {
+      "title": "订单自动取消",
+      "description": "设置待付款状态订单的自动取消及到账期限。",
+      "toggle_label": "订单自动取消",
+      "toggle_description": "在指定期限后自动取消处于待付款状态的订单。",
+      "toggle_hint": "停用后，待付款订单将不会被自动取消。",
+      "days_prefix": "待付款状态的订单，自下单日起（含当日）",
+      "days_suffix": "天后将自动取消。"
+    },
+    "cart_expiry": {
+      "title": "购物车有效期",
+      "description": "设置购物车中商品的自动删除期限。",
+      "prefix": "购物车中的商品将在",
+      "suffix": "天后自动删除。"
+    },
+    "stock_management": {
+      "title": "库存管理",
+      "description": "设置库存相关的全局政策。",
+      "restore_on_cancel": "取消订单时恢复库存",
+      "restore_on_cancel_description": "订单被取消时自动恢复已扣减的库存。",
+      "restore_on_cancel_hint": "退货／换货处理时同样适用。"
+    },
+    "cash_receipt": {
+      "title": "现金收据",
+      "description": "设置现金收据开具服务商及运费的计税方式。",
+      "provider_label": "现金收据服务商",
+      "provider_none": "（不使用）",
+      "provider_not_installed": "启用支付插件后即可选择开具服务商。",
+      "provider_help": "可与用于支付的 PG 分开选择。",
+      "shipping_fee_tax_label": "运费计税方式",
+      "shipping_fee_tax_proportional": "按比例分摊（默认）",
+      "shipping_fee_tax_taxable": "全额计税",
+      "shipping_fee_tax_follow_main_item": "以主要货物为准",
+      "shipping_fee_tax_help": "按比例分摊是指按应税、免税商品的金额比例分摊运费。",
+      "self_issue_label": "启用自行开具",
+      "self_issue_help": "对买家未申请的银行汇款订单也自动开具（仅限用于个人所得税抵扣）。",
+      "self_issue_mandatory_help": "属于现金收据强制开具行业的，即使买家未申请也有开具义务。如属于该行业请开启。",
+      "self_issue_mandatory_link": "韩国国税厅强制开具行业指南"
+    }
+  },
+  "claim": {
+    "title": "理赔设置",
+    "refund_reasons": {
+      "section_title": "退款原因管理",
+      "add_button": "添加原因",
+      "empty": "尚未登记任何退款原因。",
+      "columns": {
+        "code": "代码",
+        "name": "原因名称",
+        "fault_type": "责任归属",
+        "is_user_selectable": "客户可选",
+        "is_active": "启用",
+        "actions": "管理"
+      },
+      "form": {
+        "code": "原因代码",
+        "code_placeholder": "英文小写字母、下划线（例：order_mistake）",
+        "name": "原因名称",
+        "name_ko_placeholder": "韩语",
+        "name_en_placeholder": "English",
+        "fault_type": "责任归属",
+        "fault_types": {
+          "customer": "客户责任",
+          "seller": "卖家责任",
+          "carrier": "物流公司责任"
+        },
+        "is_user_selectable": "客户可选择",
+        "cancel": "取消",
+        "save": "添加"
+      },
+      "confirm_delete": "确定要删除该退款原因吗？",
+      "validation": {
+        "code_required": "请输入代码",
+        "name_required": "请输入原因名称"
+      }
+    }
+  },
+  "shipping": {
+    "title": "配送设置",
+    "description": "管理配送相关设置。",
+    "basic": {
+      "title": "基本配送设置",
+      "description": "管理默认配送国家／地区及海外配送设置。",
+      "default_country": "默认国家／地区",
+      "default_country_hint": "登记新配送政策时默认添加的国家／地区",
+      "international_shipping": "启用海外配送",
+      "international_shipping_description": "启用海外配送功能"
+    },
+    "countries": {
+      "title": "可配送国家／地区",
+      "description": "设置可配送的国家／地区。",
+      "add": "添加国家／地区",
+      "country_code": "国家／地区代码",
+      "country_code_placeholder": "例：KR",
+      "country_name": "国家／地区名称",
+      "is_active": "使用",
+      "actions": "管理",
+      "delete": "删除",
+      "edit": "修改",
+      "empty": "尚未登记任何配送国家／地区。",
+      "duplicate_error": "该国家／地区代码已登记。",
+      "default_badge": "默认"
+    },
+    "types": {
+      "section_title": "配送类型管理",
+      "add_button": "添加类型",
+      "empty": "尚未登记任何配送类型。",
+      "columns": {
+        "code": "代码",
+        "name": "类型名称",
+        "category": "分类",
+        "is_active": "启用",
+        "actions": "管理"
+      },
+      "form": {
+        "code": "类型代码",
+        "code_placeholder": "英文小写字母、下划线（例：express_delivery）",
+        "name": "类型名称",
+        "name_ko_placeholder": "韩语",
+        "name_en_placeholder": "English",
+        "category": "分类",
+        "cancel": "取消",
+        "save": "添加"
+      },
+      "categories": {
+        "domestic": "国内配送",
+        "international": "海外配送",
+        "other": "其他"
+      },
+      "confirm_delete": "确定要删除该配送类型吗？",
+      "validation": {
+        "code_required": "请输入代码",
+        "name_required": "请输入类型名称"
+      }
+    },
+    "carriers": {
+      "section_title": "物流公司管理",
+      "add_button": "添加物流公司",
+      "empty": "尚未登记任何物流公司。",
+      "columns": {
+        "code": "代码",
+        "name": "物流公司名称",
+        "type": "类型",
+        "tracking_url": "跟踪 URL",
+        "is_active": "启用",
+        "actions": "管理"
+      },
+      "form": {
+        "code": "物流公司代码",
+        "code_placeholder": "英文小写字母、数字、连字符（例：cj, fedex）",
+        "name": "物流公司名称",
+        "type": "类型",
+        "type_domestic": "国内",
+        "type_international": "国际",
+        "tracking_url": "跟踪 URL",
+        "tracking_url_placeholder": "https://example.com/track?no={tracking_number}",
+        "tracking_url_help": "{tracking_number} 将被替换为运单号。",
+        "cancel": "取消",
+        "save": "保存",
+        "name_ko_placeholder": "韩语"
+      },
+      "created": "物流公司已登记。",
+      "updated": "物流公司已修改。",
+      "deleted": "物流公司已删除。",
+      "confirm_delete": "确定要删除该物流公司吗？",
+      "validation": {
+        "code_required": "请输入代码",
+        "name_required": "请输入物流公司名称"
+      }
+    },
+    "remote_area": {
+      "title": "偏远及岛屿地区运费默认设置",
+      "description": "设置偏远及岛屿地区运费的默认值。",
+      "enable": "启用偏远及岛屿地区附加运费",
+      "remote_extra_fee": "偏远及岛屿地区附加运费",
+      "island_extra_fee": "济州／岛屿附加运费"
+    },
+    "modal": {
+      "disable_international": {
+        "title": "确认停用海外配送",
+        "message": "停用海外配送后，除默认国家／地区外，所有国家／地区的启用状态都将被解除。要继续吗？",
+        "confirm": "确认",
+        "cancel": "取消"
+      }
+    }
+  },
+  "seo": {
+    "meta_settings": {
+      "title": "元标签设置",
+      "description": "设置各页面的元标签。可使用变量进行动态设置。",
+      "main_page": "首页",
+      "category_page": "分类",
+      "search_page": "搜索结果",
+      "product_page": "商品详情页",
+      "shop_index_page": "商城首页",
+      "meta_title": "Title",
+      "meta_description": "Description",
+      "available_variables": "可使用的变量",
+      "main_description_placeholder": "首页说明",
+      "category_description_placeholder": "分类页说明",
+      "search_description_placeholder": "搜索结果页说明",
+      "product_description_placeholder": "商品详情页说明",
+      "shop_index_description_placeholder": "商城首页说明"
+    },
+    "seo_friendly": {
+      "title": "搜索引擎友好页面设置",
+      "description": "为搜索引擎提供经过优化的页面。",
+      "provide_pages": "提供搜索引擎友好页面的项目",
+      "site_main": "站点首页",
+      "category": "分类",
+      "search_result": "搜索结果",
+      "product_detail": "商品详情页",
+      "shop_index": "商城首页",
+      "clearing_cache": "删除中...",
+      "clear_cache_confirm_title": "删除 SEO 缓存",
+      "clear_cache_confirm": "确定要删除全部 SEO 缓存吗？删除后当爬虫再次访问时缓存将被重新生成。",
+      "clear_cache_success": "SEO 缓存已成功删除。",
+      "clear_cache_failed": "SEO 缓存删除失败。",
+      "user_agent_management": "搜索引擎 User-Agent 管理",
+      "user_agent_description": "管理要提供搜索引擎友好页面的 User-Agent。",
+      "user_agent_placeholder": "输入 User-Agent（例：Googlebot）",
+      "cache_management": "搜索引擎友好页面缓存管理",
+      "cache_description": "管理搜索引擎友好页面的缓存。",
+      "current_cache_size": "当前缓存容量:",
+      "clear_cache": "删除缓存"
+    }
+  },
+  "review_settings": {
+    "title": "评价设置",
+    "description": "管理商品评价相关设置。",
+    "write_deadline_days_label": "可撰写评价的期限",
+    "write_deadline_days_hint": "确认收货后可撰写评价的期限",
+    "days_unit": "天",
+    "max_images_label": "最大图片数",
+    "max_images_hint": "每条评价可附加的图片数（0 = 不可附图）",
+    "images_unit": "张",
+    "max_image_size_mb_label": "图片最大容量",
+    "max_image_size_mb_hint": "可上传的图片文件的最大容量"
+  },
+  "notification_definitions": {
+    "title": "通知设置",
+    "description": "管理各渠道的电商通知模板。",
+    "channel_management": "通知渠道管理",
+    "active": "启用",
+    "inactive": "停用",
+    "default_badge": "默认",
+    "btn_edit": "编辑",
+    "btn_reset": "恢复默认值",
+    "btn_activate": "启用",
+    "btn_deactivate": "停用",
+    "toggle_success": "通知的启用状态已变更。",
+    "reset_success": "通知设置已恢复为默认值。",
+    "reset_failed": "通知设置恢复失败。",
+    "reset_modal": {
+      "title": "恢复为默认值",
+      "confirm_message": "将该通知的所有渠道模板恢复为默认值。",
+      "warning_message": "已保存的标题／正文／接收人设置将全部消失且无法恢复。",
+      "target_label": "恢复对象:",
+      "btn_confirm": "恢复",
+      "btn_confirming": "恢复中..."
+    },
+    "no_template_for_channel": "该渠道没有对应的模板。",
+    "body_preview": "正文预览",
+    "save_success": "通知设置已保存。",
+    "save_error": "通知设置保存失败。",
+    "types": {
+      "order_confirmed": "订单确认",
+      "order_pending_deposit": "银行汇款指引",
+      "order_shipped": "开始配送",
+      "order_delivered": "配送完成",
+      "order_completed": "确认收货",
+      "order_cancelled": "取消订单",
+      "new_order_admin": "新订单（管理员）",
+      "inquiry_received": "商品咨询受理（管理员）",
+      "inquiry_replied": "商品咨询回复",
+      "mileage_expiring_soon": "积分即将失效"
+    },
+    "btn_search": "搜索",
+    "btn_reset_filter": "重置",
+    "search_placeholder": "请输入搜索词",
+    "search_type_all": "全部",
+    "search_type_subject": "标题",
+    "search_type_body": "正文",
+    "total_count": "共 {{count}} 条",
+    "per_page_label": "每页",
+    "empty_message": "尚未登记任何通知设置。",
+    "empty_no_results": "没有搜索结果。",
+    "edit_modal": {
+      "title": "编辑通知模板",
+      "type_label": "类型:",
+      "channel_label": "渠道:",
+      "subject": "标题",
+      "body": "正文",
+      "variables_title": "可使用的变量",
+      "btn_preview": "预览",
+      "validation_error": "请确认输入的信息。",
+      "is_active_label": "启用"
+    },
+    "preview_modal": {
+      "title": "通知预览",
+      "rendered_subject": "渲染后的标题",
+      "rendered_body": "渲染后的正文",
+      "btn_close": "关闭"
+    }
+  },
+  "identity": {
+    "policy_form_editor_label": "添加/编辑实名认证政策",
+    "intro_title": "电商实名认证政策",
+    "intro": "管理电商模块声明的政策以及运营者添加的政策。可启用支付前身份确认等领域专属政策。",
+    "purposes_section_title": "本模块登记的实名认证用途",
+    "purposes_section_description": "这是电商模块声明的实名认证用途。可在政策的“认证目的”列中选择。",
+    "purposes_empty": "本模块未登记任何实名认证用途。",
+    "allowed_channels": "允许的渠道:",
+    "list_title": "政策列表",
+    "add_policy": "添加政策",
+    "empty": "尚未登记任何政策。",
+    "edit": "编辑",
+    "grace_minutes": "{minutes} 分钟",
+    "enable_success": "政策已启用。",
+    "disable_success": "政策已停用。",
+    "toggle_failed": "政策状态变更失败。",
+    "col": {
+      "key": "政策键",
+      "scope": "范围",
+      "target": "对象",
+      "purpose": "目的",
+      "enabled": "启用",
+      "grace": "宽限",
+      "source": "来源",
+      "actions": "操作"
+    },
+    "scope": {
+      "route": "路由",
+      "hook": "钩子",
+      "custom": "自定义"
+    },
+    "source": {
+      "core": "核心",
+      "module": "模块",
+      "plugin": "插件",
+      "admin": "管理员"
+    }
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "title": "优惠码管理",
+  "description": "创建并管理优惠码。",
+  "actions": {
+    "create": "登记优惠码",
+    "edit_search": "编辑搜索",
+    "search": "搜索",
+    "reset": "重置",
+    "bulk_change": "批量变更"
+  },
+  "search": {
+    "field": {
+      "all": "全部",
+      "discount_code_name": "优惠码名称",
+      "discount_code": "代码"
+    },
+    "placeholder": "请输入搜索词...",
+    "column_select": "选择列",
+    "detail_search": "编辑搜索"
+  },
+  "filter": {
+    "benefit_type": "优惠类别",
+    "code_type": "代码类型",
+    "benefit_amount": "优惠金额",
+    "created_at": "登记日期",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "min": "最小",
+    "max": "最大",
+    "amount_suffix": "韩元",
+    "date_quick": {
+      "today": "今天",
+      "3_days": "3 天内",
+      "1_week": "一周",
+      "1_month": "1 个月",
+      "3_months": "3 个月",
+      "all": "全部"
+    }
+  },
+  "benefit_type": {
+    "all": "全部",
+    "product": "商品",
+    "shipping_fee": "运费"
+  },
+  "code_type": {
+    "all": "全部",
+    "public_code": "通用码",
+    "one_time_code": "一次性码"
+  },
+  "benefit_category": {
+    "fixed": "定额",
+    "rate": "定率"
+  },
+  "status": {
+    "active": "启用",
+    "inactive": "停用"
+  },
+  "batch": {
+    "selected_count": "已选择 {{count}} 项",
+    "status_change": "变更状态"
+  },
+  "table": {
+    "total_count": "共 {{count}} 个",
+    "sort": {
+      "created_at_desc": "登记时间最新优先",
+      "created_at_asc": "登记时间最早优先",
+      "discount_code_name_asc": "优惠码名称升序",
+      "discount_code_name_desc": "优惠码名称降序"
+    },
+    "per_page": "{{count}} 个",
+    "columns": {
+      "checkbox": "选择",
+      "no": "编号",
+      "benefit_type": "优惠类别",
+      "code_type": "代码类型",
+      "discount_code_name": "优惠码名称",
+      "code_info": "代码信息",
+      "benefit": "优惠",
+      "validity_period": "有效期",
+      "history": "记录",
+      "created_at": "登记日期",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "benefit_max": "最高 {{amount}}"
+  },
+  "mobile": {
+    "code_label": "代码",
+    "validity_period_label": "有效期",
+    "history_label": "记录",
+    "status_label": "状态",
+    "issued_count": "已发放 {{count}} 条",
+    "used_count": "已使用 {{count}} 条",
+    "view_history": "查询"
+  },
+  "modal": {
+    "status_change": {
+      "title": "确定要变更状态吗？",
+      "description": "所选 {{count}} 个优惠码的状态将变更为 {{status}}。",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "delete": {
+      "title": "确定要删除优惠码吗？",
+      "description": "此操作无法撤销。优惠码将被永久删除。",
+      "cancel": "取消",
+      "confirm": "删除"
+    }
+  },
+  "create": {
+    "title": "登记优惠码",
+    "description": "登记新的优惠码。",
+    "section": {
+      "status": "优惠码现况",
+      "basic_info": "基本信息",
+      "benefit_settings": "优惠设置",
+      "code_issue": "优惠码发放",
+      "usage_limit": "优惠码使用限制"
+    },
+    "field": {
+      "issue_status": "发放现况",
+      "is_visible": "是否展示",
+      "benefit_type": "优惠类别",
+      "code_type": "优惠码类型",
+      "discount_code_name": "优惠码名称",
+      "discount_code_description": "优惠码说明",
+      "benefit": "优惠",
+      "min_order_amount": "最低订单金额",
+      "validity_period": "有效期",
+      "code_generation_method": "代码生成方式",
+      "discount_code": "优惠码",
+      "limit_type": "先到先得限制",
+      "apply_target": "适用对象"
+    },
+    "option": {
+      "product": "商品",
+      "order": "订单",
+      "shipping_fee": "运费",
+      "public_code": "通用码",
+      "one_time_code": "一次性码",
+      "auto_generate": "自动生成",
+      "manual_generate": "手动生成",
+      "unlimited": "无限制",
+      "limited": "人数",
+      "no_limit": "无限制",
+      "specific_product": "指定商品",
+      "specific_category": "指定分类"
+    },
+    "placeholder": {
+      "discount_code_name": "请输入优惠码名称",
+      "discount_code_description": "请输入优惠码说明",
+      "amount_input": "输入金额",
+      "min_order": "最低订单金额",
+      "max_discount": "最大金额",
+      "start_date": "开始日期",
+      "end_date": "结束日期",
+      "limit_count": "人数"
+    },
+    "hint": {
+      "issued_used": "已发放 {{issued}} 条 / 已使用 {{used}} 条",
+      "min_order_suffix": "韩元以上购买时可使用",
+      "max_discount_suffix": "韩元优惠",
+      "code_length_suffix": "位的优惠码生成 1 个",
+      "limit_suffix": "人以内可使用"
+    },
+    "button": {
+      "view_history": "查询",
+      "select_product": "选择商品",
+      "select_category": "选择分类"
+    }
+  }
+}

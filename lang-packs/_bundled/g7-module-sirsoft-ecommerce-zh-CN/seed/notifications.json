@@ -1,0 +1,162 @@
+{
+  "order_pending_deposit": {
+    "definition": {
+      "name": "银行汇款到账指引",
+      "description": "银行汇款订单受理时，向客户告知汇款账户及金额"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 汇款指引 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">汇款指引</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，感谢您的下单。请汇款至以下账户，订单即会被处理。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>汇款金额:</strong> {deposit_amount}</p><p style=\"margin:5px 0\"><strong>汇款银行:</strong> {bank_name}</p><p style=\"margin:5px 0\"><strong>账号:</strong> {account_number}</p><p style=\"margin:5px 0\"><strong>开户人:</strong> {account_holder}</p><p style=\"margin:5px 0\"><strong>汇款人姓名:</strong> {depositor_name}</p><p style=\"margin:5px 0\"><strong>汇款期限:</strong> {deposit_due_at}</p></div><p style=\"color:#555;line-height:1.6\">若在汇款期限内未完成汇款，订单可能会被自动取消。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看订单详情</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "汇款指引",
+        "body": "{name} 您好，订单号 {order_number} 的汇款金额为 {deposit_amount}。({bank_name} {account_number})"
+      }
+    }
+  },
+  "mileage_expiring_soon": {
+    "definition": {
+      "name": "积分即将失效",
+      "description": "向积分即将失效的会员发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] {amount} 分积分即将失效",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">积分即将失效提醒</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，您持有的部分积分即将失效。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>即将失效的积分:</strong> {amount} 分</p><p style=\"margin:5px 0\"><strong>失效日期:</strong> {expires_date}</p><p style=\"margin:5px 0\"><strong>当前余额:</strong> {balance} 分</p></div><p style=\"color:#555;line-height:1.6\">请在失效前使用积分。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{mileage_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看积分记录</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "积分即将失效提醒",
+        "body": "{name} 您好，{amount} 分积分将于 {expires_date} 失效。"
+      }
+    }
+  },
+  "order_confirmed": {
+    "definition": {
+      "name": "支付完成",
+      "description": "支付完成时向客户发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 支付已完成 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">支付完成</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，支付已完成。感谢您的下单。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>支付金额:</strong> {total_amount}</p><p style=\"margin:5px 0\"><strong>收件人:</strong> {shipping_recipient_name}</p><p style=\"margin:5px 0\"><strong>配送国家／地区:</strong> {shipping_country_name}</p><p style=\"margin:5px 0\"><strong>收货地址:</strong> {shipping_address}</p></div><p style=\"color:#555;line-height:1.6\">点击下方按钮即可查看订单的详细内容。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看订单详情</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "支付已完成",
+        "body": "{name} 您好，订单号 {order_number} 的支付已完成。"
+      }
+    }
+  },
+  "order_shipped": {
+    "definition": {
+      "name": "开始配送",
+      "description": "开始配送时向客户发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 您订购的商品已发货 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">开始配送提醒</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，您订购的商品已发货。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>物流公司:</strong> {carrier_name}</p><p style=\"margin:5px 0\"><strong>运单号:</strong> {tracking_number}</p></div><p style=\"color:#555;line-height:1.6\">点击下方按钮即可查看订单详情及配送状态。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看订单详情</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "商品已发货",
+        "body": "{name} 您好，订单号 {order_number} 已通过 {carrier_name}(运单号: {tracking_number}) 发货。"
+      }
+    }
+  },
+  "order_delivered": {
+    "definition": {
+      "name": "配送完成",
+      "description": "配送完成时向客户发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 您订购的商品已送达 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">配送完成提醒</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，您订购的商品已配送完成。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>物流公司:</strong> {carrier_name}</p><p style=\"margin:5px 0\"><strong>运单号:</strong> {tracking_number}</p></div><p style=\"color:#555;line-height:1.6\">确认商品后，可在订单详情中进行确认收货。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看订单详情</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "商品已送达",
+        "body": "{name} 您好，订单号 {order_number} 的配送已完成。"
+      }
+    }
+  },
+  "order_completed": {
+    "definition": {
+      "name": "确认收货",
+      "description": "确认收货时向客户发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 已确认收货 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">确认收货提醒</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，已确认收货。感谢您的惠顾。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>支付金额:</strong> {total_amount}</p></div><p style=\"color:#555;line-height:1.6\">点击下方按钮即可查看订单记录。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看订单记录</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "已确认收货",
+        "body": "{name} 您好，订单号 {order_number} 已确认收货。"
+      }
+    }
+  },
+  "order_cancelled": {
+    "definition": {
+      "name": "取消订单",
+      "description": "取消订单时向客户发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 订单已取消 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #DC2626;padding-bottom:10px\">取消订单提醒</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，订单已被取消。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>取消原因:</strong> {cancel_reason}</p></div><p style=\"color:#555;line-height:1.6\">退款将根据支付方式在 3~7 个工作日内处理。点击下方按钮即可查看订单详情。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看订单详情</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "订单已取消",
+        "body": "{name} 您好，订单号 {order_number} 已被取消。原因: {cancel_reason}"
+      }
+    }
+  },
+  "new_order_admin": {
+    "definition": {
+      "name": "新订单管理员通知",
+      "description": "新订单受理时向管理员发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 已受理新订单 (订单号: {order_number})",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">新订单受理</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，已受理新的订单。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>订单号:</strong> {order_number}</p><p style=\"margin:5px 0\"><strong>下单人:</strong> {customer_name}</p><p style=\"margin:5px 0\"><strong>支付金额:</strong> {total_amount}</p></div><p style=\"color:#555;line-height:1.6\">请在管理员页面确认订单详情。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{order_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">前往订单管理</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "已受理新的订单",
+        "body": "{customer_name} 提交了订单号 {order_number} (支付金额: {total_amount})。"
+      }
+    }
+  },
+  "inquiry_received": {
+    "definition": {
+      "name": "商品咨询受理",
+      "description": "商品咨询受理时向管理员发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 已受理新的商品咨询",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">新商品咨询受理</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，已受理新的商品咨询。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>商品名称:</strong> {product_name}</p><p style=\"margin:5px 0\"><strong>咨询人:</strong> {customer_name}</p><p style=\"margin:5px 0\"><strong>咨询内容:</strong> {inquiry_content}</p></div><p style=\"color:#555;line-height:1.6\">请在管理员页面确认咨询内容并进行回复。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{inquiry_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">确认咨询</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "已受理新的商品咨询",
+        "body": "{customer_name} 对“{product_name}”商品留下了咨询。"
+      }
+    }
+  },
+  "inquiry_replied": {
+    "definition": {
+      "name": "咨询回复完成",
+      "description": "咨询回复时向客户发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] 商品咨询已收到回复",
+        "body": "<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#333;border-bottom:2px solid #4F46E5;padding-bottom:10px\">咨询回复提醒</h2><p style=\"color:#555;line-height:1.6\">{name} 您好，您咨询的内容已收到回复。</p><div style=\"background:#f8f9fa;padding:15px;border-radius:8px;margin:15px 0\"><p style=\"margin:5px 0\"><strong>商品名称:</strong> {product_name}</p><p style=\"margin:5px 0\"><strong>咨询内容:</strong> {inquiry_content}</p></div><p style=\"color:#555;line-height:1.6\">请点击下方按钮查看回复内容。</p><div style=\"text-align:center;margin:25px 0\"><a href=\"{inquiry_url}\" style=\"display:inline-block;padding:12px 30px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold\">查看回复</a></div><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"color:#999;font-size:12px\">本邮件由 {app_name} 发送。</p></div>"
+      },
+      "database": {
+        "subject": "咨询回复已登记",
+        "body": "{name} 您好，“{product_name}”商品的咨询已收到回复。"
+      }
+    }
+  }
+}

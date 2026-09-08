@@ -1,0 +1,1210 @@
+{
+  "title": "商品管理",
+  "add": "登记商品",
+  "preset": {
+    "label": "搜索预设",
+    "out_of_stock": "售罄商品",
+    "new_product": "新登记商品",
+    "display_stopped": "停止展示",
+    "applied": "已应用‘{{name}}’预设。"
+  },
+  "search": {
+    "placeholder": "请输入搜索词...",
+    "field": {
+      "all": "全部",
+      "product_name": "商品名称",
+      "description": "商品说明",
+      "product_code": "商品编码",
+      "sku": "SKU",
+      "barcode": "条码"
+    },
+    "column_select": "选择列",
+    "detail_search": "高级搜索"
+  },
+  "filter": {
+    "detail_title": "高级搜索",
+    "category": "分类",
+    "no_category": "未设置分类",
+    "date": "日期",
+    "date_type": {
+      "created_at": "登记日期",
+      "updated_at": "修改日期"
+    },
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "date_quick": {
+      "today": "今天",
+      "3days": "3 天内",
+      "week": "一周",
+      "month": "1 个月",
+      "3months": "3 个月",
+      "all": "全部"
+    },
+    "sales_status": "销售状态",
+    "sales_status_options": {
+      "all": "全部",
+      "on_sale": "在售",
+      "out_of_stock": "售罄",
+      "restocking": "补货中",
+      "stopped": "停售"
+    },
+    "display_status": "展示状态",
+    "display_status_options": {
+      "all": "全部",
+      "displayed": "展示中",
+      "hidden": "停止展示"
+    },
+    "brand": "品牌",
+    "no_brand": "未设置品牌",
+    "tax_status": "计税方式",
+    "tax_status_options": {
+      "all": "全部",
+      "taxable": "应税",
+      "tax_free": "非应税"
+    },
+    "price": "价格",
+    "price_type": {
+      "selling_price": "售价",
+      "supply_price": "未税金额",
+      "original_price": "原价"
+    },
+    "min_price": "最低金额",
+    "max_price": "最高金额",
+    "min": "最小",
+    "max": "最大",
+    "stock": "库存",
+    "stock_unit": "件",
+    "shipping_policy": "配送政策",
+    "shipping_policy_options": {
+      "all": "全部"
+    },
+    "detail_filter_label": "高级搜索筛选"
+  },
+  "action": {
+    "edit": "修改",
+    "copy": "复制",
+    "delete": "删除",
+    "edit_search": "编辑搜索",
+    "search": "搜索",
+    "reset": "重置",
+    "save_preset": "保存预设",
+    "view_user_page": "查看用户界面"
+  },
+  "bulk_apply": "批量应用",
+  "bulk_success": "所选商品已批量变更。",
+  "bulk": {
+    "no_selection": "没有已选择的项目。",
+    "update_success": "已修改 {{products}} 件商品、{{options}} 个选项。",
+    "update_error": "批量更新失败。",
+    "option_update_success": "已修改 {{count}} 个选项。",
+    "option_update_error": "选项批量更新失败。"
+  },
+  "stock_options_hint": "有选项的商品按选项分别管理库存",
+  "stock_mismatch_warning": "与选项库存合计不一致",
+  "selected_count": "已选择 {count} 项",
+  "total_count": "共 {count} 个",
+  "excel_download": "Excel 下载",
+  "sort": {
+    "latest": "最新优先",
+    "oldest": "最早优先",
+    "name_asc": "名称升序",
+    "name_desc": "名称降序",
+    "price_asc": "价格从低到高",
+    "price_desc": "价格从高到低",
+    "stock_asc": "库存从少到多",
+    "stock_desc": "库存从多到少"
+  },
+  "table": {
+    "selected_count": "已选择 {{count}} 项",
+    "total_count": "共 {{count}} 个",
+    "bulk_action": {
+      "sales_status": "变更销售状态",
+      "display_status": "变更展示状态",
+      "price": "变更售价",
+      "price_bulk": "批量变更售价",
+      "stock_bulk": "批量变更库存",
+      "apply": "批量变更"
+    },
+    "sort": {
+      "label": "排序",
+      "latest": "最新优先",
+      "oldest": "最早优先",
+      "name_asc": "名称升序",
+      "name_desc": "名称降序",
+      "price_asc": "价格从低到高",
+      "price_desc": "价格从高到低"
+    },
+    "per_page": "{{count}} 个",
+    "excel_download": "Excel 下载",
+    "column": {
+      "image": "图片",
+      "product_name": "商品名称",
+      "original_price": "原价",
+      "selling_price": "售价",
+      "stock": "库存",
+      "safety_stock": "安全库存",
+      "sales_status": "销售状态",
+      "display_status": "展示状态",
+      "shipping_policy": "运费政策",
+      "created_at": "登记日期",
+      "updated_at": "修改日期",
+      "actions": "操作",
+      "default": "默认",
+      "usd": "USD ($)",
+      "jpy": "JPY (¥)",
+      "cny": "CNY (¥)",
+      "sku": "SKU",
+      "use_status": "启用状态",
+      "color": "颜色",
+      "category": "分类",
+      "brand": "品牌",
+      "min_purchase_qty": "最少数量",
+      "max_purchase_qty": "最多购买数量"
+    },
+    "status": {
+      "on_sale": "在售",
+      "out_of_stock": "售罄",
+      "restocking": "补货中",
+      "stopped": "停售",
+      "discontinued": "停售",
+      "displayed": "展示中",
+      "hidden": "停止展示"
+    },
+    "options": {
+      "title": "选项",
+      "color": "颜色",
+      "size": "尺码",
+      "show_detail": "查看详细选项",
+      "hide_detail": "收起详细选项",
+      "column": {
+        "name": "选项名称",
+        "is_default": "默认",
+        "color": "颜色",
+        "size": "尺码",
+        "list_price": "原价",
+        "selling_price": "售价",
+        "price": "价格",
+        "sku": "SKU",
+        "stock": "库存",
+        "safe_stock": "安全库存",
+        "active": "使用"
+      },
+      "no_options": "尚未登记任何选项",
+      "loading": "正在加载选项...",
+      "load_failed": "加载选项失败。",
+      "retry": "重试"
+    },
+    "shipping": {
+      "free": "免运费",
+      "conditional_free": "有条件免运费",
+      "standard": "基本配送"
+    },
+    "pagination": {
+      "prev": "上一页",
+      "next": "下一页",
+      "showing": "全部 {{total}} 个中的 {{from}} - {{to}}"
+    },
+    "empty": {
+      "title": "尚未登记任何商品",
+      "description": "请添加新商品"
+    },
+    "mobile": {
+      "price_label": "原价",
+      "selling_price_label": "售价",
+      "stock_label": "库存",
+      "stock": "库存:",
+      "safety_stock_label": "安全库存",
+      "status_label": "状态",
+      "shipping_label": "配送政策",
+      "created_at_label": "登记日期",
+      "updated_at_label": "修改日期",
+      "unit": "件",
+      "options": "选项列表"
+    },
+    "no_data": "尚未登记任何商品"
+  },
+  "validation": {
+    "selling_price_exceeds_list_price": "售价不能超过原价"
+  },
+  "index": {
+    "title": "商品管理",
+    "description": "管理商品列表",
+    "add_product": "添加商品",
+    "empty_title": "尚未登记任何商品",
+    "empty_description": "请添加新商品"
+  },
+  "create": {
+    "title": "登记商品",
+    "title_edit": "修改商品",
+    "description": {
+      "title": "详细说明",
+      "placeholder": "请输入详细说明",
+      "mode_text": "文本",
+      "mode_html": "HTML",
+      "languages": {
+        "ko": "韩语",
+        "en": "英语"
+      },
+      "add_language": "添加语言"
+    },
+    "description_edit": "修改商品信息",
+    "basic_info": {
+      "title": "基本信息",
+      "category": {
+        "title": "选择分类",
+        "required": "*",
+        "max_count": "（最多 5 个）",
+        "manage": "分类管理",
+        "selected": "已选分类",
+        "selected_count": "（{{current}}/{{max}}）",
+        "step": "第 {{n}} 级"
+      },
+      "brand": {
+        "title": "品牌",
+        "manage": "品牌管理"
+      },
+      "product_name": {
+        "title": "商品名称",
+        "required": "*",
+        "placeholder": "请输入商品名称"
+      },
+      "languages": {
+        "ko": "韩语",
+        "en": "英语"
+      }
+    },
+    "sales_info": {
+      "title": "销售信息",
+      "base_currency": "默认货币",
+      "original_price": "原价",
+      "sale_price": "售价",
+      "sale_price_hint": "将按默认设置选项的售价自动设定",
+      "stock": "库存",
+      "stock_sync_hint": "与最新库存一致",
+      "tax_status": "计税方式",
+      "tax_status_options": {
+        "taxable": "应税",
+        "tax_free": "免税"
+      },
+      "sales_status": "销售状态",
+      "sales_status_options": {
+        "on_sale": "在售",
+        "out_of_stock": "售罄",
+        "stopped": "停售"
+      },
+      "display_status": "展示状态",
+      "display_status_options": {
+        "displayed": "展示中",
+        "hidden": "不展示"
+      }
+    },
+    "product_options": {
+      "title": "商品选项",
+      "bulk_create": {
+        "title": "批量生成选项（最多 3 个）",
+        "helper": "这是用于生成商品选项的功能。输入选项名称和项目后，点击“按选项项目生成”按钮即可生成组合选项。（默认项目将被重置）",
+        "option_name_placeholder": "选项名称",
+        "add_option": "添加选项",
+        "generate": "按选项项目生成"
+      },
+      "table": {
+        "title": "商品选项设置",
+        "multi_currency_auto": "多货币价格自动填充",
+        "add_row": "+ 添加行",
+        "columns": {
+          "default": "默认",
+          "size": "尺码",
+          "color": "颜色",
+          "regular_price": "原价",
+          "sale_price": "售价 *",
+          "usd": "USD($)",
+          "jpy": "JPY(¥)",
+          "cny": "CNY(¥)",
+          "sku": "SKU",
+          "stock": "库存 *",
+          "safety_stock": "安全库存",
+          "weight": "重量(g)",
+          "volume": "体积(cm³)",
+          "mileage": "积分",
+          "active": "使用",
+          "delete": "删除"
+        }
+      },
+      "additional": {
+        "title": "商品附加选项",
+        "helper": "这是可让客户自行输入文本的附加选项。最多可添加 5 个。（例：个性化文字、礼物留言等）",
+        "used": "使用",
+        "unused": "未使用",
+        "option_name": "选项名称",
+        "option_name_placeholder": "输入选项名称",
+        "required": "必选",
+        "add_option": "添加附加选项"
+      }
+    },
+    "image": {
+      "title": "图片",
+      "upload_title": "上传图片（最多 10 张）",
+      "upload_hint": "建议：1000x1000px，最大 5MB",
+      "drag_hint": "拖动可变更顺序（主图始终排在最前）",
+      "thumbnail_hint": "主图将自动生成各尺寸的缩略图",
+      "main_badge": "主图",
+      "set_main_button": "主图"
+    },
+    "product_notice": {
+      "title": "商品信息告示",
+      "category_label": "选择商品类别",
+      "category_placeholder": "请选择商品类别",
+      "manage_link": "前往商品信息告示管理",
+      "languages": {
+        "ko": "韩语",
+        "en": "英语",
+        "zh": "中文",
+        "ja": "日语"
+      },
+      "items_header": "项目列表",
+      "items_count": "{{count}} 个",
+      "batch_change": "将所有项目变更为“参见详细说明”",
+      "table": {
+        "order": "序号",
+        "name": "项目名称",
+        "value": "内容"
+      },
+      "add_item": "添加项目",
+      "category_options": {
+        "clothing": "服装",
+        "food": "食品",
+        "electronics": "电子产品",
+        "cosmetics": "化妆品"
+      }
+    },
+    "shipping": {
+      "title": "运费",
+      "policy_label": "运费政策",
+      "manage_link": "运费管理",
+      "use_default": "使用默认运费",
+      "policy_types": {
+        "default": "默认",
+        "free_shipping": "免运费政策",
+        "conditional_free": "有条件免运费",
+        "collect_3000": "到付 3000 韩元",
+        "quantity_based": "按数量的配送政策"
+      },
+      "detail": {
+        "delivery_method": "配送方式",
+        "carrier": "物流公司",
+        "fee": "运费",
+        "delivery_days": "配送时长",
+        "condition": "配送条件",
+        "return_exchange_fee": "退货/换货运费",
+        "additional_info": "附加信息"
+      }
+    },
+    "common_info": {
+      "title": "商品通用信息",
+      "label": "商品通用信息",
+      "manage_link": "通用信息管理",
+      "use_default": "使用默认商品通用信息",
+      "types": {
+        "none": "不使用",
+        "general": "一般商品说明"
+      },
+      "badge_default": "默认"
+    },
+    "other_info": {
+      "title": "其他信息",
+      "product_label": {
+        "title": "商品标签",
+        "hit": "HIT",
+        "etc": "其他",
+        "best": "BEST",
+        "sale": "SALE",
+        "edit": "修改",
+        "remove": "移除"
+      },
+      "min_qty": {
+        "title": "最少购买数量",
+        "hint": "1 件以上"
+      },
+      "max_qty": {
+        "title": "最多购买数量",
+        "hint": "0 表示不限制"
+      },
+      "purchase_limit": {
+        "title": "限制购买对象",
+        "no_limit": "无限制",
+        "restricted": "限制购买对象"
+      },
+      "allowed_roles": {
+        "title": "允许的角色"
+      }
+    },
+    "seo_settings": {
+      "title": "SEO 设置",
+      "seo_tags": {
+        "label": "SEO 标签",
+        "placeholder": "输入标签后按 Enter"
+      }
+    },
+    "identification_codes": {
+      "title": "识别码",
+      "product_code": {
+        "label": "商品编码（自营商城）",
+        "placeholder": "输入商品编码"
+      },
+      "barcode": {
+        "label": "条码",
+        "placeholder": "输入条码"
+      },
+      "hs_code": {
+        "label": "HS 编码",
+        "placeholder": "输入 HS 编码"
+      }
+    },
+    "shopping_integration": {
+      "title": "购物对接",
+      "integration_status": "是否对接",
+      "enabled": "对接",
+      "disabled": "不对接",
+      "naver": {
+        "name": "Naver 购物对接",
+        "plugin": "Naver 购物插件"
+      },
+      "daum": {
+        "name": "Daum 购物对接",
+        "plugin": "Daum 购物插件"
+      },
+      "facebook": {
+        "name": "Facebook 购物对接",
+        "plugin": "Facebook 购物插件"
+      },
+      "google": {
+        "name": "Google 购物对接",
+        "plugin": "Google 购物插件"
+      }
+    },
+    "activity_log": {
+      "title": "处理日志",
+      "sort": {
+        "label": "排序:",
+        "latest": "处理时间最新优先",
+        "oldest": "处理时间最早优先"
+      },
+      "per_page": {
+        "label": "每页:"
+      },
+      "columns": {
+        "datetime": "处理时间",
+        "actor": "处理者",
+        "event": "事件"
+      }
+    },
+    "modal": {
+      "add_language": {
+        "title": "添加语言",
+        "description": "请选择要添加的语言。"
+      },
+      "label_period": {
+        "title": "标签期间设置",
+        "description": "设置标签的展示期间。",
+        "start_date": "开始日期",
+        "end_date": "结束日期（可选）",
+        "labels": {
+          "featured": "企划",
+          "new": "新品",
+          "best": "热卖",
+          "sale": "促销"
+        }
+      },
+      "copy_product": {
+        "title": "复制商品",
+        "description": "确定要复制所选商品并登记为新商品吗？",
+        "note": "原商品的所有信息都将被复制，可修改后保存。",
+        "copy": "进行复制"
+      },
+      "confirm": {
+        "title": "确认重新生成选项",
+        "regenerate_options": "原有选项将被重置。确定要按新的选项组合重新生成吗？",
+        "regenerate_options_note": "同名选项将保留原有的价格及库存信息。"
+      }
+    }
+  },
+  "edit": {
+    "title": "修改商品"
+  },
+  "form": {
+    "title": "商品信息",
+    "description": "填写商品信息",
+    "placeholder": "商品表单将显示在此处"
+  },
+  "modal": {
+    "multilingual_tag_edit_editor_label": "多语言标签编辑",
+    "preset_manage": {
+      "title": "预设管理",
+      "description": "管理搜索预设。",
+      "add_new": "添加新预设",
+      "empty": "没有已保存的预设。"
+    },
+    "preset_save": {
+      "title": "保存预设",
+      "description": "将当前搜索条件保存为预设。",
+      "placeholder": "请输入预设名称",
+      "save": "保存"
+    },
+    "preset_edit": {
+      "title": "修改预设"
+    },
+    "preset_delete": {
+      "title": "删除预设",
+      "confirm": "确定要删除‘{{name}}’预设吗？"
+    },
+    "bulk_price": {
+      "title": "批量变更售价",
+      "description": "变更所选 {{count}} 件商品的售价。",
+      "method": "变更方式",
+      "method_increase": "上调",
+      "method_decrease": "下调",
+      "method_fixed": "变更为",
+      "value": "变更金额/比例",
+      "unit_won": "韩元",
+      "unit_percent": "%",
+      "preview_increase": "将售价上调 {{value}}{{unit}}。",
+      "preview_decrease": "将售价下调 {{value}}{{unit}}。",
+      "preview_fixed": "将售价变更为 {{value}}{{unit}}。"
+    },
+    "bulk_stock": {
+      "title": "批量变更库存",
+      "description": "变更所选 {{count}} 件商品的库存。",
+      "method": "变更方式",
+      "method_increase": "增加",
+      "method_decrease": "减少",
+      "method_set": "变更为",
+      "value": "变更数量",
+      "preview_increase": "将库存增加 {{value}} 件。",
+      "preview_decrease": "将库存减少 {{value}} 件。",
+      "preview_set": "将库存变更为 {{value}} 件。"
+    },
+    "bulk_confirm": {
+      "title": "批量变更确认",
+      "description": "将对以下项目进行批量变更。",
+      "bulk_changes_section": "批量变更条件",
+      "products_section": "将被变更的商品（{{count}} 件）",
+      "options_section": "将被变更的选项（{{count}} 个）",
+      "sales_status": "将销售状态变更为 {{value}}。",
+      "display_status": "将展示状态变更为 {{value}}。",
+      "price": "将售价变更 {{value}}。",
+      "stock": "将库存变更 {{value}}。",
+      "price_change": "批量变更售价",
+      "stock_change": "批量变更库存",
+      "no_changes": "没有要变更的项目。",
+      "error_section": "变更失败",
+      "options_aggregate": "{{product}} > 全部 {{count}} 个选项"
+    },
+    "bulk_placeholder": {
+      "sales_status": "选择销售状态",
+      "display_status": "选择展示状态"
+    },
+    "excel_download": {
+      "title": "Excel 下载",
+      "description": "请选择要下载的订单范围。",
+      "option_search": "按当前搜索条件下载",
+      "option_search_desc": "共将下载 {{count}} 件商品。",
+      "option_selected": "仅下载所选商品",
+      "option_selected_desc": "将仅下载 {{count}} 件商品。",
+      "download": "下载"
+    },
+    "common": {
+      "cancel": "取消",
+      "change": "变更",
+      "apply": "应用",
+      "confirm": "确认"
+    },
+    "copy": {
+      "title": "复制商品",
+      "no_name": "（无名称）",
+      "options_label": "复制选项",
+      "option_images": "商品图片",
+      "option_product_options": "商品选项",
+      "option_categories": "分类",
+      "option_sales_info": "销售信息",
+      "option_description": "商品说明",
+      "option_notice": "商品信息告示",
+      "option_common_info": "通用信息",
+      "option_other_info": "其他信息",
+      "option_shipping": "配送政策",
+      "option_seo": "SEO 设置",
+      "option_identification": "识别码",
+      "note": "所选选项的数据将预先填入商品登记页面。",
+      "submit": "进行复制"
+    },
+    "delete": {
+      "title": "删除商品",
+      "confirm_question": "确定要删除该商品吗？",
+      "cannot_delete_title": "无法删除",
+      "related_data_notice": "以下数据将被一并删除:",
+      "warning_message": "已删除的商品无法恢复。",
+      "permanent_warning": "此操作无法撤销。与商品相关的所有数据（图片、选项、库存等）都将被永久删除。",
+      "confirm_button": "删除"
+    },
+    "mode_change": {
+      "title": "变更详细说明模式",
+      "confirm_question": "确定要变更详细说明的编辑模式吗？",
+      "description": "变更模式后，当前正在撰写的内容格式可能会发生变化。",
+      "current_mode": "当前模式",
+      "new_mode": "要变更的模式",
+      "warning_title": "注意",
+      "warning_message": "变更模式时部分格式可能会丢失。建议在变更前先保存内容。",
+      "confirm_button": "变更模式"
+    },
+    "save_template": {
+      "title": "保存告示信息模板",
+      "description": "将当前输入的告示信息保存为模板。已保存的模板可在其他商品中载入使用。",
+      "template_name": "模板名称",
+      "template_name_placeholder": "例：服装基本模板",
+      "category": "分类",
+      "category_placeholder": "选择分类（可选）",
+      "set_as_default": "设为默认模板",
+      "preview": "预览将保存的内容",
+      "fields_count": "字段",
+      "more_fields": "个字段查看更多",
+      "info": "模板可在输入告示信息时快速载入使用。",
+      "save_button": "保存模板"
+    }
+  },
+  "description": {
+    "mode_html": "HTML",
+    "mode_editor": "编辑器",
+    "pc_tab": "PC 版",
+    "mobile_tab": "移动版",
+    "pc_hint": "这是在 PC 上显示的详细说明",
+    "mobile_hint": "这是在移动端显示的详细说明",
+    "copy_from_pc": "复制 PC 内容",
+    "text_mode": "文本",
+    "html_mode": "HTML 编辑"
+  },
+  "messages": {
+    "deleted_success": "商品已删除。",
+    "deleted_error": "删除商品过程中发生错误。",
+    "delete_check_error": "确认是否可删除的过程中发生错误。",
+    "code_generate_error": "商品编码生成失败。",
+    "label_period_saved": "标签期间已保存。",
+    "label_period_removed": "标签期间已移除。",
+    "copy_code_required": "请输入新的商品编码。",
+    "copy_source_not_found": "找不到原商品信息。",
+    "copy_success": "商品已复制。",
+    "copy_error": "复制商品过程中发生错误。",
+    "copy_failed": "商品复制失败。",
+    "bulk_summary_sales_status": "销售状态: {status}",
+    "bulk_summary_display_status": "展示状态: {status}",
+    "bulk_summary_name_changed": "商品名称修改",
+    "bulk_summary_list_price": "原价: {price}",
+    "bulk_summary_selling_price": "售价: {price}",
+    "bulk_summary_inline_modified": "行内修改",
+    "bulk_summary_bulk_applied": "已应用批量变更",
+    "bulk_summary_price_adjustment": "调整价: {method} {value}",
+    "bulk_summary_price_adjustment_inline": "调整价: {value}",
+    "bulk_summary_stock": "库存: {method} {value}",
+    "bulk_summary_stock_inline": "库存: {value}",
+    "bulk_summary_safe_stock": "安全库存: {value}",
+    "bulk_summary_is_active": "使用: {value}",
+    "bulk_summary_option_name": "选项名称: {name}",
+    "bulk_summary_sku": "SKU: {sku}",
+    "bulk_summary_selected": "已选择"
+  },
+  "buttons": {
+    "auto_generate": "自动生成",
+    "generate_code": "生成编码",
+    "manage_category": "分类管理",
+    "manage_brand": "品牌管理",
+    "manage_labels": "标签管理",
+    "manage_shipping": "配送政策管理",
+    "manage_common_info": "通用信息管理",
+    "manage_notice_template": "商品信息告示管理",
+    "create_shipping_policy": "创建配送政策"
+  },
+  "image_delete_confirm": "确定要删除该图片吗？",
+  "title_create": "登记商品",
+  "title_edit": "修改商品",
+  "description_create": "登记新商品",
+  "description_edit": "修改商品信息",
+  "uncategorized": "未分类",
+  "tabs": {
+    "basic": "基本信息",
+    "sales": "销售信息",
+    "options": "商品选项",
+    "images": "图片",
+    "description": "详细说明",
+    "notice": "商品告示信息",
+    "shipping": "配送",
+    "common_info": "通用信息",
+    "other": "其他信息",
+    "seo": "SEO",
+    "identification": "识别码",
+    "additional_options": "附加选项",
+    "shopping": "购物对接",
+    "activity_log": "处理日志"
+  },
+  "sections": {
+    "basic_info": "基本信息",
+    "sales_info": "销售信息",
+    "product_options": "商品选项",
+    "images": "图片",
+    "description": "详细说明",
+    "notice": "商品信息告示",
+    "shipping": "配送信息",
+    "common_info": "商品通用信息",
+    "other_info": "其他信息",
+    "seo": "SEO 设置",
+    "identification": "识别码",
+    "additional_options": "附加选项",
+    "shopping_integration": "购物对接",
+    "activity_log": "处理日志",
+    "product_code_info": "商品编码信息"
+  },
+  "fields": {
+    "base_currency": "默认货币",
+    "name": "商品名称",
+    "alternative_name": "英文名称",
+    "category": "分类",
+    "brand": "品牌",
+    "price": "价格",
+    "stock": "库存",
+    "sales_status": "销售状态",
+    "display_status": "展示状态",
+    "tax_status": "计税状态",
+    "product_code": "商品编码",
+    "sales_product_code": "销售商品编码",
+    "sku": "SKU",
+    "barcode": "条码",
+    "hs_code": "HS 编码",
+    "description": "详细说明",
+    "short_description": "简要说明",
+    "short_description_hint": "这是在商品列表等处显示的简短说明",
+    "summary_description": "摘要说明",
+    "characteristics": "商品特性",
+    "labels": "商品标签",
+    "purchase_qty": "购买数量",
+    "min_purchase_qty": "最少购买数量",
+    "max_purchase_qty": "最多购买数量",
+    "purchase_restriction": "限制购买对象",
+    "purchase_start_limit": "购买开始限制",
+    "benefit_price_qty": "优惠价数量",
+    "allowed_roles": "允许的角色",
+    "shipping_policy": "配送政策",
+    "notice_template": "商品告示模板",
+    "common_info": "通用信息",
+    "meta_title": "SEO 标题",
+    "meta_description": "SEO 说明",
+    "meta_keywords": "SEO 关键词",
+    "use_main_image_for_og": "将主图用作 OG 图片",
+    "created_at": "登记日期",
+    "updated_at": "修改日期"
+  },
+  "placeholders": {
+    "name": "请输入商品名称",
+    "alternative_name": "请输入英文商品名称",
+    "alternative_name_en": "Enter product name in English",
+    "brand": "请选择品牌",
+    "product_code": "请输入商品编码",
+    "sku": "请输入 SKU",
+    "barcode": "请输入条码",
+    "hs_code": "请输入 HS 编码",
+    "description": "请输入详细说明",
+    "description_en": "Enter detailed description",
+    "description_mobile": "请输入移动端详细说明",
+    "description_mobile_en": "Enter mobile description",
+    "short_description": "请输入简要说明",
+    "summary_description": "请输入摘要说明",
+    "common_info": "请选择通用信息",
+    "notice_template": "请选择商品告示模板",
+    "meta_title": "请输入 SEO 标题",
+    "meta_description": "请输入 SEO 说明",
+    "meta_keywords": "请输入 SEO 关键词",
+    "select_roles": "请选择要允许的角色",
+    "search_roles": "搜索角色..."
+  },
+  "options": {
+    "use_options": "使用选项",
+    "required_notice": "登记商品时至少需要 1 个选项。请添加选项。",
+    "option_table_title": "选项列表",
+    "add_option_group": "添加选项组",
+    "add_row": "添加行",
+    "generate_options": "生成选项",
+    "bulk_create_title": "批量生成选项",
+    "bulk_create_hint": "输入选项名称和选项值后，请点击“生成选项”按钮",
+    "option_name_placeholder": "选项名称（例：颜色）",
+    "option_values_placeholder": "以逗号（,）分隔输入选项值",
+    "additional_title": "商品附加选项",
+    "additional_hint": "这是客户额外选择的收费/免费选项。请登记组名和选择项（追加费用）。最多 5 个组，每组最多 20 个选择项。（例：加刻字 +5,000 韩元）",
+    "add_additional": "添加附加选项组",
+    "additional_name_label": "组名",
+    "additional_name_placeholder": "例：刻字",
+    "add_additional_value": "添加选择项",
+    "additional_value_name_label": "选择项名称",
+    "additional_value_name_placeholder": "例：加刻字",
+    "additional_value_price_label": "追加费用",
+    "additional_value_default": "默认",
+    "additional_value_active": "使用",
+    "additional_value_allow_custom_text": "自行输入",
+    "no_additional": "尚未登记任何附加选项",
+    "additional_clear_confirm": "已输入的附加选项将被全部删除。要继续吗？",
+    "auto_currency_hint": "外币价格将按售价基准汇率自动显示",
+    "items_count": "{{count}} 个选项",
+    "required": "必选",
+    "columns": {
+      "default": "默认",
+      "option": "选项",
+      "option_id": "选项ID",
+      "category": "类别",
+      "list_price": "原价",
+      "selling_price": "售价",
+      "price": "价格",
+      "price_type": "价格类型",
+      "sku": "SKU",
+      "stock": "库存",
+      "safe_stock": "安全库存",
+      "weight": "重量(g)",
+      "volume": "体积(cm³)",
+      "mileage": "积分",
+      "shipping": "配送",
+      "active": "使用",
+      "required": "必选"
+    },
+    "mileage_type": {
+      "fixed": "韩元",
+      "percent": "%"
+    },
+    "option_count": "（{count} 个选项）",
+    "price_type": {
+      "fixed": "固定价",
+      "additional": "追加金额"
+    },
+    "shipping": {
+      "available": "可以",
+      "unavailable": "不可"
+    },
+    "messages": {
+      "input_max_3": "最多可添加 3 个。",
+      "name_value_required": "请输入选项名称和选项值。",
+      "generated": "已生成 {count} 个选项。",
+      "name_required": "请输入选项名称。",
+      "add_tool_applied": "选项添加工具已应用。",
+      "additional_max_5": "附加选项组最多可添加 5 个。",
+      "additional_value_max_20": "每组最多可添加 20 个选择项。",
+      "additional_value_min_1": "每组至少需要 1 个选择项。"
+    }
+  },
+  "notice": {
+    "tab_existing_template": "选择模板",
+    "tab_new_registration": "直接输入",
+    "items_list": "项目列表",
+    "items_count_suffix": "个项目",
+    "col_number": "序号",
+    "col_name": "项目名称",
+    "col_value": "内容",
+    "add_item": "添加项目",
+    "item_name_placeholder": "请输入项目名称",
+    "input_placeholder": "请输入内容",
+    "bulk_input": "批量输入",
+    "preview": "预览",
+    "save_as_template": "保存为模板",
+    "new_template_name": "新模板名称",
+    "template_name_ko_placeholder": "韩语模板名称",
+    "template_name_en_placeholder": "英语模板名称",
+    "empty_message": "尚未登记任何项目",
+    "empty_hint": "请添加项目或选择模板",
+    "fill_detail_ref": "将所有项目变更为“参见详细说明”",
+    "confirm_change_title": "确认变更模板",
+    "confirm_change_warning": "已存在此前输入的项目。",
+    "confirm_change_description": "变更模板后，原有项目将被新模板的项目替换。同名项目的值将被保留。",
+    "confirm_change_button": "进行变更",
+    "modals": {
+      "bulk_change": {
+        "title": "所有项目批量变更",
+        "message": "确定要将所有项目的内容变更为“参见详细说明”吗？",
+        "preview_label": "变更后的内容",
+        "preview_value": "参见详细说明",
+        "notice": "此操作将覆盖当前已输入的所有值。",
+        "confirm": "变更"
+      }
+    },
+    "messages": {
+      "no_items_to_change": "没有要变更的项目。",
+      "all_items_changed_to_detail_ref": "所有项目已变更为“参见详细说明”。",
+      "template_name_required": "请输入模板名称。",
+      "no_items": "没有要保存的项目。",
+      "template_saved": "模板已保存。",
+      "template_save_error": "模板保存失败。",
+      "info_empty": "没有要保存的告示信息。",
+      "filled": "已批量填入空白项目。"
+    }
+  },
+  "shopping_integration": {
+    "description": "这是与外部商城的商品对接设置",
+    "naver": {
+      "title": "Naver 购物"
+    },
+    "google": {
+      "title": "Google 购物"
+    },
+    "facebook": {
+      "title": "Facebook 购物"
+    },
+    "sync_interval": "对接周期",
+    "intervals": {
+      "realtime": "实时",
+      "1h": "1 小时",
+      "6h": "6 小时",
+      "1d": "1 天",
+      "manual": "手动"
+    },
+    "last_synced": "最近对接",
+    "status": {
+      "enabled": "对接中",
+      "disabled": "不对接"
+    },
+    "manage": "对接管理",
+    "note": "要进行对接，必须已安装相应插件"
+  },
+  "activity_log": {
+    "columns": {
+      "datetime": "处理时间",
+      "actor": "处理者",
+      "action": "操作",
+      "description": "说明"
+    },
+    "sort_order": "排序",
+    "sort": {
+      "latest": "最新优先",
+      "oldest": "最早优先"
+    },
+    "per_page": "显示条数",
+    "total_count": "共 {{count}} 条",
+    "empty": "没有处理记录",
+    "system": "系统",
+    "actor_action": {
+      "view_member": "查看会员信息"
+    },
+    "changes": {
+      "title": "变更记录",
+      "field": "项目",
+      "before": "变更前",
+      "after": "变更后",
+      "bulk_model_id": "ID: {{id}}"
+    }
+  },
+  "shipping": {
+    "use_default": "使用默认配送政策",
+    "default_badge": "默认",
+    "empty_message": "没有配送政策",
+    "inactive_policy_warning": "当前适用的配送政策已被停用。可选择其他配送政策，或保持原样。",
+    "detail": {
+      "shipping_method": "配送方式",
+      "carrier": "物流公司",
+      "charge_policy": "计费政策",
+      "fee": "运费",
+      "countries": "配送国家／地区",
+      "currency": "基准货币",
+      "extra_fee": "附加运费",
+      "condition": "配送条件",
+      "return_exchange_fee": "退货/换货费用"
+    }
+  },
+  "price": {
+    "base_currency": "默认货币",
+    "currency": "货币",
+    "list_price": "原价",
+    "selling_price": "售价",
+    "selling_price_hint": "这是实际销售的价格",
+    "option_price_hint": "将按默认设置选项的售价自动设定",
+    "auto_calculate": "自动计算"
+  },
+  "stock": {
+    "current": "当前库存",
+    "safe_stock": "安全库存",
+    "from_options": "选项库存合计",
+    "from_options_hint": "这是各选项库存的合计",
+    "total_option_stock": "选项库存总量",
+    "auto_calculated_hint": "将根据选项库存自动计算",
+    "option_total_hint": "选项库存的总和"
+  },
+  "description_editor": {
+    "pc_tab": "PC 版",
+    "mobile_tab": "移动版",
+    "pc_hint": "这是在 PC 上显示的详细说明",
+    "mobile_hint": "这是在移动端显示的详细说明",
+    "copy_from_pc": "复制 PC 内容",
+    "text_mode": "文本",
+    "html_mode": "HTML",
+    "messages": {
+      "default_locale_cannot_delete": "默认语言无法删除。",
+      "locale_removed": "{locale} 语言已移除。",
+      "locale_already_added": "该语言已添加。",
+      "locale_unsupported": "不支持的语言。",
+      "locale_added": "{locale} 语言已添加。"
+    }
+  },
+  "common_info": {
+    "use_default": "使用默认商品通用信息",
+    "badge_default": "默认",
+    "none": "不使用",
+    "empty": "没有通用信息",
+    "preview": "预览",
+    "add_template": "添加模板"
+  },
+  "seo": {
+    "title_hint": "这是将在搜索引擎中显示的标题",
+    "keywords_hint": "请以逗号分隔输入",
+    "preview": "搜索结果预览",
+    "untitled": "无标题",
+    "no_description": "没有说明",
+    "sync_title": "设置为与商品名称相同",
+    "sync_description": "设置为与商品内容相同"
+  },
+  "additional_options": {
+    "enable_label": "使用附加选项",
+    "description": "这是客户在下单时自行输入的选项",
+    "add_option": "添加选项",
+    "option_name": "选项名称",
+    "option_name_placeholder": "请输入选项名称",
+    "input_type": "输入类型",
+    "type_text": "文本",
+    "type_textarea": "多行文本",
+    "type_number": "数字",
+    "type_date": "日期",
+    "required": "必选"
+  },
+  "images": {
+    "drag_hint": "请拖动以变更顺序",
+    "thumbnail_hint": "点击 ★ 按钮可指定主图",
+    "format_hint": "支持 JPG、PNG、GIF 格式",
+    "upload_complete": "上传完成",
+    "deleted": "图片已删除。",
+    "messages": {
+      "max_count": "最多只能添加 {max} 张。",
+      "unsupported_format": "{name}：不支持的格式。",
+      "size_exceeded": "{name}：超过 10MB。",
+      "upload_failed": "{name}：上传失败"
+    }
+  },
+  "category": {
+    "select_prev": "请先选择上级分类",
+    "no_subcategory": "没有下级分类",
+    "selected": "已选分类",
+    "max_count": "最多可选择 {{count}} 个",
+    "max_5": "最多 5 个",
+    "add_selected": "添加所选分类",
+    "step_1": "第 1 级",
+    "step_2": "第 2 级",
+    "step_3": "第 3 级",
+    "step_4": "第 4 级",
+    "messages": {
+      "max_5": "最多可选择 5 个。",
+      "already_selected": "该分类已被选择。"
+    }
+  },
+  "characteristics": {
+    "hint": "设置商品的特性",
+    "never_sold_out": "不显示售罄",
+    "notify_on_restock": "补货提醒",
+    "allow_guest_order": "允许非会员下单"
+  },
+  "purchase": {
+    "min": "最少",
+    "max": "最多",
+    "unit": "件",
+    "min_suffix": "件以上",
+    "unlimited_hint": "0 表示不限制"
+  },
+  "restriction": {
+    "none": "无限制",
+    "members": "仅限会员",
+    "roles": "指定角色",
+    "restricted": "限制购买对象"
+  },
+  "sales_status": {
+    "on_sale": "在售",
+    "sold_out": "售罄",
+    "suspended": "停售",
+    "coming_soon": "即将上市"
+  },
+  "display_status": {
+    "visible": "展示中",
+    "hidden": "不展示"
+  },
+  "tax": {
+    "taxable": "应税",
+    "tax_free": "非应税"
+  },
+  "labels": {
+    "title": "标签",
+    "no_available": "尚未登记任何标签。",
+    "add": "添加标签",
+    "edit": "修改",
+    "remove": "删除",
+    "unassign": "解除分配",
+    "delete": "删除标签",
+    "no_period": "未设置期间",
+    "modal_title": "标签设置",
+    "modal_title_create": "登记标签",
+    "modal_title_edit": "修改标签",
+    "create_success": "标签已登记。",
+    "modal_description": "设置标签的名称、颜色和适用期间。",
+    "name": "标签名称",
+    "color": "颜色",
+    "color_reset": "重置颜色",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "started_at": "选择开始日期",
+    "ended_at": "选择结束日期",
+    "end_date_hint": "留空则无限期适用",
+    "date_preset": "期间预设",
+    "preset_7d": "7 天",
+    "preset_14d": "14 天",
+    "preset_30d": "30 天",
+    "preset_permanent": "永久",
+    "save_success": "标签已保存。",
+    "save_error": "标签保存失败。",
+    "delete_success": "标签已删除。",
+    "delete_error": "标签删除失败。",
+    "preview": "预览",
+    "delete_modal": {
+      "title": "删除标签",
+      "message": "，确定要删除吗？",
+      "description": "已删除的标签将从所有商品中移除。",
+      "deleting": "删除中..."
+    },
+    "uncheck_modal": {
+      "title": "确认解除标签",
+      "message": "取消勾选时，已设置的开始日期/结束日期将被删除。",
+      "confirm": "解除"
+    },
+    "inline_period": {
+      "preset_7d": "7 天",
+      "preset_14d": "14 天",
+      "preset_30d": "30 天",
+      "preset_permanent": "永久"
+    }
+  },
+  "roles": {
+    "system": "系统角色",
+    "custom": "自定义角色"
+  },
+  "copy_section": {
+    "title": "复制区块",
+    "help": "从其他商品复制该区块的内容"
+  },
+  "copy_mode": {
+    "title": "商品复制模式",
+    "view_original": "查看原商品"
+  },
+  "buttons_form": {
+    "generate_code": "生成编码",
+    "manage_category": "分类管理",
+    "manage_brand": "品牌管理",
+    "manage_labels": "标签管理",
+    "manage_shipping": "配送政策管理",
+    "manage_common_info": "通用信息管理",
+    "manage_notice_template": "商品信息告示管理",
+    "create_shipping_policy": "创建配送政策"
+  }
+}

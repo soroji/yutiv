@@ -1,0 +1,23 @@
+{
+  "order_mistake": {
+    "name": "下单失误"
+  },
+  "changed_mind": {
+    "name": "单纯改变心意"
+  },
+  "reorder_other": {
+    "name": "改订其他商品"
+  },
+  "delayed_delivery": {
+    "name": "配送延迟"
+  },
+  "product_info_different": {
+    "name": "商品信息不符"
+  },
+  "admin_cancel": {
+    "name": "管理员取消"
+  },
+  "etc": {
+    "name": "其他"
+  }
+}

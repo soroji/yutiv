@@ -1,0 +1,161 @@
+{
+  "title": "商品评价管理",
+  "description": "查看客户评价并管理回复",
+  "search": {
+    "field": {
+      "order_number": "订单号",
+      "product_name": "商品名称",
+      "option_name": "选项名称",
+      "reviewer": "撰写人",
+      "content": "评价内容"
+    },
+    "placeholder": "请输入搜索词",
+    "column_select": "选择列"
+  },
+  "filter": {
+    "rating": "评分",
+    "reply_status": "回复状态",
+    "photo": "是否含图",
+    "review_status": "评价状态",
+    "date_range": "撰写日期范围",
+    "all": "全部",
+    "replied": "已回复",
+    "not_replied": "未回复",
+    "photo_review": "图片评价",
+    "text_review": "普通评价",
+    "visible": "展示中",
+    "hidden": "隐藏",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "search": "搜索",
+    "reset": "重置",
+    "date_quick": {
+      "today": "今天",
+      "3days": "3 天内",
+      "week": "一周",
+      "month": "1 个月",
+      "3months": "3 个月",
+      "all": "全部"
+    }
+  },
+  "batch": {
+    "selected_count": "已选择 {{count}} 项",
+    "status_change": "变更评价状态",
+    "apply": "应用"
+  },
+  "table": {
+    "total_count": "共 {{count}} 条",
+    "sort": {
+      "created_at_desc": "撰写日期（最新优先）",
+      "created_at_asc": "撰写日期（最早优先）",
+      "rating_desc": "评分（从高到低）",
+      "rating_asc": "评分（从低到高）"
+    },
+    "per_page": {
+      "10": "每页显示 10 条",
+      "20": "每页显示 20 条",
+      "50": "每页显示 50 条",
+      "100": "每页显示 100 条",
+      "template": "每页显示 {{count}} 条"
+    },
+    "columns": {
+      "checkbox": "选择",
+      "no": "序号",
+      "photo": "图片",
+      "product_name": "商品名称",
+      "content": "评价内容",
+      "rating": "评分",
+      "reviewer": "撰写人",
+      "order_number": "订单号",
+      "created_at": "撰写日期",
+      "reply": "回复",
+      "status": "状态",
+      "actions": "管理"
+    },
+    "photo_count": "+{{count}}",
+    "empty": "尚未登记任何评价",
+    "reply_status": {
+      "replied": "已回复",
+      "not_replied": "未回复"
+    }
+  },
+  "detail": {
+    "purchase_info": {
+      "title": "购买信息",
+      "product_name": "商品名称",
+      "options": "选项",
+      "reviewer": "撰写人",
+      "created_at": "撰写时间",
+      "updated_at": "修改时间",
+      "order_number": "订单号",
+      "quantity": "购买数量",
+      "purchase_date": "购买时间"
+    },
+    "customer_review": {
+      "title": "客户评价",
+      "edited": "已修改",
+      "attached_images": "附件图片",
+      "images_count": "（{{count}} 张）",
+      "attached_images_label": "附件图片（{{count}} 张）",
+      "created_at_label": "撰写: ",
+      "updated_at_label": "修改: "
+    },
+    "image_preview": {
+      "title": "图片预览"
+    },
+    "seller_reply": {
+      "title": "卖家回复",
+      "edited": "已修改",
+      "created_at": "登记",
+      "updated_at": "修改",
+      "edit": "修改",
+      "edit_save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "reply_complete": "回复完成"
+    },
+    "reply_form": {
+      "title": "卖家回复",
+      "placeholder": "请撰写要发送给客户的回复...",
+      "hint_1": "请亲切、明确地回复",
+      "hint_2": "请认真回应客户的咨询事项",
+      "char_count": "{{count}} 字",
+      "submit": "提交回复"
+    },
+    "expand": "收起",
+    "collapse": "展开"
+  },
+  "mobile": {
+    "select_all": "全选",
+    "product_label": "商品",
+    "order_number_label": "订单号",
+    "quantity_label": "数量",
+    "purchase_date_label": "购买日期",
+    "rating_label": "评分",
+    "review_content_label": "评价",
+    "reviewer_label": "撰写人",
+    "created_at_label": "撰写日期",
+    "updated_at_label": "修改日期"
+  },
+  "modal": {
+    "status_change": {
+      "title": "确认",
+      "message": "确定要将 {{count}} 条评价处理为“{{status}}”吗？",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "reply_delete": {
+      "title": "删除回复",
+      "message": "确定要删除该回复吗？",
+      "warning": "已删除的回复无法恢复。",
+      "cancel": "取消",
+      "confirm": "删除"
+    },
+    "reply_edit": {
+      "title": "修改回复",
+      "placeholder": "请输入要修改的回复...",
+      "cancel": "取消",
+      "confirm": "保存"
+    }
+  }
+}

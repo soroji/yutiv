@@ -1,0 +1,861 @@
+{
+  "default_shipping": "默认配送",
+  "title": "订单记录",
+  "description": "查询并管理订单记录。",
+  "index": {
+    "title": "订单管理",
+    "description": "管理订单列表",
+    "empty_title": "没有订单",
+    "empty_description": "目前还没有受理的订单"
+  },
+  "detail": {
+    "title": "订单详情",
+    "description": "查看订单的详细信息",
+    "placeholder": "订单详情将显示在此处",
+    "order_number": "订单号",
+    "order_date": "下单时间",
+    "status": "状态",
+    "partial_cancelled_badge": "部分取消",
+    "order_info": {
+      "title": "订单信息",
+      "order_products": "订单商品",
+      "no_products": "没有订单商品。",
+      "selected_count": "已选择 {{count}} 项",
+      "change_status": "变更订单状态",
+      "carrier": "物流公司",
+      "tracking_number": "运单号",
+      "batch_change": "批量变更",
+      "select_all": "全选",
+      "columns": {
+        "product_info": "商品信息",
+        "price": "原价/售价",
+        "quantity": "购买数量",
+        "discount": "优惠金额",
+        "actual_price": "实际购买价",
+        "points": "预计累积",
+        "status": "订单状态",
+        "delivery": "配送方式",
+        "subtotal": "小计"
+      },
+      "discount_details": {
+        "discount_code": "优惠码",
+        "referral": "来源渠道",
+        "coupon": "优惠券",
+        "event": "活动"
+      },
+      "price_details": {
+        "taxable": "应税",
+        "vat": "增值税",
+        "mileage": "积分",
+        "deposit": "预存款"
+      },
+      "delivery_info": {
+        "parcel": "快递",
+        "free_shipping": "免运费",
+        "paid_shipping": "付费配送",
+        "shipping_fee": "运费"
+      },
+      "stock_status": {
+        "deducted": "已扣减库存",
+        "not_deducted": "未扣减库存"
+      },
+      "earn_status": {
+        "earned": "已累积",
+        "pending": "预计累积"
+      },
+      "summary": {
+        "total": "合计",
+        "original_price": "原价",
+        "selling_price": "售价",
+        "shipping_fee": "运费"
+      },
+      "orderer_info": {
+        "title": "下单人信息",
+        "name": "姓名",
+        "phone": "手机",
+        "tel": "电话号码",
+        "email": "邮箱",
+        "send": "发送"
+      },
+      "orderer_action": {
+        "view_member": "查看详细信息",
+        "search_by_member": "按会员搜索",
+        "search_by_name": "按下单人姓名搜索",
+        "search_by_phone": "按联系方式搜索"
+      },
+      "receiver_info": {
+        "title": "收件人信息",
+        "name": "收件人姓名",
+        "phone": "手机",
+        "tel": "电话号码",
+        "zipcode": "邮政编码",
+        "find_zipcode": "查找邮政编码",
+        "address": "地址",
+        "address_detail": "详细地址",
+        "delivery_message": "配送留言",
+        "send": "发送",
+        "phone_or_tel_hint": "手机号码或电话号码必须填写其中一项。",
+        "intl_address1_placeholder": "请输入地址（Street Address）",
+        "intl_address2_placeholder": "详细地址（Apt, Suite, Unit 等）",
+        "intl_city_placeholder": "请输入城市名称",
+        "intl_state_placeholder": "请输入州/省",
+        "intl_postal_code_placeholder": "请输入邮政编码"
+      },
+      "admin_memo": {
+        "title": "管理员备注",
+        "placeholder": "请输入管理员备注..."
+      },
+      "cancel_reason": {
+        "title": "取消原因",
+        "reason": "原因",
+        "detail": "详细原因"
+      },
+      "save": "保存",
+      "save_success": "订单信息已保存。",
+      "save_error": "订单信息保存失败。",
+      "validation_error_title": "请确认输入值。",
+      "member": "会员",
+      "non_member": "非会员",
+      "view_member_detail": "查看详细信息",
+      "search_by_member": "按会员搜索",
+      "search_by_name": "按下单人姓名搜索",
+      "search_by_phone": "按联系方式搜索",
+      "reset_guest_password": "重置查询密码"
+    },
+    "tabs": {
+      "order_info": "订单信息",
+      "claim_history": "理赔记录",
+      "payment_info": "支付信息",
+      "activity_log": "活动日志"
+    },
+    "handler": {
+      "bulk_change_success": "{{count}} 个选项的状态已变更。",
+      "bulk_change_failed": "状态变更失败。",
+      "memo_save_success": "管理员备注已保存。",
+      "address_save_success": "收货地址信息已保存。"
+    },
+    "batch_modal": {
+      "title": "批量变更确认",
+      "description": "将所选商品变更为 {{status}}。",
+      "columns": {
+        "product_name": "商品名称",
+        "current_status": "当前状态",
+        "available_quantity": "持有数量",
+        "change_quantity": "变更数量"
+      },
+      "carrier_info": "物流公司：{{carrier}}，运单号：{{tracking}}",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "claim_history": {
+      "title": "理赔记录",
+      "tabs": {
+        "refund": "退款记录",
+        "return": "退货记录",
+        "exchange": "换货记录"
+      },
+      "view_refund_management": "在退款管理中查看",
+      "view_return_management": "在退货管理中查看",
+      "view_exchange_management": "在换货管理中查看",
+      "empty": {
+        "refund": "没有退款记录",
+        "return": "没有退货记录",
+        "exchange": "没有换货记录"
+      },
+      "sort": {
+        "label": "排序",
+        "request_date_desc": "申请时间最新优先"
+      },
+      "per_page": "每页",
+      "items_count": "{{count}} 条",
+      "columns": {
+        "request_date": "申请时间",
+        "refund_number": "退款编号",
+        "return_number": "退货编号",
+        "exchange_number": "换货编号",
+        "product_info": "商品信息",
+        "amount_info": "金额信息",
+        "quantity": "数量",
+        "refund_method": "退款方式",
+        "refund_status": "退款状态",
+        "return_status": "退货状态",
+        "exchange_status": "换货状态",
+        "refund_reason": "退款原因",
+        "return_reason": "退货原因",
+        "exchange_reason": "换货原因"
+      },
+      "amount": {
+        "actual_price": "实际价格",
+        "expected_refund": "预计退款",
+        "actual_refund": "实际退款",
+        "return_request": "退货申请",
+        "original_order": "原订单",
+        "order_quantity": "订单",
+        "difference": "差额"
+      },
+      "method": {
+        "direct_refund": "直接退款",
+        "deposit": "预存款"
+      },
+      "status": {
+        "refund_rejected": "退款驳回",
+        "refund_hold": "退款暂缓",
+        "refund_approved": "退款批准",
+        "refund_completed": "退款完成",
+        "return_requested": "退货受理",
+        "return_pickup_in_progress": "退货取件中",
+        "return_pickup_completed": "退货已取件",
+        "return_completed": "退货完成",
+        "exchange_requested": "换货受理",
+        "exchange_shipping": "换货配送",
+        "exchange_completed": "换货完成"
+      },
+      "delivery": {
+        "carrier": "物流公司",
+        "tracking_number": "运单号",
+        "pickup_carrier": "取件物流公司",
+        "pickup_tracking": "取件运单号",
+        "shipping_carrier": "寄件物流公司",
+        "shipping_tracking": "寄件运单号",
+        "pickup_fee": "取件运费",
+        "round_trip_fee": "往返运费"
+      },
+      "reason": {
+        "customer_fault": "客户责任",
+        "seller_fault": "卖家责任",
+        "simple_change": "单纯改变心意",
+        "wrong_color": "颜色不符",
+        "defect": "初期故障",
+        "defective_product": "商品瑕疵",
+        "color_change": "变更颜色",
+        "size_exchange": "更换尺码"
+      },
+      "product": {
+        "original_product": "原商品",
+        "exchange_product": "换货商品",
+        "same_product": "同款商品换货",
+        "same_product_exchange": "同款商品换货",
+        "size": "尺码",
+        "color": "颜色",
+        "capacity": "容量"
+      }
+    },
+    "payment_info": {
+      "title": "支付信息",
+      "type": {
+        "original": "原订单",
+        "additional_shipping": "附加运费",
+        "admin_manual": "管理员手动请求"
+      },
+      "status": {
+        "completed": "支付完成",
+        "pending": "待付款"
+      },
+      "payment_method": "支付方式",
+      "payment_date": "支付时间",
+      "payment_request_date": "支付请求时间",
+      "due_date": "到账期限",
+      "order_amount": "订单金额",
+      "shipping_fee": "运费",
+      "total_discount": "优惠合计",
+      "coupon": "优惠券",
+      "discount_code": "优惠码",
+      "event": "活动",
+      "referral": "访问渠道",
+      "mileage_used": "使用积分",
+      "deposit_used": "使用预存款",
+      "final_amount": "最终支付金额",
+      "taxable_amount": "应税金额",
+      "vat": "增值税（VAT）",
+      "expected_points": "预计累积积分",
+      "method": {
+        "credit_card": "信用卡",
+        "bank_transfer": "银行汇款",
+        "virtual_account": "虚拟账户"
+      },
+      "account_info": "{{bank}} {{account}}（{{holder}}）",
+      "cancelled_amount": "取消金额",
+      "refunded_amount": "退款金额",
+      "refund_status": "退款状态",
+      "refund_points_amount": "积分退款",
+      "payment_currency": "支付货币：{{currency}}",
+      "charged_in_payment_currency": "以支付货币 {{currency}} 收取 {{amount}}"
+    },
+    "activity_log": {
+      "title": "活动日志",
+      "sort": {
+        "label": "排序:",
+        "date_desc": "最新优先",
+        "date_asc": "最早优先"
+      },
+      "per_page": "每页:",
+      "per_page_option": "{{count}} 条",
+      "items_count": "{{count}} 条",
+      "columns": {
+        "date": "日期时间",
+        "actor": "执行者",
+        "event": "内容"
+      },
+      "empty": "没有活动日志。",
+      "actor_action": {
+        "view_member": "查看会员信息"
+      },
+      "system": "系统",
+      "changes": {
+        "title": "变更记录",
+        "field": "项目",
+        "before": "变更前",
+        "after": "变更后",
+        "bulk_model_id": "ID: {{id}}"
+      }
+    },
+    "modal": {
+      "send_sms": {
+        "title": "发送消息",
+        "description": "发送 SMS 短信。",
+        "phone": "手机号码",
+        "phone_placeholder": "010-1234-5678",
+        "message": "消息内容",
+        "message_placeholder": "请输入消息内容",
+        "char_count": "{{count}} 字",
+        "plugin_label": "SMS 插件",
+        "cancel": "取消",
+        "send": "发送"
+      },
+      "send_email": {
+        "title": "发送消息",
+        "description": "发送电子邮件消息。",
+        "email": "邮箱地址",
+        "email_placeholder": "hong@example.com",
+        "message": "消息内容",
+        "message_placeholder": "请输入消息内容",
+        "char_count": "{{count}} 字",
+        "cancel": "取消",
+        "send": "发送",
+        "validation_error": "请确认输入值。",
+        "sent_success": "邮件已发送。",
+        "sent_failed": "邮件发送失败。"
+      },
+      "reset_guest_password": {
+        "title": "重置非会员查询密码",
+        "description": "设置用于非会员订单查询的新密码。",
+        "order_number": "订单号",
+        "orderer_name": "下单人",
+        "orderer_phone": "电话号码",
+        "new_password": "新密码",
+        "new_password_placeholder": "请输入 8 位以上",
+        "new_password_confirmation": "确认新密码",
+        "new_password_confirmation_placeholder": "请再次输入新密码",
+        "hint": "请输入 8 位以上。原有密码无法查看，只能重置为新值。",
+        "cancel": "取消",
+        "reset": "重置",
+        "reset_success": "非会员查询密码已重置。"
+      },
+      "confirm_deposit": {
+        "title": "银行汇款到账确认",
+        "description": "确认汇款人姓名与汇款金额后记录到账。",
+        "depositor_name": "汇款人姓名",
+        "depositor_name_placeholder": "请输入汇款人姓名",
+        "amount": "到账金额",
+        "amount_hint": "必须与预计支付金额完全一致。",
+        "due_amount": "预计支付金额",
+        "mark_order_complete": "将订单处理为支付完成",
+        "mark_order_complete_hint": "勾选后将在记录到账的同时把订单状态变更为支付完成（含积分累积、库存扣减、通知发送）。不勾选则仅记录到账明细。",
+        "cancel": "取消",
+        "confirm": "确认到账",
+        "confirm_success": "到账已确认并处理完成。"
+      },
+      "batch_change": {
+        "title": "批量变更确认",
+        "confirm_message": "确定要批量变更所选 {{count}} 件商品的状态吗？",
+        "confirm_prefix": "确定要将所选的",
+        "confirm_count": "{{count}} 件商品",
+        "confirm_status": "{{status}}",
+        "confirm_suffix": "进行批量变更吗？",
+        "status_label": "变更状态:",
+        "carrier_label": "物流公司:",
+        "tracking_label": "运单号:",
+        "no_changes": "没有要变更的信息。",
+        "cancel": "取消",
+        "confirm": "确认",
+        "product_col": "商品信息",
+        "price_col": "售价",
+        "change_quantity_col": "变更数量",
+        "current_status_col": "当前状态",
+        "quantity_note": "减少数量后，其余部分将保持当前状态。"
+      },
+      "cancel": {
+        "title": "取消订单",
+        "description": "取消所选商品的订单。",
+        "validation_error_title": "请确认输入值",
+        "pg_error_title": "PG 退款失败",
+        "pg_error_description": "PG 退款处理失败。请确认错误内容后重试，或在 PG 管理界面直接进行退款处理。",
+        "product_col": "商品信息",
+        "unit_price_col": "单价",
+        "cancel_quantity_col": "取消数量",
+        "status_col": "当前状态",
+        "cancel_pg": "同时取消 PG 支付",
+        "cancel_pg_description": "取消勾选时仅变更订单状态，PG 退款需另行处理。",
+        "cancel_reason_type_label": "取消原因",
+        "reason_placeholder": "请选择取消原因",
+        "reason": {
+          "order_mistake": "下单失误",
+          "changed_mind": "单纯改变心意",
+          "reorder_other": "改订其他商品",
+          "delayed_delivery": "配送延迟",
+          "product_info_different": "商品信息不符",
+          "admin_cancel": "管理员取消",
+          "etc": "其他"
+        },
+        "cancel_reason_detail_placeholder": "请输入详细原因（可选）",
+        "refund_priority_label": "退款优先顺序",
+        "refund_priority_pg_first": "优先退回 PG 支付",
+        "refund_priority_points_first": "优先退回积分",
+        "refund_priority_no_points_hint": "由于未使用积分，无法选择退款优先顺序。",
+        "refund_estimate_title": "预计退款金额",
+        "refund_loading": "正在计算预计退款金额...",
+        "refund_product_amount": "商品退款额",
+        "refund_shipping_diff": "运费变动",
+        "refund_discount_diff": "优惠调整",
+        "refund_points_amount": "积分退款",
+        "refund_total": "最终预计退款额",
+        "remaining_pg_balance": "退款后 PG 余额",
+        "remaining_points_balance": "退款后积分余额",
+        "refund_shipping_base": "基本运费",
+        "refund_shipping_extra": "附加运费（偏远及岛屿地区）",
+        "restored_coupons_label": "将被恢复的优惠券",
+        "restored_coupons_notice": "上述优惠券将被恢复到优惠券包中。",
+        "comparison_title": "订单金额对比",
+        "col_before": "取消前",
+        "col_after": "取消后",
+        "item_count": "商品数量",
+        "count_unit": "件",
+        "list_price_amount": "原价总金额",
+        "subtotal_amount": "售价总金额",
+        "product_coupon_discount": "商品优惠券优惠",
+        "order_coupon_discount": "订单优惠券优惠",
+        "code_discount": "优惠码优惠",
+        "shipping_coupon_discount": "运费优惠券优惠",
+        "base_shipping": "基本运费",
+        "extra_shipping": "附加运费",
+        "points_used": "使用积分",
+        "taxable_amount": "应税金额",
+        "vat_amount": "增值税",
+        "total_paid": "实际支付金额",
+        "earned_points": "预计累积积分",
+        "product_subtotal": "小计",
+        "cancel_btn": "取消订单",
+        "close_btn": "关闭",
+        "estimate_failed": "预估退款金额计算失败。",
+        "cancel_success": "订单已取消。",
+        "cancel_failed": "订单取消失败。",
+        "refund_bank_label": "退款账户",
+        "refund_bank_select": "选择银行",
+        "refund_bank_account_placeholder": "账号（不含 -）",
+        "refund_bank_holder_placeholder": "开户人",
+        "refund_bank_required_hint": "已完成到账的虚拟账户订单需要填写退款账户。",
+        "refund_bank_partial_notice": "三项中只要填写其中一项，其余各项也必须填写。"
+      }
+    },
+    "cash_receipt": {
+      "title": "现金收据",
+      "issue_title": "开具现金收据",
+      "status_issued": "开具完成",
+      "awaiting_deposit": "确认到账后即可开具。",
+      "purpose": "用途",
+      "purpose_income": "用于个人所得税抵扣",
+      "purpose_expense": "用于支出凭证",
+      "identifier_type": "开具方式",
+      "identifier": "识别号码",
+      "identifier_phone": "手机号码",
+      "identifier_card": "现金收据卡号",
+      "identifier_business": "营业执照号码",
+      "identifier_placeholder": "请只输入数字，不要输入 -",
+      "immutable_help": "开具后不可变更用途。",
+      "amount": "金额",
+      "tax_free_amount": "免税金额",
+      "issue_number": "开具编号",
+      "issued_at": "开具时间",
+      "issue": "开具现金收据",
+      "cancel": "取消",
+      "cancel_issue": "取消开具",
+      "reissue": "手动重新开具",
+      "view_receipt": "查看收据",
+      "history": "开具记录（{{count}} 条）",
+      "issue_success": "现金收据已开具。",
+      "issue_failed": "开具现金收据失败。",
+      "cancel_success": "现金收据的开具已取消。",
+      "cancel_failed": "取消现金收据开具失败。",
+      "reissue_failed": "重新开具失败",
+      "reissue_success": "现金收据已重新开具。"
+    }
+  },
+  "preset": {
+    "label": "搜索预设",
+    "applied": "已应用 {{name}} 预设。",
+    "today_payment": "今日支付完成",
+    "bank_pending": "银行汇款待付款",
+    "add_new": "添加新预设",
+    "delete_confirm_message": "确定要删除‘{{name}}’预设吗？",
+    "delete_confirm_title": "删除预设",
+    "delete_success": "预设已删除",
+    "empty": "尚未登记任何预设",
+    "manage_description": "管理搜索预设",
+    "manage_title": "预设管理",
+    "more": "查看更多",
+    "name_label": "预设名称",
+    "name_placeholder": "请输入预设名称",
+    "save": "保存",
+    "save_description": "将当前搜索条件保存为预设",
+    "save_success": "预设已保存",
+    "save_title": "保存预设",
+    "update_success": "预设已修改"
+  },
+  "search": {
+    "placeholder": "请输入搜索词...",
+    "field": {
+      "all": "全部",
+      "order_number": "订单号",
+      "orderer_name": "下单人姓名",
+      "product_name": "商品名称",
+      "receiver_name": "收件人姓名",
+      "phone": "联系方式",
+      "email": "邮箱"
+    },
+    "edit_search": "编辑搜索",
+    "preset_manage": "预设管理",
+    "column_select": "选择列",
+    "detail_search": "高级搜索"
+  },
+  "filter": {
+    "date": "日期",
+    "date_type": {
+      "order_date": "下单日期",
+      "payment_date": "支付日期",
+      "shipping_date": "发货日期"
+    },
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "date_quick": {
+      "today": "今天",
+      "week": "一周",
+      "1_month": "1 个月",
+      "3_months": "3 个月",
+      "6_months": "6 个月",
+      "1_year": "1 年"
+    },
+    "order_status": "订单状态",
+    "order_status_options": {
+      "waiting": "待下单",
+      "payment_pending": "待支付",
+      "payment_complete": "支付完成",
+      "shipping_hold": "配送暂缓",
+      "preparing": "备货中",
+      "shipping_ready": "备货完成",
+      "shipping": "配送中",
+      "delivered": "已送达",
+      "cancelled": "取消订单",
+      "confirmed": "确认收货"
+    },
+    "claim_status": "理赔状态",
+    "claim_mode": "理赔模式",
+    "claim_refund": "退款",
+    "claim_refund_options": {
+      "requested": "退款受理",
+      "hold": "退款暂缓",
+      "approved": "退款批准",
+      "rejected": "退款驳回",
+      "completed": "退款完成"
+    },
+    "claim_return": "退货",
+    "claim_return_options": {
+      "requested": "退货受理",
+      "payment_pending": "退货待支付",
+      "hold": "退货暂缓",
+      "approved": "退货批准",
+      "pickup_in_progress": "退货取件中",
+      "pickup_completed": "退货已取件",
+      "rejected": "退货驳回",
+      "completed": "退货完成"
+    },
+    "claim_exchange": "换货",
+    "claim_exchange_options": {
+      "requested": "换货受理",
+      "payment_pending": "换货待支付",
+      "hold": "换货暂缓",
+      "approved": "换货批准",
+      "pickup_in_progress": "换货取件中",
+      "pickup_completed": "换货已取件",
+      "rejected": "换货驳回",
+      "reshipping": "换货发出",
+      "reshipping_completed": "换货配送完成",
+      "completed": "换货完成"
+    },
+    "delivery_method": "配送方式",
+    "delivery_options": {
+      "parcel": "快递",
+      "direct": "直接配送",
+      "mail": "邮寄",
+      "pickup": "到店自提",
+      "quick": "极速配送"
+    },
+    "payment_method": "支付方式",
+    "payment_options": {
+      "bank": "银行汇款",
+      "card": "信用卡",
+      "virtual": "虚拟账户",
+      "naver": "Naver Pay",
+      "kakao": "Kakao Pay",
+      "toss": "Toss Pay"
+    },
+    "category": "商品分类",
+    "category_level": "分类{{level}}",
+    "price": "购买金额",
+    "min_price": "最低金额",
+    "max_price": "最高金额",
+    "currency": "韩元",
+    "country": "配送国家／地区",
+    "country_options": {
+      "kr": "大韩民国",
+      "us": "美国",
+      "jp": "日本",
+      "cn": "中国",
+      "ru": "俄罗斯",
+      "tw": "台湾"
+    },
+    "device": "购买环境",
+    "device_options": {
+      "pc": "PC",
+      "mobile": "移动端"
+    },
+    "shipping_policy": "配送政策",
+    "shipping_fee": "运费",
+    "min_shipping_fee": "最低运费",
+    "max_shipping_fee": "最高运费",
+    "category_placeholder": "选择分类",
+    "claim_module_link": "在理赔管理中查看",
+    "detail_title": "高级搜索",
+    "orderer": "下单人",
+    "orderer_select": "选择会员",
+    "orderer_search_placeholder": "按姓名或邮箱搜索",
+    "orderer_search_initial": "请搜索会员",
+    "member_type": "会员类别",
+    "member_type_option": {
+      "all": "全部",
+      "member": "会员",
+      "guest": "非会员"
+    }
+  },
+  "action": {
+    "search": "搜索",
+    "reset": "重置",
+    "save_preset": "保存预设",
+    "excel_download": "Excel 下载",
+    "print": "打印",
+    "view": "查看",
+    "view_detail": "查看详情",
+    "view_member": "查看会员信息",
+    "search_by_orderer": "按下单人搜索"
+  },
+  "batch": {
+    "selected_count": "已选择 {{count}} 项",
+    "status_change": "变更订单状态",
+    "shipping_process": "发货处理",
+    "carrier": "物流公司",
+    "carrier_options": {
+      "cj": "CJ大韩通运",
+      "lotte": "乐天快递",
+      "hanjin": "韩进快递",
+      "post": "邮政快递"
+    },
+    "tracking_number": "运单号",
+    "batch_change": "批量变更"
+  },
+  "table": {
+    "total_count": "共 {{count}} 个",
+    "sort": {
+      "latest": "按下单时间最新",
+      "oldest": "按下单时间最早",
+      "amount_high": "金额从高到低",
+      "amount_low": "金额从低到高"
+    },
+    "per_page": "{{count}} 个",
+    "excel_download": "Excel 下载",
+    "columns": {
+      "checkbox": "选择",
+      "no": "编号",
+      "order_date": "下单时间",
+      "order_number": "订单号",
+      "order_status": "订单状态",
+      "order_amount": "订单金额",
+      "product": "订单商品",
+      "orderer": "下单人姓名",
+      "payment_method": "支付方式",
+      "country": "配送国家／地区",
+      "delivery_method": "配送方式",
+      "action": "操作",
+      "actions": "操作"
+    }
+  },
+  "mobile": {
+    "orderer": "下单人",
+    "payment": "支付",
+    "shipping": "配送",
+    "shipping_country": "配送国",
+    "payment_delivery": "支付 / 配送",
+    "country": "配送国家／地区"
+  },
+  "modal": {
+    "excel_download": {
+      "title": "Excel 下载",
+      "description": "请选择要下载的订单范围。",
+      "option_search": "按当前搜索条件下载",
+      "option_search_desc": "共将下载 {{count}} 份订单。",
+      "option_selected": "仅下载所选订单",
+      "option_selected_desc": "将下载 {{count}} 份订单。",
+      "cancel": "取消",
+      "download": "下载"
+    },
+    "preset_manage": {
+      "title": "预设管理",
+      "description": "管理搜索预设。",
+      "add_preset": "添加新预设",
+      "add_new": "添加新预设",
+      "empty": "没有已保存的预设。"
+    },
+    "preset_save": {
+      "title": "保存预设",
+      "description": "将当前搜索条件保存为预设。",
+      "placeholder": "请输入预设名称",
+      "save": "保存"
+    },
+    "preset_edit": {
+      "title": "修改预设"
+    },
+    "preset_delete": {
+      "title": "删除预设",
+      "confirm": "确定要删除‘{{name}}’预设吗？"
+    }
+  },
+  "status": {
+    "waiting": "待下单",
+    "payment_pending": "待付款",
+    "payment_complete": "支付完成",
+    "shipping_hold": "发货暂缓",
+    "preparing": "备货中",
+    "shipping_ready": "备货准备中",
+    "shipping": "配送中",
+    "delivered": "已送达",
+    "cancelled": "取消订单",
+    "confirmed": "确认收货"
+  },
+  "datagrid": {
+    "total_count": "共 {count} 个"
+  },
+  "message": {
+    "no_orders": "没有订单"
+  },
+  "pagination": {
+    "showing_info": "{{from}}-{{to}} / 共 {{total}} 个"
+  },
+  "sort": {
+    "latest_order": "按下单时间最新",
+    "oldest_order": "按下单时间最早",
+    "latest_payment": "按支付时间最新",
+    "oldest_payment": "按支付时间最早",
+    "latest_shipping": "按发货时间最新",
+    "oldest_shipping": "按发货时间最早",
+    "highest_amount": "金额从高到低",
+    "lowest_amount": "金额从低到高"
+  },
+  "excel": {
+    "title": "Excel 下载",
+    "description": "请选择要下载的订单范围",
+    "download": "下载",
+    "download_success": "Excel 文件已下载",
+    "option_search": "按当前搜索条件下载",
+    "option_search_desc": "共将下载 {{count}} 份订单",
+    "option_selected": "仅下载所选订单",
+    "option_selected_desc": "将下载 {{count}} 份订单"
+  },
+  "bulk": {
+    "selected_count": "已选择 {{count}} 项",
+    "apply": "应用",
+    "apply_full": "批量应用",
+    "courier_placeholder": "选择物流公司",
+    "shipping_label": "发货处理:",
+    "status_placeholder": "选择状态",
+    "no_status_selected": "请选择要变更的订单状态。",
+    "no_items_selected": "请选择要变更的商品。",
+    "no_cancellable_items": "没有可取消的商品。已取消的商品将被排除。",
+    "carrier_required": "要变更为该状态，请同时输入物流公司和运单号。",
+    "success": "已批量变更",
+    "tracking_placeholder": "输入运单号",
+    "confirm_title": "批量变更确认",
+    "confirm_message": "将对所选的 {{count}} 笔订单应用以下变更。",
+    "confirm_status_label": "变更订单状态: ",
+    "confirm_carrier_label": "物流公司: ",
+    "confirm_tracking_label": "运单号: ",
+    "confirm_cancel": "取消",
+    "confirm_apply": "应用变更",
+    "confirm_no_changes": "没有要变更的项目。"
+  },
+  "column": {
+    "no": "编号",
+    "order_date": "下单时间",
+    "order_number": "订单号",
+    "product": "订单商品",
+    "order_amount": "订单金额",
+    "shipping_fee_short": "运费 {{amount}}",
+    "paid_short": "已支付 {{amount}}",
+    "unpaid_short": "未支付 {{amount}}",
+    "mileage_used_short": "积分 -{{amount}}",
+    "points_earned_short": "累积 +{{amount}}",
+    "order_status": "订单状态",
+    "orderer": "下单人姓名",
+    "payment_method": "支付方式",
+    "delivery_method": "配送方式",
+    "country": "配送国家／地区",
+    "device": "购买环境",
+    "first_order": "首次购买",
+    "action": "操作"
+  },
+  "device": {
+    "mobile": "移动端",
+    "pc": "PC"
+  },
+  "product": {
+    "more": "等 {{count}} 件"
+  },
+  "claim": {
+    "refund": {
+      "requested": "退款受理",
+      "hold": "退款暂缓",
+      "approved": "退款批准",
+      "rejected": "退款驳回",
+      "completed": "退款完成"
+    },
+    "return": {
+      "requested": "退货受理",
+      "payment_pending": "退货待支付",
+      "hold": "退货暂缓",
+      "approved": "退货批准",
+      "pickup_in_progress": "退货取件中",
+      "pickup_completed": "退货已取件",
+      "rejected": "退货驳回",
+      "completed": "退货完成"
+    },
+    "exchange": {
+      "requested": "换货受理",
+      "payment_pending": "换货待支付",
+      "hold": "换货暂缓",
+      "approved": "换货批准",
+      "pickup_in_progress": "换货取件中",
+      "pickup_completed": "换货已取件",
+      "rejected": "换货驳回",
+      "reshipping": "换货发出",
+      "reshipping_completed": "换货配送完成",
+      "completed": "换货完成"
+    }
+  }
+}

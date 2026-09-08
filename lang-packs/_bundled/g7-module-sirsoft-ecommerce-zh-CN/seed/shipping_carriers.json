@@ -1,0 +1,38 @@
+{
+  "cj": {
+    "name": "CJ大韩通运"
+  },
+  "hanjin": {
+    "name": "韩进快递"
+  },
+  "lotte": {
+    "name": "乐天快递"
+  },
+  "logen": {
+    "name": "Logen 快递"
+  },
+  "ups": {
+    "name": "UPS"
+  },
+  "ems": {
+    "name": "EMS"
+  },
+  "dhl": {
+    "name": "DHL"
+  },
+  "fedex": {
+    "name": "FedEx"
+  },
+  "sf": {
+    "name": "SF Express"
+  },
+  "yamato": {
+    "name": "大和运输"
+  },
+  "sagawa": {
+    "name": "佐川急便"
+  },
+  "other": {
+    "name": "其他"
+  }
+}

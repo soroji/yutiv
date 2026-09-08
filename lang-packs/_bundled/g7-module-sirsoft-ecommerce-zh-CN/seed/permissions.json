@@ -1,0 +1,298 @@
+{
+  "sirsoft-ecommerce": {
+    "name": "电商",
+    "description": "电商模块权限"
+  },
+  "sirsoft-ecommerce.products": {
+    "name": "商品管理",
+    "description": "商品管理权限"
+  },
+  "sirsoft-ecommerce.products.read": {
+    "name": "商品查询",
+    "description": "商品列表及详情查询"
+  },
+  "sirsoft-ecommerce.products.create": {
+    "name": "商品创建",
+    "description": "登记新商品"
+  },
+  "sirsoft-ecommerce.products.update": {
+    "name": "商品修改",
+    "description": "修改商品信息"
+  },
+  "sirsoft-ecommerce.products.delete": {
+    "name": "商品删除",
+    "description": "商品删除"
+  },
+  "sirsoft-ecommerce.orders": {
+    "name": "订单管理",
+    "description": "订单管理权限"
+  },
+  "sirsoft-ecommerce.orders.read": {
+    "name": "订单查询",
+    "description": "订单列表及详情查询"
+  },
+  "sirsoft-ecommerce.orders.update": {
+    "name": "订单修改",
+    "description": "变更订单状态"
+  },
+  "sirsoft-ecommerce.categories": {
+    "name": "分类管理",
+    "description": "分类管理权限"
+  },
+  "sirsoft-ecommerce.categories.read": {
+    "name": "分类查询",
+    "description": "分类列表及详情查询"
+  },
+  "sirsoft-ecommerce.categories.create": {
+    "name": "分类创建",
+    "description": "分类创建"
+  },
+  "sirsoft-ecommerce.categories.update": {
+    "name": "分类修改",
+    "description": "分类修改"
+  },
+  "sirsoft-ecommerce.categories.delete": {
+    "name": "分类删除",
+    "description": "分类删除"
+  },
+  "sirsoft-ecommerce.brands": {
+    "name": "品牌管理",
+    "description": "品牌管理权限"
+  },
+  "sirsoft-ecommerce.brands.read": {
+    "name": "品牌查询",
+    "description": "品牌列表及详情查询"
+  },
+  "sirsoft-ecommerce.brands.create": {
+    "name": "品牌创建",
+    "description": "品牌创建"
+  },
+  "sirsoft-ecommerce.brands.update": {
+    "name": "品牌修改",
+    "description": "品牌修改"
+  },
+  "sirsoft-ecommerce.brands.delete": {
+    "name": "品牌删除",
+    "description": "品牌删除"
+  },
+  "sirsoft-ecommerce.product-notice-templates": {
+    "name": "商品信息告示管理",
+    "description": "商品信息告示模板管理权限"
+  },
+  "sirsoft-ecommerce.product-notice-templates.read": {
+    "name": "查询",
+    "description": "商品信息告示查询"
+  },
+  "sirsoft-ecommerce.product-notice-templates.create": {
+    "name": "创建",
+    "description": "商品信息告示创建"
+  },
+  "sirsoft-ecommerce.product-notice-templates.update": {
+    "name": "修改",
+    "description": "商品信息告示修改"
+  },
+  "sirsoft-ecommerce.product-notice-templates.delete": {
+    "name": "删除",
+    "description": "商品信息告示删除"
+  },
+  "sirsoft-ecommerce.product-common-infos": {
+    "name": "通用信息管理",
+    "description": "商品通用信息管理权限"
+  },
+  "sirsoft-ecommerce.product-common-infos.read": {
+    "name": "查询",
+    "description": "通用信息查询"
+  },
+  "sirsoft-ecommerce.product-common-infos.create": {
+    "name": "创建",
+    "description": "通用信息创建"
+  },
+  "sirsoft-ecommerce.product-common-infos.update": {
+    "name": "修改",
+    "description": "通用信息修改"
+  },
+  "sirsoft-ecommerce.product-common-infos.delete": {
+    "name": "删除",
+    "description": "通用信息删除"
+  },
+  "sirsoft-ecommerce.settings": {
+    "name": "环境设置",
+    "description": "电商环境设置权限"
+  },
+  "sirsoft-ecommerce.settings.read": {
+    "name": "环境设置查询",
+    "description": "电商环境设置查询"
+  },
+  "sirsoft-ecommerce.settings.update": {
+    "name": "环境设置修改",
+    "description": "电商环境设置修改"
+  },
+  "sirsoft-ecommerce.promotion-coupon": {
+    "name": "优惠券管理",
+    "description": "优惠券管理权限"
+  },
+  "sirsoft-ecommerce.promotion-coupon.read": {
+    "name": "优惠券查询",
+    "description": "优惠券列表及详情查询"
+  },
+  "sirsoft-ecommerce.promotion-coupon.create": {
+    "name": "优惠券创建",
+    "description": "登记新优惠券"
+  },
+  "sirsoft-ecommerce.promotion-coupon.update": {
+    "name": "优惠券修改",
+    "description": "修改优惠券信息"
+  },
+  "sirsoft-ecommerce.promotion-coupon.delete": {
+    "name": "优惠券删除",
+    "description": "优惠券删除"
+  },
+  "sirsoft-ecommerce.shipping-policies": {
+    "name": "配送政策管理",
+    "description": "配送政策管理权限"
+  },
+  "sirsoft-ecommerce.shipping-policies.read": {
+    "name": "配送政策查询",
+    "description": "配送政策列表及详情查询"
+  },
+  "sirsoft-ecommerce.shipping-policies.create": {
+    "name": "配送政策创建",
+    "description": "登记新配送政策"
+  },
+  "sirsoft-ecommerce.shipping-policies.update": {
+    "name": "配送政策修改",
+    "description": "修改配送政策信息"
+  },
+  "sirsoft-ecommerce.shipping-policies.delete": {
+    "name": "配送政策删除",
+    "description": "配送政策删除"
+  },
+  "sirsoft-ecommerce.product-labels": {
+    "name": "商品标签管理",
+    "description": "商品标签管理权限"
+  },
+  "sirsoft-ecommerce.product-labels.read": {
+    "name": "商品标签查询",
+    "description": "商品标签列表及详情查询"
+  },
+  "sirsoft-ecommerce.product-labels.create": {
+    "name": "商品标签创建",
+    "description": "登记新商品标签"
+  },
+  "sirsoft-ecommerce.product-labels.update": {
+    "name": "商品标签修改",
+    "description": "修改商品标签信息"
+  },
+  "sirsoft-ecommerce.product-labels.delete": {
+    "name": "商品标签删除",
+    "description": "商品标签删除"
+  },
+  "sirsoft-ecommerce.identity.policies": {
+    "name": "电商实名认证政策",
+    "description": "电商上下文的实名认证政策管理权限"
+  },
+  "sirsoft-ecommerce.identity.policies.read": {
+    "name": "实名认证政策查询",
+    "description": "电商实名认证政策查询"
+  },
+  "sirsoft-ecommerce.identity.policies.update": {
+    "name": "实名认证政策修改",
+    "description": "电商实名认证政策修改/添加/删除"
+  },
+  "sirsoft-ecommerce.reviews": {
+    "name": "评价管理",
+    "description": "商品评价管理权限"
+  },
+  "sirsoft-ecommerce.reviews.read": {
+    "name": "评价查询",
+    "description": "评价列表及详情查询"
+  },
+  "sirsoft-ecommerce.reviews.update": {
+    "name": "评价处理",
+    "description": "变更评价状态、回复登记/修改/删除、批量处理"
+  },
+  "sirsoft-ecommerce.reviews.delete": {
+    "name": "评价删除",
+    "description": "评价删除"
+  },
+  "sirsoft-ecommerce.inquiries": {
+    "name": "咨询管理",
+    "description": "商品一对一咨询管理权限"
+  },
+  "sirsoft-ecommerce.inquiries.update": {
+    "name": "咨询处理",
+    "description": "回复登记/修改/删除、私密帖内容查看"
+  },
+  "sirsoft-ecommerce.inquiries.delete": {
+    "name": "咨询删除",
+    "description": "删除客户撰写的咨询本身"
+  },
+  "sirsoft-ecommerce.dashboard": {
+    "name": "仪表盘",
+    "description": "管理员仪表盘电商区域查询权限"
+  },
+  "sirsoft-ecommerce.dashboard.view": {
+    "name": "仪表盘查询",
+    "description": "查询管理员仪表盘的电商销售概况/评价/咨询挂件"
+  },
+  "sirsoft-ecommerce.user-products": {
+    "name": "用户商品",
+    "description": "用户商品访问权限（用于拦截恶意消费者）"
+  },
+  "sirsoft-ecommerce.user-products.read": {
+    "name": "商品查询",
+    "description": "商品列表及详情查询"
+  },
+  "sirsoft-ecommerce.user-orders": {
+    "name": "用户订单",
+    "description": "用户订单相关权限（用于拦截恶意消费者）"
+  },
+  "sirsoft-ecommerce.user-orders.create": {
+    "name": "下单",
+    "description": "创建订单"
+  },
+  "sirsoft-ecommerce.user-orders.cancel": {
+    "name": "取消订单",
+    "description": "取消订单请求"
+  },
+  "sirsoft-ecommerce.user-orders.confirm": {
+    "name": "确认收货",
+    "description": "订单商品确认收货"
+  },
+  "sirsoft-ecommerce.user-reviews": {
+    "name": "用户评价",
+    "description": "用户评价相关权限（用于拦截恶意消费者）"
+  },
+  "sirsoft-ecommerce.user-reviews.write": {
+    "name": "撰写评价",
+    "description": "撰写商品评价"
+  },
+  "sirsoft-ecommerce.mileage": {
+    "name": "积分管理",
+    "description": "积分记录查询及手动发放/扣减权限"
+  },
+  "sirsoft-ecommerce.mileage.read": {
+    "name": "积分记录查询",
+    "description": "积分记录列表及详情查询"
+  },
+  "sirsoft-ecommerce.mileage.manage": {
+    "name": "积分手动处理",
+    "description": "积分手动发放/扣减及批量延长有效期"
+  },
+  "sirsoft-ecommerce.user-currency": {
+    "name": "会员支付货币管理",
+    "description": "管理员变更各会员支付货币的权限"
+  },
+  "sirsoft-ecommerce.user-currency.manage": {
+    "name": "变更会员支付货币",
+    "description": "变更各会员的支付货币"
+  },
+  "sirsoft-ecommerce.user-shipping-country": {
+    "name": "会员配送国家管理",
+    "description": "管理员变更各会员配送国家的权限"
+  },
+  "sirsoft-ecommerce.user-shipping-country.manage": {
+    "name": "变更会员配送国家",
+    "description": "变更各会员的配送国家／地区"
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "editor": {
+    "action": {
+      "request_pg_payment": {
+        "label": "支付进入",
+        "param_handler": "支付处理器",
+        "param_data": "支付数据"
+      }
+    },
+    "action_chip": {
+      "response_pg_handler": "支付处理器（响应）",
+      "response_pg_data": "支付数据（响应）"
+    },
+    "data_source": {
+      "active_carriers": "启用的物流公司",
+      "activity_logs": "活动日志",
+      "availableChannels": "可用渠道",
+      "brands": "品牌列表",
+      "carriers": "物流公司列表",
+      "categories": "分类列表",
+      "commonInfos": "通用信息列表",
+      "common_infos": "通用信息列表",
+      "copy_source": "复制源",
+      "coupon": "优惠券",
+      "couponIssues": "优惠券发放记录",
+      "coupons": "优惠券列表",
+      "ecommerceIdentityPolicies": "商城实名认证政策",
+      "ecommerceIdentityPurposes": "商城实名认证用途",
+      "ecommerceNotificationDefinitions": "商城通知定义",
+      "ecommerce_settings": "商城设置",
+      "extra_fee_templates": "附加运费模板",
+      "identityProviders": "实名认证服务商",
+      "notice_templates": "商品信息告示模板",
+      "order": "订单",
+      "order_logs": "订单日志",
+      "orders": "订单列表",
+      "paymentSettings": "支付配置",
+      "policy": "配送政策",
+      "presets": "预设列表",
+      "product": "商品",
+      "product_labels": "商品标签",
+      "products": "商品列表",
+      "refundReasons": "退款原因",
+      "reviews": "商品评价",
+      "roles": "角色列表",
+      "seoStats": "SEO 统计",
+      "settings": "设置",
+      "shipping_policies": "配送政策列表",
+      "templates": "模板列表"
+    }
+  },
+  "common": {
+    "$partial": "partial/common.json"
+  },
+  "currency": {
+    "$partial": "partial/currency.json"
+  },
+  "admin": {
+    "dashboard": {
+      "$partial": "partial/admin/dashboard.json"
+    },
+    "locale": {
+      "$partial": "partial/admin/locale.json"
+    },
+    "settings": {
+      "$partial": "partial/admin/settings.json"
+    },
+    "order_settings": {
+      "$partial": "partial/admin/order_settings.json"
+    },
+    "product": {
+      "$partial": "partial/admin/product.json"
+    },
+    "brand": {
+      "$partial": "partial/admin/brand.json"
+    },
+    "category": {
+      "$partial": "partial/admin/category.json"
+    },
+    "promotion_coupon": {
+      "$partial": "partial/admin/promotion_coupon.json"
+    },
+    "order": {
+      "$partial": "partial/admin/order.json"
+    },
+    "main_banner": {
+      "$partial": "partial/admin/main_banner.json"
+    },
+    "product_review": {
+      "$partial": "partial/admin/product_review.json"
+    },
+    "payment_failure_history": {
+      "$partial": "partial/admin/payment_failure_history.json"
+    },
+    "excel_download": {
+      "$partial": "partial/admin/excel_download.json"
+    },
+    "personal_payment": {
+      "$partial": "partial/admin/personal_payment.json"
+    },
+    "personal_payment_create": {
+      "$partial": "partial/admin/personal_payment_create.json"
+    },
+    "personal_payment_detail": {
+      "$partial": "partial/admin/personal_payment_detail.json"
+    },
+    "mileage_settings": {
+      "$partial": "partial/admin/mileage_settings.json"
+    },
+    "mileage_transactions": {
+      "$partial": "partial/admin/mileage_transactions.json"
+    },
+    "user_mileage": {
+      "tab_label": "积分",
+      "title": "积分",
+      "available": "可使用",
+      "pending": "待累积",
+      "total_earned": "累计累积",
+      "expiring_soon": "即将失效",
+      "view_history": "查看该会员的记录",
+      "disabled_notice": "积分功能已停用。可在环境设置中启用。"
+    },
+    "user_currency": {
+      "title": "支付货币",
+      "description": "指定该会员下单、支付时使用的货币。",
+      "save_button": "保存",
+      "saved": "会员的支付货币已变更。",
+      "save_failed": "会员的支付货币变更失败。"
+    },
+    "user_shipping_country": {
+      "title": "配送国家／地区",
+      "description": "指定该会员的默认配送国家／地区。",
+      "save_button": "保存",
+      "saved": "会员的配送国家／地区已变更。",
+      "save_failed": "会员的配送国家／地区变更失败。"
+    },
+    "product_notice_template": {
+      "$partial": "partial/admin/product_notice_template.json"
+    },
+    "deposit": {
+      "$partial": "partial/admin/deposit.json"
+    },
+    "promotion_discount_code": {
+      "$partial": "partial/admin/promotion_discount_code.json"
+    },
+    "common_info": {
+      "$partial": "partial/admin/common_info.json"
+    },
+    "shipping_policy": {
+      "$partial": "partial/admin/shipping_policy.json"
+    }
+  },
+  "user": {
+    "$partial": "partial/user.json"
+  },
+  "auth": {
+    "register_currency": {
+      "label": "支付货币",
+      "hint": "下单、支付时使用的货币。注册后可在“我的信息”中变更。"
+    },
+    "register_shipping_country": {
+      "label": "配送国家／地区",
+      "hint": "默认配送国家／地区。注册后可在“我的信息”中变更。"
+    }
+  },
+  "user_mileage": {
+    "title": "我的积分",
+    "available": "可使用",
+    "expiring_soon": "即将失效 {{amount}} P",
+    "view_history": "积分记录",
+    "disabled_notice": "积分功能已停用。"
+  },
+  "product": {
+    "$partial": "partial/product.json"
+  },
+  "order": {
+    "$partial": "partial/order.json"
+  },
+  "category": {
+    "$partial": "partial/category.json"
+  },
+  "enums": {
+    "$partial": "partial/enums.json"
+  },
+  "messages": {
+    "$partial": "partial/messages.json"
+  },
+  "exceptions": {
+    "$partial": "partial/exceptions.json"
+  },
+  "validation": {
+    "$partial": "partial/validation.json"
+  },
+  "shop": {
+    "$partial": "partial/shop.json"
+  },
+  "checkout": {
+    "cash_receipt": {
+      "request": "申请现金收据",
+      "purpose": "用途",
+      "purpose_income": "用于个人所得税抵扣",
+      "purpose_expense": "用于支出凭证",
+      "identifier_phone": "手机号码",
+      "identifier_card": "现金收据卡号",
+      "identifier_business": "营业执照号码",
+      "identifier_placeholder": "请只输入数字，不要输入 -",
+      "purpose_help": "个人所得税抵扣用于年终结算，支出凭证用于企业进项税额抵扣。",
+      "immutable_help": "开具后不可变更用途。"
+    }
+  }
+}

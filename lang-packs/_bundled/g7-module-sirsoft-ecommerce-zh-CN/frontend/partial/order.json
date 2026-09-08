@@ -1,0 +1,40 @@
+{
+  "default_shipping": "默认配送",
+  "order_number": "订单号",
+  "order_date": "下单日期",
+  "total_amount": "总金额",
+  "status": "订单状态",
+  "statuses": {
+    "pending": "等待中",
+    "paid": "支付完成",
+    "preparing": "准备中",
+    "shipped": "配送中",
+    "delivered": "已送达",
+    "cancelled": "已取消",
+    "refunded": "已退款"
+  },
+  "cash_receipt": {
+    "title": "现金收据",
+    "issue_title": "开具现金收据",
+    "purpose": "用途",
+    "purpose_income": "用于个人所得税抵扣",
+    "purpose_expense": "用于支出凭证",
+    "identifier_type": "开具方式",
+    "identifier": "识别号码",
+    "identifier_phone": "手机号码",
+    "identifier_card": "现金收据卡号",
+    "identifier_business": "营业执照号码",
+    "identifier_placeholder": "请只输入数字，不要输入 -",
+    "immutable_help": "开具后不可变更用途。",
+    "awaiting_deposit": "确认到账后将开具。",
+    "none": "没有已开具的现金收据。",
+    "issue": "开具现金收据",
+    "cancel": "取消",
+    "issued_at": "开具时间",
+    "view_receipt": "查看收据",
+    "issue_success": "现金收据已开具。",
+    "issue_failed": "开具现金收据失败。",
+    "reissue_failed": "重新开具失败",
+    "reissue_failed_help": "因退款而进行的现金收据重新开具失败。请联系客服中心。"
+  }
+}

@@ -1,0 +1,30 @@
+{
+    "identifier": "g7-module-sirsoft-ecommerce-zh-CN",
+    "namespace": "g7",
+    "vendor": "sirsoft",
+    "name": {
+        "ko": "G7 모듈 (sirsoft-ecommerce) 중국어 간체 언어팩",
+        "en": "G7 module (sirsoft-ecommerce) Simplified Chinese language pack",
+        "zh-CN": "G7 模块（sirsoft-ecommerce）简体中文语言包"
+    },
+    "description": {
+        "ko": "G7 모듈 (sirsoft-ecommerce) 중국어 간체 언어팩 (번들)",
+        "en": "G7 module (sirsoft-ecommerce) Simplified Chinese language pack (bundled)",
+        "zh-CN": "G7 模块（sirsoft-ecommerce）简体中文语言包（捆绑）"
+    },
+    "version": "1.0.0",
+    "license": "MIT",
+    "scope": "module",
+    "target_identifier": "sirsoft-ecommerce",
+    "locale": "zh-CN",
+    "locale_name": "Simplified Chinese",
+    "locale_native_name": "简体中文",
+    "text_direction": "ltr",
+    "g7_version": ">=7.0.0",
+    "requires": {
+        "target_version": null,
+        "depends_on_core_locale": true
+    },
+    "github_url": "",
+    "github_changelog_url": ""
+}

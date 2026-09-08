@@ -1,0 +1,111 @@
+{
+  "title": "商品信息告示管理",
+  "description": "管理各商品类别的信息告示模板",
+  "list": {
+    "title": "商品类别",
+    "count": "{{count}} 个",
+    "add": "添加",
+    "search_placeholder": "搜索商品类别...",
+    "empty": "尚未登记任何商品类别",
+    "fields_count": "{{count}}"
+  },
+  "info": {
+    "title": "商品类别信息"
+  },
+  "fields": {
+    "order": "序号",
+    "name": "项目名称",
+    "content": "内容"
+  },
+  "empty": {
+    "title": "请选择商品类别",
+    "description": "请从左侧列表中选择商品类别，或新建一个"
+  },
+  "actions": {
+    "copy": "复制"
+  },
+  "view": {
+    "title": "商品类别信息",
+    "fields_count": "{{count}} 个项目",
+    "status": {
+      "active": "启用",
+      "inactive": "停用"
+    },
+    "table": {
+      "order": "序号",
+      "name": "项目名称",
+      "content": "内容"
+    },
+    "copy": "复制",
+    "edit": "编辑",
+    "delete": "删除"
+  },
+  "form": {
+    "create_title": "添加商品类别",
+    "edit_title": "编辑商品类别",
+    "name": "商品类别名称",
+    "name_label": "商品类别名称",
+    "name_placeholder": "例：电子书",
+    "name_required": "商品类别名称为必填项",
+    "status_title": "状态设置",
+    "is_active": "启用",
+    "is_active_label": "启用",
+    "fill_detail_ref": "将所有项目变更为“参见详细说明”",
+    "fill_all_detail_ref": "将所有项目变更为“参见详细说明”",
+    "detail_reference": "参见详细说明",
+    "fields_title": "项目列表",
+    "field_name_placeholder": "输入项目名称",
+    "field_content_placeholder": "输入内容",
+    "empty_fields": "没有项目。请添加项目。",
+    "field": {
+      "name_label": "项目名称",
+      "name_placeholder": "输入项目名称",
+      "content_label": "内容",
+      "content_placeholder": "输入内容"
+    },
+    "add_field": "添加项目",
+    "cancel": "取消",
+    "save": "保存"
+  },
+  "empty_selection": {
+    "title": "请选择商品类别",
+    "description": "请从左侧列表中选择商品类别，或新建一个"
+  },
+  "messages": {
+    "created": "商品类别已创建",
+    "updated": "商品类别已修改",
+    "deleted": "商品类别已删除",
+    "copied": "商品类别已复制",
+    "create_error": "商品类别创建失败",
+    "update_error": "商品类别修改失败",
+    "delete_error": "商品类别删除失败",
+    "no_fields_to_change": "没有可变更的项目。",
+    "all_fields_changed_to_detail_ref": "所有项目已变更为“参见详细说明”。"
+  },
+  "modals": {
+    "delete": {
+      "title": "删除商品类别",
+      "message": "确定要删除以下商品类别吗？",
+      "message_suffix": " 商品类别，确定要删除吗？",
+      "warning": "此操作无法撤销。"
+    },
+    "editing": {
+      "title": "正在修改中",
+      "message": "修改中的内容将不会被保存。",
+      "confirm_message": "确定要取消并选择其他项目吗？",
+      "continue": "继续修改",
+      "discard": "取消并离开"
+    },
+    "bulk_change": {
+      "title": "所有项目批量变更",
+      "message": "确定要将当前模板中所有项目的内容变更为“参见详细说明”吗？",
+      "preview_label": "变更后的内容：",
+      "notice": "※仅变更当前所选语言的内容。",
+      "confirm": "变更"
+    }
+  },
+  "language": {
+    "ko": "韩语",
+    "en": "英语"
+  }
+}

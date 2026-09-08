@@ -1,0 +1,32 @@
+{
+  "quick_menu": {
+    "products": "商品",
+    "orders": "订单",
+    "reviews": "评价",
+    "coupons": "优惠券",
+    "shipping": "配送"
+  },
+  "today_badges": {
+    "pending_payment": "未支付 {{count}} 笔",
+    "payment_complete": "支付完成 {{count}} 笔",
+    "preparing": "准备中 {{count}} 笔",
+    "shipping_ready": "备货中 {{count}} 笔",
+    "shipping": "配送中 {{count}} 笔",
+    "cancellations": "取消 {{count}} 笔",
+    "returns": "退货 {{count}} 笔"
+  },
+  "community": {
+    "sales_graph": "销售概况",
+    "quantity": "销售数量",
+    "sales_amount": "销售额",
+    "total_quantity": "总销售数量",
+    "total_sales": "总销售额",
+    "latest_reviews": "最新评价",
+    "go_to_reviews": "查看全部",
+    "no_reviews": "尚无评价",
+    "unanswered_inquiries": "未回复咨询",
+    "go_to_inquiries": "查看全部",
+    "no_inquiries": "没有未回复的咨询",
+    "updated_at": "最近更新：{{time}}"
+  }
+}

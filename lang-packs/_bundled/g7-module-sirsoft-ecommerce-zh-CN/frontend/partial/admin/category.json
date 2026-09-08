@@ -1,0 +1,87 @@
+{
+  "title": "分类管理",
+  "description": "管理电商商品分类。",
+  "tree": {
+    "title": "分类列表",
+    "add": "添加分类",
+    "empty": "尚未登记任何分类"
+  },
+  "empty": {
+    "title": "请选择分类",
+    "description": "请从左侧选择分类，或新建一个"
+  },
+  "form": {
+    "new_category_title": "新分类",
+    "edit_category_title": "修改分类",
+    "name": "分类名称",
+    "name_placeholder": "请输入分类名称",
+    "slug": "别名（slug）",
+    "slug_placeholder": "category-slug",
+    "slug_hint": "别名（slug）必须以英文小写字母开头，且只能使用英文小写字母、数字和连字符（-）。",
+    "description": "说明",
+    "description_placeholder": "请输入分类说明",
+    "parent_category": "上级分类",
+    "parent_category_placeholder": "请搜索上级分类",
+    "parent_category_hint": "请选择上级分类，或选择“顶级分类”。",
+    "parent_top_level": "顶级分类",
+    "sort_order": "排序",
+    "sort_order_hint": "同一层级内的排序（数字越小显示越靠前）",
+    "is_active": "启用",
+    "image": "分类图片",
+    "meta_title": "SEO 元标题",
+    "meta_description": "SEO 元描述",
+    "confirm_remove_image_title": "删除图片",
+    "confirm_remove_image_message": "图片将立即删除。无论分类是否保存，均无法撤销。"
+  },
+  "info": {
+    "title": "分类信息",
+    "basic": "基本信息",
+    "name": "分类名称",
+    "slug": "别名（slug）",
+    "depth": "层级深度",
+    "order": "顺序",
+    "path": "路径",
+    "status": "状态",
+    "description": "说明",
+    "image": "图片",
+    "image_click_to_enlarge": "点击图片可放大查看。",
+    "no_image": "图片不存在。",
+    "products_count": "已登记商品",
+    "hierarchy_info": "层级信息",
+    "parent_category": "上级分类",
+    "top_level": "顶级",
+    "child_categories": "下级分类",
+    "no_children": "无下级分类",
+    "children_count": "{{count}} 个",
+    "seo": "SEO 信息",
+    "system": "系统信息",
+    "statistics": "统计",
+    "product_count": "商品数",
+    "subcategory_count": "下级分类数"
+  },
+  "delete_modal": {
+    "title": "删除分类",
+    "message_can_delete": " 分类，确定要删除吗？",
+    "message_cannot_delete": " 分类无法删除。",
+    "message_suffix": " 分类，确定要删除吗？",
+    "cannot_delete_title": "无法删除",
+    "has_children_cannot_delete": "有 {count} 个下级分类。请先删除下级分类。",
+    "has_products_cannot_delete": "有 {count} 件商品与之关联。请先变更商品的分类。",
+    "irreversible_warning": "此操作无法撤销。确定要删除吗？"
+  },
+  "modal": {
+    "image_preview": {
+      "title": "图片预览",
+      "close": "关闭"
+    }
+  },
+  "messages": {
+    "created": "分类已登记。",
+    "updated": "分类已修改。",
+    "deleted": "分类已删除。",
+    "order_updated": "分类顺序已变更。",
+    "order_update_failed": "分类顺序变更失败。",
+    "status_changed": "分类状态已变更。",
+    "image_delete_failed": "图片删除失败。"
+  }
+}

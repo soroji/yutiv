@@ -1,0 +1,195 @@
+{
+  "order_status": {
+    "pending_order": "待下单",
+    "pending_payment": "待支付",
+    "payment_complete": "支付完成",
+    "shipping_hold": "配送暂缓",
+    "preparing": "备货中",
+    "shipping_ready": "备货完成",
+    "shipping": "配送中",
+    "delivered": "已送达",
+    "confirmed": "确认收货",
+    "cancelled": "取消订单"
+  },
+  "payment_status": {
+    "ready": "待支付",
+    "in_progress": "支付进行中",
+    "waiting_deposit": "待付款",
+    "paid": "支付完成",
+    "partial_cancelled": "部分取消",
+    "cancelled": "支付取消",
+    "failed": "支付失败",
+    "expired": "已过期"
+  },
+  "payment_method": {
+    "card": "信用卡",
+    "vbank": "虚拟账户",
+    "dbank": "银行汇款",
+    "bank": "账户转账",
+    "phone": "手机支付",
+    "point": "积分支付",
+    "deposit": "预存款支付",
+    "free": "免费"
+  },
+  "shipping_status": {
+    "pending": "待配送",
+    "preparing": "备货中",
+    "ready": "备货完成",
+    "shipped": "配送中",
+    "in_transit": "运输中",
+    "out_for_delivery": "派送中",
+    "delivered": "已送达",
+    "failed": "配送失败",
+    "returned": "退回",
+    "pickup_ready": "待自提",
+    "pickup_complete": "自提完成"
+  },
+  "sales_status": {
+    "on_sale": "在售",
+    "suspended": "停售",
+    "sold_out": "售罄",
+    "coming_soon": "即将上市"
+  },
+  "display_status": {
+    "visible": "展示中",
+    "hidden": "停止展示"
+  },
+  "tax_status": {
+    "taxable": "应税",
+    "tax_free": "免税"
+  },
+  "target_screen": {
+    "products": "商品",
+    "orders": "订单",
+    "customers": "客户"
+  },
+  "price_type": {
+    "list_price": "原价",
+    "selling_price": "售价",
+    "supply_price": "未税金额"
+  },
+  "image_collection": {
+    "main": "主图",
+    "gallery": "图库",
+    "detail": "详情图"
+  },
+  "date_type": {
+    "created_at": "登记日期",
+    "updated_at": "修改日期"
+  },
+  "order_date_type": {
+    "ordered_at": "下单日期",
+    "paid_at": "支付日期",
+    "confirmed_at": "确认日期",
+    "delivered_at": "送达日期",
+    "cancelled_at": "取消日期"
+  },
+  "device_type": {
+    "pc": "PC",
+    "mobile": "移动端",
+    "app_ios": "iOS 应用",
+    "app_android": "Android 应用",
+    "admin": "管理员",
+    "api": "API"
+  },
+  "option_status": {
+    "ordered": "下单完成",
+    "confirmed": "确认完成",
+    "preparing": "准备中",
+    "shipped": "发货完成",
+    "delivered": "已送达",
+    "cancelled": "取消",
+    "refund_requested": "退款申请",
+    "refund_complete": "退款完成",
+    "return_requested": "退货申请",
+    "return_complete": "退货完成",
+    "exchange_requested": "换货申请",
+    "exchange_complete": "换货完成"
+  },
+  "order_option_status": {
+    "pending": "待下单",
+    "payment_complete": "支付完成",
+    "preparing": "备货中",
+    "shipped": "发货完成",
+    "delivered": "已送达",
+    "confirmed": "确认收货",
+    "cancelled": "取消",
+    "return_requested": "退货申请",
+    "return_complete": "退货完成",
+    "exchange_requested": "换货申请",
+    "exchange_complete": "换货完成",
+    "refund_complete": "退款完成"
+  },
+  "order_option_source_type": {
+    "order": "首次下单",
+    "exchange": "换货",
+    "split": "数量拆分"
+  },
+  "tax_invoice_status": {
+    "pending": "待开具",
+    "processing": "开具处理中",
+    "issued": "开具完成",
+    "failed": "开具失败",
+    "cancelled": "开具取消"
+  },
+  "coupon_target_type": {
+    "product_amount": "商品金额",
+    "order_amount": "订单金额",
+    "shipping_fee": "运费"
+  },
+  "coupon_discount_type": {
+    "fixed": "定额",
+    "rate": "定率"
+  },
+  "coupon_issue_status": {
+    "issuing": "发放中",
+    "stopped": "停止发放"
+  },
+  "coupon_issue_method": {
+    "direct": "直接发放",
+    "download": "领取",
+    "auto": "自动发放"
+  },
+  "coupon_issue_condition": {
+    "manual": "手动发放",
+    "signup": "注册会员",
+    "first_purchase": "首次购买",
+    "birthday": "生日"
+  },
+  "coupon_use_status": {
+    "available": "可使用",
+    "used": "已使用",
+    "expired": "已过期",
+    "cancelled": "已取消"
+  },
+  "carrier": {
+    "cj": "大韩通运",
+    "logen": "Logen 快递",
+    "ems": "EMS",
+    "dhl": "DHL",
+    "fedex": "FedEx",
+    "other": "其他"
+  },
+  "charge_policy": {
+    "free": "免费",
+    "fixed": "固定",
+    "conditional_free": "有条件免费",
+    "range_amount": "按区间（金额）",
+    "range_quantity": "按区间（数量）",
+    "range_weight": "按区间（重量）",
+    "range_volume": "按区间（体积）",
+    "range_volume_weight": "按区间（体积+重量）",
+    "api": "计算 API",
+    "per_quantity": "按数量",
+    "per_weight": "按重量",
+    "per_volume": "按体积",
+    "per_volume_weight": "按体积重",
+    "per_amount": "按金额"
+  },
+  "shipping_country": {
+    "KR": "韩国",
+    "US": "美国",
+    "CN": "中国",
+    "JP": "日本"
+  }
+}

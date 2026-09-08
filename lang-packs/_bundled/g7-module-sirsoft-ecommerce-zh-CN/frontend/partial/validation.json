@@ -1,0 +1,238 @@
+{
+  "attributes": {
+    "name": "商品名称",
+    "product_code": "商品编码",
+    "list_price": "原价",
+    "selling_price": "售价",
+    "stock": "库存",
+    "cancel_code": "取消代码",
+    "cancel_message": "取消原因"
+  },
+  "settings": {
+    "key_required": "设置键为必填项。",
+    "value_present": "设置值为必填项。"
+  },
+  "product": {
+    "name": {
+      "required": "商品名称为必填项。"
+    },
+    "name_ko": {
+      "required": "韩语商品名称为必填项。"
+    },
+    "product_code": {
+      "required": "商品编码为必填项。",
+      "unique": "该商品编码已被使用。"
+    },
+    "list_price": {
+      "required": "原价为必填项。"
+    },
+    "selling_price": {
+      "required": "售价为必填项。"
+    },
+    "invalid_sales_status": "销售状态无效。",
+    "invalid_display_status": "展示状态无效。"
+  },
+  "preset": {
+    "name_required": "预设名称为必填项。",
+    "name_exists": "该预设名称已被使用。",
+    "conditions_required": "搜索条件为必填项。"
+  },
+  "bulk": {
+    "ids_required": "没有已选择的商品。",
+    "method_required": "变更方式为必填项。",
+    "value_required": "变更值为必填项。"
+  },
+  "bulk_option_price": {
+    "product_ids": {
+      "required": "没有已选择的商品。",
+      "min": "必须至少选择 1 件商品。"
+    },
+    "method": {
+      "required": "变更方式为必填项。",
+      "in": "变更方式无效。"
+    },
+    "value": {
+      "required": "变更值为必填项。",
+      "integer": "变更值必须为整数。",
+      "min": "变更值必须为 0 以上。"
+    },
+    "unit": {
+      "required": "单位为必填项。",
+      "in": "单位无效。"
+    }
+  },
+  "bulk_option_stock": {
+    "product_ids": {
+      "required": "没有已选择的商品。",
+      "min": "必须至少选择 1 件商品。"
+    },
+    "method": {
+      "required": "变更方式为必填项。",
+      "in": "变更方式无效。"
+    },
+    "value": {
+      "required": "变更数量为必填项。",
+      "integer": "变更数量必须为整数。",
+      "min": "变更数量必须为 0 以上。"
+    }
+  },
+  "custom": {
+    "language_currency": {
+      "currencies": {
+        "duplicate_code": "存在重复的货币代码。",
+        "name_required": "货币名称为必填项。"
+      }
+    },
+    "basic_info": {
+      "shop_name": {
+        "required": "商城名称为必填项。"
+      },
+      "route_path": {
+        "required": "路由路径为必填项。"
+      },
+      "privacy_officer_email": {
+        "email": "不是有效的邮箱格式。"
+      }
+    }
+  },
+  "shipping_policy": {
+    "name": {
+      "required": "配送政策名称为必填项。"
+    },
+    "is_active": {
+      "required": "启用状态为必填项。"
+    },
+    "country_settings": {
+      "required": "至少需要 1 项国家/地区设置。",
+      "min": "至少需要 1 项国家/地区设置。",
+      "country_code": {
+        "required": "请选择国家／地区。",
+        "distinct": "存在重复的国家／地区。",
+        "max": "国家／地区代码最多 10 个字符。"
+      },
+      "shipping_method": {
+        "required": "配送方式为必填项。",
+        "in": "配送方式无效。"
+      },
+      "carrier": {
+        "in": "物流公司无效。"
+      },
+      "currency_code": {
+        "required": "基准货币为必填项。",
+        "max": "货币代码最多 10 个字符。"
+      },
+      "charge_policy": {
+        "required": "运费计费政策为必填项。",
+        "in": "计费政策无效。"
+      },
+      "base_fee": {
+        "numeric": "运费必须为数字。",
+        "min": "运费必须为 0 以上。"
+      },
+      "free_threshold": {
+        "numeric": "免运费门槛金额必须为数字。",
+        "min": "免运费门槛金额必须为 0 以上。"
+      },
+      "api_endpoint": {
+        "url": "请输入有效的 URL。",
+        "max": "API 端点最多 500 个字符。"
+      },
+      "extra_fee_enabled": {
+        "required": "偏远及岛屿地区附加运费的启用状态为必填项。"
+      },
+      "is_active": {
+        "required": "启用状态为必填项。"
+      }
+    },
+    "ranges": {
+      "first_min_zero": "第一个区间的起始值必须为 0。",
+      "last_max_unlimited": "最后一个区间的结束值必须留空。",
+      "continuity": "区间不连续。",
+      "min_less_than_max": "起始值必须小于结束值。",
+      "fee_non_negative": "运费必须为 0 以上。"
+    }
+  },
+  "list": {
+    "search": {
+      "string": "搜索词必须为字符串。",
+      "max": "搜索词最多 200 个字符。"
+    },
+    "shipping_methods": {
+      "array": "配送方式必须为数组。",
+      "string": "配送方式必须为字符串。",
+      "in": "配送方式无效。"
+    },
+    "carriers": {
+      "array": "物流公司必须为数组。",
+      "string": "物流公司必须为字符串。",
+      "in": "物流公司无效。"
+    },
+    "charge_policies": {
+      "array": "计费政策必须为数组。",
+      "string": "计费政策必须为字符串。",
+      "in": "计费政策无效。"
+    },
+    "countries": {
+      "array": "配送国家／地区必须为数组。",
+      "string": "国家／地区代码必须为字符串。",
+      "max": "国家／地区代码最多 10 个字符。"
+    },
+    "is_active": {
+      "in": "启用状态的值无效。"
+    },
+    "sort_by": {
+      "in": "排序基准无效。"
+    },
+    "sort_order": {
+      "in": "排序方式无效。"
+    },
+    "per_page": {
+      "integer": "每页条数必须为整数。",
+      "min": "每页最少 10 条。",
+      "max": "每页最多 100 条。"
+    },
+    "page": {
+      "integer": "页码必须为整数。",
+      "min": "页码必须为 1 以上。"
+    }
+  },
+  "extra_fee_template": {
+    "zipcode_required": "邮政编码为必填项。",
+    "zipcode_unique": "该邮政编码已登记。",
+    "zipcode_max": "邮政编码最多 20 个字符。",
+    "zipcode_format": "邮政编码只能输入数字和连字符（-）。（例：12345 或 12345-12399）",
+    "fee_required": "运费为必填项。",
+    "fee_numeric": "运费必须为数字。",
+    "fee_min": "运费必须为 0 以上。",
+    "items_required": "需要有要登记的项目。",
+    "items_array": "项目格式不正确。",
+    "items_min": "至少需要 1 个项目。",
+    "items_max": "单次最多可登记 1,000 个。",
+    "item_zipcode_required": "邮政编码为必填项。",
+    "item_fee_required": "运费为必填项。",
+    "ids_required": "没有已选择的项目。",
+    "ids_array": "项目格式不正确。",
+    "ids_min": "必须至少选择 1 个项目。",
+    "id_not_found": "其中包含不存在的项目。",
+    "is_active_required": "启用状态为必填项。",
+    "is_active_boolean": "启用状态必须为真／假值。"
+  },
+  "product_notice_template": {
+    "name_required": "商品类别名称为必填项。",
+    "name_max": "商品类别名称不能超过 100 个字符。",
+    "fields_required": "至少需要 1 个项目。",
+    "fields_min": "至少需要 1 个项目。",
+    "field_name_required": "项目名称为必填项。",
+    "field_name_min": "项目名称必须为 1 个字符以上。",
+    "field_name_max": "项目名称不能超过 200 个字符。",
+    "field_content_required": "项目内容为必填项。",
+    "field_content_min": "项目内容必须为 1 个字符以上。",
+    "field_content_max": "项目内容不能超过 2000 个字符。"
+  },
+  "review_image": {
+    "image_required": "图片文件为必填项。",
+    "image_file": "请上传正确的文件。",
+    "image_image": "只能上传图片文件。",
+    "image_max": "图片文件大小不能超过 10MB。"
+  }
+}

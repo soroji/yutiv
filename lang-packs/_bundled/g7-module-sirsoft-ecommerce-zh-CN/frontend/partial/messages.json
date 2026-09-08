@@ -1,0 +1,85 @@
+{
+  "product_created": "商品已登记",
+  "product_updated": "商品已修改",
+  "products": {
+    "fetch_success": "已加载商品列表。",
+    "fetch_failed": "加载商品列表失败。",
+    "created": "商品已登记。",
+    "create_failed": "商品登记失败。",
+    "updated": "商品已修改。",
+    "update_failed": "商品修改失败。",
+    "deleted": "商品已删除。",
+    "delete_failed": "商品删除失败。",
+    "bulk_updated": "已批量修改 :count 件商品。",
+    "bulk_update_failed": "商品批量修改失败。",
+    "bulk_price_updated": "已批量变更 :count 件商品的价格。",
+    "bulk_price_update_failed": "商品价格批量变更失败。",
+    "bulk_stock_updated": "已批量变更 :count 件商品的库存。",
+    "bulk_stock_update_failed": "商品库存批量变更失败。",
+    "bulk": {
+      "no_selection": "没有已选择的项目。",
+      "update_success": "已修改 {products} 件商品、{options} 个选项。",
+      "update_error": "批量更新失败。",
+      "option_update_success": "已修改 {count} 个选项。",
+      "option_update_error": "选项批量更新失败。",
+      "overwrite_warning": "选择批量变更选项（销售状态、展示状态、价格变更、库存变更）时，将忽略单独修改的内容。"
+    }
+  },
+  "options": {
+    "bulk_price_updated": "已批量变更 :count 个选项的售价。",
+    "bulk_price_update_failed": "选项售价批量变更失败。",
+    "bulk_stock_updated": "已批量变更 :count 个选项的库存。",
+    "bulk_stock_update_failed": "选项库存批量变更失败。",
+    "bulk_update_success": "已修改 {count} 个选项。",
+    "bulk_update_error": "选项批量更新失败。",
+    "has_order_history": "有订单记录的选项无法删除。"
+  },
+  "presets": {
+    "created": "预设已保存。",
+    "updated": "预设已修改。",
+    "deleted": "预设已删除。"
+  },
+  "notice_templates": {
+    "fetch_success": "已加载商品信息告示列表。",
+    "created": "商品信息告示已创建。",
+    "updated": "商品信息告示已修改。",
+    "deleted": "商品信息告示已删除。",
+    "copied": "商品信息告示已复制。",
+    "not_found": "找不到商品信息告示。"
+  },
+  "common_infos": {
+    "fetch_success": "已加载通用信息列表。",
+    "created": "通用信息已创建。",
+    "updated": "通用信息已修改。",
+    "deleted": "通用信息已删除。",
+    "not_found": "找不到通用信息。",
+    "activated": "通用信息已启用。",
+    "deactivated": "通用信息已停用。"
+  },
+  "categories": {
+    "list_retrieved": "已查询分类列表。",
+    "fetch_success": "已查询分类。",
+    "fetch_failed": "加载分类失败。",
+    "not_found": "找不到分类。",
+    "created": "分类已登记。",
+    "retrieved": "已查询分类。",
+    "updated": "分类已修改。",
+    "deleted": "分类已删除。",
+    "status_changed": "分类状态已变更。",
+    "reorder_data_required": "需要顺序变更数据。",
+    "order_updated": "分类顺序已变更。"
+  },
+  "extra_fee_template": {
+    "list_retrieved": "已加载附加运费模板列表。",
+    "retrieved": "已加载附加运费模板。",
+    "not_found": "找不到附加运费模板。",
+    "created": "附加运费模板已登记。",
+    "updated": "附加运费模板已修改。",
+    "deleted": "附加运费模板已删除。",
+    "toggled": "启用状态已变更。",
+    "bulk_deleted": "所选模板已删除。",
+    "bulk_toggled": "所选模板的启用状态已变更。",
+    "bulk_created": "模板已批量登记。",
+    "settings_retrieved": "已加载附加运费设置。"
+  }
+}

@@ -421,6 +421,7 @@ cp .env.example .env
 | **g7-module-sirsoft-board-ja** | 게시판 모듈 일본어 |
 | **g7-module-sirsoft-board-zh-CN** | 게시판 모듈 중국어 간체 |
 | **g7-module-sirsoft-ecommerce-ja** | 이커머스 모듈 일본어 |
+| **g7-module-sirsoft-ecommerce-zh-CN** | 이커머스 모듈 중국어 간체 |
 | **g7-module-sirsoft-page-ja** | 페이지 모듈 일본어 |
 | **g7-plugin-sirsoft-ckeditor5-ja** | CKEditor5 플러그인 일본어 |
 | **g7-plugin-sirsoft-daum_postcode-ja** | 다음 우편번호 플러그인 일본어 |

@@ -1,0 +1,77 @@
+{
+  "title": "个人支付管理",
+  "description": "生成并管理面向个人的支付链接",
+  "add": "添加",
+  "search": {
+    "field": {
+      "payment_number": "支付编号",
+      "member_name": "会员名",
+      "member_id": "会员 ID",
+      "product_name": "商品名称"
+    },
+    "placeholder": "请输入搜索词",
+    "reset": "重置"
+  },
+  "filter": {
+    "status": "支付状态",
+    "payment_method": "支付方式",
+    "date_search": "日期搜索",
+    "amount": "支付金额",
+    "all": "全部",
+    "pending": "等待中",
+    "completed": "完成",
+    "expired": "已过期",
+    "card": "信用卡",
+    "bank_transfer": "账户转账",
+    "kakao_pay": "Kakao Pay",
+    "naver_pay": "Naver Pay",
+    "created_at": "生成日期",
+    "expired_at": "过期日期",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "min_amount": "最低金额",
+    "max_amount": "最高金额"
+  },
+  "table": {
+    "total_count": "共 {{count}} 个",
+    "sort": {
+      "created_at_desc": "生成日期（最新优先）",
+      "created_at_asc": "生成日期（最早优先）",
+      "amount_desc": "金额（从高到低）",
+      "amount_asc": "金额（从低到高）"
+    },
+    "per_page": "每页显示 {{count}} 个",
+    "columns": {
+      "no": "序号",
+      "payment_number": "支付编号",
+      "status": "状态",
+      "member_info": "会员信息",
+      "product_name": "商品名称",
+      "amount": "支付金额",
+      "order_number": "订单号",
+      "created_at": "生成时间",
+      "expired_at": "过期时间",
+      "payment_method": "支付方式",
+      "paid_at": "支付时间",
+      "actions": "管理"
+    }
+  },
+  "dropdown": {
+    "search_by_member": "按会员名搜索",
+    "view_member_info": "查看会员信息",
+    "view_order_detail": "查看订单详情",
+    "view_detail": "查看详情",
+    "edit": "修改",
+    "copy_link": "复制链接",
+    "delete": "删除"
+  },
+  "status": {
+    "pending": "等待中",
+    "completed": "完成",
+    "expired": "已过期"
+  },
+  "mobile": {
+    "created_at": "生成时间",
+    "expired_at": "过期时间"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "title": "主横幅管理",
+  "description": "管理主页的主横幅，并可变更其顺序。",
+  "actions": {
+    "create": "登记",
+    "preview_close": "关闭预览"
+  },
+  "preview": {
+    "title": "客户界面预览",
+    "info": "共 {{count}} 个横幅 · 每 {{interval}} 秒自动切换",
+    "carousel_placeholder": "需要开发 Carousel 组件"
+  },
+  "list": {
+    "title": "横幅",
+    "tabs": {
+      "all": "全部",
+      "active": "启用",
+      "inactive": "停用"
+    },
+    "empty": "尚未登记任何横幅。",
+    "drag_placeholder": "需要开发 DragList 组件",
+    "period_always": "常时展示",
+    "status_ended": "已结束"
+  },
+  "detail": {
+    "title": "横幅信息",
+    "preview": "横幅预览",
+    "language": {
+      "ko": "韩语",
+      "en": "英语",
+      "ja": "日语",
+      "zh": "中文"
+    },
+    "field": {
+      "banner_title": "标题",
+      "banner_content": "内容",
+      "style_settings": "样式设置",
+      "title_style": "标题",
+      "content_style": "内容",
+      "show": "显示",
+      "hide": "隐藏",
+      "color": "颜色",
+      "position": "位置",
+      "position_left": "左侧",
+      "position_center": "居中",
+      "position_right": "右侧",
+      "banner_image": "横幅图片",
+      "image_upload_hint": "请拖动图片，或点击选择文件。",
+      "image_size_hint": "建议尺寸：1200x200px，最大 5MB",
+      "image_placeholder": "尚未登记图片",
+      "image_upload_placeholder": "需要开发 ImageUpload 组件",
+      "link_url": "链接 URL",
+      "link_url_placeholder": "/promotion/sale",
+      "link_url_hint": "请输入点击横幅后跳转的 URL",
+      "exposure_period": "展示期间",
+      "start_date": "开始时间",
+      "end_date": "结束时间",
+      "period_hint": "不设置期间则常时展示",
+      "status": "状态",
+      "status_active": "启用",
+      "status_inactive": "停用",
+      "created_at": "创建日期",
+      "color_picker_placeholder": "需要开发 ColorPicker 组件"
+    },
+    "actions": {
+      "edit": "编辑",
+      "delete": "删除"
+    }
+  },
+  "form": {
+    "add_title": "添加横幅",
+    "edit_title": "修改横幅",
+    "cancel": "取消",
+    "save": "保存"
+  },
+  "modal": {
+    "delete": {
+      "title": "确认",
+      "message": "确定要删除所选横幅吗？",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "edit_cancel": {
+      "title": "正在修改中",
+      "message": "修改中的内容将不会被保存。",
+      "sub_message": "确定要取消并选择其他横幅吗？",
+      "cancel": "继续修改",
+      "confirm": "取消并离开"
+    },
+    "status_change": {
+      "title": "横幅状态批量变更",
+      "message": "将变更所选横幅的状态。",
+      "cancel": "取消",
+      "confirm": "变更"
+    }
+  }
+}

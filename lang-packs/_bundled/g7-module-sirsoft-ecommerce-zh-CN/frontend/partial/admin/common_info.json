@@ -1,0 +1,89 @@
+{
+  "title": "通用信息管理",
+  "description": "管理将在商品详情页显示的通用说明信息",
+  "list": {
+    "title": "通用信息",
+    "add": "添加",
+    "languages_count": "{count} 种语言",
+    "default": "默认",
+    "empty": "尚未登记任何通用信息。",
+    "search_placeholder": "按通用信息名称搜索"
+  },
+  "empty_state": {
+    "title": "请选择通用信息",
+    "description": "请从左侧列表中选择通用信息，或新建一个。"
+  },
+  "detail": {
+    "title": "通用信息详情",
+    "name": "通用信息名称",
+    "status": "状态",
+    "default": "默认",
+    "active": "使用",
+    "created_at": "登记日期",
+    "updated_at": "修改日期",
+    "copy": "复制",
+    "content": "说明内容",
+    "content_placeholder": "显示说明内容"
+  },
+  "form": {
+    "title_add": "添加通用信息",
+    "title_edit": "编辑通用信息",
+    "title_copy": "复制通用信息",
+    "name": "通用信息名称",
+    "name_placeholder": "请输入通用信息名称",
+    "set_default": "设为默认值",
+    "is_active": "是否使用",
+    "active_label": "使用",
+    "content_section": "说明内容",
+    "mode_text": "文本",
+    "mode_html": "HTML",
+    "preview": "预览",
+    "placeholder_text": "请输入说明内容",
+    "placeholder_html": "请以 HTML 代码输入说明内容",
+    "status_section": "状态设置",
+    "status_default": "默认设置",
+    "status_active": "启用"
+  },
+  "language": {
+    "ko": "韩语",
+    "en": "英语"
+  },
+  "modal": {
+    "delete": {
+      "title": "删除通用信息",
+      "confirm_message": "确定要删除“{name}”通用信息吗？",
+      "confirm_suffix": "通用信息，确定要删除吗？",
+      "warning": "使用该通用信息的所有商品的关联都将被解除。",
+      "irreversible": "※ 此操作无法撤销。"
+    },
+    "editing": {
+      "title": "正在修改中",
+      "message": "修改中的内容将不会被保存。",
+      "confirm_message": "确定要取消并选择其他商品类别吗？",
+      "continue": "继续修改",
+      "discard": "取消并离开"
+    },
+    "content_mode_change": {
+      "title": "变更输入模式",
+      "message": "从 HTML 变更为纯文本时，所有 HTML 标签都将被移除。要继续吗？",
+      "confirm": "变更"
+    },
+    "set_default": {
+      "title": "确认默认设置",
+      "message": "要将该通用信息设为默认吗？原有的默认设置将被取消。"
+    },
+    "copy": {
+      "title": "复制通用信息",
+      "message": "确定要复制“{name}”通用信息吗？",
+      "confirm": "复制"
+    }
+  },
+  "button": {
+    "cancel": "取消",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除",
+    "confirm": "确认",
+    "set_default": "设为默认值"
+  }
+}

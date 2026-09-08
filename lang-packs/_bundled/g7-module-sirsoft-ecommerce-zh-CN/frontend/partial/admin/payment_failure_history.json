@@ -1,0 +1,98 @@
+{
+  "title": "支付失败记录",
+  "description": "查看并管理支付失败的订单记录",
+  "search": {
+    "field": {
+      "order_number": "订单号",
+      "member_name": "会员名",
+      "member_id": "会员 ID",
+      "product_name": "商品名称",
+      "failure_reason": "失败原因",
+      "failure_code": "失败代码"
+    },
+    "placeholder": "请输入搜索词",
+    "reset": "重置"
+  },
+  "filter": {
+    "payment_method": "支付方式",
+    "device": "访问设备",
+    "failure_date": "失败时间",
+    "all": "全部",
+    "card": "银行卡",
+    "bank_transfer": "账户转账",
+    "virtual_account": "虚拟账户",
+    "easy_payment": "快捷支付",
+    "bank_deposit": "银行汇款",
+    "desktop": "桌面端",
+    "mobile": "移动端",
+    "start_date": "开始日期",
+    "end_date": "结束日期"
+  },
+  "table": {
+    "total_count": "共 {{count}} 个",
+    "sort_by": "失败时间（最新优先）",
+    "per_page": "每页显示 {{count}} 个",
+    "sort": {
+      "failure_date_desc": "失败时间（最新优先）",
+      "failure_date_asc": "失败时间（最早优先）",
+      "amount_desc": "金额（从高到低）",
+      "amount_asc": "金额（从低到高）",
+      "order_number_asc": "订单号（升序）",
+      "order_number_desc": "订单号（降序）"
+    },
+    "columns": {
+      "no": "序号",
+      "order_number": "订单号",
+      "member_info": "会员信息",
+      "product_name": "商品名称",
+      "payment_method": "支付方式",
+      "payment_amount": "支付金额",
+      "failure_reason": "失败原因",
+      "failure_date": "失败时间",
+      "detail": "查看详情"
+    },
+    "product_count": "等 {{count}} 件"
+  },
+  "dropdown": {
+    "view_order_detail": "查看订单详情",
+    "search_by_member": "按会员信息搜索",
+    "view_member_info": "查看会员信息"
+  },
+  "detail": {
+    "payment_failure_info": {
+      "title": "支付失败信息",
+      "transaction_number": "交易编号",
+      "payment_method": "支付方式",
+      "payment_amount": "支付金额",
+      "failure_date": "失败时间",
+      "failure_reason": "失败原因",
+      "error_code": "错误代码"
+    },
+    "customer_info": {
+      "title": "客户信息",
+      "name": "姓名",
+      "id": "账号",
+      "email": "邮箱",
+      "phone": "联系方式"
+    },
+    "access_info": {
+      "title": "访问环境",
+      "device": "设备",
+      "browser": "浏览器",
+      "os": "OS",
+      "ip": "IP"
+    }
+  },
+  "failure_reasons": {
+    "exceed_max_one_time_auth_amount": "已超出单次授权限额",
+    "invalid_stopped_card": "该银行卡已被停用",
+    "not_enough_balance": "账户余额不足",
+    "user_cancel": "用户已取消支付",
+    "incorrect_card_password": "银行卡密码不正确",
+    "reject_card_company": "发卡机构拒绝了授权",
+    "virtual_account_expired": "虚拟账户的到账期限已过期",
+    "invalid_card_expiration": "银行卡有效期无效",
+    "invalid_card_number": "银行卡卡号无效",
+    "exceed_max_auth_count": "已超出每日授权限额"
+  }
+}

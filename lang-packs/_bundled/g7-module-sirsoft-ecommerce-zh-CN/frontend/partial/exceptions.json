@@ -1,0 +1,9 @@
+{
+  "unauthorized_preset_access": "您没有访问预设 ':preset_name' 的权限。",
+  "stock_mismatch": "商品 ':product_name' 的库存不一致。预期：:expected，实际：:actual",
+  "currency_setting_locked": "货币 ':currency' 的设置已锁定，无法变更。原因：:reason",
+  "product_notice_template_not_found": "找不到商品信息告示模板。",
+  "product_notice_template_has_notices": "有 :count 件商品正在使用该模板。请先变更相应商品的商品信息告示。",
+  "product_common_info_not_found": "找不到商品通用信息。",
+  "order_cancel_not_allowed": "当前订单状态下无法记录支付取消。"
+}

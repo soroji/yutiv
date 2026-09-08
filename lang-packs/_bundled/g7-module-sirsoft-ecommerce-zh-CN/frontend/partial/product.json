@@ -1,0 +1,13 @@
+{
+  "name": "商品名称",
+  "price": "价格",
+  "stock": "库存",
+  "description": "商品说明",
+  "category": "分类",
+  "status": "状态",
+  "statuses": {
+    "active": "在售",
+    "inactive": "停售",
+    "soldout": "售罄"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "sirsoft-ecommerce.manager": {
+    "name": "电商管理员",
+    "description": "拥有电商管理权限的角色"
+  }
+}

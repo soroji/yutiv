@@ -1,0 +1,124 @@
+{
+  "title": "到账管理",
+  "description": "管理通过 Webhook 接收的到账记录并与订单匹配",
+  "search": {
+    "field": {
+      "order_number": "订单号",
+      "depositor_name": "汇款人姓名",
+      "member_name": "会员名",
+      "member_id": "会员 ID"
+    },
+    "placeholder": "请输入搜索词",
+    "reset": "重置"
+  },
+  "filter": {
+    "matching_type": "匹配类型",
+    "payment_method": "支付方式",
+    "deposit_date": "到账日期范围",
+    "all": "全部",
+    "unmatched": "未匹配",
+    "auto_matched": "自动匹配",
+    "manual_matched": "手动匹配",
+    "bank_transfer": "银行汇款",
+    "virtual_account": "虚拟账户",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "1_day": "1 天",
+    "1_week": "1 周",
+    "1_month": "1 个月",
+    "3_months": "3 个月"
+  },
+  "batch": {
+    "selected_count": "已选择 {{count}} 项",
+    "batch_match": "批量匹配"
+  },
+  "table": {
+    "total_count": "共 {{count}} 个",
+    "sort": {
+      "deposit_date_desc": "到账日期（最新优先）",
+      "deposit_date_asc": "到账日期（最早优先）",
+      "amount_desc": "金额（从高到低）",
+      "amount_asc": "金额（从低到高）"
+    },
+    "per_page": "每页显示 {{count}} 个",
+    "columns": {
+      "no": "序号",
+      "payment_method": "支付方式",
+      "bank_account": "银行/账户",
+      "depositor_name": "汇款人姓名",
+      "amount": "金额",
+      "deposit_time": "到账时间",
+      "order_number": "订单号",
+      "member_info": "会员信息",
+      "matching_type": "匹配类型",
+      "receive_status": "接收状态",
+      "actions": "管理"
+    }
+  },
+  "status": {
+    "virtual_account": "虚拟账户",
+    "bank_transfer": "银行汇款",
+    "manual": "手动",
+    "auto": "自动",
+    "normal": "正常"
+  },
+  "actions": {
+    "match": "进行匹配",
+    "view_history": "查看记录"
+  },
+  "mobile": {
+    "select_all": "全选",
+    "deposit_time": "到账时间",
+    "bank_account": "银行/账户",
+    "member": "会员",
+    "order_number": "订单号"
+  },
+  "modal": {
+    "manual_match": {
+      "title": "手动匹配",
+      "description": "手动将到账记录与订单关联",
+      "deposit_info": "到账信息",
+      "depositor_name": "汇款人姓名",
+      "deposit_amount": "到账金额",
+      "deposit_bank": "到账银行",
+      "search_label": "搜索订单号（仅待付款的订单）",
+      "search_placeholder": "按订单号、会员名、商品名称搜索",
+      "cancel": "取消",
+      "match": "进行匹配"
+    },
+    "process_history": {
+      "title": "处理记录",
+      "description": "查看到账处理记录及 Webhook 日志",
+      "order_number": "订单号",
+      "timeline_title": "处理时间线",
+      "system_pg_webhook": "系统（PG Webhook）",
+      "webhook_receive": "Webhook 接收",
+      "match_complete": "匹配完成",
+      "failed": "失败",
+      "toggle_detail_open": "查看详细信息",
+      "toggle_detail_close": "收起详细信息",
+      "request_data": "Request Data",
+      "response_data": "Response Data"
+    },
+    "bulk_match": {
+      "title": "批量匹配",
+      "description": "将所选的 {{count}} 条到账记录与订单进行匹配。",
+      "instruction_1": "• 可直接输入订单号，或输入订单号/客户名后自动显示搜索结果。",
+      "instruction_2": "• 在搜索结果中选择所需订单后将自动填入。（例：ORD20251118-0001）",
+      "columns": {
+        "depositor_name": "汇款人姓名",
+        "amount": "金额",
+        "bank_account": "银行/账户",
+        "deposit_time": "到账时间",
+        "order_number": "订单号"
+      },
+      "orderer": "下单人：",
+      "order_amount": "金额：",
+      "amount_mismatch": "金额不一致",
+      "amount_mismatch_full": "订单金额与到账金额不一致",
+      "order_number_placeholder": "输入订单号或客户名",
+      "cancel": "取消",
+      "save": "保存"
+    }
+  }
+}

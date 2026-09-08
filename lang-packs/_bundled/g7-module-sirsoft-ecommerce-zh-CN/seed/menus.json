@@ -1,0 +1,38 @@
+{
+  "sirsoft-ecommerce": {
+    "name": "电商"
+  },
+  "sirsoft-ecommerce-settings": {
+    "name": "环境设置"
+  },
+  "sirsoft-ecommerce-products": {
+    "name": "商品管理"
+  },
+  "sirsoft-ecommerce-categories": {
+    "name": "分类管理"
+  },
+  "sirsoft-ecommerce-brands": {
+    "name": "品牌管理"
+  },
+  "sirsoft-ecommerce-product-notices": {
+    "name": "商品信息告示"
+  },
+  "sirsoft-ecommerce-common-info": {
+    "name": "通用信息管理"
+  },
+  "sirsoft-ecommerce-orders": {
+    "name": "订单管理"
+  },
+  "sirsoft-ecommerce-promotion-coupons": {
+    "name": "优惠券管理"
+  },
+  "sirsoft-ecommerce-shipping-policies": {
+    "name": "配送政策"
+  },
+  "sirsoft-ecommerce-reviews": {
+    "name": "评价管理"
+  },
+  "sirsoft-ecommerce-mileage-transactions": {
+    "name": "积分记录"
+  }
+}

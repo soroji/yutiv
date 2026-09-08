@@ -1,0 +1,35 @@
+{
+  "parcel": {
+    "name": "快递"
+  },
+  "direct": {
+    "name": "直接配送"
+  },
+  "quick": {
+    "name": "即时速递"
+  },
+  "freight": {
+    "name": "货运配送"
+  },
+  "pickup": {
+    "name": "到店自提"
+  },
+  "express": {
+    "name": "国内特快"
+  },
+  "international_ems": {
+    "name": "国际EMS"
+  },
+  "international_standard": {
+    "name": "国际普通"
+  },
+  "cvs": {
+    "name": "便利店快递"
+  },
+  "digital": {
+    "name": "数字商品"
+  },
+  "custom": {
+    "name": "直接输入"
+  }
+}

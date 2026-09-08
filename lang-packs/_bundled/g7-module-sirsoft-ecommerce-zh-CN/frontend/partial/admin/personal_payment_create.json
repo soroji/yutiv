@@ -1,0 +1,61 @@
+{
+  "title": "创建个人支付",
+  "description": "创建新的个人支付",
+  "buyer_info": {
+    "title": "买家信息",
+    "required_notice": "为必填项",
+    "buyer_type": "支付对象",
+    "member_select": "选择会员",
+    "guest_input": "非会员输入",
+    "selected_member": "已选会员",
+    "name": "姓名",
+    "name_placeholder": "例：张三",
+    "phone": "联系方式",
+    "phone_placeholder": "例：010-1234-5678",
+    "phone_hint": "只输入数字即可自动套用格式",
+    "email": "邮箱",
+    "email_placeholder": "例：example@email.com"
+  },
+  "payment_detail": {
+    "title": "个人支付详情",
+    "product_name": "商品名称",
+    "product_name_placeholder": "例：高级会员 1 年",
+    "amount": "支付金额",
+    "amount_placeholder": "例：100,000",
+    "amount_hint": "只输入数字即可自动套用格式",
+    "expired_at": "过期时间",
+    "expired_at_hint": "默认值：当前日期 + 7 天",
+    "order_link": "订单号关联",
+    "order_link_optional": "（可选）",
+    "search_order": "搜索并关联订单",
+    "search_order_hint": "如需与现有订单关联，请选择",
+    "linked_order": "已关联的订单",
+    "linked_order_optional": "（可选）",
+    "memo": "管理员备注",
+    "memo_optional": "（可选）",
+    "memo_placeholder": "例：定期会员支付 - 已适用 VIP 客户专享优惠\n可记录客户的要求事项等"
+  },
+  "modal": {
+    "member_search": {
+      "title": "会员搜索",
+      "description": "请通过会员名、ID、邮箱搜索并选择",
+      "search_placeholder": "按会员名、ID、邮箱搜索"
+    },
+    "order_search": {
+      "title": "搜索并关联订单",
+      "description": "请通过订单号、客户名、商品名称搜索并选择",
+      "search_field": "搜索字段",
+      "search_field_all": "全部",
+      "search_field_order_number": "订单号",
+      "search_field_member_name": "客户名",
+      "search_field_product_name": "商品名称",
+      "search_placeholder": "请输入搜索词",
+      "order_date": "下单日期",
+      "order_date_all": "全部",
+      "order_date_last_7_days": "最近 7 天",
+      "order_date_last_30_days": "最近 30 天",
+      "order_date_last_90_days": "最近 90 天",
+      "result_count": "搜索到 {{count}} 笔订单"
+    }
+  }
+}

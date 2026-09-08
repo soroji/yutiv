@@ -1,0 +1,72 @@
+{
+  "title": "品牌管理",
+  "description": "管理商品品牌信息",
+  "list": {
+    "title": "品牌",
+    "add": "添加品牌",
+    "search_placeholder": "搜索品牌名称...",
+    "sort": {
+      "name_asc": "按名称正序",
+      "name_desc": "按名称倒序",
+      "created_desc": "最新优先",
+      "created_asc": "最早优先"
+    },
+    "products_count": "{{count}} 件商品",
+    "empty": "尚未登记任何品牌"
+  },
+  "info": {
+    "title": "品牌信息",
+    "basic": "基本信息",
+    "additional": "附加信息",
+    "system": "系统信息",
+    "name": "品牌名称",
+    "slug": "别名（slug）",
+    "website": "网站",
+    "sort_order": "排序",
+    "status": "状态",
+    "products_count": "已登记商品数",
+    "statistics": "统计"
+  },
+  "form": {
+    "create_title": "添加品牌",
+    "edit_title": "编辑品牌",
+    "name": "品牌名称",
+    "name_placeholder": "请输入品牌名称",
+    "slug": "别名（slug）",
+    "slug_placeholder": "以英文小写字母开头（例：nike）",
+    "slug_hint": "用于 URL 的唯一标识符。只能使用英文小写字母、数字和连字符（-）。",
+    "website": "品牌网站",
+    "website_placeholder": "https://www.example.com",
+    "website_hint": "品牌官方网站 URL（可选）",
+    "sort_order": "排序",
+    "sort_order_hint": "数字越小显示越靠前（默认值：0）",
+    "is_active": "启用"
+  },
+  "empty": {
+    "title": "请选择品牌",
+    "description": "请从左侧选择品牌，或新建一个"
+  },
+  "delete_modal": {
+    "title": "删除品牌",
+    "message_suffix": " 品牌，确定要删除吗？",
+    "cannot_delete_title": "无法删除",
+    "has_products_cannot_delete": "有 {count} 件商品与之关联。请先变更商品的品牌。",
+    "irreversible_warning": "此操作无法撤销。确定要删除吗？"
+  },
+  "messages": {
+    "created": "品牌创建成功",
+    "updated": "品牌修改成功",
+    "deleted": "品牌删除成功",
+    "status_changed": "品牌状态已变更",
+    "status_change_failed": "品牌状态变更失败"
+  },
+  "modal": {
+    "editing": {
+      "title": "有正在编辑的内容",
+      "message": "存在尚未保存的变更。",
+      "confirm_message": "要在不保存变更的情况下离开吗？",
+      "discard": "放弃变更",
+      "continue": "继续编辑"
+    }
+  }
+}

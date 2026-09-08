@@ -576,7 +576,7 @@ php artisan language-pack:install https://example.com/my-lang-pack-zh.zip --sour
 
 ## 공식 중국어 간체 번들 언어팩 (g7-*-zh-CN)
 
-G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 게시판 모듈 1종**이며, 이커머스/페이지/플러그인/템플릿 zh-CN 팩은 아직 없다. 코어·모듈 트리를 건드리지 않는 외부 패키지형이므로 **코어·모듈 코드 변경 0** 이다.
+G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 게시판 모듈 1종 + 이커머스 모듈 1종**이며, 페이지/플러그인/템플릿 zh-CN 팩은 아직 없다. 코어·모듈 트리를 건드리지 않는 외부 패키지형이므로 **코어·모듈 코드 변경 0** 이다.
 
 ### 패키지 구성
 
@@ -584,6 +584,7 @@ G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공
 |---|---|---|---|
 | core | `g7-core-zh-CN` | (null) | 50 |
 | module | `g7-module-sirsoft-board-zh-CN` | `sirsoft-board` | 33 |
+| module | `g7-module-sirsoft-ecommerce-zh-CN` | `sirsoft-ecommerce` | 60 |
 
 ### locale 코드
 
@@ -761,14 +762,116 @@ php artisan test --filter=BundledSimplifiedChineseBoardPackTest
 `frontend build 불필요` — 모듈의 `package.json` 에는 build 스크립트가 없고, 언어팩 frontend JSON 은
 `MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다(`/api/templates/{id}/lang/{locale}.json`).
 
+### 이커머스 모듈 팩 (g7-module-sirsoft-ecommerce-zh-CN)
+
+`scope: module`, `target_identifier: sirsoft-ecommerce`, `requires.depends_on_core_locale: true`.
+`g7-module-sirsoft-ecommerce-ja` 와 상대 경로 구성이 1:1 이며(아래 "ja 팩과의 의도적 차이" 1건 제외),
+번역 원문은 전부 이커머스 모듈의 한국어 원본이다.
+
+#### 입력 → 산출 매핑
+
+| 구분 | ko 원문 소스 | 산출 위치 | 개수 |
+|---|---|---|---|
+| backend | `modules/_bundled/sirsoft-ecommerce/src/lang/ko/*.php` | `backend/zh-CN/*.php` | 13 |
+| frontend 엔트리 | `modules/_bundled/sirsoft-ecommerce/resources/lang/ko.json` | `frontend/zh-CN.json` | 1 |
+| frontend partial | `.../resources/lang/partial/ko/**/*.json` (재귀) | `frontend/partial/**/*.json` | 35 |
+| seed | `module.php` 의 `getRoles`/`getPermissions`/`getAdminMenus`/`getNotificationDefinitions`/`getIdentityMessages`, `ClaimReasonSeeder`·`ShippingTypeSeeder`·`ShippingCarrierSeeder`, `module.json` | `seed/{roles,permissions,menus,notifications,identity_messages,claim_reasons,shipping_types,shipping_carriers,manifest}.json` | 9 |
+
+패키지 총 60개 파일 (매니페스트 1 + CHANGELOG 1 + backend 13 + frontend 36 + seed 9).
+
+#### 이커머스 도메인 용어집
+
+코어·게시판 용어집을 승계하되, 커머스 도메인 용어를 다음으로 고정한다.
+
+| 한국어 | 중국어 간체 | 비고 |
+|---|---|---|
+| 쇼핑몰 / 이커머스 | 商城 / 电商 | 상점 UI 는 `商城`, 모듈·권한 이름은 `电商` |
+| 상품 / 상품명 / 상품 상세 | 商品 / 商品名称 / 商品详情 | |
+| 상품 옵션 / 옵션 / 속성 | 商品选项 / 选项 / 属性 | |
+| 카테고리 / 브랜드 | 分类 / 品牌 | |
+| 장바구니 / 찜 / 바로 구매 | 购物车 / 收藏 / 立即购买 | |
+| 주문 / 주문번호 / 주문자 | 订单 / 订单号 / 下单人 | |
+| 결제 / 결제수단 / 결제완료 / 입금대기 | 支付 / 支付方式 / 支付完成 / 待付款 | |
+| 배송 / 배송지 / 배송비 | 配送 / 收货地址 / 运费 | |
+| 배송준비 / 배송중 / 배송완료 | 备货中 / 配送中 / 已送达 | |
+| 송장번호 / 택배사 | 运单号 / 物流公司 | |
+| 주문취소 / 취소 / 교환 / 반품 | 取消订单 / 取消 / 换货 / 退货 | |
+| 환불 / 환불완료 / 구매확정 | 退款 / 退款完成 / 确认收货 | |
+| 재고 / 품절 / 재입고 / 수량 | 库存 / 售罄 / 补货 / 数量 | |
+| 가격 / 판매가 / 정상가 | 价格 / 售价 / 原价 | |
+| 할인 / 할인금액 / 쿠폰 | 优惠 / 优惠金额 / 优惠券 | 할인코드는 `优惠码` |
+| 포인트 / 마일리지 | 积分 | 이 모듈은 두 개념을 구분하지 않는다 |
+| 총액 / 소계 / 세금 / 공급가 / 결제금액 | 总额 / 小计 / 税费 / 未税金额 / 支付金额 | |
+| 구매자 / 판매자 / 고객 / 관리자 | 买家 / 卖家 / 客户 / 管理员 | |
+| 리뷰 / 평점 / 문의 / 답변 | 评价 / 评分 / 咨询 / 回复 | |
+| 영수증 / 현금영수증 / 세금계산서 | 收据 / 现金收据 / 税务发票 | 한국 제도 고유 명칭 — 중국 제도와 동일시하지 않는다 |
+| 정산 / 배송정책 / 국가별 설정 | 结算 / 配送政策 / 国家/地区设置 | |
+| 무통장입금 | 银行汇款 | 결제수단 설명은 `直接汇款至指定账户` — 중국 결제 수단명으로 치환하지 않는다 |
+
+#### 보존 대상 (번역하지 않음)
+
+- 주문·결제·배송·환불 상태의 **내부 enum key/value** (`pending`, `paid`, `shipping`, `completed`, `cancelled`, `refunded` 등) — 표시 문자열만 번역
+- 통화 코드 `KRW`/`USD`/`JPY`/`CNY`/`EUR`, 기술 식별자 `SKU`/`PG`/`API`/`URL`/`VAT`/`HS`/`ISO 4217`
+- `floor, round, ceil`, `GET`/`POST`, `asc`/`desc`, `text`/`html`, `domestic`/`international` 등 in-rule 리터럴
+- 금액 계산식·숫자/날짜 포맷 문자열·소수점 자릿수
+- ko 원문이 원화 단위(`원`)를 명시한 문장은 `韩元` 으로 옮긴다 — 삭제하거나 `元`(CNY) 로 바꾸지 않는다
+
+#### ja 팩과의 의도적 차이
+
+| 구분 | 내용 | 판단 |
+|---|---|---|
+| `frontend/partial/admin/mileage_deposit_settings.json` | ja 팩에만 존재. ko·en 원본 어디에도 없고 모듈 코드 참조 0건 | zh-CN 에서 **제외**. 검사기의 `$intentionalJaOnlyPartials` 에 명시 |
+| `seed/permissions.json` | ja 에 `dashboard`/`mileage`/`user-currency`/`user-shipping-country` 카테고리 없음 | ko 원본 기준으로 **포함**(20개 카테고리) |
+| `seed/menus.json` | ja 에 `sirsoft-ecommerce-mileage-transactions` 없음 | ko 원본 기준으로 **포함**(12개) |
+| `seed/notifications.json` | ja 에 `order_pending_deposit`/`mileage_expiring_soon`/`order_delivered` 없음 | ko 원본 기준으로 **포함**(10종) |
+| `seed/notifications.json` :: `order_confirmed` 메일 본문 | ko 원본이 수취인·배송국가·배송지 3행을 추가했으나 ja 미반영 | ko 원본 기준. 검사기의 `$intentionalSeedValueDrift` 에 명시 |
+
+위 5건은 모두 **ja 팩(v1.1.3)이 현재 ko 원본보다 오래된** 결과다. ja 팩 동기화는 별도 과제이며,
+이 작업에서 ja 팩은 수정하지 않았다.
+
+#### 설치 및 활성화
+
+```bash
+# 1) 코어 zh-CN 팩이 먼저 활성이어야 한다 (depends_on_core_locale: true)
+php artisan language-pack:install g7-core-zh-CN --source=bundled
+
+# 2) 대상 모듈이 active 여야 한다 (아니면 target_inactive 로 차단)
+php artisan module:list
+
+# 3) 이커머스 팩 설치 (자동 활성)
+php artisan language-pack:install g7-module-sirsoft-ecommerce-zh-CN --source=bundled
+
+# 확인
+php artisan language-pack:list --scope=module
+
+# 콘텐츠 수정 후 설치본 재반영 (프론트엔드 빌드 불필요)
+php artisan language-pack:update g7-module-sirsoft-ecommerce-zh-CN --force
+```
+
+#### 검증
+
+```bash
+# 원본 대조 검사기 (vendor·Laravel 불필요, 단독 실행)
+php tests/Translations/zh-CN-ecommerce-parity-check.php --verbose --style
+
+# PHPUnit — 프로덕션 validator 실호출
+php artisan test --filter=BundledSimplifiedChineseEcommercePackTest
+```
+
+`frontend build 불필요` — 이커머스 모듈의 `vite.config.ts` 는 라이브러리 모드로 `resources/js/index.ts`
+하나만 번들하며(산출물 `dist/js/module.iife.js` + `dist/css/module.css`), 프로덕션 TS 코드는
+`resources/lang/**` 를 import 하지 않는다(참조는 `__tests__/` 뿐). 언어팩 frontend JSON 은
+`MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다(`/api/templates/{id}/lang/{locale}.json`).
+
 ### 기존 ko/en 변경 시 zh-CN 동기화 의무
 
-코어 또는 게시판 모듈의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
-(`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-board-zh-CN/`) 의
+코어·게시판 모듈·이커머스 모듈의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
+(`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-board-zh-CN/`,
+`lang-packs/_bundled/g7-module-sirsoft-ecommerce-zh-CN/`) 의
 키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역
 fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치
 (`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 대응 parity 검사기
-(`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`) 로 확인한다.
+(`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`, `zh-CN-ecommerce-parity-check.php`) 로 확인한다.
 
 ## 의존성 검증 — 설치 차단 사유 (UI 인라인 안내)
 

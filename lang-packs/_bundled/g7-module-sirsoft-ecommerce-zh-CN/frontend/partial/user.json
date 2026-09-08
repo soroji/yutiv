@@ -1,0 +1,35 @@
+{
+  "product": {
+    "index": {
+      "title": "商品列表",
+      "description": "浏览商品",
+      "empty_title": "没有商品",
+      "empty_description": "尚未登记任何商品"
+    },
+    "detail": {
+      "title": "商品详情",
+      "description": "商品详情信息",
+      "placeholder": "商品详情将显示在此处"
+    }
+  },
+  "cart": {
+    "title": "购物车",
+    "description": "已加入购物车的商品",
+    "empty_title": "购物车为空",
+    "empty_description": "请将商品加入购物车"
+  },
+  "checkout": {
+    "title": "下单/支付",
+    "description": "填写下单及支付信息",
+    "placeholder": "下单/支付表单将显示在此处"
+  },
+  "review": {
+    "validation": {
+      "rating_required": "请选择评分。",
+      "content_min": "评价内容请至少输入 10 个字符。"
+    },
+    "image_upload_partial_fail": "部分图片上传失败。",
+    "submit_success": "评价已提交。",
+    "submit_failed": "评价提交失败。"
+  }
+}

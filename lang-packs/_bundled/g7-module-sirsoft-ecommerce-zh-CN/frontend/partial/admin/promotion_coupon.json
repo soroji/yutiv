@@ -1,0 +1,388 @@
+{
+  "title": "优惠券管理",
+  "description": "创建并管理优惠券。",
+  "actions": {
+    "create": "登记优惠券",
+    "edit_search": "编辑搜索",
+    "search": "搜索",
+    "reset": "重置",
+    "bulk_change": "批量变更",
+    "view_member": "查看会员信息",
+    "search_by_creator": "按该登记者搜索"
+  },
+  "action": {
+    "edit": "修改",
+    "delete": "删除",
+    "direct_issue": "直接发放",
+    "edit_search": "编辑搜索",
+    "search": "搜索",
+    "reset": "重置",
+    "view_member": "查看会员信息",
+    "search_by_creator": "按该登记者搜索"
+  },
+  "search": {
+    "field": {
+      "all": "全部",
+      "coupon_name": "优惠券名称",
+      "coupon_code": "优惠券码"
+    },
+    "placeholder": "请输入搜索词...",
+    "column_select": "选择列",
+    "detail_search": "高级搜索"
+  },
+  "filter": {
+    "target_type": "适用对象",
+    "benefit_amount": "优惠金额",
+    "created_at": "登记日期",
+    "issue_status": "发放状态",
+    "issue_method": "发放方式",
+    "issue_condition": "发放条件",
+    "min_order_amount": "最低订单金额",
+    "min_order_amount_placeholder": "输入金额",
+    "min_order_amount_suffix": "韩元以上购买时可使用",
+    "validity_period": "有效期",
+    "valid_period": "有效期",
+    "validity_range": "开始日期 ~ 结束日期",
+    "validity_from_issue": "自发放日起",
+    "validity_days_suffix": "天",
+    "issue_period": "发放期间",
+    "creator": "登记者",
+    "creator_select": "选择登记者",
+    "creator_search_placeholder": "按姓名搜索",
+    "creator_search_initial": "请输入登记者姓名",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "min": "最小",
+    "max": "最大",
+    "date_quick": {
+      "today": "今天",
+      "1_week": "一周",
+      "1_month": "1 个月",
+      "3_months": "3 个月",
+      "6_months": "6 个月",
+      "1_year": "1 年"
+    }
+  },
+  "target_type": {
+    "all": "全部",
+    "product_amount": "商品金额",
+    "order_amount": "订单金额",
+    "shipping_fee": "运费"
+  },
+  "benefit_type": {
+    "fixed": "定额",
+    "rate": "定率"
+  },
+  "issue_status": {
+    "all": "全部",
+    "issuing": "发放中",
+    "stopped": "停止发放"
+  },
+  "issue_method": {
+    "all": "全部",
+    "direct": "直接发放",
+    "download": "领取",
+    "auto": "自动发放"
+  },
+  "issue_condition": {
+    "all": "全部",
+    "manual": "手动发放",
+    "signup": "注册会员",
+    "first_purchase": "首次购买",
+    "birthday": "生日"
+  },
+  "batch": {
+    "selected_count": "已选择 {{count}} 项",
+    "status_change": "变更发放状态"
+  },
+  "bulk": {
+    "apply": "应用",
+    "select_status": "选择要变更的状态"
+  },
+  "toast": {
+    "status_changed": "发放状态已变更。",
+    "deleted": "优惠券已删除。"
+  },
+  "table": {
+    "total_count": "共 {{count}} 个",
+    "selected_count": "已选择 {{count}} 项",
+    "empty": "尚未登记任何优惠券。",
+    "sort": {
+      "created_at_desc": "登记时间最新优先",
+      "created_at_asc": "登记时间最早优先",
+      "coupon_name_asc": "优惠券名称升序",
+      "coupon_name_desc": "优惠券名称降序",
+      "name_asc": "优惠券名称升序",
+      "name_desc": "优惠券名称降序",
+      "valid_to_asc": "有效期由近及远",
+      "valid_to_desc": "有效期由远及近"
+    },
+    "per_page": "{{count}} 个",
+    "columns": {
+      "checkbox": "选择",
+      "target_type": "适用对象",
+      "coupon_name": "优惠券名称",
+      "name": "优惠券名称",
+      "description": "说明",
+      "benefit_amount": "优惠金额",
+      "validity_period": "有效期",
+      "valid_period": "有效期",
+      "issue_period": "发放期间",
+      "issue_count": "发放数量",
+      "issue_method": "发放方式",
+      "issue_condition": "发放条件",
+      "issue_status": "发放状态",
+      "created_at": "登记日期",
+      "creator": "登记者",
+      "created_by": "登记者",
+      "actions": "操作"
+    }
+  },
+  "mobile": {
+    "benefit_label": "优惠金额",
+    "target_type_label": "适用对象",
+    "issue_label": "发放",
+    "validity_period_label": "有效期",
+    "issue_period_label": "发放期间",
+    "issue_count_label": "发放数量",
+    "status_label": "状态",
+    "creator_label": "登记者",
+    "target_type:": "适用对象:",
+    "issue:": "发放:",
+    "valid_period: ": "有效期: ",
+    "issue_period: ": "发放期间: ",
+    "issue_count: ": "发放数量: ",
+    "status:": "状态:"
+  },
+  "modal": {
+    "status_change": {
+      "title": "确定要变更发放状态吗？",
+      "message": "所选 {{count}} 张优惠券的发放状态将变更为 {{status}}。"
+    },
+    "delete": {
+      "title": "确定要删除优惠券吗？",
+      "message": "此操作无法撤销。优惠券及所有相关记录将被永久删除。",
+      "warning": "已删除的优惠券无法恢复。",
+      "delete": "删除"
+    },
+    "issue_history": {
+      "title": "优惠券发放记录",
+      "subtitle": "共 {{count}} 条发放记录",
+      "total": "共 {{count}} 条",
+      "empty": "没有发放记录。",
+      "description": "这是已发放该优惠券的用户列表。（共 12 条）",
+      "total_count": "共 12 条",
+      "columns": {
+        "issued_at": "发放时间",
+        "user": "会员",
+        "status": "状态",
+        "member_info": "会员信息",
+        "usage_status": "使用状态",
+        "used_at": "使用时间",
+        "used_order": "使用的订单",
+        "actions": "管理"
+      },
+      "action": {
+        "filter_by_user": "按该会员筛选",
+        "cancel_issue": "取消发放"
+      },
+      "status": {
+        "used": "已使用",
+        "unused": "未使用"
+      }
+    },
+    "cancel_issue": {
+      "title": "确定要取消发放吗？",
+      "message": "将取消发放给 {{name}} 会员的优惠券。",
+      "warning": "已取消的发放无法恢复，且只能取消未使用状态的发放记录。",
+      "confirm_btn": "取消发放",
+      "failed": "取消发放失败。"
+    },
+    "direct_issue": {
+      "title": "优惠券直接发放",
+      "subtitle": "将‘{{name}}’优惠券立即发放给指定会员。",
+      "search_placeholder": "按会员姓名或邮箱搜索",
+      "search_btn": "搜索",
+      "search_failed": "会员搜索失败。",
+      "add": "添加",
+      "added": "已添加",
+      "selected": "已选会员 {{count}} 名",
+      "issue_btn": "发放",
+      "issue_failed": "优惠券发放失败。"
+    }
+  },
+  "messages": {
+    "created": "优惠券已登记。",
+    "updated": "优惠券已修改。"
+  },
+  "create": {
+    "title": "登记优惠券",
+    "description": "登记新的优惠券。",
+    "section": {
+      "basic_info": "基本信息",
+      "benefit_settings": "优惠设置",
+      "issue_settings": "发放设置",
+      "usage_conditions": "使用条件设置"
+    },
+    "field": {
+      "target_type": "适用对象",
+      "issue_method": "发放方式",
+      "issue_condition": "发放条件",
+      "coupon_name": "优惠券名称",
+      "coupon_description": "优惠券说明",
+      "benefit_amount": "优惠金额",
+      "min_order_amount": "最低订单金额",
+      "validity_period": "有效期",
+      "issue_quantity": "发放数量",
+      "issue_period": "发放期间",
+      "reissue": "重新发放（重复领取）",
+      "coupon_overlap": "可与其他优惠券叠加",
+      "apply_target": "适用对象"
+    },
+    "option": {
+      "product_amount": "商品金额",
+      "order_amount": "订单金额",
+      "shipping_fee": "运费",
+      "direct_issue": "直接发放",
+      "download": "领取",
+      "auto_issue": "自动发放",
+      "manual_issue": "手动发放",
+      "unlimited": "无限制",
+      "quantity_limit": "数量限制",
+      "period_setting": "期间设置",
+      "limit_per_member": "每位会员限制",
+      "possible": "可以",
+      "impossible": "不可以",
+      "no_limit": "无限制",
+      "specific_product": "指定商品",
+      "specific_category": "指定分类"
+    },
+    "placeholder": {
+      "coupon_name": "请输入优惠券名称",
+      "coupon_description": "请输入优惠券说明",
+      "amount_input": "输入金额",
+      "max_discount": "最大金额",
+      "min_order": "最低订单金额",
+      "quantity": "数量",
+      "days": "天数"
+    },
+    "hint": {
+      "min_order_suffix": "韩元以上购买时可适用",
+      "max_discount_suffix": "韩元优惠",
+      "quantity_suffix": "张",
+      "days_suffix": "天",
+      "times_suffix": "次"
+    },
+    "table": {
+      "product_code": "商品编码",
+      "product_name": "商品名称",
+      "sale_price": "售价",
+      "category_name": "分类名称",
+      "product_count": "已登记商品数"
+    },
+    "button": {
+      "select_product": "选择商品",
+      "select_category": "选择分类",
+      "delete_selected": "删除所选"
+    }
+  },
+  "form": {
+    "title_create": "登记优惠券",
+    "title_edit": "修改优惠券",
+    "description_create": "登记新的优惠券。",
+    "description_edit": "修改优惠券 #{id}。",
+    "section": {
+      "basic_info": "基本信息",
+      "benefit_settings": "优惠设置",
+      "issue_settings": "发放设置",
+      "usage_conditions": "使用条件设置"
+    },
+    "field": {
+      "target_type": "适用对象",
+      "issue_method": "发放方式",
+      "issue_condition": "发放条件",
+      "coupon_name": "优惠券名称",
+      "coupon_description": "优惠券说明",
+      "benefit_amount": "优惠金额",
+      "max_discount": "最大优惠金额",
+      "min_order_amount": "最低订单金额",
+      "validity_period": "有效期",
+      "issue_quantity": "发放数量",
+      "issue_period": "发放期间",
+      "reissue": "重新发放（重复领取）",
+      "coupon_overlap": "与其他优惠券叠加使用",
+      "apply_target": "适用对象"
+    },
+    "option": {
+      "target_type_product_amount": "商品金额",
+      "target_type_order_amount": "订单金额",
+      "target_type_shipping_fee": "运费",
+      "issue_method_direct": "直接发放",
+      "issue_method_download": "领取",
+      "issue_method_auto": "自动发放",
+      "issue_condition_manual": "手动发放",
+      "issue_condition_signup": "注册会员",
+      "issue_condition_first_purchase": "首次购买",
+      "issue_condition_birthday": "生日",
+      "discount_type_fixed": "韩元",
+      "discount_type_rate": "%",
+      "valid_type_fixed_period": "指定期间",
+      "valid_type_days_from_issue": "自发放日起",
+      "unlimited": "无限制",
+      "issue_quantity_limited": "数量限制",
+      "issue_period_limited": "期间设置",
+      "reissue_limited": "限制",
+      "combinable_yes": "可以",
+      "combinable_no": "不可以",
+      "target_scope_all": "无限制",
+      "target_scope_products": "指定商品",
+      "target_scope_categories": "指定分类"
+    },
+    "placeholder": {
+      "coupon_name": "请输入优惠券名称",
+      "coupon_description": "请输入优惠券说明"
+    },
+    "hint": {
+      "min_order_suffix": "韩元以上购买时可使用",
+      "max_prefix": "最高",
+      "currency_won_discount": "韩元优惠",
+      "from_issue_date": "自发放日起",
+      "unit_days": "天内有效",
+      "unit_quantity": "张",
+      "per_user": "每位会员",
+      "unit_times": "次",
+      "direct_issue_guide": "直接发放的优惠券在登记后，可在优惠券列表中点击该优惠券的 [直接发放] 按钮，发放给特定会员。"
+    },
+    "search": {
+      "products": "商品搜索",
+      "categories": "分类搜索",
+      "field_all": "全部",
+      "field_code": "商品编码",
+      "field_name": "商品名称",
+      "field_sku": "SKU",
+      "keyword_placeholder": "请输入搜索词",
+      "results": "搜索结果",
+      "no_results": "没有搜索结果。",
+      "add_selected": "添加所选",
+      "selected_products": "已选商品",
+      "selected_categories": "已选分类",
+      "no_selected": "没有已选择的项目。",
+      "delete_selected": "删除所选",
+      "category_placeholder": "请输入分类名称",
+      "category_tree": "分类树",
+      "load_more": "查看更多（{{current}} / {{total}}）"
+    },
+    "table": {
+      "product_code": "商品编码",
+      "product_name": "商品名称",
+      "price": "售价",
+      "category_name": "分类名称",
+      "product_count": "已登记商品数"
+    },
+    "button": {
+      "cancel": "取消",
+      "save": "保存",
+      "saving": "保存中..."
+    }
+  }
+}

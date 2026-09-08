@@ -1,0 +1,119 @@
+{
+  "title": "附加运费模板管理",
+  "description": "管理偏远及岛屿地区的附加运费模板。",
+  "add": "登记模板",
+  "import": "批量登记",
+  "search": {
+    "placeholder": "搜索邮政编码或地区名称..."
+  },
+  "filter": {
+    "zipcode": "邮政编码",
+    "region": "地区名称",
+    "is_active": "启用状态",
+    "all": "全部",
+    "active": "使用",
+    "inactive": "未使用"
+  },
+  "table": {
+    "column": {
+      "zipcode": "邮政编码",
+      "fee": "附加运费",
+      "region": "地区名称",
+      "description": "说明",
+      "is_active": "启用状态",
+      "created_at": "登记日期",
+      "actions": "操作"
+    }
+  },
+  "form": {
+    "zipcode": "邮政编码",
+    "zipcode_placeholder": "请输入邮政编码（例：63000）",
+    "fee": "附加运费",
+    "fee_placeholder": "请输入运费",
+    "region": "地区名称",
+    "region_placeholder": "请输入地区名称（例：济州岛）",
+    "description": "说明",
+    "description_placeholder": "请输入说明（例：偏远及岛屿地区）",
+    "is_active": "启用状态"
+  },
+  "action": {
+    "edit": "修改",
+    "delete": "删除",
+    "search": "搜索",
+    "reset": "重置",
+    "bulk_delete": "删除所选",
+    "bulk_toggle": "变更启用状态",
+    "bulk_import": "CSV 上传"
+  },
+  "bulk": {
+    "selected_count": "已选择 {{count}} 项",
+    "toggle_active": "使用",
+    "toggle_inactive": "未使用"
+  },
+  "modal": {
+    "delete": {
+      "title": "删除模板",
+      "message": "确定要删除所选模板吗？",
+      "warning": "已删除的模板无法恢复。",
+      "confirm": "删除"
+    },
+    "bulk_delete": {
+      "title": "批量删除模板",
+      "message": "确定要删除所选的 {{count}} 个模板吗？",
+      "warning": "已删除的模板无法恢复。",
+      "confirm": "删除"
+    },
+    "bulk_toggle": {
+      "title": "批量变更启用状态",
+      "message": "确定要变更所选 {{count}} 个模板的启用状态吗？",
+      "confirm": "变更"
+    },
+    "import": {
+      "title": "CSV 批量登记",
+      "message": "上传 CSV 文件以批量登记附加运费模板。",
+      "format_info": "CSV 格式：邮政编码、运费、地区名称、说明（含表头）",
+      "confirm": "上传"
+    }
+  },
+  "empty": {
+    "title": "尚未登记任何模板。",
+    "message": "请登记附加运费模板，以管理偏远及岛屿地区的运费。",
+    "no_results": "没有搜索结果。",
+    "no_results_message": "请尝试使用其他搜索词。"
+  },
+  "sort": {
+    "created_at_desc": "最新优先",
+    "created_at_asc": "最早优先",
+    "zipcode_asc": "按邮政编码",
+    "fee_desc": "运费从高到低",
+    "fee_asc": "运费从低到高",
+    "region_asc": "按地区名称"
+  },
+  "validation": {
+    "zipcode_required": "请输入邮政编码。",
+    "zipcode_unique": "该邮政编码已登记。",
+    "zipcode_max": "邮政编码最多可输入 10 个字符。",
+    "fee_required": "请输入运费。",
+    "fee_numeric": "运费只能输入数字。",
+    "fee_min": "运费必须为 0 以上。",
+    "ids_required": "没有已选择的项目。",
+    "ids_array": "请求格式不正确。",
+    "ids_min": "必须至少选择 1 项。",
+    "id_not_found": "其中包含不存在的模板。",
+    "is_active_required": "请选择启用状态。",
+    "is_active_boolean": "启用状态必须为 true 或 false 值。",
+    "items_required": "没有要登记的项目。",
+    "items_array": "请求格式不正确。",
+    "items_min": "至少需要 1 个项目。",
+    "items_max": "单次最多可登记 1000 个。",
+    "item_zipcode_required": "邮政编码为必填项。",
+    "item_fee_required": "运费为必填项。"
+  },
+  "statistics": {
+    "total": "全部",
+    "active": "使用中",
+    "inactive": "未使用",
+    "regions": "地区",
+    "avg_fee": "平均运费"
+  }
+}
