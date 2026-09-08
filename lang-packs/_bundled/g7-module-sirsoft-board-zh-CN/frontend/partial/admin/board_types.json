@@ -1,0 +1,19 @@
+{
+  "manage": "管理",
+  "modal_title": "版块类型管理",
+  "slug": "别名",
+  "name": "名称",
+  "actions": "操作",
+  "empty": "没有已登记的类型",
+  "delete_confirm": "确定要删除此类型吗？",
+  "delete_success": "类型已删除",
+  "edit_title": "修改类型",
+  "add_title": "添加类型",
+  "add": "添加类型",
+  "adding": "添加中...",
+  "name_placeholder": "例：基础型",
+  "slug_hint": "只能使用小写字母、数字和连字符（-），且必须以小写字母开头。（例：basic, gallery, photo-card）",
+  "update_success": "类型已修改",
+  "create_success": "类型已创建",
+  "usage_guide": "别名（slug）是区分版块显示类型的标识符。需要在模板中为相应别名添加并配置专用布局后才会生效。"
+}

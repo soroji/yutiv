@@ -1,0 +1,70 @@
+{
+  "common": {
+    "system": "系统"
+  },
+  "boards": {
+    "menu_added_success": "已添加到管理菜单。",
+    "menu_add_failed": "添加菜单失败。",
+    "menu_already_exists": "该菜单已添加。",
+    "module_not_found": "找不到版块模块。"
+  },
+  "post": {
+    "notice": "公告",
+    "reply": "回复",
+    "action": {
+      "blind": "屏蔽处理",
+      "delete": "删除处理",
+      "restore": "恢复处理"
+    },
+    "deleted_post_title": "这是已删除的帖子",
+    "deleted_post_content": "此帖子已被删除。",
+    "blinded_post_title": "这是已被屏蔽的帖子",
+    "blinded_post_content": "此帖子已被屏蔽。"
+  },
+  "comment": {
+    "create_success": "评论已发表。",
+    "update_success": "评论已修改。",
+    "delete_success": "评论已删除。",
+    "blind_success": "评论已被屏蔽。",
+    "restore_success": "评论已恢复。",
+    "not_found": "找不到评论。",
+    "not_guest_comment": "这不是游客评论。",
+    "invalid_password": "密码不正确。",
+    "password_verified": "密码已验证。",
+    "verify_password_failed": "密码验证失败。",
+    "deleted_comment_content": "这是已删除的评论",
+    "blinded_comment_content": "这是已被屏蔽的评论",
+    "view_original": "查看原文",
+    "hide_original": "隐藏原文",
+    "post_blinded": "无法在已被屏蔽的帖子中发表评论。",
+    "post_deleted": "无法在已删除的帖子中发表评论。"
+  },
+  "reports": {
+    "create_success": "举报已受理。",
+    "create_failed": "提交举报失败。",
+    "duplicate_report": "您已举报过该对象。",
+    "report_disabled": "此版块的举报功能已停用。",
+    "target_not_reportable": "该对象无法举报。"
+  },
+  "board_type": {
+    "list": "已获取版块类型列表。",
+    "created": "版块类型已创建。",
+    "updated": "版块类型已修改。",
+    "deleted": "版块类型已删除。",
+    "default_set": "默认版块类型已设置。",
+    "not_found": "找不到版块类型。",
+    "in_use": "正在使用中的版块类型无法删除。",
+    "delete_in_use": "正在 :count 个版块中使用的类型无法删除。"
+  },
+  "settings": {
+    "fetch_success": "已获取设置。",
+    "fetch_failed": "获取设置失败。",
+    "save_success": "设置已保存。",
+    "save_failed": "保存设置失败。",
+    "save_error": "保存设置过程中发生错误。",
+    "bulk_apply_success": "已将设置批量应用到 :count 个版块。",
+    "bulk_apply_failed": "批量应用设置失败。",
+    "clear_cache_success": "设置缓存已清空。",
+    "clear_cache_error": "清空设置缓存过程中发生错误。"
+  }
+}

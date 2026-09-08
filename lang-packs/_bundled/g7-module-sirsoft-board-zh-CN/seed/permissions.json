@@ -1,0 +1,70 @@
+{
+  "sirsoft-board": {
+    "name": "版块",
+    "description": "版块模块权限"
+  },
+  "sirsoft-board.boards": {
+    "name": "版块管理",
+    "description": "版块管理权限"
+  },
+  "sirsoft-board.boards.read": {
+    "name": "查看版块",
+    "description": "查看版块列表及详情"
+  },
+  "sirsoft-board.boards.create": {
+    "name": "创建版块",
+    "description": "创建新版块"
+  },
+  "sirsoft-board.boards.update": {
+    "name": "修改版块",
+    "description": "修改版块设置"
+  },
+  "sirsoft-board.boards.delete": {
+    "name": "删除版块",
+    "description": "删除版块"
+  },
+  "sirsoft-board.settings": {
+    "name": "系统设置",
+    "description": "版块系统设置权限"
+  },
+  "sirsoft-board.settings.read": {
+    "name": "查看系统设置",
+    "description": "查看版块系统设置"
+  },
+  "sirsoft-board.settings.update": {
+    "name": "修改系统设置",
+    "description": "修改版块系统设置"
+  },
+  "sirsoft-board.identity.policies": {
+    "name": "版块实名认证策略",
+    "description": "版块上下文的实名认证策略管理权限"
+  },
+  "sirsoft-board.identity.policies.read": {
+    "name": "查看实名认证策略",
+    "description": "查看版块实名认证策略"
+  },
+  "sirsoft-board.identity.policies.update": {
+    "name": "修改实名认证策略",
+    "description": "修改／添加／删除版块实名认证策略"
+  },
+  "sirsoft-board.dashboard": {
+    "name": "版块仪表盘",
+    "description": "版块仪表盘查看权限"
+  },
+  "sirsoft-board.dashboard.view": {
+    "name": "查看仪表盘",
+    "description": "查看版块仪表盘（概况／趋势／最新帖子／未处理举报）"
+  },
+  "sirsoft-board.reports": {
+    "name": "版块举报管理",
+    "description": "版块举报管理权限"
+  },
+  "sirsoft-board.reports.view": {
+    "name": "查看举报",
+    "description": "查看举报列表及详情"
+  },
+  "sirsoft-board.reports.manage": {
+    "name": "处理举报",
+    "description": "变更举报状态并进行处理"
+  }
+}

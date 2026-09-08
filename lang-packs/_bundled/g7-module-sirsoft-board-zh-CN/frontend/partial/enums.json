@@ -1,0 +1,29 @@
+{
+  "report_status": {
+    "pending": "已受理",
+    "review": "审核中",
+    "rejected": "已驳回",
+    "suspended": "已下架",
+    "deleted": "永久删除"
+  },
+  "trigger_type": {
+    "report": "举报",
+    "admin": "管理员",
+    "system": "系统"
+  },
+  "report_type": {
+    "post": "帖子",
+    "comment": "评论"
+  },
+  "report_reason_type": {
+    "abuse": "辱骂／诽谤",
+    "hate_speech": "仇恨言论",
+    "spam": "垃圾信息／广告",
+    "copyright": "侵犯著作权",
+    "privacy": "泄露个人信息",
+    "misinformation": "虚假信息／假新闻",
+    "sexual": "色情内容",
+    "violence": "暴力内容",
+    "other": "其他"
+  }
+}

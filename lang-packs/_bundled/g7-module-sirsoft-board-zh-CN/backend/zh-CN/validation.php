@@ -1,0 +1,536 @@
+<?php
+
+return [
+    'fields_invalid' => '所选的 :value 字段不被允许。',
+    'bulk_apply' => [
+        'fields.required' => '请至少选择一个要批量应用的项目。',
+        'fields.min' => '请至少选择一个要批量应用的项目。',
+        'apply_all.required' => '请指定是否应用于全部版块。',
+        'board_ids.required_if' => '若非全部应用，请选择目标版块。',
+        'board_ids.*.exists' => '该版块不存在。',
+    ],
+    'slug' => [
+        'required' => '版块别名为必填项。',
+        'format' => '版块别名必须以小写英文字母开头，且只能使用小写英文字母、数字和连字符（-）。',
+        'unique' => '该版块别名已被使用。',
+        'reserved' => ':value 是保留别名。请使用其他名称。',
+        'max' => '版块别名不能超过 :max 个字符。',
+    ],
+    'name' => [
+        'required' => '版块名称为必填项。',
+        'string' => '版块名称必须为字符串。',
+        'max' => '版块名称不能超过 :max 个字符。',
+    ],
+    'type' => [
+        'required' => '版块类型为必填项。',
+    ],
+    'per_page' => [
+        'required' => '每页帖子数为必填项。',
+        'min' => '每页帖子数至少为 :min 条。',
+        'max' => '每页帖子数不能超过 :max 条。',
+    ],
+    'per_page_mobile' => [
+        'required' => '移动端每页帖子数为必填项。',
+        'min' => '移动端每页帖子数至少为 :min 条。',
+        'max' => '移动端每页帖子数不能超过 :max 条。',
+    ],
+    'order_by' => [
+        'required' => '排序字段为必填项。',
+        'in' => '排序字段必须为 created_at、view_count、title、author 之一。',
+    ],
+    'order_direction' => [
+        'required' => '排序方向为必填项。',
+        'in' => '排序方向只能使用 ASC 或 DESC。',
+    ],
+    'categories' => [
+        'array' => '分类必须为数组格式。',
+        'max' => '分类最多可添加 :max 个。',
+        'item_max' => '分类名称不能超过 :max 个字符。',
+        'item_required' => '不能使用空的分类名称。',
+    ],
+    'show_view_count' => [
+        'required' => '是否显示浏览量为必填项。',
+    ],
+    'secret_mode' => [
+        'required' => '私密帖模式为必填项。',
+        'in' => '私密帖模式必须为 disabled、enabled、always 之一。',
+    ],
+    'use_comment' => [
+        'required' => '是否使用评论为必填项。',
+    ],
+    'use_reply' => [
+        'required' => '是否使用回复为必填项。',
+    ],
+    'use_report' => [
+        'required' => '是否使用举报功能为必填项。',
+    ],
+    'min_title_length' => [
+        'min' => '标题最小字数必须大于或等于 :min 个字符。',
+        'max' => '标题最小字数不能超过 :max 个字符。',
+    ],
+    'max_title_length' => [
+        'min' => '标题最大字数必须大于或等于 :min 个字符。',
+        'max' => '标题最大字数不能超过 :max 个字符。',
+        'gte_min' => '标题最大字数不能小于标题最小字数。',
+    ],
+    'min_content_length' => [
+        'min' => '帖子最小字数必须大于或等于 :min 个字符。',
+        'max' => '帖子最小字数不能超过 :max 个字符。',
+    ],
+    'max_content_length' => [
+        'min' => '帖子最大字数必须大于或等于 :min 个字符。',
+        'max' => '帖子最大字数不能超过 :max 个字符。',
+        'gte_min' => '帖子最大字数不能小于帖子最小字数。',
+    ],
+    'min_comment_length' => [
+        'min' => '评论最小字数必须大于或等于 :min 个字符。',
+        'max' => '评论最小字数不能超过 :max 个字符。',
+    ],
+    'max_comment_length' => [
+        'min' => '评论最大字数必须大于或等于 :min 个字符。',
+        'max' => '评论最大字数不能超过 :max 个字符。',
+        'gte_min' => '评论最大字数不能小于评论最小字数。',
+    ],
+    'use_file_upload' => [
+        'required' => '是否使用文件上传为必填项。',
+    ],
+    'max_file_size' => [
+        'min' => '最大文件大小至少为 :min MB。',
+        'max' => '最大文件大小不能超过 :max MB。',
+    ],
+    'max_file_count' => [
+        'min' => '最大文件数至少为 :min 个。',
+        'max' => '最大文件数不能超过 :max 个。',
+    ],
+    'allowed_extensions' => [
+        'min' => '请至少输入 1 个允许的文件扩展名。',
+    ],
+    'permissions' => [
+        'required' => '权限设置为必填项。',
+        'roles_required' => '每项权限至少需要一个角色。请为以下权限设置角色：:permissions',
+        'roles' => [
+            'required' => '请为权限选择角色。',
+            'min' => '请为权限至少选择一个角色。',
+            'exists' => '该角色不存在。',
+        ],
+        'mode' => [
+            'required' => '请选择权限模式。',
+            'in' => '权限模式无效。',
+        ],
+    ],
+    'max_reply_depth' => [
+        'min' => '回复帖最大层级至少为 :min。',
+        'max' => '回复帖最大层级最多可设置为 :max。',
+    ],
+    'max_comment_depth' => [
+        'min' => '评论回复最大层级至少为 :min。',
+        'max' => '评论回复最大层级最多可设置为 :max。',
+    ],
+    'notify_admin_on_post' => [
+        'required' => '发帖时是否通知管理员为必填项。',
+    ],
+    'notify_author' => [
+        'required' => '是否向作者发送邮件通知为必填项。',
+    ],
+    'blocked_keywords' => [
+        'string' => '违禁词列表必须为字符串。',
+        'max' => '违禁词列表不能超过 :max 个字符。',
+    ],
+    'cooldown_required' => ':time 后才能再次发表。',
+    'cooldown_required_report' => '举报需间隔 :time。请稍后重试。',
+    'cooldown_duration' => [
+        'seconds' => ':seconds 秒',
+        'minutes' => ':minutes 分钟',
+        'minutes_seconds' => ':minutes 分 :seconds 秒',
+        'hours' => ':hours 小时',
+        'hours_minutes' => ':hours 小时 :minutes 分',
+    ],
+    'board' => [
+        'not_found' => '找不到版块。',
+        'name' => [
+            'required' => '版块名称为必填项。',
+            'string' => '版块名称必须为字符串。',
+            'max' => '版块名称不能超过 :max 个字符。',
+        ],
+        'slug' => [
+            'required' => '版块别名为必填项。',
+            'string' => '版块别名必须为字符串。',
+            'max' => '版块别名不能超过 :max 个字符。',
+            'alpha_dash' => '版块别名只能使用字母、数字、短横线（-）和下划线（_）。',
+            'unique' => '该版块别名已被使用。',
+            'regex' => '版块别名必须以字母开头。',
+        ],
+        'type' => [
+            'required' => '版块类型为必填项。',
+            'in' => '版块类型无效。',
+        ],
+        'description' => [
+            'string' => '版块说明必须为字符串。',
+            'max' => '版块说明不能超过 :max 个字符。',
+        ],
+        'per_page' => [
+            'integer' => '每页帖子数必须为整数。',
+            'min' => '每页帖子数至少为 :min 条。',
+            'max' => '每页帖子数不能超过 :max 条。',
+        ],
+        'per_page_mobile' => [
+            'integer' => '移动端每页帖子数必须为整数。',
+            'min' => '移动端每页帖子数至少为 :min 条。',
+            'max' => '移动端每页帖子数不能超过 :max 条。',
+        ],
+        'secret_mode' => [
+            'in' => '私密帖模式无效。',
+        ],
+    ],
+    'post' => [
+        'title' => [
+            'required' => '标题为必填项。',
+            'string' => '标题必须为字符串。',
+            'min' => '标题至少需要 :min 个字符。',
+            'max' => '标题不能超过 :max 个字符。',
+        ],
+        'content' => [
+            'required' => '内容为必填项。',
+            'string' => '内容必须为字符串。',
+            'min' => '内容至少需要 :min 个字符。',
+            'max' => '内容不能超过 :max 个字符。',
+        ],
+        'category' => [
+            'max' => '分类不能超过 :max 个字符。',
+        ],
+        'category_id' => [
+            'exists' => '该分类不存在。',
+        ],
+        'is_secret' => [
+            'boolean' => '是否为私密帖必须为真／假值。',
+        ],
+        'secret_password' => [
+            'required_if' => '私密帖密码为必填项。',
+            'string' => '私密帖密码必须为字符串。',
+            'min' => '私密帖密码至少需要 :min 个字符。',
+            'max' => '私密帖密码不能超过 :max 个字符。',
+        ],
+        'parent_id' => [
+            'exists' => '该原帖不存在。',
+            'not_found' => '找不到原帖。',
+            'blinded' => '无法在已被屏蔽的帖子下发表回复。',
+            'deleted' => '无法在已删除的帖子下发表回复。',
+            'depth_exceeded' => '此版块的回复最多只允许 :max 层。',
+            'notice_not_allowed' => '无法在公告下发表回复。',
+        ],
+        'reply_not_allowed' => '此版块的回复功能已停用。',
+        'delete' => [
+            'has_replies' => '已有回复的帖子无法删除。请先删除回复。',
+        ],
+        'status' => [
+            'in' => '帖子状态无效。',
+        ],
+        'user_id' => [
+            'exists' => '该用户不存在。',
+        ],
+        'author_name' => [
+            'required' => '游客必须填写作者名称。',
+            'max' => '作者名称不能超过 :max 个字符。',
+        ],
+        'password' => [
+            'required' => '游客必须填写密码。',
+            'min' => '密码至少需要 :min 个字符。',
+        ],
+        'is_notice' => [
+            'guest_not_allowed' => '游客无法发布公告。',
+        ],
+        'blocked_keyword' => '内容中含有违禁词 ":keyword"。',
+        'files' => [
+            'array' => '附件必须为数组格式。',
+            'max' => '最多只能上传 :max 个文件。',
+            'file' => '不是有效的文件。',
+            'file_max' => '文件大小超出了允许的范围。',
+            'mimes' => '不允许的文件格式。',
+        ],
+    ],
+    'attributes' => [
+        'settings' => [
+            'basic_defaults.type' => '版块类型',
+            'basic_defaults.per_page' => '每页帖子数',
+            'basic_defaults.per_page_mobile' => '移动端每页帖子数',
+            'basic_defaults.order_by' => '排序字段',
+            'basic_defaults.order_direction' => '排序方向',
+            'basic_defaults.secret_mode' => '私密帖模式',
+            'basic_defaults.use_comment' => '是否使用评论',
+            'basic_defaults.use_reply' => '是否使用回复',
+            'basic_defaults.max_reply_depth' => '最大回复层级',
+            'basic_defaults.reply_delete_policy' => '回复删除方式',
+            'basic_defaults.max_comment_depth' => '最大评论层级',
+            'basic_defaults.comment_order' => '评论排序',
+            'basic_defaults.show_view_count' => '显示浏览量',
+            'basic_defaults.use_report' => '使用举报功能',
+            'basic_defaults.min_title_length' => '标题最小长度',
+            'basic_defaults.max_title_length' => '标题最大长度',
+            'basic_defaults.min_content_length' => '内容最小长度',
+            'basic_defaults.max_content_length' => '内容最大长度',
+            'basic_defaults.min_comment_length' => '评论最小长度',
+            'basic_defaults.max_comment_length' => '评论最大长度',
+            'basic_defaults.use_file_upload' => '使用文件上传',
+            'basic_defaults.max_file_size' => '最大文件大小',
+            'basic_defaults.max_file_count' => '最大文件数',
+            'basic_defaults.allowed_extensions' => '允许的文件扩展名',
+            'basic_defaults.notify_admin_on_post' => '发帖时通知管理员',
+            'basic_defaults.notify_author' => '通知作者',
+            'basic_defaults.new_display_hours' => '新帖标识时长',
+            'basic_defaults.default_board_permissions' => '默认版块权限',
+            'report_policy.auto_hide_threshold' => '自动隐藏举报数',
+            'report_policy.auto_hide_target' => '自动隐藏对象',
+            'report_policy.daily_report_limit' => '每日举报上限',
+            'report_policy.rejection_limit_count' => '举报驳回上限',
+            'report_policy.rejection_limit_days' => '举报驳回统计周期',
+            'report_permissions.view_roles' => '举报查看权限角色',
+            'report_permissions.manage_roles' => '举报处理权限角色',
+            'spam_security.blocked_keywords' => '违禁词',
+            'spam_security.post_cooldown_seconds' => '发帖冷却时间（秒）',
+            'spam_security.comment_cooldown_seconds' => '发表评论冷却时间（秒）',
+            'spam_security.report_cooldown_seconds' => '举报冷却时间（秒）',
+            'spam_security.view_count_cache_ttl' => '浏览量缓存有效时长（秒）',
+        ],
+        'post' => [
+            'title' => '标题',
+            'content' => '内容',
+            'category' => '分类',
+            'is_notice' => '公告',
+            'is_secret' => '私密帖',
+            'content_mode' => '内容模式',
+            'status' => '状态',
+            'user_id' => '用户 ID',
+            'author_name' => '作者名称',
+            'password' => '密码',
+            'parent_id' => '原帖',
+            'files' => '附件',
+            'file' => '附件',
+        ],
+        'comment' => [
+            'content' => '评论内容',
+            'author_name' => '作者名称',
+            'password' => '密码',
+            'is_secret' => '私密评论',
+            'parent_id' => '上级评论',
+            'user_id' => '用户 ID',
+            'ip_address' => 'IP 地址',
+            'status' => '状态',
+        ],
+        'report' => [
+            'reason_type' => '举报类型',
+            'reason_detail' => '举报详情',
+            'status' => '举报状态',
+            'process_note' => '处理备注',
+            'ids' => '举报 ID',
+        ],
+        'blind' => [
+            'reason' => '屏蔽原因',
+        ],
+        'restore' => [
+            'reason' => '恢复原因',
+        ],
+        'board' => [
+            'add_to_menu' => '在管理菜单中显示',
+            'blocked_keywords' => '违禁词',
+        ],
+        'bulk_apply' => [
+            'fields' => '应用项目',
+            'fields.*' => '应用项目',
+            'apply_all' => '应用于全部版块',
+            'board_ids' => '目标版块',
+            'board_ids.*' => '目标版块',
+            'override_values' => '覆盖值',
+            'override_values.per_page' => '每页帖子数',
+            'override_values.per_page_mobile' => '移动端每页帖子数',
+            'override_values.max_reply_depth' => '最大回复层级',
+            'override_values.reply_delete_policy' => '回复删除方式',
+            'override_values.max_comment_depth' => '最大评论层级',
+            'override_values.min_title_length' => '标题最小长度',
+            'override_values.max_title_length' => '标题最大长度',
+            'override_values.min_content_length' => '内容最小长度',
+            'override_values.max_content_length' => '内容最大长度',
+            'override_values.min_comment_length' => '评论最小长度',
+            'override_values.max_comment_length' => '评论最大长度',
+            'override_values.max_file_size' => '最大文件大小',
+            'override_values.max_file_count' => '最大文件数',
+            'override_values.new_display_hours' => '新帖标识时长',
+            'attachment_settings.purge_enabled' => '永久清理已删除附件',
+            'attachment_settings.purge_retention_days' => '已删除附件保留期限',
+        ],
+    ],
+    'blind' => [
+        'reason' => [
+            'required' => '屏蔽原因为必填项。',
+            'min' => '屏蔽原因至少需要 :min 个字符。',
+            'max' => '屏蔽原因不能超过 :max 个字符。',
+            'string' => '屏蔽原因必须为字符串。',
+        ],
+    ],
+    'restore' => [
+        'reason' => [
+            'required' => '恢复原因为必填项。',
+            'min' => '恢复原因至少需要 :min 个字符。',
+            'max' => '恢复原因不能超过 :max 个字符。',
+            'string' => '恢复原因必须为字符串。',
+        ],
+    ],
+    'comment' => [
+        'content' => [
+            'required' => '评论内容为必填项。',
+            'string' => '评论内容必须为字符串。',
+            'min' => '评论内容至少需要 :min 个字符。',
+            'max' => '评论内容不能超过 :max 个字符。',
+        ],
+        'post_id' => [
+            'not_found' => '找不到帖子。',
+            'blinded' => '无法在已被屏蔽的帖子中发表评论。',
+            'deleted' => '无法在已删除的帖子中发表评论。',
+        ],
+        'parent_id' => [
+            'exists' => '该评论不存在。',
+            'integer' => '上级评论 ID 必须为整数。',
+            'not_found' => '找不到父级评论。',
+            'blinded' => '无法在已被屏蔽的评论下发表回复。',
+            'deleted' => '无法在已删除的评论下发表回复。',
+        ],
+        'depth' => [
+            'integer' => '评论层级必须为整数。',
+            'min' => '评论层级至少为 :min。',
+            'max' => '回复最多只能写到 :max 层。',
+            'exceeded' => '此版块的回复最多只允许 :max 层。',
+        ],
+        'user_id' => [
+            'exists' => '该用户不存在。',
+        ],
+        'author_name' => [
+            'required' => '游客必须填写作者名称。',
+            'max' => '作者名称不能超过 :max 个字符。',
+        ],
+        'password' => [
+            'required' => '请输入密码。',
+            'min' => '密码至少需要 :min 个字符。',
+        ],
+        'ip_address' => [
+            'required' => 'IP 地址为必填项。',
+        ],
+        'blocked_keyword' => '内容中含有违禁词 ":keyword"。',
+    ],
+    'attachment' => [
+        'file' => [
+            'required' => '文件为必填项。',
+            'file' => '不是有效的文件。',
+            'max' => '文件大小不能超过 :max KB。',
+            'mimes' => '不允许的文件格式。',
+        ],
+        'file_required' => '文件为必填项。',
+        'file_invalid' => '不是有效的文件。',
+        'file_max' => '文件大小不能超过 :max MB。',
+        'file_mimes' => '不允许的文件格式。',
+        'post_id_required' => '帖子 ID 为必填项。',
+        'post_id_invalid' => '帖子 ID 无效。',
+        'max_count_exceeded' => '已超出最大上传文件数（:max 个）。',
+        'extension_not_allowed' => '不允许的文件扩展名：:extension',
+        'orders_required' => '排序信息为必填项。',
+        'orders_array' => '排序信息必须为数组格式。',
+        'order_id_required' => '附件 ID 为必填项。',
+        'order_id_integer' => '附件 ID 必须为整数。',
+        'order_value_required' => '排序值为必填项。',
+        'order_value_integer' => '排序值必须为整数。',
+    ],
+    'category' => [
+        'name' => [
+            'required' => '分类名称为必填项。',
+            'string' => '分类名称必须为字符串。',
+            'max' => '分类名称不能超过 :max 个字符。',
+        ],
+        'max_count_exceeded' => '已超出最大分类数（:max 个）。',
+    ],
+    'board_manager_ids' => [
+        'required' => '版块管理员为必填项。',
+        'min' => '版块管理员至少需要指定 :min 名。',
+    ],
+    'category_in_use' => '“:category”分类当前正在 :count 篇帖子中使用。',
+    'board_type_invalid' => '版块类型无效。可用类型：:types',
+    'board_type' => [
+        'slug_required' => '别名为必填项。',
+        'slug_format' => '别名只能使用小写字母、数字和连字符，且必须以小写字母开头。',
+        'slug_unique' => '该别名已被使用。',
+        'name_required' => '类型名称为必填项。',
+        'name_ko_required' => '韩语类型名称为必填项。',
+    ],
+    'multilingual_default_locale_required' => '默认语言（:locale）的值为必填项。',
+    'permission' => [
+        'invalid_role' => '角色无效：:role',
+    ],
+    'permission_names' => [
+        'admin' => [
+            'posts' => [
+                'read' => '查看帖子（管理员）',
+                'write' => '发表／修改／删除帖子（管理员）',
+                'read-secret' => '查看私密帖（管理员）',
+            ],
+            'comments' => [
+                'read' => '查看评论（管理员）',
+                'write' => '发表／修改／删除评论（管理员）',
+            ],
+            'manage' => '管理他人帖子／评论（管理员）',
+            'attachments' => [
+                'upload' => '上传文件（管理员）',
+                'download' => '下载文件（管理员）',
+            ],
+        ],
+        'posts' => [
+            'read' => '查看帖子',
+            'write' => '发表帖子',
+            'read-secret' => '查看私密帖',
+        ],
+        'comments' => [
+            'read' => '查看评论',
+            'write' => '发表评论',
+        ],
+        'attachments' => [
+            'upload' => '上传文件',
+            'download' => '下载文件',
+        ],
+        'manager' => '版块管理员',
+    ],
+    'role_field_suffix' => '角色',
+    'report_permissions' => [
+        'view_roles' => [
+            'required_with' => '请至少选择 1 个举报查看权限角色。',
+            'min' => '请至少选择 :min 个举报查看权限角色。',
+        ],
+        'manage_roles' => [
+            'required_with' => '请至少选择 1 个举报处理权限角色。',
+            'min' => '请至少选择 :min 个举报处理权限角色。',
+        ],
+    ],
+    'report' => [
+        'invalid_status_transition' => '当前举报状态无法变更为该状态。',
+        'status' => [
+            'required' => '举报状态为必填项。',
+            'in' => '举报状态无效。',
+        ],
+        'process_note' => [
+            'max' => '处理备注不能超过 :max 个字符。',
+        ],
+        'ids' => [
+            'required' => '举报 ID 为必填项。',
+            'array' => '举报 ID 必须为数组格式。',
+            'min' => '请至少选择 1 条举报。',
+            'integer' => '举报 ID 必须为整数。',
+            'exists' => '该举报不存在。',
+        ],
+        'reason_type' => [
+            'required' => '举报理由为必填项。',
+            'in' => '举报理由无效。',
+        ],
+        'reason_detail' => [
+            'required' => '举报详情为必填项。',
+            'min' => '举报详情至少需要 :min 个字符。',
+            'max' => '举报详情不能超过 :max 个字符。',
+        ],
+        'daily_limit_exceeded' => '已超出今日可举报次数（:limit 次）。',
+        'rejection_limit_exceeded' => '最近 :days 天内举报被驳回累计 :count 次，举报功能已受限。',
+    ],
+];

@@ -1,0 +1,55 @@
+{
+  "parent_post": "原帖",
+  "view_parent_post": "查看原帖",
+  "view_detail": "查看详情",
+  "show_more": "展开",
+  "show_less": "收起",
+  "permissions": {
+    "admin": {
+      "posts": {
+        "read": "查看帖子（管理员）",
+        "read_desc": "可以在管理页面查看帖子列表及详细内容。",
+        "write": "发表／修改／删除帖子（管理员）",
+        "write_desc": "可以在管理页面发表帖子，并修改／删除所有帖子。",
+        "read-secret": "查看私密帖（管理员）",
+        "read-secret_desc": "无需输入密码即可查阅私密帖。"
+      },
+      "comments": {
+        "read": "查看评论（管理员）",
+        "read_desc": "可以在管理页面查看所有评论。",
+        "write": "发表／修改／删除评论（管理员）",
+        "write_desc": "可以在管理页面发表评论，并修改／删除所有评论。"
+      },
+      "attachments": {
+        "upload": "上传／删除文件（管理员）",
+        "upload_desc": "可以为帖子添加附件，并删除所有附件。",
+        "download": "下载文件（管理员）",
+        "download_desc": "可以下载所有附件。"
+      },
+      "manage": "版块管理（管理员）",
+      "manage_desc": "可以管理他人的帖子／评论，并进行屏蔽、恢复和公告设置。"
+    },
+    "posts": {
+      "read": "查看帖子",
+      "read_desc": "可以查看帖子列表及详细内容。",
+      "write": "发表／修改／删除帖子",
+      "write_desc": "可以发表帖子，并修改／删除本人的帖子。",
+      "read-secret": "查看私密帖",
+      "read-secret_desc": "无需输入密码即可查阅私密帖。"
+    },
+    "comments": {
+      "read": "查看评论",
+      "read_desc": "可以查看评论列表。",
+      "write": "发表／修改／删除评论",
+      "write_desc": "可以发表评论，并修改／删除本人的评论。"
+    },
+    "attachments": {
+      "upload": "上传／删除文件",
+      "upload_desc": "可以为帖子添加附件，并删除本人添加的附件。",
+      "download": "下载文件",
+      "download_desc": "可以下载附件。"
+    },
+    "manager": "版块管理（用户）",
+    "manager_desc": "可以在用户页面对他人的帖子／评论进行屏蔽、恢复和删除。"
+  }
+}

@@ -431,6 +431,7 @@ Official language packs you can install alongside the initial setup, so the core
 | **g7-core-ja** | Core, Japanese |
 | **g7-core-zh-CN** | Core, Simplified Chinese |
 | **g7-module-sirsoft-board-ja** | Board module, Japanese |
+| **g7-module-sirsoft-board-zh-CN** | Board module, Simplified Chinese |
 | **g7-module-sirsoft-ecommerce-ja** | E-commerce module, Japanese |
 | **g7-module-sirsoft-page-ja** | Page module, Japanese |
 | **g7-plugin-sirsoft-ckeditor5-ja** | CKEditor 5 plugin, Japanese |

@@ -1,0 +1,225 @@
+{
+  "title_create": "创建版块",
+  "title_edit": "修改版块",
+  "description": "管理版块设置",
+  "read_only_message": "您只有查看权限。如需修改，请联系管理员。",
+  "validation_error": "请检查输入的信息。",
+  "add_category": "添加分类",
+  "tabs": {
+    "basic": "基本设置",
+    "permissions": "权限设置",
+    "list": "列表设置",
+    "post": "帖子设置",
+    "notification": "通知设置"
+  },
+  "fields": {
+    "name": "版块名称",
+    "slug": "别名",
+    "description": "版块说明",
+    "is_active": "启用",
+    "type": "版块类型",
+    "categories": "分类",
+    "show_view_count": "显示浏览量",
+    "use_comment": "使用评论",
+    "use_reply": "使用回复帖",
+    "use_report": "使用举报",
+    "secret_mode": "私密帖模式",
+    "order_by": {
+      "label": "排序字段",
+      "options": {
+        "created_at": "最新发布",
+        "view_count": "浏览量",
+        "title": "标题",
+        "author": "发帖人"
+      }
+    },
+    "order_direction": {
+      "label": "排序顺序",
+      "options": {
+        "desc": "降序",
+        "asc": "升序"
+      }
+    },
+    "per_page": {
+      "label": "每页列表条数（PC）",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "per_page_mobile": {
+      "label": "每页列表条数（Mobile）",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "min_title_length": {
+      "label": "标题最小字数",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "max_title_length": {
+      "label": "标题最大字数",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "min_content_length": {
+      "label": "帖子最小字数",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "max_content_length": {
+      "label": "帖子最大字数",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "min_comment_length": {
+      "label": "评论最小字数",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "max_comment_length": {
+      "label": "评论最大字数",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "blocked_keywords": {
+      "label": "违禁词",
+      "placeholder": "输入违禁词后按 Enter（例：辱骂、诽谤、广告）",
+      "description": "不当词汇，或需要在该版块中排除的违禁词"
+    },
+    "use_file_upload": {
+      "label": "附件设置",
+      "description": "可以为帖子添加附件。"
+    },
+    "max_file_count": {
+      "label": "最大文件数",
+      "hint": "最多可上传 {{max}} 个"
+    },
+    "max_file_size": {
+      "label": "最大文件容量（MB）",
+      "placeholder": "以 MB 为单位输入",
+      "hint": "最多可上传 {{maxMB}}MB"
+    },
+    "allowed_extensions": {
+      "label": "允许的扩展名",
+      "placeholder": "输入扩展名后按 Enter（例：jpg, png, pdf）",
+      "description": "请至少输入 1 个允许的文件扩展名"
+    },
+    "comment_order": {
+      "label": "评论排序顺序",
+      "options": {
+        "asc": "升序（由旧到新）",
+        "desc": "降序（由新到旧）"
+      }
+    },
+    "new_display_hours": {
+      "label": "新帖标识显示时长",
+      "hint": "帖子发表后显示 [New] 徽标的时长（以小时为单位）"
+    },
+    "max_reply_depth": {
+      "label": "回复帖最大层级",
+      "hint": "请输入 {{min}}~{{max}} 之间的值"
+    },
+    "reply_delete_policy": {
+      "label": "回复帖删除方式",
+      "hint": "设置删除含有回复帖的帖子时的行为",
+      "options": {
+        "block": "阻止删除",
+        "cascade": "一并删除"
+      }
+    },
+    "max_comment_depth": {
+      "label": "评论回复最大层级",
+      "hint": "请输入 {{min}}~{{max}} 之间的值。设为 0 则停用评论回复功能。"
+    },
+    "notify_author": {
+      "label": "作者邮件通知",
+      "description": "有评论、评论回复、回复帖或管理员处理时，向作者发送邮件"
+    },
+    "notify_admin_on_post": {
+      "label": "管理员邮件通知",
+      "description": "有新帖子发布时向管理员发送邮件"
+    },
+    "notification_channels": {
+      "label": "通知渠道",
+      "description": "选择接收版块通知的渠道",
+      "channels_label": "通知渠道",
+      "channel_mail": "电子邮件",
+      "channel_database": "站内通知"
+    }
+  },
+  "placeholders": {
+    "name": "例：公告栏",
+    "slug": "例：notice（仅限字母、数字和连字符）",
+    "description": "请简要说明此版块的用途",
+    "select_type": "请选择版块类型"
+  },
+  "descriptions": {
+    "slug": "用作 URL 和数据表名（仅限字母、数字和连字符）",
+    "description": "在版块列表中向用户展示的说明",
+    "is_active": "已停用的版块不会显示在用户页面上",
+    "categories": "管理帖子分类",
+    "categories_notice": "删除分类后，该分类下的帖子仍会保留，可通过“未分类”筛选查看。",
+    "show_view_count": "在帖子列表和详情中显示浏览量",
+    "use_comment": "启用后可以设置评论的详细选项（长度、层级、排序）。",
+    "use_reply": "启用后可以设置回复帖的最大层级。",
+    "use_report": "启用对不当帖子／评论的举报功能",
+    "type": "版块类型可在“系统设置 > 基本设置”中管理。"
+  },
+  "options": {
+    "secret_mode": {
+      "disabled": "不使用",
+      "enabled": "可选择",
+      "always": "始终为私密帖"
+    }
+  },
+  "permissions": {
+    "managers_title": "版块管理员",
+    "managers_description": "指定拥有该版块全部权限的管理员。",
+    "managers_select_button": "选择管理员",
+    "manager_email_placeholder": "请输入管理员邮箱",
+    "search_manager": "查询",
+    "confirm_add": "添加",
+    "select": "选择",
+    "change": "变更",
+    "users_found": "找到 {{count}} 位用户",
+    "no_users_found_search": "找不到用户",
+    "user_search_failed": "查询用户失败",
+    "users_found_with_limit": "找到 {{count}} 位用户（最多显示 20 位）",
+    "user_added": "已添加 {{name}}",
+    "no_search_results": "没有搜索结果",
+    "selected_managers": "已选择的管理员",
+    "select_managers": "选择管理员",
+    "admin_permissions_title": "管理员权限（Admin）",
+    "admin_permissions_description": "管理页面的访问权限。授予版块管理员和系统管理员。",
+    "user_permissions_title": "用户权限（User）",
+    "user_permissions_description": "普通用户的版块访问权限。通过角色（Role）控制细分权限。",
+    "settings_title": "按角色的访问控制",
+    "settings_description": "请为每项权限选择要分配的角色。未选择角色时，将对所有用户开放。",
+    "search_users": "按姓名或邮箱搜索",
+    "no_users_found": "没有搜索结果",
+    "select_roles": "请选择角色（必填）",
+    "mode_all": "全部",
+    "mode_roles": "角色",
+    "header_feature": "功能",
+    "header_access": "访问权限",
+    "header_all_access": "全部开放",
+    "header_role_selection": "选择角色",
+    "all_access": "全部开放",
+    "all_access_enabled": "所有用户均可访问。",
+    "role_restricted": "角色限制",
+    "select_roles_hint": "请选择允许访问的角色。（必填）",
+    "admin_count": "{{count}} 项权限",
+    "user_count": "{{count}} 项权限",
+    "error_title": "权限设置错误",
+    "error_description": "请为每项权限至少选择一个角色。",
+    "error_roles_required": "请选择角色。",
+    "select_manager": "选择管理员",
+    "search_placeholder": "按姓名或邮箱搜索（最多显示 20 位，请尽量输入具体条件）",
+    "steps_title": "版块协管",
+    "steps_description": "协管拥有除版块管理权限之外的所有权限。",
+    "auto_role_notice": "版块管理员和协管角色在创建时会作为默认值包含在各项权限中，可在下方修改。",
+    "create_mode_permissions_notice": "按角色的访问控制可在版块创建后的修改页面中设置。创建时会自动应用默认权限。"
+  },
+  "menu": {
+    "manual_guide": "此版块可通过以下路径访问。",
+    "manual_admin_label": "管理菜单路径",
+    "manual_user_label": "用户菜单路径",
+    "example": "示例",
+    "add_to_admin_menu": "添加到管理菜单",
+    "show_in_admin_menu": "在管理菜单中显示",
+    "show_in_admin_menu_desc": "将此版块显示在管理菜单中。保存时生效，并添加到 [版块管理] 菜单下。",
+    "menu_added_success": "已添加到管理菜单。",
+    "menu_add_failed": "添加菜单失败。"
+  }
+}

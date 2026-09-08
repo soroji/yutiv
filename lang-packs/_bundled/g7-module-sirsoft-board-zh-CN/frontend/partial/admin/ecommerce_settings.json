@@ -1,0 +1,15 @@
+{
+  "inquiry": {
+    "description": "可以指定用作商品咨询版块的版块。",
+    "board_label": "咨询版块",
+    "board_placeholder": "请选择版块",
+    "hint_secret": "ℹ 建议使用已启用私密帖功能的版块。",
+    "go_to_board_edit": "前往版块编辑页面",
+    "go_to_board_edit_desc": "可以修改私密帖设置、读写权限、分类等版块详细设置。",
+    "hint_category": "ℹ 为版块设置分类后，用户在提交咨询时即可选择分类。",
+    "go_to_posts": "咨询记录管理",
+    "go_to_posts_desc": "可以查看客户提交的商品咨询并管理回复。添加到管理员侧边栏菜单后可以更方便地访问。",
+    "add_to_admin_menu": "添加到管理菜单",
+    "add_to_admin_menu_desc": "在侧边栏管理菜单中添加此版块的帖子管理项目。"
+  }
+}

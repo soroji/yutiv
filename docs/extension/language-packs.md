@@ -574,15 +574,16 @@ php artisan language-pack:install https://example.com/my-lang-pack-zh.zip --sour
 
 설치 후 `language-pack:list` 로 확인. 다른 로케일 패키지와 동일하게 활성/비활성/제거가 가능하며, 의존성 검증(`core_locale_missing` 등) 도 동일하게 적용된다.
 
-## 공식 중국어 간체 번들 언어팩 (g7-core-zh-CN)
+## 공식 중국어 간체 번들 언어팩 (g7-*-zh-CN)
 
-G7 는 중국어 간체(`zh-CN`) 코어 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종**이며, 템플릿/모듈/플러그인 zh-CN 팩은 아직 없다. 코어 트리를 건드리지 않는 외부 패키지형이므로 **코어 코드 변경 0** 이다.
+G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 게시판 모듈 1종**이며, 이커머스/페이지/플러그인/템플릿 zh-CN 팩은 아직 없다. 코어·모듈 트리를 건드리지 않는 외부 패키지형이므로 **코어·모듈 코드 변경 0** 이다.
 
 ### 패키지 구성
 
-| scope | 식별자 | target_identifier |
-|---|---|---|
-| core | `g7-core-zh-CN` | (null) |
+| scope | 식별자 | target_identifier | 파일 수 |
+|---|---|---|---|
+| core | `g7-core-zh-CN` | (null) | 50 |
+| module | `g7-module-sirsoft-board-zh-CN` | `sirsoft-board` | 33 |
 
 ### locale 코드
 
@@ -677,9 +678,97 @@ php artisan language-pack:update g7-core-zh-CN --force
 
 `supported_locales` / `translatable_locales` / `locale_names` 는 활성화 시 `LanguagePackServiceProvider::refreshSupportedLocales()` 가 자동 갱신하므로 `config/app.php` 를 편집하지 않는다.
 
+### 게시판 모듈 팩 (g7-module-sirsoft-board-zh-CN)
+
+`scope: module` 팩의 첫 zh-CN 사례. 대상 모듈은 `sirsoft-board` 이며, 코어 팩과 달리
+**`requires.depends_on_core_locale: true`** 다 — `LanguagePackService::resolveCoreLocaleBlockedReason()`
+가 scope ≠ core 인 팩에 대해 동일 locale 코어 팩의 active 여부를 강제하므로,
+`g7-core-zh-CN` 이 활성이 아니면 설치가 `core_locale_missing` 으로 차단된다.
+
+#### 입력 → 산출 매핑
+
+| 구분 | ko 원문 소스 | 산출 위치 | 개수 |
+|---|---|---|---|
+| backend | `modules/_bundled/sirsoft-board/src/lang/ko/*.php` | `backend/zh-CN/*.php` | 7 |
+| frontend 엔트리 | `modules/_bundled/sirsoft-board/resources/lang/ko.json` | `frontend/zh-CN.json` | 1 |
+| frontend partial | `.../resources/lang/partial/ko/**/*.json` (재귀) | `frontend/partial/**/*.json` | 18 |
+| seed | `module.php` 의 `getPermissions`/`getAdminMenus`/`getNotificationDefinitions`, `BoardTypeSeeder`, `module.json` | `seed/{permissions,menus,notifications,board_types,manifest}.json` | 5 |
+
+`frontend/partial/` 은 `admin/` 서브디렉토리를 포함해 **재귀**로 대응한다.
+`$partial` 경로는 원본의 `partial/ko/{name}.json` 에서 로케일 세그먼트를 제거한
+`partial/{name}.json` 형태로 정규화한다.
+
+#### 게시판 도메인 용어집
+
+코어 용어집을 승계하되, 게시판 도메인 용어를 다음으로 고정한다.
+
+| 한국어 | 중국어 간체 | 비고 |
+|---|---|---|
+| 게시판 | 版块 | 문맥과 무관하게 `版块` 로 통일. `论坛`(포럼 전체)·`留言板`(방명록)은 이 모듈의 의미와 다르므로 쓰지 않는다 |
+| 게시글 | 帖子 | |
+| 댓글 | 评论 | |
+| 답글 / 답변글 | 回复 / 回复帖 | 게시글에 달리는 답변 게시물 |
+| 대댓글 | 评论回复 | 댓글에 달리는 답글 — `帖子回复`(=답변글)와 구분 |
+| 작성자 | 作者 | |
+| 조회수 | 浏览量 | |
+| 공지 | 公告 | |
+| 비밀글 | 私密帖 | |
+| 첨부파일 | 附件 | |
+| 신고 | 举报 | |
+| 블라인드 | 屏蔽 | 상태 라벨은 `已屏蔽` |
+| 분류 / 카테고리 | 分类 | |
+| 스텝 | 协管 | 게시판 보조 관리자 |
+| 슬러그 | 别名 | 코어 팩과 동일 |
+
+#### ja 팩과의 의도적 차이 — dashboard 권한
+
+`g7-module-sirsoft-board-ja` 의 `seed/permissions.json` 은 15개 키뿐이고
+`sirsoft-board.dashboard` / `sirsoft-board.dashboard.view` 가 빠져 있다.
+현재 `module.php::getPermissions()` 는 `dashboard` 카테고리를 선언하므로 **ja 팩이 원본보다 오래된
+상태**다. zh-CN 팩은 ja 재번역이 아니라 ko 원본을 기준으로 만들었으므로 이 2개 키를 포함해
+**17개**를 갖는다. `zh-CN-board-parity-check.php` 는 이 차이를 `$intentionalSeedExtras` 에 명시해
+"초과 키"로 오탐하지 않는다. ja 팩 동기화는 별도 과제다.
+
+#### 설치 및 활성화
+
+```bash
+# 1) 코어 zh-CN 팩이 먼저 활성이어야 한다 (depends_on_core_locale: true)
+php artisan language-pack:install g7-core-zh-CN --source=bundled
+
+# 2) 대상 모듈이 active 여야 한다 (아니면 target_inactive 로 차단)
+php artisan module:list
+
+# 3) 게시판 팩 설치 (자동 활성)
+php artisan language-pack:install g7-module-sirsoft-board-zh-CN --source=bundled
+
+# 확인
+php artisan language-pack:list --scope=module
+
+# 콘텐츠 수정 후 설치본 재반영 (프론트엔드 빌드 불필요)
+php artisan language-pack:update g7-module-sirsoft-board-zh-CN --force
+```
+
+#### 검증
+
+```bash
+# 원본 대조 검사기 (vendor·Laravel 불필요, 단독 실행)
+php tests/Translations/zh-CN-board-parity-check.php --verbose --style
+
+# PHPUnit — 프로덕션 validator 실호출
+php artisan test --filter=BundledSimplifiedChineseBoardPackTest
+```
+
+`frontend build 불필요` — 모듈의 `package.json` 에는 build 스크립트가 없고, 언어팩 frontend JSON 은
+`MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다(`/api/templates/{id}/lang/{locale}.json`).
+
 ### 기존 ko/en 변경 시 zh-CN 동기화 의무
 
-코어의 ko 또는 en 다국어 키를 추가/수정/제거할 때마다 `lang-packs/_bundled/g7-core-zh-CN/` 의 키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역 fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치(`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 `zh-CN-core-parity-check.php` 로 확인한다.
+코어 또는 게시판 모듈의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
+(`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-board-zh-CN/`) 의
+키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역
+fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치
+(`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 대응 parity 검사기
+(`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`) 로 확인한다.
 
 ## 의존성 검증 — 설치 차단 사유 (UI 인라인 안내)
 

@@ -1,0 +1,10 @@
+{
+  "spam": "垃圾信息／广告",
+  "abuse": "辱骂／诽谤",
+  "obscenity": "淫秽内容",
+  "illegal": "违法信息",
+  "hate_speech": "仇恨言论",
+  "privacy": "泄露个人信息",
+  "copyright": "侵犯著作权",
+  "other": "其他"
+}

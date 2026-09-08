@@ -1,0 +1,14 @@
+{
+  "sirsoft-board": {
+    "name": "版块管理"
+  },
+  "sirsoft-board-settings": {
+    "name": "系统设置"
+  },
+  "sirsoft-board-list": {
+    "name": "版块列表"
+  },
+  "sirsoft-board-reports": {
+    "name": "版块举报概况"
+  }
+}

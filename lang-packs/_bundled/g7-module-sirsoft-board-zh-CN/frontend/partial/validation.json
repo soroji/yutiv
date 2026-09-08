@@ -1,0 +1,124 @@
+{
+  "post": {
+    "title": {
+      "required": "标题为必填项。",
+      "min": "标题至少需要 :min 个字符。",
+      "max": "标题最多可输入 :max 个字符。"
+    },
+    "content": {
+      "required": "内容为必填项。",
+      "min": "内容至少需要 :min 个字符。",
+      "max": "内容最多可输入 :max 个字符。"
+    },
+    "category": {
+      "max": "分类最多可输入 :max 个字符。"
+    },
+    "status": {
+      "in": "状态无效。"
+    },
+    "author_name": {
+      "max": "作者名称最多可输入 :max 个字符。"
+    },
+    "password": {
+      "min": "密码至少需要 :min 个字符。"
+    },
+    "parent_id": {
+      "not_found": "找不到原帖。",
+      "blinded": "无法在已被屏蔽的帖子下发表回复。",
+      "deleted": "无法在已删除的帖子下发表回复。",
+      "exists": "该帖子不存在。"
+    },
+    "files": {
+      "array": "文件必须为数组。",
+      "max": "最多只能上传 :max 个文件。",
+      "file": "必须为有效的文件。",
+      "file_max": "文件容量不能超过 :maxKB。",
+      "mimes": "不是允许的扩展名。"
+    }
+  },
+  "comment": {
+    "content": {
+      "required": "评论内容为必填项。",
+      "min": "评论至少需要 :min 个字符。",
+      "max": "评论最多可输入 :max 个字符。"
+    },
+    "post_id": {
+      "not_found": "找不到帖子。",
+      "blinded": "无法在已被屏蔽的帖子中发表评论。",
+      "deleted": "无法在已删除的帖子中发表评论。"
+    },
+    "parent_id": {
+      "integer": "父级评论 ID 必须为整数。",
+      "not_found": "找不到父级评论。",
+      "blinded": "无法在已被屏蔽的评论下发表回复。",
+      "deleted": "无法在已删除的评论下发表回复。"
+    },
+    "user_id": {
+      "exists": "该用户不存在。"
+    },
+    "author_name": {
+      "max": "作者名称最多可输入 :max 个字符。"
+    },
+    "password": {
+      "min": "密码至少需要 :min 个字符。"
+    },
+    "ip_address": {
+      "required": "IP 地址为必填项。"
+    }
+  },
+  "board": {
+    "not_found": "找不到版块。"
+  },
+  "board_type": {
+    "slug_required": "别名为必填项。",
+    "slug_format": "别名只能使用小写字母、数字和连字符，且必须以小写字母开头。",
+    "slug_unique": "该别名已被使用。",
+    "name_required": "类型名称为必填项。",
+    "name_ko_required": "韩语类型名称为必填项。"
+  },
+  "report": {
+    "status": {
+      "required": "状态为必填项。",
+      "in": "状态无效。"
+    },
+    "process_note": {
+      "max": "处理理由最多可输入 1000 个字符。"
+    },
+    "invalid_status_transition": "无法从当前状态变更为该状态。"
+  },
+  "max_reply_depth": {
+    "min": "回复帖最大层级至少为 :min。",
+    "max": "回复帖最大层级最多可设置为 :max。"
+  },
+  "max_comment_depth": {
+    "min": "评论回复最大层级至少为 :min。",
+    "max": "评论回复最大层级最多可设置为 :max。"
+  },
+  "settings": {
+    "category": {
+      "required": "分类为必填项。",
+      "in": "分类无效。"
+    }
+  },
+  "bulk_apply": {
+    "fields": {
+      "required": "请选择要应用的字段。",
+      "min": "请至少选择 1 个字段。"
+    },
+    "fields_item": {
+      "in": "字段无效。"
+    },
+    "apply_all": {
+      "required": "是否全部应用为必填项。",
+      "boolean": "是否全部应用必须为 true/false。"
+    },
+    "board_ids": {
+      "required_if": "应用于特定版块时，请选择版块。",
+      "array": "版块 ID 必须为数组。"
+    },
+    "board_ids_item": {
+      "integer": "版块 ID 必须为整数。",
+      "exists": "该版块不存在。"
+    }
+  }
+}

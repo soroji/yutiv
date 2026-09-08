@@ -1,0 +1,13 @@
+{
+  "form": {
+    "sections": {
+      "notification_settings": "版块通知设置"
+    },
+    "notifications": {
+      "post_complete": "发帖完成通知",
+      "post_reply": "帖子回复通知",
+      "comment": "评论通知",
+      "reply_comment": "回复通知"
+    }
+  }
+}

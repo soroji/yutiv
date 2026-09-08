@@ -1,0 +1,74 @@
+{
+  "editor": {
+    "data_source": {
+      "availableChannels": "可用渠道",
+      "boardIdentityPolicies": "版块实名认证策略",
+      "boardIdentityPurposes": "版块实名认证用途",
+      "boardNotificationDefinitions": "版块通知定义",
+      "board_list_for_inquiry": "咨询用版块列表",
+      "board_types": "版块类型",
+      "boards": "版块列表",
+      "boards_list": "版块列表",
+      "form_data": "表单数据",
+      "form_meta": "表单元数据",
+      "identityProviders": "实名认证服务商",
+      "post": "帖子",
+      "posts": "帖子列表",
+      "report_detail": "举报详情",
+      "reporters_list": "举报人列表",
+      "reports": "举报列表",
+      "roles": "角色列表",
+      "settings": "版块设置"
+    }
+  },
+  "common": {
+    "$partial": "partial/common.json"
+  },
+  "admin": {
+    "board": {
+      "$partial": "partial/admin/board.json"
+    },
+    "modals": {
+      "$partial": "partial/admin/modals.json"
+    },
+    "form": {
+      "$partial": "partial/admin/form.json"
+    },
+    "reports": {
+      "$partial": "partial/admin/reports.json"
+    },
+    "posts": {
+      "$partial": "partial/admin/posts.json"
+    },
+    "settings": {
+      "$partial": "partial/admin/settings.json"
+    },
+    "board_types": {
+      "$partial": "partial/admin/board_types.json"
+    },
+    "users": {
+      "$partial": "partial/admin/users.json"
+    },
+    "ecommerce_settings": {
+      "$partial": "partial/admin/ecommerce_settings.json"
+    },
+    "dashboard": {
+      "$partial": "partial/admin/dashboard.json"
+    }
+  },
+  "board": {
+    "$partial": "partial/board.json"
+  },
+  "messages": {
+    "$partial": "partial/messages.json"
+  },
+  "validation": {
+    "$partial": "partial/validation.json"
+  },
+  "attributes": {
+    "$partial": "partial/attributes.json"
+  },
+  "enums": {
+    "$partial": "partial/enums.json"
+  }
+}

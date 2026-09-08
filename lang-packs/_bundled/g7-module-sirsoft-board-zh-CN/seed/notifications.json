@@ -1,0 +1,114 @@
+{
+  "new_comment": {
+    "definition": {
+      "name": "新评论通知",
+      "description": "帖子有新评论时发送给帖子作者"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] 您的帖子有了新评论",
+        "body": "<h1>{name}，您好。</h1><p><strong>{comment_author}</strong> 在 <strong>{board_name}</strong> 版块的帖子中发表了评论。</p><blockquote style=\"border-left: 3px solid #cbd5e0; padding-left: 12px; color: #718096;\">{comment_content}</blockquote><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{post_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">查看帖子</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "您的帖子有了新评论",
+        "body": "{comment_author} 在“{board_name}”的帖子“{post_title}”中发表了评论。"
+      }
+    }
+  },
+  "reply_comment": {
+    "definition": {
+      "name": "评论回复通知",
+      "description": "评论有回复时发送给评论作者"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] 您的评论有了回复",
+        "body": "<h1>{name}，您好。</h1><p><strong>{comment_author}</strong> 在 <strong>{board_name}</strong> 版块回复了您的评论。</p><blockquote style=\"border-left: 3px solid #cbd5e0; padding-left: 12px; color: #718096;\">{comment_content}</blockquote><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{post_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">查看帖子</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "您的评论有了回复",
+        "body": "{comment_author} 回复了您在“{board_name}”中的评论。"
+      }
+    }
+  },
+  "post_reply": {
+    "definition": {
+      "name": "回复帖通知",
+      "description": "帖子有回复帖时发送给原帖作者"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] 您的帖子有了回复",
+        "body": "<h1>{name}，您好。</h1><p><strong>{board_name}</strong> 版块的帖子 \"<strong>{post_title}</strong>\" 有了新的回复帖。</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{post_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">查看帖子</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "您的帖子有了回复",
+        "body": "“{board_name}”的帖子“{post_title}”有了回复。"
+      }
+    }
+  },
+  "post_action": {
+    "definition": {
+      "name": "帖子／评论处理通知",
+      "description": "帖子／评论被屏蔽、删除或恢复时发送给作者"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] “{post_title}”{target_type}已被{action_type}处理",
+        "body": "<h1>{name}，您好。</h1><p><strong>{board_name}</strong> 版块的 \"<strong>{post_title}</strong>\" {target_type}已被管理员 <strong>{action_type}</strong> 处理。</p><p>如有疑问，请联系管理员。</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{post_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">查看帖子</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "您的{target_type}已被处理",
+        "body": "“{board_name}”的“{post_title}”{target_type}已被{action_type}处理。"
+      }
+    }
+  },
+  "new_post_admin": {
+    "definition": {
+      "name": "新帖子管理员通知",
+      "description": "有新帖子发布时发送给管理员"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] 有新帖子发布",
+        "body": "<h1>{name}，您好。</h1><p><strong>{post_author}</strong> 在 <strong>{board_name}</strong> 版块发布了新帖子。</p><p>帖子标题：<strong>{post_title}</strong></p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{post_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">查看帖子</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "有新帖子发布",
+        "body": "{post_author} 在“{board_name}”发布了新帖子“{post_title}”。"
+      }
+    }
+  },
+  "report_received_admin": {
+    "definition": {
+      "name": "举报受理管理员通知",
+      "description": "举报受理时发送给管理员"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] 收到了对“{post_title}”的举报",
+        "body": "<h1>{name}，您好。</h1><p><strong>{board_name}</strong> 版块中，<strong>{target_type}</strong> \"<strong>{post_title}</strong>\" 收到了新的举报。</p><p>举报理由：<strong>{reason_type}</strong></p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{report_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">前往举报管理页面</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "收到了举报",
+        "body": "“{board_name}”的 {target_type}“{post_title}”收到了举报（{reason_type}）。"
+      }
+    }
+  },
+  "report_action": {
+    "definition": {
+      "name": "举报处理结果通知",
+      "description": "举报处理完成时发送给帖子作者"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{board_name}] “{post_title}”{target_type}已被{action_type}处理",
+        "body": "<h1>{name}，您好。</h1><p><strong>{board_name}</strong> 版块的 \"<strong>{post_title}</strong>\" {target_type}因举报处理已被 <strong>{action_type}</strong> 处理。</p><p>如有疑问，请联系管理员。</p><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin: 24px 0;\"><tr><td align=\"center\"><a href=\"{post_url}\" style=\"display: inline-block; padding: 12px 32px; background-color: #2d3748; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 14px;\">查看帖子</a></td></tr></table><p>感谢您的支持，<br><a href=\"{site_url}\">{app_name}</a></p>"
+      },
+      "database": {
+        "subject": "举报处理结果通知",
+        "body": "“{board_name}”的“{post_title}”{target_type}已被{action_type}处理。"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "copy": {
+    "title": "复制版块",
+    "message": "确定要复制“{{name}}”版块吗？",
+    "info_copied": "设置、权限和管理员名单会一并复制。",
+    "info_excluded": "帖子和评论不会被复制。",
+    "info_slug": "保存前请在表单中确认新的别名。",
+    "new_slug_label": "新别名",
+    "new_slug_placeholder": "例：notice-copy",
+    "confirm": "复制"
+  },
+  "delete": {
+    "title": "删除版块",
+    "confirm": "确定要删除“{{name}}”版块吗？",
+    "with_posts_info": "此版块中有 {{posts_count}} 篇帖子。删除时，帖子下的评论和附件（含已上传的原始文件）也会一并删除。",
+    "no_posts_info": "此版块中没有帖子。",
+    "force_delete_label_with_posts": "永久删除（帖子、评论、附件全部删除）",
+    "force_delete_label_no_posts": "永久删除（数据库表也一并删除）",
+    "force_delete_warning_with_posts": "永久删除后，所有数据将被不可恢复地移除。删除前请备份数据。",
+    "force_delete_warning_no_posts": "该操作无法撤销。与此版块相关的所有数据都将被彻底移除。",
+    "backup_notice": "为防止数据丢失，建议在删除前备份数据库。"
+  },
+  "cancel_confirm": {
+    "title": "确认变更",
+    "message": "有尚未保存的更改。确定要离开此页面吗？",
+    "confirm": "离开页面"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "index": {
+    "title": "版块管理",
+    "description": "管理版块列表",
+    "search_placeholder": "搜索版块...",
+    "search": "搜索",
+    "add_board": "添加版块",
+    "post_count": "帖子：",
+    "created_at": "创建日期：",
+    "categories_label": "分类：",
+    "empty_title": "没有版块",
+    "empty_description": "没有已登记的版块。",
+    "filter_all_types": "全部类型",
+    "filter_type_basic": "基础型",
+    "filter_type_gallery": "画廊型",
+    "filter_type_card": "卡片型",
+    "status": "状态",
+    "active": "已启用",
+    "inactive": "已停用"
+  },
+  "create": {
+    "title": "创建版块"
+  },
+  "edit": {
+    "title": "修改版块"
+  },
+  "columns": {
+    "type": "类型",
+    "name": "版块名称",
+    "slug": "别名",
+    "posts_count": "帖子数",
+    "created_at": "创建日期"
+  },
+  "actions": {
+    "edit": "修改",
+    "manage_posts": "帖子管理",
+    "copy": "复制",
+    "delete": "删除"
+  },
+  "messages": {
+    "create_success": "版块已创建",
+    "update_success": "版块已修改",
+    "delete_success": "版块已删除",
+    "deleted": "版块已删除",
+    "copy_success": "版块已复制",
+    "save_failed": "保存失败",
+    "table_not_found": "版块数据表不存在，无法删除",
+    "activated": "版块已启用",
+    "deactivated": "版块已停用"
+  }
+}
