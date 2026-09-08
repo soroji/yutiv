@@ -5,6 +5,7 @@
     "login_prompt": "ログインしてコミュニティに参加してください。",
     "greeting": "こんにちは、{{name}}さん!"
   },
+  "welcome_badge": "ようこそ",
   "welcome_suffix": "へようこそ",
   "welcome_description": "一緒に成長するコミュニティでさまざまなお話を共有してください。",
   "get_started": "始める",

@@ -77,6 +77,10 @@
   "multilingual": {
     "add_language": "言語を追加"
   },
+  "language_ko": "韓国語",
+  "language_en": "英語",
+  "language_ja": "日本語",
+  "language_zh-CN": "簡体中国語",
   "refresh": "更新",
   "activate": "有効化",
   "skip": "スキップ"

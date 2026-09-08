@@ -1325,6 +1325,7 @@
       "site_url": "站点 URL",
       "site_description": "站点说明",
       "site_description_placeholder": "请输入关于站点的简要说明。",
+      "site_description_hint": "请按语言分别输入。留空的语言在该界面上将显示模板默认文案。",
       "admin_email": "管理员邮箱",
       "site_logo": "站点标题图片",
       "site_logo_desc": "显示在页眉中的标志图片。",

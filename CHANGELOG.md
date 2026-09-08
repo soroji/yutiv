@@ -8,12 +8,19 @@
 
 ### Added
 
+- 환경설정 > 일반의 사이트 설명을 언어별로 입력할 수 있습니다. 한국어·영어·일본어·중국어 간체 등 활성 언어팩의 언어마다 다른 설명을 저장할 수 있으며, 사용자 화면에는 접속 언어에 맞는 설명만 표시됩니다. 기존에 저장돼 있던 설명은 기준 언어 값으로 그대로 보존됩니다.
 - 중국어 간체(Simplified Chinese) 코어 언어팩(`g7-core-zh-CN`)이 추가되었습니다. 설치·활성화하면 관리자 화면과 사용자 화면의 코어 문구·검증 메시지·오류 안내가 간체 중국어로 표시됩니다.
 - 게시판 모듈 중국어 간체 언어팩(`g7-module-sirsoft-board-zh-CN`)이 추가되었습니다. 설치·활성화하면 게시판 관리·게시글·댓글·신고 화면과 게시판 알림 메일이 간체 중국어로 표시됩니다.
 - 이커머스 모듈 중국어 간체 언어팩(`g7-module-sirsoft-ecommerce-zh-CN`)이 추가되었습니다. 설치·활성화하면 상품·주문·결제·배송·환불 관리 화면과 장바구니·주문서 등 사용자 화면, 주문 알림 메일이 간체 중국어로 표시됩니다. 주문 상태값·통화 코드·결제 식별자는 변경되지 않습니다.
 - 페이지 모듈 중국어 간체 언어팩(`g7-module-sirsoft-page-zh-CN`)이 추가되었습니다. 설치·활성화하면 페이지 관리 목록·등록/수정 폼·버전 이력·첨부파일 화면과 검증 메시지가 간체 중국어로 표시됩니다. 페이지 슬러그와 발행 상태 값은 변경되지 않습니다.
 - 번들 플러그인 11종의 중국어 간체 언어팩이 추가되었습니다 — CKEditor 5(`g7-plugin-sirsoft-ckeditor5-zh-CN`), Daum 우편번호(`g7-plugin-sirsoft-daum_postcode-zh-CN`), GDPR(`g7-plugin-sirsoft-gdpr-zh-CN`), 마케팅 동의(`g7-plugin-sirsoft-marketing-zh-CN`), 비즈뿌리오 메시지 발송(`g7-plugin-sirsoft-message_bizppurio-zh-CN`), KG 이니시스 결제(`g7-plugin-sirsoft-pay_kginicis-zh-CN`), NHN KCP 결제(`g7-plugin-sirsoft-pay_nhnkcp-zh-CN`), 나이스페이먼츠(`g7-plugin-sirsoft-pay_nicepayments-zh-CN`), 토스페이먼츠(`g7-plugin-sirsoft-tosspayments-zh-CN`), KG이니시스 본인인증(`g7-plugin-sirsoft-verification_kginicis-zh-CN`), NHN KCP 휴대폰 본인확인(`g7-plugin-sirsoft-verification_nhnkcp-zh-CN`). 설치·활성화하면 각 플러그인의 관리자 설정 화면과 사용자 화면 문구가 간체 중국어로 표시됩니다. 결제 식별자(MID·TID·site_cd)·정책 키·enum 값은 변경되지 않습니다.
 - 관리자·사용자 기본 템플릿의 중국어 간체 언어팩이 추가되었습니다 — 관리자 템플릿(`g7-template-sirsoft-admin_basic-zh-CN`), 사용자 템플릿(`g7-template-sirsoft-basic-zh-CN`). 설치·활성화하면 관리자 대시보드·회원/모듈/플러그인/템플릿/언어팩 관리·환경설정·본인인증 화면과, 사용자 홈·게시판·쇼핑몰·마이페이지·검색·약관 화면의 템플릿 문구가 간체 중국어로 표시됩니다. 레이아웃 편집기의 컴포넌트·속성 이름도 함께 번역됩니다. 라우트 이름·상태 enum·설정 키·컴포넌트 식별자는 변경되지 않습니다.
+
+### Fixed
+
+- 브라우저 언어를 한국어 외 언어로 바꿔도 홈 환영 카드의 사이트 소개 문구만 한국어로 남던 문제를 수정했습니다. 해당 언어의 설명이 저장돼 있으면 그 값이 표시되고, 비어 있으면 템플릿 기본 소개 문구가 표시됩니다.
+- 홈 환영 카드의 "Welcome" 배지가 번역되지 않고 영어로 고정돼 있던 문제를 수정했습니다. 한국어·영어·일본어·중국어 간체 화면에서 각 언어로 표시됩니다.
+- 사이트 이름·설명을 언어별 값으로 저장한 경우 사용자 화면·푸터·검색엔진 봇 화면에 `Array` 가 표시될 수 있던 문제를 수정했습니다.
 
 ## [7.0.9] - 2026-08-24
 

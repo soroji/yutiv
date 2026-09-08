@@ -160,15 +160,35 @@
                   "text": "$t:admin.settings.general.site_description"
                 },
                 {
-                  "type": "basic",
-                  "name": "Textarea",
+                  "type": "composite",
+                  "name": "MultilingualInput",
                   "props": {
                     "name": "general.site_description",
-                    "rows": 2,
+                    "inputType": "textarea",
+                    "layout": "tabs",
+                    "rows": 3,
+                    "maxLength": 500,
                     "placeholder": "$t:admin.settings.general.site_description_placeholder",
                     "disabled": "{{_computed.isReadOnly}}",
-                    "className": "input textarea-sm resize-none"
+                    "error": "{{_local.errors?.['general.site_description']?.[0] ?? ''}}"
                   }
+                },
+                {
+                  "type": "basic",
+                  "name": "Span",
+                  "if": "{{_local.errors?.['general.site_description']}}",
+                  "props": {
+                    "className": "form-error"
+                  },
+                  "text": "{{_local.errors?.['general.site_description']?.[0] ?? ''}}"
+                },
+                {
+                  "type": "basic",
+                  "name": "Span",
+                  "props": {
+                    "className": "form-hint"
+                  },
+                  "text": "$t:admin.settings.general.site_description_hint"
                 }
               ]
             },

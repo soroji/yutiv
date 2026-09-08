@@ -176,13 +176,14 @@
     },
     "frontend_schema": {
         "_description": "프론트엔드에 노출할 설정 필드 정의. 각 카테고리별로 노출할 필드와 타입 캐스팅, 민감 정보 여부를 정의합니다.",
+        "_localized": "localized 는 값이 string 또는 로케일 맵({\"ko\":\"...\",\"zh-CN\":\"...\"})일 수 있는 필드를 표시합니다. 'fallback'=요청 로케일→fallback_locale→첫 값, 'strict'=요청 로케일 값이 없으면 빈 문자열(레이아웃의 $t: 번역키로 넘김). 선언한 필드는 SettingsService 가 프론트 노출 시 현재 로케일 문자열로 좁히고, 관리자 조회 시 로케일 맵으로 정규화합니다.",
         "general": {
             "expose": true,
             "_comment": "site_url, admin_email, language, timezone는 프론트엔드에서 미참조하므로 expose: false",
             "fields": {
-                "site_name": { "type": "string", "sensitive": false },
+                "site_name": { "type": "string", "sensitive": false, "localized": "fallback" },
                 "site_url": { "type": "string", "sensitive": false, "expose": false },
-                "site_description": { "type": "string", "sensitive": false },
+                "site_description": { "type": "string", "sensitive": false, "localized": "strict" },
                 "admin_email": { "type": "string", "sensitive": false, "expose": false },
                 "language": { "type": "string", "sensitive": false, "expose": false },
                 "timezone": { "type": "string", "sensitive": false, "expose": false },

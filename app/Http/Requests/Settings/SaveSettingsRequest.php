@@ -4,6 +4,7 @@ namespace App\Http\Requests\Settings;
 
 use App\Extension\HookManager;
 use App\Models\Attachment;
+use App\Rules\TranslatableField;
 use App\Rules\ValidOutboundProxyUrl;
 use App\Search\Engines\DatabaseFulltextEngine;
 use App\Services\DriverRegistryService;
@@ -203,7 +204,18 @@ class SaveSettingsRequest extends FormRequest
             // 일반 설정
             'general.site_name' => $this->getTabRules($tab, 'general', 'string|max:100'),
             'general.site_url' => $this->getTabRules($tab, 'general', 'url|max:255'),
-            'general.site_description' => ['nullable', 'string', 'max:500'],
+            // 사이트 설명은 레거시 단일 string 과 로케일 맵을 **모두** 받는다.
+            //
+            // 운영 중인 설정 파일에는 이미 string 이 들어 있고, 다른 탭을 저장할 때도
+            // 이 값이 그대로 되돌아올 수 있다. 배열만 허용하면 기존 값이 검증에서 막혀
+            // 사이트 설명을 건드리지 않은 저장까지 422 로 실패한다.
+            //
+            // 로케일 맵일 때는 TranslatableField 가 프로젝트 표준(역할/메뉴 폼과 동일)으로
+            // 로케일별 nullable|string|max:500 을 강제하고, strictLocales 로 활성 언어팩에
+            // 없는 임의 키를 거부한다 — 임의 중첩 구조가 설정 파일에 굳는 것을 막는다.
+            'general.site_description' => is_array($this->input('general.site_description'))
+                ? ['nullable', 'array', new TranslatableField(maxLength: 500, strictLocales: true)]
+                : ['nullable', 'string', 'max:500'],
             'general.admin_email' => $this->getTabRules($tab, 'general', 'email|max:255'),
             'general.timezone' => $this->getTabRules($tab, 'general', ['timezone']),
             'general.language' => $this->getTabRules($tab, 'general', [Rule::in(config('app.supported_locales', ['ko', 'en']))]),

@@ -15,7 +15,7 @@
       "props": { "className": "flex items-center gap-2 mb-2" },
       "children": [
         { "type": "basic", "name": "Icon", "props": { "name": "sparkles", "className": "w-5 h-5" } },
-        { "type": "basic", "name": "Span", "props": { "className": "text-sm font-medium opacity-90" }, "text": "Welcome" }
+        { "type": "basic", "name": "Span", "props": { "className": "text-sm font-medium opacity-90" }, "text": "$t:home.welcome_badge" }
       ]
     },
     {
@@ -28,7 +28,7 @@
       "type": "basic",
       "name": "P",
       "props": { "className": "text-sm opacity-90 mb-4" },
-      "text": "{{_global.settings?.general?.site_description ?? '$t:home.welcome_description'}}"
+      "text": "{{_global.settings?.general?.site_description || '$t:home.welcome_description'}}"
     },
     {
       "type": "basic",

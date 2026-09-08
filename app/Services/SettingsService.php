@@ -134,6 +134,15 @@ class SettingsService
                 // frontend_key가 정의되어 있으면 해당 키로 변환
                 $outputKey = $fields[$key]['frontend_key'] ?? $key;
 
+                // 다국어 설정은 관리자 편집 화면(MultilingualInput)이 로케일 맵을 그대로 받아야 한다.
+                // 여기서 정규화하지 않으면 레거시 string 이 그대로 내려가고, 컴포넌트는
+                // `value['ko']` 를 읽으므로 화면에 값이 비어 보인 채 저장되어 원문이 유실된다.
+                // 레거시 string 은 기준 로케일 한 칸만 채운다 — 모든 로케일에 복제하면
+                // 한국어 원문이 다른 언어 화면에 그대로 굳어 이 기능이 고치려는 증상이 남는다.
+                if (! empty($fields[$key]['localized'])) {
+                    $value = localized_setting_map($value);
+                }
+
                 // 타겟 카테고리에 병합
                 $settings[$targetCategory][$outputKey] = $value;
 
@@ -405,6 +414,23 @@ class SettingsService
     {
         $type = $fieldSchema['type'] ?? 'string';
         $transform = $fieldSchema['transform'] ?? null;
+
+        // 다국어 설정(로케일 맵 허용)은 프론트로 나가기 전에 현재 로케일 문자열로 좁힌다.
+        //
+        // 이 단계가 없으면 아래 `(string) $value` 캐스팅이 로케일 맵을 만나 "Array" 를 렌더하거나
+        // (PHP 8 에서는 경고와 함께) 화면에 그대로 노출된다. `_global.settings` 는 사용자 템플릿의
+        // 환영 카드·Footer 와 SEO 봇 렌더가 모두 그대로 출력하는 값이라, 배열이 새면 즉시 눈에 띈다.
+        //
+        // 두 정책을 스키마가 선언한다:
+        //  - 'fallback' : 요청 로케일 → fallback_locale → 첫 비어있지 않은 값 (site_name 처럼
+        //                 어느 언어 화면에서도 무언가는 보여야 하는 값)
+        //  - 'strict'   : 요청 로케일 값이 없으면 빈 문자열. 폴백하면 중국어 화면에 한국어가
+        //                 남는 바로 그 증상이 재현되므로 폴백하지 않는다. 빈 문자열을 받은
+        //                 레이아웃이 `$t:` 번역키로 넘어가야 한다 (`||` 표현식).
+        $localized = $fieldSchema['localized'] ?? null;
+        if ($localized) {
+            return localized_setting_value($value, strict: $localized === 'strict');
+        }
 
         // transform이 있으면 먼저 처리
         if ($transform === 'join_comma' && is_array($value)) {

@@ -182,3 +182,131 @@ if (! function_exists('localized_payload')) {
         );
     }
 }
+
+if (! function_exists('localized_setting_base_locale')) {
+    /**
+     * 다국어 미지정 레거시 설정 문자열이 귀속되는 기준 로케일을 반환합니다.
+     *
+     * `general.site_description` 처럼 원래 단일 string 이던 설정이 로케일 맵으로 확장될 때,
+     * 기존 값이 "어느 언어로 쓰였는지" 판정할 근거는 사이트의 기준 로케일뿐이다.
+     * `localized_label()` 의 폴백 체인과 같은 축(`app.fallback_locale`)을 쓴다 —
+     * 두 곳이 갈라지면 마이그레이션된 값이 해석 단계에서 다시 사라진다.
+     *
+     * @return string 기준 로케일 (기본 'ko')
+     */
+    function localized_setting_base_locale(): string
+    {
+        try {
+            $locale = config('app.fallback_locale', 'ko');
+        } catch (\Throwable) {
+            return 'ko';
+        }
+
+        return is_string($locale) && $locale !== '' ? $locale : 'ko';
+    }
+}
+
+if (! function_exists('localized_setting_map')) {
+    /**
+     * 설정값을 관리자 편집용 로케일 맵으로 정규화합니다.
+     *
+     * - 레거시 string  → `[기준 로케일 => 값]` **한 칸만** 채운다.
+     *   모든 로케일에 복제하면 한국어 원문이 중국어 화면에 그대로 남아, 이 기능이 고치려는
+     *   증상이 데이터에 그대로 굳어진다. 나머지 로케일은 비워 두고 표시 단계의 폴백에 맡긴다.
+     * - 로케일 맵      → string 값만 남겨 그대로 통과 (운영자 입력 보존).
+     * - 그 외          → 빈 배열.
+     *
+     * 반환 맵에 없는 로케일 키를 임의로 만들어 채우지 않는다 — 빈 문자열을 저장해 두면
+     * "번역이 없다"와 "번역이 빈 값이다"를 구분할 수 없다.
+     *
+     * @param  mixed  $value  설정값 (string / 로케일 맵 / null)
+     * @return array<string, string> 로케일 맵
+     */
+    function localized_setting_map(mixed $value): array
+    {
+        if (is_string($value)) {
+            return $value === '' ? [] : [localized_setting_base_locale() => $value];
+        }
+
+        if (! is_array($value)) {
+            return [];
+        }
+
+        $map = [];
+        foreach ($value as $locale => $text) {
+            if (is_string($locale) && is_string($text)) {
+                $map[$locale] = $text;
+            }
+        }
+
+        return $map;
+    }
+}
+
+if (! function_exists('localized_setting_value')) {
+    /**
+     * 설정값을 현재(또는 지정) 로케일 문자열로 해석합니다.
+     *
+     * 배열이 그대로 화면 경로에 흘러 `"Array"` 로 렌더되거나 `(string)` 캐스팅에서
+     * TypeError 가 나는 것을 차단하는 단일 지점이다.
+     *
+     * 두 가지 정책을 지원한다:
+     *
+     * - `$strict = false` (기본, 예: `general.site_name`)
+     *   요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 순으로 폴백한다.
+     *   사이트 이름처럼 "어느 언어 화면에서도 무언가는 보여야 하는" 값에 쓴다.
+     *
+     * - `$strict = true` (예: `general.site_description`)
+     *   요청 로케일 값이 비어 있으면 **폴백하지 않고 빈 문자열**을 돌려준다.
+     *   중국어 화면에 한국어 설명이 남는 것이 바로 고치려는 증상이므로, 여기서 폴백하면
+     *   증상이 그대로 재현된다. 빈 문자열을 받은 레이아웃이 `$t:` 번역키로 넘어가야 한다.
+     *   레거시 string 은 기준 로케일 값으로 간주하므로, 기준 로케일 화면에서만 노출된다.
+     *
+     * @param  mixed  $value  설정값 (string / 로케일 맵 / scalar / null)
+     * @param  bool  $strict  요청 로케일 값이 없을 때 폴백을 금지할지 여부
+     * @param  string|null  $locale  명시 로케일 (기본: 활성 로케일)
+     * @return string 해석된 문자열 (없으면 빈 문자열)
+     */
+    function localized_setting_value(mixed $value, bool $strict = false, ?string $locale = null): string
+    {
+        if ($locale === null) {
+            try {
+                $locale = app()->getLocale();
+            } catch (\Throwable) {
+                $locale = null;
+            }
+            if (! is_string($locale) || $locale === '') {
+                $locale = localized_setting_base_locale();
+            }
+        }
+
+        // 레거시 string 은 기준 로케일 값으로 간주한다 (localized_setting_map 과 동일 규칙).
+        $map = localized_setting_map($value);
+
+        if ($map === []) {
+            // 로케일 맵도 string 도 아닌 scalar 는 화면 표기용으로만 문자열화한다.
+            return is_scalar($value) ? (string) $value : '';
+        }
+
+        if (isset($map[$locale]) && $map[$locale] !== '') {
+            return $map[$locale];
+        }
+
+        if ($strict) {
+            return '';
+        }
+
+        $fallback = localized_setting_base_locale();
+        if (isset($map[$fallback]) && $map[$fallback] !== '') {
+            return $map[$fallback];
+        }
+
+        foreach ($map as $candidate) {
+            if ($candidate !== '') {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+}

@@ -12,7 +12,7 @@
         "en": "G7 template (sirsoft-admin_basic) Simplified Chinese language pack (bundled)",
         "zh-CN": "G7 模板（sirsoft-admin_basic）简体中文语言包（捆绑）"
     },
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "scope": "template",
     "target_identifier": "sirsoft-admin_basic",

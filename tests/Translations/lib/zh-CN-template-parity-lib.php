@@ -333,11 +333,29 @@ function zhcnCheckTemplateManifest(ZhCnParityReport $r, string $packRoot, string
     if (($m['text_direction'] ?? null) !== 'ltr') {
         $r->fail('manifest', 'text_direction 은 ltr 이어야 합니다');
     }
-    if (($m['version'] ?? null) !== '1.0.0') {
-        $r->fail('manifest', 'version 은 1.0.0 이어야 합니다 (신규 팩)');
-    }
     if (! preg_match('/^\d+\.\d+\.\d+$/', (string) ($m['version'] ?? ''))) {
         $r->fail('manifest', 'version 이 SemVer 가 아닙니다');
+    }
+    // manifest version 과 CHANGELOG 최신 항목이 같아야 한다.
+    //
+    // 최초에는 "version 은 1.0.0" 으로 고정했지만, 그 상수는 팩이 한 번이라도 갱신되면
+    // 반드시 틀린다 — 실제로 지켜야 하는 계약은 "번들을 고쳤으면 버전과 이력을 함께 올린다"
+    // 이다. `language-pack:update` 의 비강제 경로가 버전 비교로 갱신 여부를 판단하므로,
+    // 내용만 바뀌고 버전이 그대로면 운영 설치본이 조용히 낡은 채 남는다.
+    $changelogPath = $packRoot.'/CHANGELOG.md';
+    if (is_file($changelogPath)) {
+        $head = (string) file_get_contents($changelogPath);
+        if (preg_match('/^##\s*\[([0-9]+\.[0-9]+\.[0-9]+)\]/m', $head, $cm)) {
+            if ($cm[1] !== ($m['version'] ?? null)) {
+                $r->fail('manifest', sprintf(
+                    'manifest version(%s) 과 CHANGELOG 최신 항목(%s) 이 다릅니다',
+                    (string) ($m['version'] ?? '(없음)'),
+                    $cm[1]
+                ));
+            }
+        } else {
+            $r->fail('manifest', 'CHANGELOG.md 에서 최신 버전 항목(## [x.y.z])을 찾지 못했습니다');
+        }
     }
     if (($m['requires']['depends_on_core_locale'] ?? null) !== true) {
         $r->fail('manifest', 'requires.depends_on_core_locale 는 true 여야 합니다');

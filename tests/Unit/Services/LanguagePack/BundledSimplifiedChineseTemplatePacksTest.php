@@ -131,7 +131,21 @@ class BundledSimplifiedChineseTemplatePacksTest extends TestCase
         $this->assertSame('Simplified Chinese', $manifest['locale_name']);
         $this->assertSame('简体中文', $manifest['locale_native_name']);
         $this->assertSame('ltr', $manifest['text_direction']);
-        $this->assertSame('1.0.0', $manifest['version'], '최초 릴리즈 버전');
+        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', (string) $manifest['version'], 'version 은 SemVer');
+
+        // manifest version 과 CHANGELOG 최신 항목이 같아야 한다.
+        //
+        // 처음에는 '1.0.0' 을 그대로 단언했지만, 그 상수는 팩을 한 번이라도 갱신하면 반드시
+        // 틀린다 — 지켜야 하는 계약은 "번들을 고쳤으면 버전과 이력을 함께 올린다" 이다.
+        // `language-pack:update` 의 비강제 경로가 버전 비교로 갱신 여부를 판단하므로,
+        // 내용만 바뀌고 버전이 그대로면 운영 설치본이 조용히 낡은 채 남는다.
+        $changelog = File::get($this->packageRoot($identifier).'/CHANGELOG.md');
+        $this->assertSame(
+            1,
+            preg_match('/^##\s*\[(\d+\.\d+\.\d+)\]/m', $changelog, $cm),
+            'CHANGELOG.md 에 최신 버전 항목(## [x.y.z])이 있어야 함'
+        );
+        $this->assertSame($cm[1], $manifest['version'], 'manifest version 과 CHANGELOG 최신 항목이 일치해야 함');
 
         // target_version 은 "제약 없음"을 뜻하는 null 이어야 한다.
         // `??` 는 null 을 '없음'으로 취급하므로 array_key_exists 로 확인한다.

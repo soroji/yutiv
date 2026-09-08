@@ -1325,6 +1325,7 @@
       "site_url": "사이트 URL",
       "site_description": "사이트 설명",
       "site_description_placeholder": "사이트에 대한 간단한 설명을 입력하세요.",
+      "site_description_hint": "언어별로 입력합니다. 비워 둔 언어는 해당 화면에서 템플릿 기본 문구로 표시됩니다.",
       "admin_email": "관리자 이메일",
       "site_logo": "사이트 타이틀 이미지",
       "site_logo_desc": "헤더에 표시될 로고 이미지입니다.",

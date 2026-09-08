@@ -77,6 +77,10 @@
   "multilingual": {
     "add_language": "Add Language"
   },
+  "language_ko": "Korean",
+  "language_en": "English",
+  "language_ja": "Japanese",
+  "language_zh-CN": "Simplified Chinese",
   "refresh": "Refresh",
   "activate": "Activate",
   "skip": "Skip"

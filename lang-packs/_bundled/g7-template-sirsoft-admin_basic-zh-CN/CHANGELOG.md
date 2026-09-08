@@ -4,6 +4,13 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [1.0.1] - 2026-09-08
+
+### Added
+
+- 다국어 입력 컴포넌트의 언어 탭 라벨(`common.language_ko` / `_en` / `_ja` / `_zh-CN`) 번역을 추가했습니다.
+- 환경설정 > 일반의 사이트 설명 입력 안내 문구(`admin.settings.general.site_description_hint`) 번역을 추가했습니다.
+
 ## [1.0.0] - 2026-09-08
 
 ### Added

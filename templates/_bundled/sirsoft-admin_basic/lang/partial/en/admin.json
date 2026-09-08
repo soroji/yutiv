@@ -1321,6 +1321,7 @@
       "site_url": "Site URL",
       "site_description": "Site Description",
       "site_description_placeholder": "Enter a brief description of your site.",
+      "site_description_hint": "Enter a description for each language. Languages left blank fall back to the template default text on that screen.",
       "admin_email": "Admin Email",
       "site_logo": "Site Title Image",
       "site_logo_desc": "Logo image to be displayed in the header.",

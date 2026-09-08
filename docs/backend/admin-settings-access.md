@@ -139,6 +139,18 @@ plugin_setting('sirsoft-pay_kginicis', 'api_key');
 3. testing 격리가 필요한 키 (드라이버, 외부 서비스 자격증명 등) 는 `! $isTestingEnv` 가드로 sync 를 차단한다. 이 키들은 `config()` 가 testing 격리 SSoT 다.
 4. 의미가 다른 키 (`app.timezone` 처럼) 는 sync 하지 않고 별도 키 (`app.default_user_timezone`) 로 분리한다.
 5. 고급 탭 화면에 얹을 카테고리는 `config/settings/defaults.json` 의 `frontend_schema.{카테고리}.merge_into` 를 `advanced` 로 선언한다. 저장 시 어느 카테고리 파일에 쓸지는 이 선언에서 도출되므로 별도 등록이 필요 없다. 선언이 없으면 화면·검증·읽기가 모두 정상인데 입력값만 저장되지 않고 버려진다 — 저장 응답은 성공이고 화면에도 값이 보여 실패 신호가 없으므로, 새 카테고리를 추가했으면 저장 후 `storage/app/settings/{카테고리}.json` 이 생성되는지 직접 확인한다.
+6. 화면에 그대로 노출되는 문구 설정(사이트 이름·설명 등)은 `frontend_schema.{카테고리}.fields.{키}.localized` 를 선언한다. 선언하면 값이 단일 string 이든 로케일 맵(`{"ko":"...","zh-CN":"..."}`)이든 프론트에는 **항상 현재 로케일 문자열**로 나가고, 관리자 조회에서는 편집용 로케일 맵으로 정규화된다. 선언하지 않으면 `SettingsService::castValue()` 의 `(string)` 캐스팅이 배열을 만나 화면에 `"Array"` 가 찍힌다 — 예외가 아니라 렌더 결과라 로그에도 남지 않는다.
+
+   | 값 | 폴백 정책 | 쓰는 곳 |
+   |----|-----------|---------|
+   | `"fallback"` | 요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 | 어느 언어 화면에서도 비면 안 되는 값 (`general.site_name`) |
+   | `"strict"` | 요청 로케일 값이 없으면 **빈 문자열** (폴백하지 않음) | 번역이 없으면 레이아웃의 `$t:` 기본 문구로 넘겨야 하는 값 (`general.site_description`) |
+
+   `strict` 를 `fallback` 으로 바꾸면 "중국어 화면에 한국어 원문이 남는" 증상이 그대로 재현되므로 정책 선택이 곧 계약이다. 레거시 단일 string 은 `app.fallback_locale` 값으로 간주하며, 다른 로케일로 복제하지 않는다 — 복제하면 그 증상이 데이터에 굳는다.
+
+   레이아웃에서 폴백을 걸 때는 `??` 가 아니라 `||` 를 쓴다. 서버가 내려주는 "번역 없음"은 `null` 이 아니라 빈 문자열이라 `??` 는 폴백하지 않는다.
+
+   검증은 `App\Rules\TranslatableField` 를 재사용한다(역할·메뉴 폼과 동일). 저장 요청이 string 일 수도 있으므로 `is_array()` 로 분기해 두 형태를 **모두** 받아야 한다 — 배열만 허용하면 그 필드를 건드리지 않은 다른 탭 저장까지 422 로 막힌다.
 
 ---
 

@@ -4,6 +4,12 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [1.1.3] - 2026-09-08
+
+### Added
+
+- 홈 환영 카드 배지 문구(`home.welcome_badge`) 번역을 추가했습니다. 템플릿에서 영어로 하드코딩돼 있던 "Welcome" 이 번역키로 바뀌면서 필요해진 키입니다.
+
 ## [1.1.2] - 2026-08-24
 
 ### Fixed

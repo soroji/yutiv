@@ -5,6 +5,7 @@
     "login_prompt": "登录后加入社区吧。",
     "greeting": "您好，{{name}}！"
   },
+  "welcome_badge": "欢迎",
   "welcome_suffix": "，欢迎您的到来",
   "welcome_description": "在共同成长的社区里分享各种话题吧。",
   "get_started": "开始使用",
