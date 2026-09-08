@@ -422,11 +422,17 @@ class SettingsService
         // 환영 카드·Footer 와 SEO 봇 렌더가 모두 그대로 출력하는 값이라, 배열이 새면 즉시 눈에 띈다.
         //
         // 두 정책을 스키마가 선언한다:
-        //  - 'fallback' : 요청 로케일 → fallback_locale → 첫 비어있지 않은 값 (site_name 처럼
-        //                 어느 언어 화면에서도 무언가는 보여야 하는 값)
         //  - 'strict'   : 요청 로케일 값이 없으면 빈 문자열. 폴백하면 중국어 화면에 한국어가
         //                 남는 바로 그 증상이 재현되므로 폴백하지 않는다. 빈 문자열을 받은
         //                 레이아웃이 `$t:` 번역키로 넘어가야 한다 (`||` 표현식).
+        //                 현재 `general.site_description` 만 이 정책을 쓴다.
+        //  - 'fallback' : 요청 로케일 → fallback_locale → 첫 비어있지 않은 값.
+        //                 현재 이 값을 선언한 코어 필드는 없다.
+        //
+        // 주의 — 이 플래그는 표시 경로만 바꾸는 것이 아니다. getAllSettings() 가 같은 선언을 보고
+        // 관리자 조회값을 **로케일 맵으로** 정규화하므로, 관리자 화면의 해당 입력이
+        // MultilingualInput 이 아닌 필드에 이 플래그를 붙이면 일반 Input 이 객체를 받아
+        // "[object Object]" 로 표시된다. 플래그 추가는 반드시 입력 컴포넌트 교체와 함께 한다.
         $localized = $fieldSchema['localized'] ?? null;
         if ($localized) {
             return localized_setting_value($value, strict: $localized === 'strict');

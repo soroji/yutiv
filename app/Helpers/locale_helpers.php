@@ -252,9 +252,11 @@ if (! function_exists('localized_setting_value')) {
      *
      * 두 가지 정책을 지원한다:
      *
-     * - `$strict = false` (기본, 예: `general.site_name`)
+     * - `$strict = false` (기본)
      *   요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 순으로 폴백한다.
-     *   사이트 이름처럼 "어느 언어 화면에서도 무언가는 보여야 하는" 값에 쓴다.
+     *   "어느 언어 화면에서도 무언가는 보여야 하는" 값에 쓴다. 이는 코어가 이미
+     *   `SettingsServiceProvider::localizeSettingValue()` · `LocalizesSeoValues::resolveLocalizedValue()`
+     *   에서 쓰는 관용과 같은 순서다. 현재 이 모드를 쓰는 코어 설정 필드는 없다.
      *
      * - `$strict = true` (예: `general.site_description`)
      *   요청 로케일 값이 비어 있으면 **폴백하지 않고 빈 문자열**을 돌려준다.

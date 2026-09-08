@@ -417,27 +417,71 @@ class SiteDescriptionLocalizationTest extends TestCase
     }
 
     /**
-     * site_name 도 동일하게 배열이 새지 않아야 합니다.
+     * site_name 은 관리자 조회에서 **문자열 그대로** 유지되어야 합니다 (회귀 방지).
      *
-     * site_name 은 이미 코어 곳곳(`config('app.name')`, SEO og:site_name)이 다국어 배열을
-     * 상정하고 방어하는데, 프론트 노출 경로만 그 방어가 없었습니다. 다만 사이트 이름은
-     * 어느 언어 화면에서도 무언가는 보여야 하므로 폴백을 허용합니다 (site_description 과 반대).
+     * `localized` 플래그는 표시 경로만 바꾸는 것이 아니라 `getAllSettings()` 가 같은 선언을
+     * 보고 관리자 조회값을 로케일 맵으로 정규화한다. 사이트 이름의 관리자 입력은
+     * `MultilingualInput` 이 아니라 단일 `Input` 이라, 이 필드에 플래그를 붙이면 입력란에
+     * `[object Object]` 가 표시된다 — 실제로 그렇게 회귀했다.
      *
-     * @effects site_description_resolves_per_locale
+     * 사이트 이름 다국어 입력은 이번 작업 범위가 아니므로 기존 string 계약을 그대로 둔다.
+     *
+     * @effects site_name_remains_plain_string
      */
-    public function test_site_name_locale_map_is_resolved_with_fallback(): void
+    public function test_site_name_remains_plain_string_for_admin(): void
     {
         $repo = app(ConfigRepositoryInterface::class);
         $general = $repo->getCategory('general');
-        $general['site_name'] = ['ko' => '유티브', 'en' => 'YUTIV'];
+        $general['site_name'] = 'YUTIV';
         $repo->saveCategory('general', $general);
 
-        App::setLocale('en');
-        $this->assertSame('YUTIV', app(SettingsService::class)->getFrontendSettings()['general']['site_name']);
+        $loaded = app(SettingsService::class)->getAllSettings()['general']['site_name'];
 
-        // ja 값이 없어도 사이트 이름은 비어서는 안 된다 — 기준 로케일로 폴백한다.
-        App::setLocale('ja');
-        $this->assertSame('유티브', app(SettingsService::class)->getFrontendSettings()['general']['site_name']);
+        $this->assertIsString($loaded, '관리자 입력이 단일 Input 이므로 문자열이어야 한다');
+        $this->assertSame('YUTIV', $loaded);
+    }
+
+    /**
+     * site_name 은 프론트 노출에서도 문자열 그대로여야 합니다.
+     *
+     * 로케일이 무엇이든 저장된 이름이 그대로 나가야 한다 — 사이트 이름은 로케일별 값을
+     * 입력받지 않으므로 로케일에 따라 값이 달라지거나 비면 회귀다.
+     *
+     * @effects site_name_remains_plain_string
+     */
+    public function test_site_name_is_locale_independent_on_frontend(): void
+    {
+        $repo = app(ConfigRepositoryInterface::class);
+        $general = $repo->getCategory('general');
+        $general['site_name'] = 'YUTIV';
+        $repo->saveCategory('general', $general);
+
+        foreach (['ko', 'en', 'ja', 'zh-CN'] as $locale) {
+            App::setLocale($locale);
+            $value = app(SettingsService::class)->getFrontendSettings()['general']['site_name'];
+
+            $this->assertSame('YUTIV', $value, "[$locale] 사이트 이름은 로케일과 무관하게 그대로여야 한다");
+        }
+    }
+
+    /**
+     * site_name 스키마에 `localized` 플래그가 없어야 합니다 (회귀 방지 계약).
+     *
+     * 위 두 테스트는 증상을 잡지만, 플래그가 다시 붙는 순간 관리자 화면이 깨지는
+     * 원인 자체를 여기서 고정한다.
+     *
+     * @effects site_name_remains_plain_string
+     */
+    public function test_site_name_schema_has_no_localized_flag(): void
+    {
+        $fields = app(ConfigRepositoryInterface::class)->getFrontendSchema()['general']['fields'];
+
+        $this->assertArrayNotHasKey(
+            'localized',
+            $fields['site_name'],
+            'site_name 관리자 입력은 MultilingualInput 이 아니다 — localized 를 붙이면 [object Object] 로 표시된다'
+        );
+        $this->assertSame('strict', $fields['site_description']['localized'] ?? null, 'site_description 은 유지');
     }
 
     /**

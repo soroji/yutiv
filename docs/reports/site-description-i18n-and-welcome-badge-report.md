@@ -27,7 +27,7 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 부수 결함 두 개가 같은 지점에 얽혀 있었다.
 
 - **폴백이 사실상 죽어 있었다.** `castValue()` 는 값이 없으면 `''` 를 돌려주는데 `??` 는 `null` 에만 폴백한다. 즉 설명이 비어 있어도 `$t:home.welcome_description` 은 **한 번도 쓰이지 않고** 빈 문단이 남았다.
-- **배열을 넣으면 화면이 깨졌다.** `site_name` 은 코어 곳곳(`config('app.name')` 주입, SEO `og:site_name`)이 이미 다국어 배열을 상정하고 방어하는데, 프론트 노출 경로(`castValue`)만 그 방어가 없어 `(string) $배열` → `"Array"` 가 렌더된다.
+- **배열을 넣으면 화면이 깨진다.** `castValue()` 의 `(string) $value` 캐스팅은 로케일 맵을 만나면 `"Array"` 를 렌더한다. 예외가 아니라 렌더 결과라 로그에도 남지 않는다.
 
 ### 1-2. "Welcome" 배지
 
@@ -60,14 +60,15 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 `config/settings/defaults.json` 의 `frontend_schema` 에 `localized` 플래그를 추가했다.
 
 ```json
-"site_name":        { "type": "string", "sensitive": false, "localized": "fallback" },
-"site_description": { "type": "string", "sensitive": false, "localized": "strict"   }
+"site_description": { "type": "string", "sensitive": false, "localized": "strict" }
 ```
 
 | 정책 | 해석 순서 | 적용 |
 | --- | --- | --- |
-| `fallback` | 요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 | `site_name` — 어느 언어 화면에서도 사이트 이름이 비면 안 된다 |
-| `strict` | 요청 로케일 값이 없으면 **빈 문자열** (폴백 없음) | `site_description` — 여기서 ko 로 폴백하면 고치려던 증상이 그대로 재현된다 |
+| `strict` | 요청 로케일 값이 없으면 **빈 문자열** (폴백 없음) | `site_description` — 여기서 ko 로 폴백하면 고치려던 증상이 그대로 재현된다. **현재 유일한 선언 필드** |
+| `fallback` | 요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 | 헬퍼가 지원하는 다른 모드. 현재 이 값을 선언한 코어 필드는 없다 |
+
+**이 플래그는 관리자 입력 컴포넌트와 한 쌍이다.** 표시 경로만 바꾸는 것이 아니라 `getAllSettings()` 가 같은 선언을 보고 관리자 조회값을 로케일 맵으로 정규화하므로, 해당 입력이 `MultilingualInput` 이 아닌 필드에 붙이면 일반 `Input` 이 객체를 받아 `[object Object]` 로 표시된다. `general.site_name` 이 그 경우라 플래그를 선언하지 않는다 (§12 회귀 이력 참조).
 
 ### 2-3. fallback 정책 (확정)
 
@@ -131,7 +132,7 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 
 | 파일 | 변경 |
 | --- | --- |
-| `config/settings/defaults.json` | `site_name: localized=fallback`, `site_description: localized=strict`, `frontend_schema._localized` 설명 추가. **기본값은 `""` 그대로 — 운영 사이트 문구 하드코딩 없음** |
+| `config/settings/defaults.json` | `site_description: localized=strict`, `frontend_schema._localized` 설명 추가. `site_name` 은 기존 string 계약 유지(플래그 없음). **기본값은 `""` 그대로 — 운영 사이트 문구 하드코딩 없음** |
 
 ### 관리자 템플릿 sirsoft-admin_basic (7)
 
@@ -167,7 +168,7 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 
 | 파일 | 변경 |
 | --- | --- |
-| `tests/Feature/Settings/SiteDescriptionLocalizationTest.php` | **신규** — 저장·검증·해석 계약 15케이스 |
+| `tests/Feature/Settings/SiteDescriptionLocalizationTest.php` | **신규** — 저장·검증·해석 계약 + `site_name` 회귀 방지 17케이스 |
 | `tests/Unit/Layouts/WelcomeCardLocalizationTest.php` | **신규** — 레이아웃·4개 로케일 자원 동기 7케이스 |
 | `tests/Translations/lib/zh-CN-template-parity-lib.php` | `version === '1.0.0'` 상수 → `manifest version == CHANGELOG 최신 항목` 불변식 |
 | `tests/Unit/Services/LanguagePack/BundledSimplifiedChineseTemplatePacksTest.php` | 동일 |
@@ -244,7 +245,7 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 | ko (= `app.fallback_locale`) | 저장된 원문 |
 | en · ja · zh-CN | `""` → 각 언어의 `home.welcome_description` |
 
-`site_name` 은 반대 정책이므로 회귀가 없다 — 레거시 string 은 **모든** 화면에서 그대로 유지되고, 로케일 맵이면 없는 언어는 기준 로케일로 폴백한다.
+`site_name` 은 이번 변경 대상이 아니다 — `localized` 플래그를 선언하지 않으므로 관리자 조회·프론트 노출 모두 기존 string 계약 그대로다. 다국어 배열이 저장돼 있을 경우의 방어는 종전처럼 `SettingsServiceProvider::localizeSettingValue()`(`config('app.name')`)와 `LocalizesSeoValues::resolveLocalizedValue()`(og:site_name)가 각자 담당한다.
 
 ---
 
@@ -282,13 +283,13 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 | 7 | PHP 구문 (7종) | PHP8→7.4 정규화 후 `php -l` | **전부 OK** |
 | 8 | 변경 JSON 전수 파싱 | `json_decode` | **전부 OK** |
 | 9 | BOM / CRLF / UTF-8 | 변경 파일 전수 | **위반 0** |
-| 10 | 오프라인 재현 하네스 | 저장소 실제 코드 로드 후 81단언 | **ALL PASS (81)** |
+| 10 | 오프라인 재현 하네스 | 저장소 실제 코드 로드 후 89단언 | **ALL PASS (89)** |
 | 11 | 템플릿 팩 PHPUnit 재현 | 34단언 × 2팩 | **ALL PASS** |
 | 12 | `git diff --check` | 공백 오류 | **0건** |
 
 ### 10번 하네스가 검증한 것 (G-1 ~ G-13)
 
-재구현이 아니라 **저장소의 실제 코드**(`app/Helpers/locale_helpers.php`, `app/Rules/TranslatableField.php`)를 문법 정규화만 거쳐 include 해 실행했다.
+재구현이 아니라 **저장소의 실제 코드**(`app/Helpers/locale_helpers.php`, `app/Rules/TranslatableField.php`)를 문법 정규화만 거쳐 include 해 실행했다. `getAllSettings()` / `castValue()` 의 `localized` 분기는 실제 스키마(`defaults.json`) + 실제 헬퍼로 같은 조건을 재현했다.
 
 | 요구 | 검증 내용 | 결과 |
 | --- | --- | --- |
@@ -300,7 +301,7 @@ _welcome_card.json  {{_global.settings?.general?.site_description ?? '$t:home.we
 | G-6 | ko/en/ja/zh-CN 각 로케일이 자기 값 선택 | PASS |
 | G-7 | 요청 로케일 값이 비면 폴백 없이 빈 문자열 | PASS |
 | G-8 | 모든 (로케일 × 입력 × 정책) 조합에서 반환값이 항상 string, `"Array"` 아님 | PASS |
-| G-9 | `site_name` 폴백 정책 회귀 없음 · defaults 기본값 회귀 없음 | PASS |
+| G-9 | `site_name` 문자열 계약 회귀 없음(관리자 조회·프론트 노출 양쪽) · defaults 기본값 회귀 없음 | PASS |
 | G-10 | `"Welcome"` 제거 · 4개 로케일 `welcome_badge` 존재 및 각 언어 문자 체계 확인 | PASS |
 | G-11 | 기존 zh-CN parity 6종 | PASS (표의 1~6번) |
 | G-12 | 템플릿 ↔ 번들/언어팩 키 집합·순서 동기 | PASS |
@@ -358,7 +359,19 @@ ja 팩과 템플릿 ko 원본의 키 집합도 대조했다 — 이번에 손댄
 
 **허용 범위 밖 변경 없음.** 메일/SES · DB 접속정보 · `.env` · 사용자/주문/결제 데이터 · 의존성 파일 모두 무변경.
 
-작업 중 발견했지만 **고치지 않고 그대로 둔 것** 2건:
+### 12-1. 이 작업이 만든 회귀 (후속 커밋에서 수정)
+
+최초 구현에서 `general.site_name` 에도 `localized: "fallback"` 을 붙였다. `castValue()` 의 배열 → `"Array"` 위험만 보고 판단했는데, **같은 플래그를 `getAllSettings()` 도 읽어 관리자 조회값을 로케일 맵으로 바꾼다는 점을 놓쳤다.** 사이트 이름의 관리자 입력은 `MultilingualInput` 이 아니라 단일 `Input` 이라, 환경설정 > 일반의 사이트 이름 입력란에 `[object Object]` 가 표시됐다.
+
+운영 화면 검증에서 발견됐고 저장 전이라 데이터 훼손은 없었다. 조치:
+
+- `defaults.json` 의 `site_name` 에서 `localized` 제거 (기존 string 계약 복원). `site_description` 의 `strict` 는 유지.
+- 플래그가 **표시 경로만이 아니라 관리자 조회 형태까지 바꾼다**는 점을 `castValue()` 주석 · `defaults.json._localized` · `docs/backend/admin-settings-access.md` 6번에 명시.
+- `site_name` 로케일 맵 폴백 테스트를 제거하고, 문자열 유지 회귀 테스트 3종으로 교체.
+
+교훈은 주석으로 남겼다 — `localized` 플래그 추가는 관리자 입력 컴포넌트 교체와 **한 쌍**이다.
+
+### 12-2. 발견했지만 고치지 않고 그대로 둔 것 2건
 
 1. **`tests/Translations/lib/zh-CN-template-parity-lib.php` 의 `version === '1.0.0'` 상수** — 이건 고쳤다. 팩 버전을 올리는 순간 반드시 실패하는 단언이라, 이번 변경을 막고 있었다. 상수를 지운 게 아니라 "manifest version == CHANGELOG 최신 항목" 이라는 더 강한 불변식으로 **교체**했다. 같은 이유로 대응 PHPUnit 단언도 함께 바꿨다.
 2. **`templates/_bundled/sirsoft-admin_basic/lang/partial/en/admin.json` 의 기존 키 누락 2건** (`dashboard.activities.user_registered`, `dashboard.refreshed`) — HEAD 시점에도 동일하게 없었음을 `git show HEAD:...` 로 대조 확인했다. 이번 작업과 무관한 선재 결함이라 **손대지 않았다.**
@@ -419,6 +432,20 @@ $ git diff --check
 ```
 
 > `templates/sirsoft-basic/` · `templates/sirsoft-admin_basic/` (설치본) 과 `lang-packs/{identifier}/` (설치본) 은 `.gitignore` 대상이라 저장소에 없다. 저장소의 "원본"은 `_bundled` 이며, 설치본 반영은 18항의 배포 명령이 담당한다.
+
+**후속 회귀 수정분** (§12-1 — 위 목록은 `c94ab441` 로 커밋된 최초 구현 시점의 상태다):
+
+```
+ M CHANGELOG.md
+ M app/Helpers/locale_helpers.php
+ M app/Services/SettingsService.php
+ M config/settings/defaults.json
+ M docs/backend/admin-settings-access.md
+ M docs/reports/site-description-i18n-and-welcome-badge-report.md
+ M tests/Feature/Settings/SiteDescriptionLocalizationTest.php
+```
+
+신규 0 · 수정 7 · 삭제 0. `app/Services/SettingsService.php` · `app/Helpers/locale_helpers.php` 변경은 주석뿐이고 실행 코드는 그대로다.
 
 ---
 

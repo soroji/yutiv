@@ -139,14 +139,18 @@ plugin_setting('sirsoft-pay_kginicis', 'api_key');
 3. testing 격리가 필요한 키 (드라이버, 외부 서비스 자격증명 등) 는 `! $isTestingEnv` 가드로 sync 를 차단한다. 이 키들은 `config()` 가 testing 격리 SSoT 다.
 4. 의미가 다른 키 (`app.timezone` 처럼) 는 sync 하지 않고 별도 키 (`app.default_user_timezone`) 로 분리한다.
 5. 고급 탭 화면에 얹을 카테고리는 `config/settings/defaults.json` 의 `frontend_schema.{카테고리}.merge_into` 를 `advanced` 로 선언한다. 저장 시 어느 카테고리 파일에 쓸지는 이 선언에서 도출되므로 별도 등록이 필요 없다. 선언이 없으면 화면·검증·읽기가 모두 정상인데 입력값만 저장되지 않고 버려진다 — 저장 응답은 성공이고 화면에도 값이 보여 실패 신호가 없으므로, 새 카테고리를 추가했으면 저장 후 `storage/app/settings/{카테고리}.json` 이 생성되는지 직접 확인한다.
-6. 화면에 그대로 노출되는 문구 설정(사이트 이름·설명 등)은 `frontend_schema.{카테고리}.fields.{키}.localized` 를 선언한다. 선언하면 값이 단일 string 이든 로케일 맵(`{"ko":"...","zh-CN":"..."}`)이든 프론트에는 **항상 현재 로케일 문자열**로 나가고, 관리자 조회에서는 편집용 로케일 맵으로 정규화된다. 선언하지 않으면 `SettingsService::castValue()` 의 `(string)` 캐스팅이 배열을 만나 화면에 `"Array"` 가 찍힌다 — 예외가 아니라 렌더 결과라 로그에도 남지 않는다.
+6. 로케일별로 다른 값을 입력받아야 하는 문구 설정은 `frontend_schema.{카테고리}.fields.{키}.localized` 를 선언한다. 선언하면 값이 단일 string 이든 로케일 맵(`{"ko":"...","zh-CN":"..."}`)이든 프론트에는 **항상 현재 로케일 문자열**로 나가고, 관리자 조회에서는 편집용 로케일 맵으로 정규화된다. 선언하지 않으면 `SettingsService::castValue()` 의 `(string)` 캐스팅이 배열을 만나 화면에 `"Array"` 가 찍힌다 — 예외가 아니라 렌더 결과라 로그에도 남지 않는다.
+
+   **이 플래그는 관리자 입력 컴포넌트와 한 쌍이다.** 표시 경로만 바꾸는 것이 아니라 `getAllSettings()` 가 같은 선언을 보고 관리자 조회값을 로케일 맵으로 바꾸므로, 해당 입력이 `MultilingualInput` 이 아닌 필드에 붙이면 일반 `Input` 이 객체를 받아 입력란에 **`[object Object]`** 가 표시된다. 플래그 추가와 컴포넌트 교체는 반드시 함께 한다.
 
    | 값 | 폴백 정책 | 쓰는 곳 |
    |----|-----------|---------|
-   | `"fallback"` | 요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 | 어느 언어 화면에서도 비면 안 되는 값 (`general.site_name`) |
-   | `"strict"` | 요청 로케일 값이 없으면 **빈 문자열** (폴백하지 않음) | 번역이 없으면 레이아웃의 `$t:` 기본 문구로 넘겨야 하는 값 (`general.site_description`) |
+   | `"strict"` | 요청 로케일 값이 없으면 **빈 문자열** (폴백하지 않음) | 번역이 없으면 레이아웃의 `$t:` 기본 문구로 넘겨야 하는 값 (`general.site_description` — 현재 유일한 선언 필드) |
+   | `"fallback"` | 요청 로케일 → `app.fallback_locale` → 첫 비어 있지 않은 값 | 어느 언어 화면에서도 비면 안 되는 값. 현재 이 값을 선언한 코어 필드는 없다 |
 
    `strict` 를 `fallback` 으로 바꾸면 "중국어 화면에 한국어 원문이 남는" 증상이 그대로 재현되므로 정책 선택이 곧 계약이다. 레거시 단일 string 은 `app.fallback_locale` 값으로 간주하며, 다른 로케일로 복제하지 않는다 — 복제하면 그 증상이 데이터에 굳는다.
+
+   `general.site_name` 은 이 플래그를 **선언하지 않는다.** 관리자 입력이 단일 `Input` 이고, 다국어 배열이 들어올 경우의 방어는 이미 `SettingsServiceProvider::localizeSettingValue()`(`config('app.name')` 주입)와 `LocalizesSeoValues::resolveLocalizedValue()`(og:site_name)가 각자 담당한다.
 
    레이아웃에서 폴백을 걸 때는 `??` 가 아니라 `||` 를 쓴다. 서버가 내려주는 "번역 없음"은 `null` 이 아니라 빈 문자열이라 `??` 는 폴백하지 않는다.
 
