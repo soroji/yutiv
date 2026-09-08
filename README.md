@@ -435,6 +435,7 @@ Official language packs you can install alongside the initial setup, so the core
 | **g7-module-sirsoft-ecommerce-ja** | E-commerce module, Japanese |
 | **g7-module-sirsoft-ecommerce-zh-CN** | E-commerce module, Simplified Chinese |
 | **g7-module-sirsoft-page-ja** | Page module, Japanese |
+| **g7-module-sirsoft-page-zh-CN** | Page module, Simplified Chinese |
 | **g7-plugin-sirsoft-ckeditor5-ja** | CKEditor 5 plugin, Japanese |
 | **g7-plugin-sirsoft-daum_postcode-ja** | Daum postcode plugin, Japanese |
 | **g7-plugin-sirsoft-gdpr-ja** | Privacy/GDPR plugin, Japanese |

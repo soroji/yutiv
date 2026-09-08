@@ -576,7 +576,7 @@ php artisan language-pack:install https://example.com/my-lang-pack-zh.zip --sour
 
 ## 공식 중국어 간체 번들 언어팩 (g7-*-zh-CN)
 
-G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 게시판 모듈 1종 + 이커머스 모듈 1종**이며, 페이지/플러그인/템플릿 zh-CN 팩은 아직 없다. 코어·모듈 트리를 건드리지 않는 외부 패키지형이므로 **코어·모듈 코드 변경 0** 이다.
+G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 게시판·이커머스·페이지 모듈 3종**이며, 플러그인/템플릿 zh-CN 팩은 아직 없다. 코어·모듈 트리를 건드리지 않는 외부 패키지형이므로 **코어·모듈 코드 변경 0** 이다.
 
 ### 패키지 구성
 
@@ -585,6 +585,7 @@ G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공
 | core | `g7-core-zh-CN` | (null) | 50 |
 | module | `g7-module-sirsoft-board-zh-CN` | `sirsoft-board` | 33 |
 | module | `g7-module-sirsoft-ecommerce-zh-CN` | `sirsoft-ecommerce` | 60 |
+| module | `g7-module-sirsoft-page-zh-CN` | `sirsoft-page` | 10 |
 
 ### locale 코드
 
@@ -863,15 +864,113 @@ php artisan test --filter=BundledSimplifiedChineseEcommercePackTest
 `resources/lang/**` 를 import 하지 않는다(참조는 `__tests__/` 뿐). 언어팩 frontend JSON 은
 `MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다(`/api/templates/{id}/lang/{locale}.json`).
 
+### 페이지 모듈 팩 (g7-module-sirsoft-page-zh-CN)
+
+`scope: module`, `target_identifier: sirsoft-page`, `requires.depends_on_core_locale: true`.
+`g7-module-sirsoft-page-ja` 와 상대 경로 구성이 1:1 이며(파일 10개로 동일), 번역 원문은 전부
+페이지 모듈의 한국어 원본이다.
+
+#### 입력 → 산출 매핑
+
+| 구분 | ko 원문 소스 | 산출 위치 | 개수 |
+|---|---|---|---|
+| backend | `modules/_bundled/sirsoft-page/src/lang/ko/*.php` | `backend/zh-CN/*.php` | 3 |
+| frontend 엔트리 | `modules/_bundled/sirsoft-page/resources/lang/ko.json` | `frontend/zh-CN.json` | 1 |
+| frontend partial | `.../resources/lang/partial/ko/admin.json` | `frontend/partial/admin.json` | 1 |
+| seed | `module.php` 의 `getPermissions`/`getAdminMenus`, `module.json` | `seed/{permissions,menus,manifest}.json` | 3 |
+
+패키지 총 10개 파일 (매니페스트 1 + CHANGELOG 1 + backend 3 + frontend 2 + seed 3).
+
+`module.php::getRoles()` 가 빈 배열이고 알림 정의·본인인증 메시지도 선언하지 않으므로
+`seed/roles.json`·`seed/notifications.json`·`seed/identity_messages.json` 은 만들지 않는다
+(ja 팩도 동일). 게시판·이커머스 팩과 달리 `frontend/partial/` 에 서브디렉토리가 없다.
+
+#### 페이지 도메인 용어집
+
+코어 용어집을 승계하되, 페이지 도메인 용어를 다음으로 고정한다.
+
+| 한국어 | 중국어 간체 | 비고 |
+|---|---|---|
+| 페이지 / 페이지 관리 | 页面 / 页面管理 | |
+| 제목 / 내용 | 标题 / 内容 | |
+| 작성자 / 저장자 | 作者 / 保存者 | 버전 이력의 저장 주체는 `保存者` |
+| 슬러그 | 别名 | **코어·게시판 팩과 동일**. `路径别名`·`Slug` 는 쓰지 않는다 |
+| 발행 / 미발행 / 발행 취소 | 发布 / 未发布 / 取消发布 | 상태 라벨은 `已发布`·`未发布` |
+| 발행 여부 | 是否发布 | 코어의 `是否…` 패턴 승계 |
+| 발행일시 | 发布时间 | 목록 컬럼·상세 정보 공통 |
+| 버전 / 버전 이력 / 복원 | 版本 / 版本历史 / 恢复 | 복원은 `还原` 이 아닌 `恢复` (기존 팩 166:1) |
+| 첨부파일 | 附件 | |
+| 미리보기 | 预览 | |
+| 편집 모드 / 콘텐츠 모드 | 编辑模式 / 内容模式 | frontend 는 `편집 모드`, activity_log 는 `콘텐츠 모드` — 원문 구분 유지 |
+| SEO 제목 / 설명 / 키워드 | SEO 标题 / SEO 说明 / SEO 关键词 | 이커머스 팩과 동일 |
+| 생성일 / 수정일 | 创建日期 / 修改日期 | |
+
+#### 보존 대상 (번역하지 않음)
+
+- 슬러그 값 형식(`url-slug`)과 URL 경로 `/page/{{slug}}`
+- in-rule 리터럴 `html`/`text`, `asc`/`desc`, `created_at`/`published_at`, `all`/`title`/`slug`
+- placeholder `:title` `:count` `:limit` `:attempted` `:max` `:min` `:locale` `:maxKB`,
+  `{{count}}` `{{slug}}` `{{version}}` `{{fields}}`
+- 권한 키(`sirsoft-page.pages.*`), 메뉴 slug(`sirsoft-page`), route 경로
+
+#### ja 팩과의 차이
+
+파일·키 집합은 ja 팩과 완전히 일치한다. 다만 **키 순서**가 3개 파일에서 다르다.
+
+| 파일 | 차이 | 판단 |
+|---|---|---|
+| `backend/*/validation.php` | ja 는 `attributes.search` 를 맨 뒤에 둠 | ko 원본 순서(중간)를 따름 |
+| `frontend/*.json` | ja 는 `admin` 을 `editor` 앞에 둠 | ko 원본 순서(`editor` → `admin`)를 따름 |
+| `frontend/partial/admin.json` | ja 는 `versions.preview_modal_editor_label` 을 맨 뒤에 둠 | ko 원본 순서를 따름 |
+
+zh-CN 은 ko 원본 순서를 따르며(검사기 §1·§2 가 강제), ja 와의 차이는
+`zh-CN-page-parity-check.php --style` 에서 정보성 경고로 표면화한다(실패 아님).
+**ja 팩은 이번 작업에서 수정하지 않았다.**
+
+#### 설치 및 활성화
+
+```bash
+# 1) 코어 zh-CN 팩이 먼저 활성이어야 한다 (depends_on_core_locale: true)
+php artisan language-pack:install g7-core-zh-CN --source=bundled
+
+# 2) 대상 모듈이 active 여야 한다 (아니면 target_inactive 로 차단)
+php artisan module:list
+
+# 3) 페이지 팩 설치 (자동 활성)
+php artisan language-pack:install g7-module-sirsoft-page-zh-CN --source=bundled
+
+# 확인
+php artisan language-pack:list --scope=module
+
+# 콘텐츠 수정 후 설치본 재반영 (프론트엔드 빌드 불필요)
+php artisan language-pack:update g7-module-sirsoft-page-zh-CN --force
+```
+
+#### 검증
+
+```bash
+# 원본 대조 검사기 (vendor·Laravel 불필요, 단독 실행)
+php tests/Translations/zh-CN-page-parity-check.php --verbose --style
+
+# PHPUnit — 프로덕션 validator 실호출
+php artisan test --filter=BundledSimplifiedChinesePagePackTest
+```
+
+`frontend build 불필요` — 페이지 모듈의 `package.json` 에는 **build 스크립트가 없고**
+(`test`/`test:run`/`test:e2e`/`test:e2e:ui` 뿐), 번들러 설정도 `vitest.config.ts`(테스트 전용)만
+있으며 `vite.config.ts` 와 `dist/` 가 존재하지 않는다. 언어팩 frontend JSON 은
+`MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다(`/api/templates/{id}/lang/{locale}.json`).
+
 ### 기존 ko/en 변경 시 zh-CN 동기화 의무
 
-코어·게시판 모듈·이커머스 모듈의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
+코어·게시판·이커머스·페이지 모듈의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
 (`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-board-zh-CN/`,
-`lang-packs/_bundled/g7-module-sirsoft-ecommerce-zh-CN/`) 의
+`lang-packs/_bundled/g7-module-sirsoft-ecommerce-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-page-zh-CN/`) 의
 키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역
 fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치
 (`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 대응 parity 검사기
-(`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`, `zh-CN-ecommerce-parity-check.php`) 로 확인한다.
+(`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`, `zh-CN-ecommerce-parity-check.php`,
+`zh-CN-page-parity-check.php`) 로 확인한다.
 
 ## 의존성 검증 — 설치 차단 사유 (UI 인라인 안내)
 

@@ -1,0 +1,13 @@
+{
+  "editor": {
+    "data_source": {
+      "page": "页面",
+      "pageData": "页面数据",
+      "pages": "页面列表",
+      "versions": "版本历史"
+    }
+  },
+  "admin": {
+    "$partial": "partial/admin.json"
+  }
+}

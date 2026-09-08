@@ -1,0 +1,173 @@
+{
+  "page": {
+    "page_title": "页面管理",
+    "page_description": "管理页面。",
+    "title": "页面管理",
+    "description": "管理静态页面。",
+    "add_page": "添加页面",
+    "search": "搜索",
+    "search_placeholder": "按标题或别名搜索...",
+    "search_fields": {
+      "all": "全部",
+      "title": "标题",
+      "slug": "别名"
+    },
+    "columns": {
+      "id": "ID",
+      "title": "标题",
+      "slug": "别名",
+      "published": "发布",
+      "current_version": "版本",
+      "creator": "作者",
+      "created_at": "创建日期",
+      "published_at": "发布时间",
+      "updated_at": "修改日期"
+    },
+    "published_filter": {
+      "all": "全部",
+      "published": "已发布",
+      "unpublished": "未发布"
+    },
+    "published_status": {
+      "published": "已发布",
+      "unpublished": "未发布",
+      "publish_action": "发布",
+      "unpublish_action": "设为未发布"
+    },
+    "total_count": "共 {{count}} 个",
+    "per_page": "{{count}} 个",
+    "sort": {
+      "created_at_desc": "按创建时间最新",
+      "created_at_asc": "按创建时间最早",
+      "published_at_desc": "按发布时间最新",
+      "published_at_asc": "按发布时间最早"
+    },
+    "selected_count": "已选择 {{count}} 项",
+    "bulk_status_change": "变更状态:",
+    "bulk_publish": "批量发布",
+    "bulk_unpublish": "批量设为未发布",
+    "bulk_clear_selection": "取消选择",
+    "actions": {
+      "view": "查看详情",
+      "edit": "修改",
+      "delete": "删除"
+    },
+    "modals": {
+      "delete_title": "删除页面",
+      "delete_confirm": "确定要删除该页面吗？",
+      "delete_success": "页面已删除。",
+      "restore_title": "恢复版本",
+      "restore_confirm": "确定要恢复为该版本吗？当前内容将被覆盖。",
+      "restore_notice": "恢复时将以所选版本的内容创建新版本。原有的版本历史全部保留。附件不属于恢复对象。",
+      "restoring": "恢复中...",
+      "restore_success": "版本已恢复。",
+      "bulk_publish_title": "批量发布",
+      "bulk_publish_confirm": "将把 {{count}} 个页面变更为已发布状态。",
+      "bulk_publish_success": "所选页面已发布。",
+      "bulk_unpublish_title": "批量设为未发布",
+      "bulk_unpublish_confirm": "将把 {{count}} 个页面变更为未发布状态。",
+      "bulk_unpublish_success": "所选页面已变更为未发布。"
+    },
+    "errors": {
+      "delete_failed": "删除页面失败。",
+      "restore_failed": "恢复版本失败。",
+      "publish_change_failed": "变更发布状态失败。"
+    },
+    "form": {
+      "page_title_create": "登记页面",
+      "page_title_edit": "修改页面",
+      "page_description_create": "登记新的页面。",
+      "page_description_edit": "修改页面信息。",
+      "sections": {
+        "basic_info": "基本信息"
+      },
+      "fields": {
+        "title": "标题",
+        "title_placeholder": "请输入页面标题",
+        "slug": "别名",
+        "slug_placeholder": "url-slug",
+        "slug_hint": "URL: /page/{{slug}}",
+        "slug_check": "重复检查",
+        "slug_available": "该别名可以使用。",
+        "slug_unavailable": "该别名已被使用。",
+        "slug_format_hint": "只能使用英文小写字母、数字和连字符（-）",
+        "slug_checking": "检查中...",
+        "slug_check_required": "请先进行别名重复检查。",
+        "published": "是否发布",
+        "content": "内容",
+        "content_mode": "编辑模式"
+      },
+      "seo": {
+        "title": "SEO 设置",
+        "seo_title": "SEO 标题",
+        "seo_title_placeholder": "将在搜索引擎中显示的标题",
+        "seo_description": "SEO 说明",
+        "seo_description_placeholder": "将在搜索引擎中显示的说明",
+        "seo_keywords": "SEO 关键词",
+        "seo_keywords_placeholder": "请以逗号分隔输入"
+      },
+      "lang_tabs": {
+        "ko": "韩语",
+        "en": "英语"
+      },
+      "attachments": "附件",
+      "attachments_section": "附件",
+      "confirm_remove_attachment_title": "删除附件",
+      "confirm_remove_attachment_message": "文件将立即删除。无论页面是否保存，均无法撤销。",
+      "create_success": "页面已登记。",
+      "update_success": "页面已修改。",
+      "validation_error": "请确认输入的信息。",
+      "read_only_message": "由于没有修改权限，以只读方式显示。"
+    },
+    "attachment": {
+      "download": "下载"
+    },
+    "show": {
+      "title": "页面"
+    },
+    "detail": {
+      "page_title": "页面详情",
+      "page_description": "查看页面的详细信息。",
+      "back_to_list": "返回列表",
+      "edit": "修改",
+      "delete": "删除",
+      "display_language": "显示语言",
+      "display_language_hint": "将以所选语言显示标题和内容。",
+      "view_page": "查看页面",
+      "publish_changed": "发布状态已变更。",
+      "attachments": "附件（{{count}}）",
+      "info": {
+        "published_at": "发布时间",
+        "created_at": "创建日期",
+        "updated_at": "修改日期",
+        "creator": "作者"
+      },
+      "tabs": {
+        "preview": "内容预览",
+        "versions": "版本历史"
+      },
+      "versions": {
+        "version": "版本",
+        "creator": "保存者",
+        "created_at": "保存时间",
+        "changes": "变更记录",
+        "actions": "操作",
+        "view": "查看",
+        "preview_modal_title": "版本 v{{version}} 预览",
+        "preview_modal_editor_label": "版本预览",
+        "restore": "恢复",
+        "current": "当前",
+        "initial": "首次创建",
+        "changed_fields": "变更: {{fields}}",
+        "restored_from": "从 v{{version}} 恢复",
+        "restore_guide": "点击查看按钮即可确认内容并进行恢复。附件不纳入版本管理。",
+        "field_labels": {
+          "title": "标题",
+          "content": "内容",
+          "seo_meta": "SEO 信息",
+          "content_mode": "编辑模式"
+        }
+      }
+    }
+  }
+}

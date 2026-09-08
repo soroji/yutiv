@@ -1,0 +1,26 @@
+{
+  "sirsoft-page": {
+    "name": "页面",
+    "description": "页面模块权限"
+  },
+  "sirsoft-page.pages": {
+    "name": "页面管理",
+    "description": "页面管理权限"
+  },
+  "sirsoft-page.pages.read": {
+    "name": "页面查询",
+    "description": "页面列表及详情查询"
+  },
+  "sirsoft-page.pages.create": {
+    "name": "页面创建",
+    "description": "创建新页面"
+  },
+  "sirsoft-page.pages.update": {
+    "name": "页面修改",
+    "description": "修改页面内容"
+  },
+  "sirsoft-page.pages.delete": {
+    "name": "页面删除",
+    "description": "页面删除"
+  }
+}

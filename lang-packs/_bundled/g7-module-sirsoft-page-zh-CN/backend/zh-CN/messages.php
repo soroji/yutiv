@@ -1,0 +1,40 @@
+<?php
+
+return [
+    'page' => [
+        'not_found' => '找不到页面。',
+        'fetch_success' => '已查询页面信息。',
+        'fetch_failed' => '查询页面信息失败。',
+        'create_success' => '页面已创建。',
+        'create_failed' => '创建页面失败。',
+        'update_success' => '页面已修改。',
+        'update_failed' => '修改页面失败。',
+        'delete_success' => '页面已删除。',
+        'delete_failed' => '删除页面失败。',
+        'publish_success' => '页面的发布状态已变更。',
+        'publish_failed' => '变更页面发布状态失败。',
+        'bulk_publish_success' => '已变更 :count 个页面的发布状态。',
+        'bulk_publish_failed' => '批量变更发布状态失败。',
+        'restore_success' => '已恢复为之前的版本。',
+        'restore_failed' => '恢复版本失败。',
+        'slug_check_success' => '别名重复检查已完成。',
+    ],
+    'attachment' => [
+        'not_found' => '找不到附件。',
+        'file_not_found' => '附件在存储中不存在。',
+        'upload_success' => '附件已上传。',
+        'upload_failed' => '上传附件失败。',
+        'delete_success' => '附件已删除。',
+        'delete_failed' => '删除附件失败。',
+        'reorder_success' => '附件顺序已变更。',
+        'reorder_failed' => '变更附件顺序失败。',
+    ],
+    'errors' => [
+        'not_found' => '找不到页面。',
+        'version_not_found' => '找不到该版本。',
+        'version_belongs_to_different_page' => '指定的版本不属于该页面。',
+        'permission_denied' => '没有权限。',
+        'validation_failed' => '输入值不正确。',
+        'attachment_limit_exceeded' => '附件最多可登记 :limit 个。（请求：:attempted 个）',
+    ],
+];
