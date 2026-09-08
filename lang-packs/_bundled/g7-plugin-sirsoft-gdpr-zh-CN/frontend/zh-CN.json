@@ -1,0 +1,327 @@
+{
+  "editor": {
+    "data_source": {
+      "gdprConsentLog": "同意日志",
+      "gdprMeConsents": "我的同意记录",
+      "gdprMyConsent": "我的同意",
+      "gdprMyConsents": "我的同意记录",
+      "gdprPolicyVersionCurrent": "当前政策版本",
+      "gdprPolicyVersionHistory": "政策版本记录",
+      "gdprPolicyVersionSnapshot": "政策版本快照",
+      "gdprPublicSettings": "GDPR 公开设置",
+      "gdprSettings": "GDPR 设置"
+    }
+  },
+  "consent": {
+    "granted": "同意已保存。",
+    "granted_again": "同意已更新。",
+    "rejected_saved": "将在不同意的情况下继续。可选项目不会被使用。",
+    "revoked": "同意已撤回。",
+    "renew_all_success": "已将 {renewed} 个启用项目更新为新的政策版本。",
+    "granting": "同意中...",
+    "revoking": "撤回中...",
+    "renewing": "更新中...",
+    "already_same_state": "已经是相同的状态。",
+    "required_cannot_revoke": "必需项目无法撤回。",
+    "invalid_key": "无效的同意项目。",
+    "category_cookie_necessary": "必需 Cookie",
+    "category_cookie_functional": "功能 Cookie",
+    "category_cookie_analytics": "分析 Cookie",
+    "category_cookie_marketing": "营销 Cookie"
+  },
+  "blocked_domains": {
+    "invalid_format": "域名格式不正确。（仅支持 FQDN，可使用 *.example.com 通配符）",
+    "invalid_format_functional": "功能分类 — 域名格式不正确。（仅支持 FQDN，可使用 *.example.com 通配符）",
+    "invalid_format_analytics": "分析分类 — 域名格式不正确。（仅支持 FQDN，可使用 *.example.com 通配符）",
+    "invalid_format_marketing": "营销分类 — 域名格式不正确。（仅支持 FQDN，可使用 *.example.com 通配符）",
+    "too_long": "域名不能超过 253 个字符。",
+    "too_long_functional": "功能分类 — 域名不能超过 253 个字符。",
+    "too_long_analytics": "分析分类 — 域名不能超过 253 个字符。",
+    "too_long_marketing": "营销分类 — 域名不能超过 253 个字符。",
+    "must_be_array": "各分类的域名列表必须为数组。"
+  },
+  "settings": {
+    "saved": "设置已保存。",
+    "title": "GDPR 设置",
+    "description": "由运营者控制 Cookie 同意横幅与我的页面同意管理卡片的行为。",
+    "section": {
+      "operator": "运营主体 / 隐私政策",
+      "operator_desc": "登记将在 Cookie 横幅、政策页面中显示的运营主体、数据存储位置和政策页面别名。",
+      "cookie_banner": "Cookie 同意横幅",
+      "cookie_banner_desc": "在一处设置向访客展示的 Cookie 同意横幅的展示、位置、分类和政策版本。",
+      "cookie_banner_settings": "横幅显示设置",
+      "cookie_categories": "Cookie 分类",
+      "cookie_policy_version": "Cookie 政策版本",
+      "auto_blocking": "自动拦截政策",
+      "auto_blocking_desc": "Cookie 横幅展示后，各分类域名列表中的外部追踪资源会在用户同意前被自动拦截。"
+    },
+    "nav": {
+      "operator": "运营信息",
+      "cookie_banner": "Cookie 横幅",
+      "auto_blocking_policy": "自动拦截政策"
+    },
+    "status": {
+      "enabled": "启用",
+      "disabled": "停用",
+      "visible": "展示",
+      "hidden": "隐藏"
+    },
+    "fields": {
+      "cookie_policy_version": {
+        "label": "政策版本",
+        "hint": "当政策正文、分类含义、受托方及数据保管信息发生变化时，请点击「+ 发布新版本」。发布后所有会员会在下次访问时进行重新同意。"
+      },
+      "privacy_policy_slug": {
+        "label": "隐私政策页面别名",
+        "hint": "登记在页面插件中的隐私政策页面的别名。留空则不显示 Cookie 横幅中的政策链接。",
+        "placeholder": "例：privacy-policy"
+      },
+      "legal_entity_name": {
+        "label": "法人名称 / 运营主体",
+        "hint": "这是显示在 Cookie 横幅和我的页面中的站点运营主体名称。",
+        "placeholder": "例：某某有限公司"
+      },
+      "data_storage_location": {
+        "label": "数据存储位置",
+        "hint": "请填写要告知用户的数据存储国家。例：\"大韩民国\"、\"美国 (AWS)\"。出于安全考虑，请勿填写 IP 地址、云区域代码（例：ap-northeast-2）或数据中心地址。",
+        "placeholder": "例：大韩民国（自建数据中心） / 美国 (AWS)"
+      },
+      "banner_enabled": {
+        "label": "Cookie 横幅展示",
+        "hint": "启用后会同时开始展示 Cookie 横幅并在同意前自动拦截外部追踪。我的页面的同意管理卡片与该开关无关，始终会向有同意/撤回记录的会员展示。"
+      },
+      "banner_position": {
+        "label": "横幅位置",
+        "hint": "选择 Cookie 横幅在屏幕上显示的位置。",
+        "option_bottom_bar": "底部（全宽）",
+        "option_bottom_left_popup": "左下角弹窗",
+        "option_bottom_right_popup": "右下角弹窗",
+        "option_centered_modal": "居中模态框"
+      },
+      "blocked_domains": {
+        "warnings_title": "说明",
+        "auto_blocking_off_hint": "自动拦截仅在 Cookie 横幅展示为 ON 时生效。请先在「Cookie 横幅」卡片中打开 Cookie 横幅展示开关。",
+        "warning_visual_break": "对外部字体、样式表的分类请谨慎。分类错误导致误拦截时，页面可能会无声地出错。",
+        "warning_policy_bump": "变更拦截域名后请提升 Cookie 政策版本。这可以避免已同意的用户被视为也同意了新域名。",
+        "warning_domain_format": "域名格式：可使用 example.com、*.example.com（通配符）。不支持 localhost 这类不含点号的名称或中文域名。",
+        "warning_scope_limit": "该自动拦截仅针对插件、模块所注册的脚本。「模板外部脚本」等由运营者直接插入到 head 区域的外部脚本不在该自动拦截的保护范围内，请另行确认其加载条件。",
+        "tag_input_placeholder": "输入域名后按 Enter（例：google-analytics.com, *.hotjar.com）",
+        "tag_no_options": "没有推荐域名。请手动输入。",
+        "category": {
+          "functional": "功能分类拦截域名",
+          "analytics": "分析分类拦截域名",
+          "marketing": "营销分类拦截域名"
+        }
+      },
+      "cookie_categories": {
+        "description": "4 种 Cookie 分类的用途和拦截工具示例可在各卡片的 [展开信息] 中查看。",
+        "category_required_badge": "必需",
+        "category_optional_badge": "可选",
+        "info": {
+          "expand": "展开信息",
+          "collapse": "收起信息",
+          "description_label": "面向用户的说明文案",
+          "scope_label": "自动拦截对象",
+          "tools_label": "代表性工具示例",
+          "necessary": {
+            "scope": "不会自动拦截。会话、登录令牌、购物车标识符、用户注册时选择的语言设置、Cookie 同意记录等站点运行所必需的项目始终被允许。",
+            "tools": "会话 ID、认证令牌、CSRF 令牌、购物车标识符、多语言设置等（无需额外设置）"
+          },
+          "functional": {
+            "scope": "登记在「自动拦截政策」标签的功能分类域名列表中的外部资源会在同意前被自动拦截。此外，深色模式、货币偏好等用户便利设置也只有在同意后才会被保存。",
+            "tools": "客服聊天机器人（Crisp、Intercom、Tawk.to）、多语言自动翻译挂件、用户设置同步服务等"
+          },
+          "analytics": {
+            "scope": "登记在「自动拦截政策」标签的分析分类域名列表中的外部分析脚本、嵌入内容、追踪像素会在同意前被自动拦截。同意后会立即恢复运行。",
+            "tools": "Google Analytics 4 (GA4)、Hotjar、Microsoft Clarity、Mixpanel、Matomo、Naver 高级日志分析等"
+          },
+          "marketing": {
+            "scope": "登记在「自动拦截政策」标签的营销分类域名列表中的外部广告、嵌入内容、追踪像素会在同意前被自动拦截。同意后会立即恢复运行。",
+            "tools": "Meta Pixel (Facebook)、Google Ads 再营销、Kakao 像素、YouTube 视频嵌入等"
+          }
+        }
+      }
+    },
+    "save_success": "设置已保存。",
+    "save_error": "保存设置时发生错误。",
+    "validation_error": "请确认输入值。",
+    "unsaved_changes": "存在尚未保存的变更。",
+    "policy_version": {
+      "current_label": "当前版本",
+      "published_at_label": "发布时间",
+      "publisher_label": "发布者",
+      "publisher_system": "系统",
+      "memo_label": "变更原因",
+      "publish_button": "发布新版本",
+      "history_toggle_show": "查看记录",
+      "history_toggle_hide": "关闭记录",
+      "history_empty": "没有已发布的政策版本。",
+      "publish_success": "新的政策版本已发布。所有会员将在下次访问时进行重新同意。",
+      "publishing": "发布中...",
+      "guide_title": "什么时候需要发布新版本？",
+      "guide_body": "变更拦截域名、修改 UI 文案等运营层面的变更不需要发布新版本。",
+      "change_type": {
+        "material": "触发重新同意",
+        "non_material": "简单变更",
+        "initial": "初次发布"
+      },
+      "history": {
+        "col": {
+          "version": "版本",
+          "created_at": "发布时间",
+          "publisher": "发布者",
+          "change_type": "种类",
+          "memo": "原因",
+          "snapshot_action": "正文"
+        }
+      },
+      "snapshot_view_short": "查看",
+      "material_modal": {
+        "title": "发布新政策版本 + 触发重新同意",
+        "body": "点击「发布新版本」后会立即发布，所有用户需要在下次访问时重新同意。",
+        "effect_bump": "政策版本单调递增（例：v2 → v3）",
+        "effect_reconsent": "所有会员将在下次访问时看到重新同意页面",
+        "effect_history": "记录表中会新增版本行",
+        "memo_label": "变更原因（必填）",
+        "memo_placeholder": "例：修改条款页面正文 / 变更受托运营方",
+        "confirm": "发布新版本"
+      },
+      "snapshot_modal": {
+        "editor_label": "查看政策版本正文",
+        "title": "政策版本 v{version} 正文",
+        "description": "这是发布时点 settings 的分类列表、政策正文别名、拦截域名等完整正文。DPO 在同意纠纷时可作为举证材料使用。",
+        "section_categories": "Cookie 分类",
+        "section_privacy_policy": "政策正文别名",
+        "section_blocked_domains": "拦截域名目录",
+        "category_required_badge": "必需",
+        "no_categories": "没有已登记的分类。",
+        "no_blocked_domains": "没有已登记的拦截域名。",
+        "view_button": "查看 v{version} 正文",
+        "close": "关闭",
+        "open_policy_page": "打开正文页面",
+        "no_policy_slug": "没有已登记的政策正文页面。"
+      },
+      "not_found": "找不到该政策版本。",
+      "history_page_summary": "共 {total} 条 · 第 {current} / {last} 页",
+      "history_prev": "上一页",
+      "history_next": "下一页"
+    }
+  },
+  "admin": {
+    "consent_log": {
+      "title": "GDPR 同意记录",
+      "description": "查询会员、访客的同意/撤回变更记录。IP、User-Agent 等审计信息会一并显示。",
+      "refresh": "刷新",
+      "empty": "没有查询到同意记录。",
+      "clear_filters": "重置筛选",
+      "guest_label": "访客",
+      "view_member_tooltip": "跳转到会员详情页面",
+      "search_placeholder": "按邮箱或会话 ID 搜索",
+      "search_button": "搜索",
+      "search_type": {
+        "email": "邮箱",
+        "session_id": "会话 ID"
+      },
+      "filter": {
+        "consent_key_label": "同意项目",
+        "action_label": "操作",
+        "source_label": "来源",
+        "option_all": "全部"
+      },
+      "action": {
+        "granted": "同意",
+        "revoked": "撤回",
+        "rejected": "拒绝"
+      },
+      "source": {
+        "banner": "横幅",
+        "preference_center": "环境设置",
+        "mypage": "我的页面",
+        "register": "注册会员",
+        "mypage_renew_all": "我的页面批量重新同意"
+      },
+      "col": {
+        "created_at": "时点",
+        "subject": "主体",
+        "consent_key": "同意项目",
+        "action": "操作",
+        "source": "来源",
+        "policy_version": "政策版本",
+        "ip": "IP"
+      },
+      "detail": {
+        "session_id_label": "会话 ID",
+        "user_agent_label": "User-Agent",
+        "categories_label": "分类快照",
+        "categories_hint": "这是会员在同意时点对各分类表达的意愿。即使政策正文更新，该记录也会以不可变的形式保留。",
+        "snapshot_granted": "同意",
+        "snapshot_revoked": "未同意"
+      }
+    }
+  },
+  "mypage": {
+    "privacy": {
+      "title": "Cookie 同意管理",
+      "description": "可以变更或撤回对站点正在使用的 Cookie 项目的同意。",
+      "section_consents": "我的同意现状",
+      "section_consents_hint": "会按同意/撤回的时点立即生效。必需项目无法撤回。",
+      "col_consent_key": "同意项目",
+      "col_consented": "状态",
+      "col_consented_at": "同意日期",
+      "col_revoked_at": "撤回日期",
+      "col_policy_version": "政策版本",
+      "col_action": "操作",
+      "consented": "同意",
+      "revoked": "撤回",
+      "rejected_label": "拒绝",
+      "revoke": "撤回",
+      "grant": "同意",
+      "grant_again": "重新同意",
+      "label_suffix": "{label} Cookie",
+      "locked_label": "必需",
+      "enable_all": "全部同意",
+      "enable_all_hint": "存在尚未同意的可选项目。可以一次性全部同意。",
+      "enable_all_success": "已同意全部可选项目。",
+      "required_label": "必需",
+      "required_hint": "因服务提供所必需，无法撤回。",
+      "grant_confirm_title": "确认 Cookie 同意",
+      "grant_confirm_message": "确定要同意该 Cookie 吗？同意后将使用该分类的 Cookie，您可以随时再次撤回。",
+      "revoke_confirm_title": "确认撤回同意",
+      "revoke_confirm_message": "确定要撤回该项目吗？撤回同意后，该分类相关的功能可能会受到限制。",
+      "revoke_target_consented_at": "同意 · {date}",
+      "no_consents": "没有启用的同意项目。",
+      "needs_renewal": "Cookie 政策已变更。请更新您的同意。",
+      "needs_renewal_with_version": "Cookie 政策已变更为版本 {version}。请重新确认可选项目的同意。",
+      "needs_renewal_hint": "必需 Cookie 是站点运营所必不可少的项目，因此与政策变更无关，始终适用。",
+      "btn_renew_all": "更新当前同意",
+      "btn_renew_this_item": "更新政策",
+      "renew_all_success": "已将 {renewed} 个启用项目更新为新的政策版本。",
+      "operator_and_storage_meta": "本站点由 {entity} 运营，数据存储于 {location}",
+      "operator_only_meta": "本站点由 {entity} 运营",
+      "storage_only_meta": "用户数据存储于 {location}"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "refresh": "刷新"
+  },
+  "banner": {
+    "re_appear_reason": "Cookie 政策已变更为版本 {version}，因此需要重新确认同意。",
+    "consent_required_hint": "与已拒绝项目相关的功能可能会受到限制。",
+    "btn_renew_consent": "更新当前同意",
+    "title": "Cookie 使用说明",
+    "description": "本站点为改善用户体验和进行分析而使用 Cookie。您可以按项目选择是否同意。",
+    "accept_all": "全部同意",
+    "reject_continue": "不同意并继续",
+    "preferences": "可选同意",
+    "save": "保存所选",
+    "policy_link": "隐私政策",
+    "preferences_title": "Cookie 环境设置",
+    "preferences_description": "可以按分类分别同意/撤回 Cookie 的使用。必需分类无法关闭。",
+    "category_required_badge": "必需",
+    "view_policy_label": "查看变更后的政策正文",
+    "operator_and_storage_line": "本站点由 {entity} 运营，数据存储于 {location}",
+    "operator_only_line": "本站点由 {entity} 运营",
+    "storage_only_line": "用户数据存储于 {location}"
+  }
+}

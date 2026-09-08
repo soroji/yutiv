@@ -1,0 +1,304 @@
+{
+  "name": "Bizppurio 消息发送",
+  "description": "对接 Bizppurio 的 SMS/LMS 及 Kakao Alimtalk 发送插件。",
+  "settings": {
+    "title": "Bizppurio 消息发送设置",
+    "description": "管理 Bizppurio 的对接信息和发送设置。",
+    "save": "保存",
+    "saving": "保存中...",
+    "save_success": "设置已保存。",
+    "save_failed": "设置保存失败。",
+    "test_mode": {
+      "label": "审核模式",
+      "hint": "审核模式下会发送到 Bizppurio 的审核域名。关闭后会以生产域名实际发送。",
+      "account_notice": "建议将审核与生产分别使用不同的 Bizppurio 账户运营。"
+    },
+    "live_mode_warning_title": "将以生产环境发送",
+    "live_mode_warning_body": "由于审核模式已关闭，短信、Alimtalk 会实际发送给客户并产生发送费用。在审核阶段请保持开启审核模式。",
+    "sections": {
+      "api": {
+        "title": "API 对接",
+        "description": "这是发送系统与 Kakao 管理系统共用的对接信息。"
+      },
+      "sending": {
+        "title": "发送设置",
+        "description": "这是短信、Alimtalk 发送所使用的发送方信息。"
+      }
+    },
+    "fields": {
+      "bizppurio_id": {
+        "label": "Bizppurio 账号",
+        "hint": "这是发送与 Kakao 管理共用的 Bizppurio 账号。"
+      },
+      "password": {
+        "label": "Bizppurio 模块密码",
+        "hint": "请输入 Bizppurio 模块密码。（Bizppurio 控制台 > 模块对接环境设置 > 变更模块密码）"
+      },
+      "connection_check": {
+        "label": "连接确认",
+        "hint": "点击即可立即确认已保存的账号、密码是否有效。（仅在保存后才会生效）",
+        "button": "连接确认",
+        "checking": "确认中...",
+        "success": "认证已正常确认。账号和密码正确。",
+        "failed": "认证确认失败。",
+        "unsaved_changes": "请先保存变更内容。"
+      },
+      "api_key": {
+        "label": "API 密钥",
+        "hint": "API 密钥需向 Bizppurio 客服中心连同账号一起申请，确认后发放。"
+      },
+      "sender_number": {
+        "label": "发送号码",
+        "hint": "这是短信、Alimtalk 发送所使用的发送方电话号码。"
+      },
+      "sender_key": {
+        "label": "Alimtalk 发送方资料密钥",
+        "hint": "这是 Alimtalk 发送及模板申请所使用的发送方资料密钥（40 个字符）。"
+      }
+    },
+    "report": {
+      "section_title": "报告接收设置",
+      "hint": "Bizppurio 提供在短信、Alimtalk 发送后将成功/失败结果发送到该地址（URL PUSH）的报告接收方式。请将以下地址登记到 Bizppurio 业务团队（或管理控制台的报告接收设置）。",
+      "note": "登记后发送结果会自动记录到历史中，可确认实际送达情况。登记前只能确认到发送请求，最终结果（成功/失败）不会更新。",
+      "copy": "复制",
+      "copied": "报告接收地址已复制到剪贴板。"
+    },
+    "tabs": {
+      "connection": "环境设置",
+      "templates": "通知模板管理"
+    },
+    "preparation": {
+      "intro": "要发送短信及 Kakao Alimtalk，需先在 Bizppurio 控制台完成以下前期准备。",
+      "sms_label": "短信（SMS/LMS）",
+      "sms_sender": "请登记发送号码。",
+      "kakao_label": "Kakao Alimtalk",
+      "kakao_channel": "请创建 KakaoTalk 商业频道并登记发送方资料。",
+      "kakao_template": "Alimtalk 模板在管理员通知设置（Bizppurio 标签）中撰写并提交审核申请。",
+      "kakao_apikey": "请向客服中心申请 API 密钥。",
+      "console_link": "打开 Bizppurio 控制台"
+    }
+  },
+  "channels": {
+    "bizppurio_tab": "Bizppurio"
+  },
+  "binding": {
+    "variables_hint": "可用变量（点击后会插入到正文光标位置）"
+  },
+  "banner": {
+    "not_ready": "发送所需的设置尚未完成。",
+    "setup_action": "去设置",
+    "test_mode": "当前为审核模式 — 不会进行实际发送。"
+  },
+  "dispatch_result": {
+    "column_header": "短信、Alimtalk 结果",
+    "inspection_label": "审核",
+    "low_balance": "余额不足",
+    "fallback": "SMS 备用发送 {status}",
+    "detail_title": "短信、Alimtalk 发送结果",
+    "channel_label": "发送渠道：{channel}",
+    "sent_content_label": "实际发送内容",
+    "sent_content_hint": "Alimtalk 会以审核通过确定的模板内容发送，可能与上方的\"正文\"不同。"
+  },
+  "editor": {
+    "data_source": {
+      "dispatch_results": "Bizppurio 发送结果"
+    }
+  },
+  "template": {
+    "tab_guide": "请在各通知的 [编辑] 中一并撰写 Alimtalk 模板和短信（SMS）正文，并提交审核申请。Kakao 审核通过后 Alimtalk 会自动发送，备用 SMS 及仅以 SMS 发送也在同一窗口中设置。",
+    "status": {
+      "unwritten": "未撰写",
+      "draft": "撰写中",
+      "requested": "审核中",
+      "approved": "已通过",
+      "rejected": "已驳回",
+      "stopped": "已停止",
+      "blocked": "已封禁",
+      "dormant": "休眠"
+    },
+    "row": {
+      "alimtalk_label": "Alimtalk",
+      "requested_on": "{date} 申请",
+      "synced_on": "{date} 同步",
+      "alimtalk_enabled": "启用发送",
+      "btn_view_reason": "查看原因",
+      "btn_compose": "撰写 Alimtalk 模板",
+      "btn_edit": "修改",
+      "btn_edit_approved": "修改（取消审核通过）",
+      "btn_request": "提交审核",
+      "btn_cancel_request": "取消申请",
+      "btn_release": "解除休眠",
+      "btn_refresh": "刷新",
+      "requested_toast": "已提交审核申请。",
+      "cancel_request_toast": "已取消审核申请。",
+      "released_toast": "已解除休眠状态。",
+      "synced_toast": "已同步 Kakao 的审核状态。",
+      "fallback_sms": "备用 SMS",
+      "sms_only": "仅 SMS",
+      "sms_body_prefix": "正文:",
+      "sms_body_missing": "未设置 SMS 正文",
+      "btn_edit_sms": "编辑 SMS 正文",
+      "sms_label": "短信（SMS）",
+      "on": "使用",
+      "off": "未使用",
+      "alimtalk_disabled": "不启用发送"
+    },
+    "form": {
+      "modal_title": "Alimtalk 模板 — {name}",
+      "rejected_banner": "这是被驳回的模板。请查看下方原因，修改后重新申请。",
+      "sender_profile": "发送方资料",
+      "sender_profile_placeholder": "选择发送方资料（仅供参考）",
+      "sender_profile_hint": "审核申请将使用环境设置中保存的发送方资料密钥进行。",
+      "category": "分类",
+      "category_placeholder": "选择分类",
+      "name": "模板名称",
+      "message_type": "消息类型",
+      "templateMessageType_options": {
+        "BA": "基本型",
+        "EX": "附加信息型",
+        "AD": "频道添加型",
+        "MI": "复合型"
+      },
+      "emphasize_type": "强调类型",
+      "templateEmphasizeType_options": {
+        "NONE": "无",
+        "TEXT": "强调文字",
+        "IMAGE": "图片",
+        "ITEM_LIST": "项目列表"
+      },
+      "emphasize_title": "强调文字标题",
+      "emphasize_subtitle": "强调文字副标题",
+      "image": "图片",
+      "image_hint": "jpg/png · 500KB 以下 · 宽度 500px 以上 · 宽:高 2:1（上传后会自动填入 URL）",
+      "image_uploading": "图片上传中...",
+      "image_upload_failed": "图片上传失败。",
+      "content": "正文",
+      "extra": "附加信息",
+      "header": "页眉",
+      "header_hint": "显示在正文上方的最多 16 个字符的文案（可选）",
+      "buttons": "按钮（最多 5 个）",
+      "button_add": "添加按钮",
+      "button_name": "按钮名称（最多 14 个字符）",
+      "quick_replies": "快捷连接（最多 10 个）",
+      "quick_reply_add": "添加快捷连接",
+      "link_mo": "移动端链接（必填）",
+      "link_pc": "PC 链接（可选）",
+      "link_and": "Android 方案（必填）",
+      "link_ios": "iOS 方案（必填）",
+      "tel_number": "电话号码（必填）",
+      "plugin_id": "插件 ID（必填）",
+      "item_highlight": "项目高亮（可选）",
+      "hl_title": "高亮标题",
+      "hl_description": "高亮说明",
+      "hl_image_url": "缩略图图片 URL（可选）",
+      "item_list": "项目清单（2~10 个）",
+      "item_list_hint": "项目最少 2 个，最多 10 个。（标题 6 个字符、说明 23 个字符以内）",
+      "item_add": "添加项目",
+      "item_title": "标题",
+      "item_description": "说明",
+      "item_summary": "摘要（价格信息）",
+      "summary_description": "摘要值（14 个字符以内）",
+      "btn_remove_item": "删除项目",
+      "btn_remove_button": "删除按钮",
+      "btn_remove_quick_reply": "删除快捷连接",
+      "btn_save": "保存",
+      "btn_save_request": "保存后提交审核",
+      "request_comment": "给审核方的说明",
+      "request_comment_placeholder": "例：#{name}=张三, #{order_number}=20260823-0001",
+      "request_comment_hint": "提交审核申请时会一并转达给 Kakao 审核人员（可选，500 个字符以内）。Kakao 审查指南要求为正文中的每个变量提供示例值，因此写明各变量的示例值可以减少被驳回。该内容不会被保存，仅在申请时发送。",
+      "saved_toast": "已保存通知模板。",
+      "requested_toast": "已提交审核申请。通过后将开始发送 Alimtalk。"
+    },
+    "sms": {
+      "modal_title": "SMS 正文 — {name}",
+      "hint": "这是备用 SMS 与仅以 SMS 发送共用的正文。#{变量} 会在发送时自动替换。",
+      "btn_save": "保存",
+      "saved_toast": "已保存 SMS 正文。"
+    },
+    "cancel_approval": {
+      "modal_title": "确认取消审核通过",
+      "warning": "取消'{name}'模板的审核通过后，该通知的 Alimtalk 发送会立即停止。（备用 SMS 及仅以 SMS 发送会按 SMS 设置继续。）修改后需重新提交审核并获得通过，Alimtalk 发送才会恢复。",
+      "btn_confirm": "取消审核通过后修改",
+      "done_toast": "已取消审核通过。请修改后重新提交审核。"
+    },
+    "rejection": {
+      "modal_title": "驳回原因 — {name}",
+      "btn_close": "关闭"
+    },
+    "approval": {
+      "approved": "已通过",
+      "not_approved": "未通过"
+    },
+    "section": {
+      "alimtalk_title": "Alimtalk 模板",
+      "sms_title": "短信（SMS）",
+      "alimtalk_enabled": "启用 Alimtalk 发送",
+      "locked_hint": "审核中或已通过的模板无法修改内容。要修改请先点击 [取消申请] 或 [修改（取消审核通过）]。",
+      "saved_toast": "已保存通知模板。",
+      "loading": "正在加载模板内容…"
+    }
+  },
+  "manage": {
+    "guide": "一览式管理所有通知的 Bizppurio 模板状态。撰写、提交审核的操作与通知设置页面相同。",
+    "filter_all": "全部状态",
+    "search_placeholder": "搜索通知名称/类型",
+    "btn_search": "搜索",
+    "total_count": "共 {count} 条",
+    "btn_compose": "撰写",
+    "btn_edit": "修改",
+    "btn_delete": "删除",
+    "empty": "尚未登记任何 Bizppurio 通知模板。",
+    "empty_hint": "在管理员通知设置的 Bizppurio 标签中撰写 Alimtalk 模板或设置 SMS 后，会显示在这里。",
+    "sms_only": "单独",
+    "sms_fallback": "备用",
+    "owner": {
+      "core": "核心",
+      "module": "模块",
+      "plugin": "插件"
+    },
+    "columns": {
+      "notification": "通知",
+      "owner": "所属",
+      "status": "Alimtalk 状态",
+      "sms": "SMS",
+      "requested_at": "申请日期",
+      "synced_at": "同步",
+      "actions": "管理"
+    },
+    "delete": {
+      "modal_title": "删除模板",
+      "warning": "将删除'{name}'的 Bizppurio 模板设置。已在 Kakao 登记的模板只有在可删除状态（已登记/已驳回）时才会一并删除。",
+      "btn_confirm": "删除",
+      "done_with_kakao": "已删除模板。（含 Kakao 侧模板）",
+      "done_db_only": "已删除模板设置。Kakao 侧模板因状态限制仍然保留。"
+    }
+  },
+  "templates": {
+    "readiness": {
+      "title": "要使用 Alimtalk 模板需要以下设置",
+      "go_settings": "前往环境设置",
+      "missing_label": "未设置项目",
+      "api_key_missing": "Kakao 管理 API 密钥",
+      "sender_key_missing": "Alimtalk 发送方资料密钥",
+      "note": "在环境设置标签中填写以上项目后即可撰写模板并提交审核。实际发送需关闭审核模式切换到生产后，且只能使用已通过审核的模板。"
+    },
+    "list": {
+      "refresh": "刷新"
+    },
+    "link_type": {
+      "WL": "网页链接",
+      "AL": "应用链接",
+      "DS": "配送查询",
+      "BK": "机器人关键词",
+      "MD": "消息转达",
+      "AC": "添加频道",
+      "BC": "转人工咨询",
+      "BT": "转机器人",
+      "TN": "拨打电话",
+      "MP": "查看地图",
+      "P1": "图片安全传输",
+      "P2": "个人信息使用",
+      "P3": "一键支付"
+    }
+  }
+}

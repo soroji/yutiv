@@ -1,0 +1,18 @@
+{
+  "sirsoft-gdpr": {
+    "name": "GDPR（通用数据保护条例）",
+    "description": "GDPR 插件提供的权限"
+  },
+  "sirsoft-gdpr.privacy": {
+    "name": "个人信息保护",
+    "description": "GDPR 领域权限（查询·设置）"
+  },
+  "sirsoft-gdpr.privacy.view": {
+    "name": "个人信息查询",
+    "description": "同意记录·GDPR 设置查询（审计·监控）"
+  },
+  "sirsoft-gdpr.privacy.update": {
+    "name": "个人信息设置变更",
+    "description": "Cookie 分类·政策版本等 GDPR 插件设置变更"
+  }
+}

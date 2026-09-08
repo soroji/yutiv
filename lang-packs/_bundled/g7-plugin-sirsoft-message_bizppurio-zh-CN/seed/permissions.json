@@ -1,0 +1,18 @@
+{
+  "sirsoft-message_bizppurio": {
+    "name": "Bizppurio 消息发送",
+    "description": "Bizppurio 消息发送插件提供的权限"
+  },
+  "sirsoft-message_bizppurio.messaging": {
+    "name": "消息发送",
+    "description": "消息发送领域权限（查询·管理）"
+  },
+  "sirsoft-message_bizppurio.messaging.view": {
+    "name": "消息查询",
+    "description": "发送记录·Alimtalk 模板查询（监控）"
+  },
+  "sirsoft-message_bizppurio.messaging.manage": {
+    "name": "消息管理",
+    "description": "环境设置·Alimtalk 模板登记/审核·事件对接管理"
+  }
+}

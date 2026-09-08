@@ -425,16 +425,27 @@ cp .env.example .env
 | **g7-module-sirsoft-page-ja** | 페이지 모듈 일본어 |
 | **g7-module-sirsoft-page-zh-CN** | 페이지 모듈 중국어 간체 |
 | **g7-plugin-sirsoft-ckeditor5-ja** | CKEditor5 플러그인 일본어 |
+| **g7-plugin-sirsoft-ckeditor5-zh-CN** | CKEditor5 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-daum_postcode-ja** | 다음 우편번호 플러그인 일본어 |
+| **g7-plugin-sirsoft-daum_postcode-zh-CN** | 다음 우편번호 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-gdpr-ja** | 개인정보 보호(GDPR) 플러그인 일본어 |
+| **g7-plugin-sirsoft-gdpr-zh-CN** | 개인정보 보호(GDPR) 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-marketing-ja** | 마케팅 플러그인 일본어 |
+| **g7-plugin-sirsoft-marketing-zh-CN** | 마케팅 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-message_bizppurio-ja** | 비즈뿌리오 메시지 발송 플러그인 일본어 |
+| **g7-plugin-sirsoft-message_bizppurio-zh-CN** | 비즈뿌리오 메시지 발송 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-pay_kginicis-ja** | KG이니시스 결제 플러그인 일본어 |
+| **g7-plugin-sirsoft-pay_kginicis-zh-CN** | KG이니시스 결제 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-pay_nicepayments-ja** | 나이스페이먼츠 결제 플러그인 일본어 |
+| **g7-plugin-sirsoft-pay_nicepayments-zh-CN** | 나이스페이먼츠 결제 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-pay_nhnkcp-ja** | NHN KCP 결제 플러그인 일본어 |
+| **g7-plugin-sirsoft-pay_nhnkcp-zh-CN** | NHN KCP 결제 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-tosspayments-ja** | 토스페이먼츠 플러그인 일본어 |
+| **g7-plugin-sirsoft-tosspayments-zh-CN** | 토스페이먼츠 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-verification_kginicis-ja** | KG이니시스 본인인증 플러그인 일본어 |
+| **g7-plugin-sirsoft-verification_kginicis-zh-CN** | KG이니시스 본인인증 플러그인 중국어 간체 |
 | **g7-plugin-sirsoft-verification_nhnkcp-ja** | NHN KCP 휴대폰 본인확인 플러그인 일본어 |
+| **g7-plugin-sirsoft-verification_nhnkcp-zh-CN** | NHN KCP 휴대폰 본인확인 플러그인 중국어 간체 |
 | **g7-template-sirsoft-admin_basic-ja** | 관리자 기본 템플릿 일본어 |
 | **g7-template-sirsoft-basic-ja** | 사용자 기본 템플릿 일본어 |
 

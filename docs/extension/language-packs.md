@@ -576,7 +576,7 @@ php artisan language-pack:install https://example.com/my-lang-pack-zh.zip --sour
 
 ## 공식 중국어 간체 번들 언어팩 (g7-*-zh-CN)
 
-G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 게시판·이커머스·페이지 모듈 3종**이며, 플러그인/템플릿 zh-CN 팩은 아직 없다. 코어·모듈 트리를 건드리지 않는 외부 패키지형이므로 **코어·모듈 코드 변경 0** 이다.
+G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공 범위는 **코어 1종 + 모듈 3종 + 플러그인 11종**이며, 템플릿 zh-CN 팩은 아직 없다. 코어·모듈·플러그인 트리를 건드리지 않는 외부 패키지형이므로 **코어·확장 코드 변경 0** 이다.
 
 ### 패키지 구성
 
@@ -586,6 +586,17 @@ G7 는 중국어 간체(`zh-CN`) 언어팩을 공식 제공한다. 현재 제공
 | module | `g7-module-sirsoft-board-zh-CN` | `sirsoft-board` | 33 |
 | module | `g7-module-sirsoft-ecommerce-zh-CN` | `sirsoft-ecommerce` | 60 |
 | module | `g7-module-sirsoft-page-zh-CN` | `sirsoft-page` | 10 |
+| plugin | `g7-plugin-sirsoft-ckeditor5-zh-CN` | `sirsoft-ckeditor5` | 6 |
+| plugin | `g7-plugin-sirsoft-daum_postcode-zh-CN` | `sirsoft-daum_postcode` | 4 |
+| plugin | `g7-plugin-sirsoft-gdpr-zh-CN` | `sirsoft-gdpr` | 7 |
+| plugin | `g7-plugin-sirsoft-marketing-zh-CN` | `sirsoft-marketing` | 6 |
+| plugin | `g7-plugin-sirsoft-message_bizppurio-zh-CN` | `sirsoft-message_bizppurio` | 9 |
+| plugin | `g7-plugin-sirsoft-pay_kginicis-zh-CN` | `sirsoft-pay_kginicis` | 8 |
+| plugin | `g7-plugin-sirsoft-pay_nhnkcp-zh-CN` | `sirsoft-pay_nhnkcp` | 8 |
+| plugin | `g7-plugin-sirsoft-pay_nicepayments-zh-CN` | `sirsoft-pay_nicepayments` | 8 |
+| plugin | `g7-plugin-sirsoft-tosspayments-zh-CN` | `sirsoft-tosspayments` | 7 |
+| plugin | `g7-plugin-sirsoft-verification_kginicis-zh-CN` | `sirsoft-verification_kginicis` | 6 |
+| plugin | `g7-plugin-sirsoft-verification_nhnkcp-zh-CN` | `sirsoft-verification_nhnkcp` | 6 |
 
 ### locale 코드
 
@@ -961,16 +972,131 @@ php artisan test --filter=BundledSimplifiedChinesePagePackTest
 있으며 `vite.config.ts` 와 `dist/` 가 존재하지 않는다. 언어팩 frontend JSON 은
 `MergeFrontendLanguage` 가 런타임에 디스크에서 읽어 병합한다(`/api/templates/{id}/lang/{locale}.json`).
 
+### 플러그인 팩 (g7-plugin-*-zh-CN, 11종)
+
+`scope: plugin`, `requires.depends_on_core_locale: true`, `requires.target_version: null`,
+`g7_version: ">=7.0.0"`, `vendor`·`license` 는 각 `plugin.json` 과 일치(전부 `sirsoft` / `MIT`).
+
+#### 대상 선정
+
+`plugins/_bundled` 의 12종 중 **11종**에 팩을 만들었다.
+
+| 제외 대상 | 근거 |
+|---|---|
+| `gnuboard7-hello_plugin` | README 「학습용 샘플 확장」 표에 속한 데모용 확장. ja 팩(`g7-plugin-gnuboard7-hello_plugin-ja`)도 공식 언어팩 인벤토리에 등재되어 있지 않다. 번역 자산은 있으나(ko.json 7키) 운영 화면 문구가 아니므로 공식 팩으로 제공하지 않는다 |
+
+**번들 ≠ 활성**이다. 플러그인 활성 여부는 `plugins` 테이블의 런타임 상태이며 저장소에는 이를
+정적으로 판정할 설치 manifest 나 `config/plugin.php` 가 없다. 따라서 선정 기준은 "번들로
+동봉되고 공식 언어팩 인벤토리에 등재된 플러그인"으로 삼았다.
+
+#### 입력 → 산출 매핑
+
+플러그인 11종이 동일한 레이아웃을 쓴다.
+
+| 구분 | ko 원문 소스 | 산출 위치 |
+|---|---|---|
+| backend | `plugins/_bundled/{id}/lang/ko/*.php` | `backend/zh-CN/*.php` |
+| frontend | `plugins/_bundled/{id}/resources/lang/ko.json` | `frontend/zh-CN.json` |
+| seed | `plugin.php` 의 `getPermissions`/`getRoles`/`getNotificationDefinitions`, `plugin.json` | `seed/{permissions,roles,notifications,manifest}.json` |
+
+모듈 팩과 달리 `frontend/partial/` 을 쓰는 플러그인이 없다(원본에도 없음).
+합계 **75개 파일 / 2,092 리프 키** (backend 26 + frontend 11 + seed 16 + 매니페스트 11 + CHANGELOG 11).
+
+#### 플러그인 도메인 용어집
+
+코어·모듈 용어집을 승계하되, 플러그인 도메인 용어를 다음으로 고정한다.
+
+| 한국어 | 중국어 간체 | 비고 |
+|---|---|---|
+| 플러그인 / 에디터 | 插件 / 编辑器 | |
+| 업로드 / 이미지 | 上传 / 图片 | |
+| 주소 검색 / 우편번호 | 地址搜索 / 邮政编码 | |
+| 도로명 주소 / 지번 주소 | 街道名地址 / 地番地址 | 한국 주소 체계 고유 개념 — 중국 주소 체계로 치환하지 않는다 |
+| 개인정보 / 개인정보처리방침 | 个人信息 / 隐私政策 | |
+| 동의 / 동의하지 않음 / 철회 / 거부 | 同意 / 不同意 / 撤回 / 拒绝 | |
+| 필수 동의 / 선택 동의 | 必需 / 可选 | GDPR 카테고리 배지 |
+| 쿠키 / 쿠키 배너 | Cookie / Cookie 横幅 | |
+| 마케팅 / 마케팅 정보 수신 | 营销 / 接收营销信息 | 서비스 필수 알림과 구분해 표기 |
+| 광고성 이메일 수신 / SMS 수신 | 接收广告类电子邮件 / 接收短信 | |
+| 에스크로 | 担保交易 | 결제 3종 공통 |
+| 가상계좌 / 계좌이체 / 무통장 | 虚拟账户 / 账户转账 / 银行汇款 | 이커머스 팩과 동일 |
+| 간편결제 | 快捷支付 | |
+| 현금영수증 (소득공제용/지출증빙용) | 现金收据（用于个人所得税抵扣／用于支出凭证） | 이커머스 팩과 동일 |
+| 공급가액 / 부가세 / 면세금액 | 未税金额 / 增值税 / 免税金额 | |
+| 본인확인 / 본인인증 | 实名认证 | ko 는 두 표기가 혼재하나 같은 개념 — 하나로 통일 |
+| 성인 인증 / 만 19세 | 成人认证 / 满 19 周岁 | |
+| 알림톡 | Alimtalk | Kakao 서비스 브랜드명 — 음역·의역하지 않는다 |
+| 문자(SMS/LMS) | 短信（SMS/LMS） | |
+| 발신번호 / 발신프로필 | 发送号码 / 发送方资料 | |
+| 검수 / 반려 / 휴면 | 审核 / 驳回 / 休眠 | Alimtalk 템플릿 라이프사이클 |
+| 상점관리자 / 가맹점 | 商户管理后台 / 商户 | PG 콘솔 |
+
+#### 보존 대상 (번역하지 않음)
+
+- 브랜드명: `CKEditor`, `Daum`, `KG Inicis`, `NHN KCP`, `NICE Payments`, `Toss Payments`, `Bizppurio`, `Kakao Pay`, `Naver Pay`, `Samsung Pay`, `Apple Pay`, `PAYCO`, `L.pay`, `11pay`, `SSGPAY`, `PayPay`
+- 법령·규격 약어: `GDPR`, `Art.6`, `Art.13`, `FQDN`, `CIDR`, `DPO`, `ISO`, `SMS`, `LMS`, `API`, `URL`, `HTML`, `JSON`, `CSRF`, `DNS`, `TCP`
+- PG·인증 식별자: `MID`, `TID`, `Moid`, `site_cd`, `site_key`, `web_siteid`, `TNO`, `SignKey`, `INIAPI`, `P_CHKFAKE`, `DI`, `CI`, `reqSvcCd`, `CBT`, `JPPG`, `DEVCBT`
+- 설정·enum 키: `useescrow`, `acceptmethod`, `P_RESERVED`, `DEPOSIT_CALLBACK`, `WL/AL/DS/BK/MD/AC/BC/BT/TN/MP/P1/P2/P3`, `BA/EX/AD/MI`, `NONE/TEXT/IMAGE/ITEM_LIST`
+- 결과 코드 숫자 키(비즈뿌리오 `1000`~`7523`), 예시 IP·도메인·경로, `artisan` 명령 문자열
+
+#### ja 팩과의 의도적 차이
+
+| # | 대상 | 차이 | 판단 |
+|---|---|---|---|
+| 1 | `sirsoft-pay_kginicis` | ja `frontend/ja.json` 에 `admin.cash_receipt_*` 14키가 있으나 현재 ko 원본에 없음 | KG 전용 현금영수증 패널이 이커머스 모듈의 공용 프로바이더 축으로 **이관·제거**되었다(`EnsureAdminOrderDetailPaymentQueryLayoutListenerTest::test_..._panel_removed`). 남은 코드 참조는 낡은 패널을 걷어내기 위한 시그니처 탐지뿐이다 → zh-CN 에서 **제외** |
+| 2 | `sirsoft-daum_postcode` | ja 팩에 `CHANGELOG.md` 없음(3파일) | zh-CN 은 다른 팩과 동일하게 **포함**(4파일). 허용 확장자이며 릴리즈 이력 추적에 필요 |
+| 3 | ckeditor5 · pay_kginicis · pay_nhnkcp · pay_nicepayments · tosspayments · message_bizppurio · verification_* | `messages.php` / `payment_methods.php` / `result_codes.php` / `ko.json` 에서 ja 가 ko 와 **키 순서**가 다름 (집합은 동일) | zh-CN 은 **ko 순서**를 따른다. `--style` 에서 정보성 경고로 표면화 |
+| 4 | `sirsoft-pay_nicepayments` | ko `payment_methods.php` 의 한글 브랜드명에 zero-width space(`U+200B`)가 삽입되어 있음 | ZWSP 는 한글 문자열을 끊기 위한 장치다. zh-CN 은 라틴 브랜드명(`Naver Pay` 등)을 쓰므로 그 목적이 사라져 **넣지 않는다** — ja 팩도 동일하게 처리했다 |
+
+**ja 팩은 이번 작업에서 수정하지 않았다.**
+
+#### 검증
+
+```bash
+# 통합 실행 (11종 개별 PASS/FAIL + 전체 위반 건수, 하나라도 실패하면 exit 1)
+php tests/Translations/zh-CN-plugins-parity-check.php --style
+
+# 개별 실행
+php tests/Translations/zh-CN-gdpr-parity-check.php --verbose --style
+
+# PHPUnit — 프로덕션 validator 실호출 (데이터셋 = 팩 식별자)
+php artisan test --filter=BundledSimplifiedChinesePluginPacksTest
+```
+
+검사 로직은 `tests/Translations/lib/zh-CN-plugin-parity-lib.php` 하나에 모여 있고,
+플러그인별 진입점은 대상 식별자와 ja 대비 의도적 차이만 선언한다.
+
+`frontend build 불필요` — 언어팩 JSON 은 `MergeFrontendLanguage` 가 런타임에 디스크에서 읽어
+병합한다. `sirsoft-ckeditor5` 처럼 `plugin.json` 에 `assets.js` 를 선언한 플러그인도 그 진입점은
+`resources/js/index.ts` 이며 `resources/lang/**` 를 import 하지 않는다.
+
+#### 설치 순서
+
+```bash
+# 1) 코어 zh-CN 팩이 먼저 활성이어야 한다 (depends_on_core_locale: true)
+php artisan language-pack:install g7-core-zh-CN --source=bundled
+
+# 2) 대상 플러그인이 active 여야 한다 (아니면 target_inactive 로 차단)
+php artisan plugin:list
+
+# 3) 플러그인 팩 설치 (자동 활성) — 서로 의존하지 않으므로 순서는 자유
+php artisan language-pack:install g7-plugin-sirsoft-ckeditor5-zh-CN --source=bundled
+php artisan language-pack:install g7-plugin-sirsoft-daum_postcode-zh-CN --source=bundled
+# … 나머지 9종 동일
+
+php artisan language-pack:list --scope=plugin
+```
+
 ### 기존 ko/en 변경 시 zh-CN 동기화 의무
 
-코어·게시판·이커머스·페이지 모듈의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
-(`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-board-zh-CN/`,
-`lang-packs/_bundled/g7-module-sirsoft-ecommerce-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-page-zh-CN/`) 의
+코어·모듈 3종·플러그인 11종의 ko/en 다국어 키를 추가/수정/제거할 때마다 대응하는 zh-CN 팩
+(`lang-packs/_bundled/g7-core-zh-CN/`, `lang-packs/_bundled/g7-module-sirsoft-{board,ecommerce,page}-zh-CN/`,
+`lang-packs/_bundled/g7-plugin-sirsoft-*-zh-CN/`) 의
 키 셋도 동기화해야 한다. ja 팩과 동일하게, 동기화하지 않으면 중국어 화면에서 미번역
 fallback(ko/en) 이 오류 없이 노출된다. zh-CN 은 자동 빌드 스크립트가 없으므로 대응 위치
 (`backend/zh-CN/`, `frontend/`, `seed/`) 에 수동 반영하고 대응 parity 검사기
 (`zh-CN-core-parity-check.php`, `zh-CN-board-parity-check.php`, `zh-CN-ecommerce-parity-check.php`,
-`zh-CN-page-parity-check.php`) 로 확인한다.
+`zh-CN-page-parity-check.php`, `zh-CN-plugins-parity-check.php`) 로 확인한다.
 
 ## 의존성 검증 — 설치 차단 사유 (UI 인라인 안내)
 

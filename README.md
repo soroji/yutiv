@@ -437,16 +437,27 @@ Official language packs you can install alongside the initial setup, so the core
 | **g7-module-sirsoft-page-ja** | Page module, Japanese |
 | **g7-module-sirsoft-page-zh-CN** | Page module, Simplified Chinese |
 | **g7-plugin-sirsoft-ckeditor5-ja** | CKEditor 5 plugin, Japanese |
+| **g7-plugin-sirsoft-ckeditor5-zh-CN** | CKEditor5 plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-daum_postcode-ja** | Daum postcode plugin, Japanese |
+| **g7-plugin-sirsoft-daum_postcode-zh-CN** | Daum postcode plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-gdpr-ja** | Privacy/GDPR plugin, Japanese |
+| **g7-plugin-sirsoft-gdpr-zh-CN** | Privacy/GDPR plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-marketing-ja** | Marketing plugin, Japanese |
+| **g7-plugin-sirsoft-marketing-zh-CN** | Marketing plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-message_bizppurio-ja** | Bizppurio messaging plugin, Japanese |
+| **g7-plugin-sirsoft-message_bizppurio-zh-CN** | Bizppurio messaging plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-pay_kginicis-ja** | KG Inicis payment plugin, Japanese |
+| **g7-plugin-sirsoft-pay_kginicis-zh-CN** | KG Inicis payment plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-pay_nicepayments-ja** | NICE Payments plugin, Japanese |
+| **g7-plugin-sirsoft-pay_nicepayments-zh-CN** | NICE Payments plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-pay_nhnkcp-ja** | NHN KCP payment plugin, Japanese |
+| **g7-plugin-sirsoft-pay_nhnkcp-zh-CN** | NHN KCP payment plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-tosspayments-ja** | Toss Payments plugin, Japanese |
+| **g7-plugin-sirsoft-tosspayments-zh-CN** | Toss Payments plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-verification_kginicis-ja** | KG Inicis identity verification plugin, Japanese |
+| **g7-plugin-sirsoft-verification_kginicis-zh-CN** | KG Inicis identity verification plugin, Simplified Chinese |
 | **g7-plugin-sirsoft-verification_nhnkcp-ja** | NHN KCP mobile identity verification plugin, Japanese |
+| **g7-plugin-sirsoft-verification_nhnkcp-zh-CN** | NHN KCP mobile identity verification plugin, Simplified Chinese |
 | **g7-template-sirsoft-admin_basic-ja** | Default admin template, Japanese |
 | **g7-template-sirsoft-basic-ja** | Default user template, Japanese |
 

@@ -1,0 +1,4 @@
+{
+  "name": "Bizppurio 消息发送",
+  "description": "对接 Bizppurio 的 SMS/LMS 及 Kakao Alimtalk 发送插件。作为核心通知系统的渠道发送短信、Alimtalk，并通过 webhook 接收发送结果。"
+}

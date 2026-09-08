@@ -1,0 +1,18 @@
+{
+  "bizppurio_balance_low": {
+    "definition": {
+      "name": "Bizppurio 余额不足",
+      "description": "当 Bizppurio 钱包余额不足导致短信/Alimtalk 发送失败时，向管理员发送"
+    },
+    "templates": {
+      "mail": {
+        "subject": "[{app_name}] Bizppurio 余额不足",
+        "body": "{name} 您好，由于 Bizppurio 钱包余额不足，{channel_label} 发送失败（代码：{result_code}）。充值后发送将恢复正常。"
+      },
+      "database": {
+        "subject": "Bizppurio 余额不足",
+        "body": "由于 Bizppurio 余额不足，{channel_label} 发送失败（代码：{result_code}）。"
+      }
+    }
+  }
+}
