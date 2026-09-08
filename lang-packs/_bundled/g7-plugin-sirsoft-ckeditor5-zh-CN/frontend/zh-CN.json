@@ -1,0 +1,107 @@
+{
+  "editor": {
+    "data_source": {
+      "settings": "编辑器设置",
+      "ckeditor5Uploads": "上传图片列表"
+    }
+  },
+  "admin": {
+    "uploads": {
+      "title": "编辑器上传图片",
+      "description": "查看通过编辑器上传的图片，并清理已不再使用的图片。",
+      "refresh": "刷新",
+      "open_settings": "打开清理设置",
+      "reference_notice": "引用状态是通过扫描帖子、页面、商品说明等已登记内容来判定的。仅用于未登记引用来源的外部扩展内容中的图片可能显示为「未被引用」，删除前请先确认。",
+      "scan_limited_notice": "引用状态筛选以最近 {{count}} 条为基准进行判定。早于此范围的图片不会显示在该列表中。",
+      "empty": "没有已上传的图片。",
+      "col": {
+        "thumbnail": "预览",
+        "original_name": "原始文件名",
+        "file_size": "大小",
+        "uploader": "上传者",
+        "created_at": "上传时间",
+        "referenced": "引用状态"
+      },
+      "badge": {
+        "referenced": "已被引用",
+        "unreferenced": "未被引用"
+      },
+      "filter": {
+        "search_placeholder": "按原始文件名或哈希值搜索",
+        "search_button": "搜索",
+        "referenced_all": "全部状态",
+        "referenced_only": "仅已被引用",
+        "unreferenced_only": "仅未被引用",
+        "date_from": "开始日期",
+        "date_to": "结束日期",
+        "clear": "重置筛选"
+      },
+      "delete": {
+        "button": "删除",
+        "confirm_title": "要删除该图片吗？",
+        "confirm_message": "所选图片的文件和记录将被一并删除。此操作无法撤销。",
+        "success": "已删除图片。",
+        "failed": "图片删除失败。"
+      },
+      "bulk_delete": {
+        "button": "删除所选",
+        "selected": "已选择 {{count}} 项",
+        "confirm_title": "要删除所选图片吗？",
+        "confirm_message": "所选 {{count}} 项的文件和记录将被一并删除。此操作无法撤销。"
+      }
+    }
+  },
+  "settings": {
+    "title": "CKEditor5 设置",
+    "description": "CKEditor5 WYSIWYG 编辑器插件的环境设置",
+    "notice": "CKEditor5 通过 CDN 方式加载。需要连接互联网，且无需单独授权即可免费使用。",
+    "section_toolbar": "编辑器设置",
+    "section_image": "图片设置",
+    "section_cleanup": "未使用图片清理",
+    "section_preview": "编辑器测试",
+    "section_preview_hint": "可预览应用了当前设置的 CKEditor5 编辑器。",
+    "cleanup": {
+      "toggle_label": "自动清理未使用的图片",
+      "toggle_hint": "默认关闭 — 需由运营者手动开启才会生效。开启后每天执行一次，将超过保留期限且未被使用的图片的文件和记录一并删除。",
+      "retention_label": "保留期限 (日)",
+      "retention_hint": "只有上传后超过该期限且未被使用的图片才会成为清理对象。（1 ~ 3650 日）",
+      "manual_hint": "若想先确认现在会删除哪些内容，请在服务器上执行以下命令：php artisan sirsoft-ckeditor5:prune-unused-images --dry-run",
+      "open_uploads": "打开上传图片管理"
+    },
+    "preview_placeholder": "请在此输入内容以测试编辑器。",
+    "fields": {
+      "toolbar": {
+        "label": "工具栏类型",
+        "hint": "选择要在编辑器中显示的工具栏按钮组合。",
+        "minimal": "最小（加粗、斜体、下划线、链接）",
+        "standard": "标准（标题、格式、对齐、链接、列表、表格）",
+        "full": "完整（标准 + 媒体、颜色、代码块、源码编辑）"
+      },
+      "image_upload": {
+        "label": "启用图片上传",
+        "hint": "启用在编辑器内直接上传图片的功能。停用时只能输入 URL。"
+      },
+      "image_max_size": {
+        "label": "最大图片大小 (MB)",
+        "hint": "可上传图片的最大大小。（1 ~ 10 MB）"
+      },
+      "public_asset_disk": {
+        "label": "公开资源磁盘",
+        "hint": "如需仅本插件使用其他磁盘，请在此选择。留空则遵循核心的公开资源磁盘设置。",
+        "follow_core": "遵循核心设置"
+      },
+      "editor_height": {
+        "label": "编辑器高度 (px)",
+        "hint": "以像素为单位设置编辑器的最小高度。（200 ~ 2000 px）"
+      }
+    },
+    "guide": {
+      "title": "使用说明",
+      "step1": "启用插件后，布局中 extension_point 使用 html_editor、html_content 的区域会自动应用 CKEditor5。直接使用 HtmlEditor/HtmlContent 组件的区域（例如邮件模板）不受影响。",
+      "step2": "通过选择工具栏类型来调整编辑器中显示的功能。请选择符合运营目的的工具栏。",
+      "step3": "启用图片上传后，即可在编辑器中直接粘贴或上传图片。上传的图片会保存在服务器上。",
+      "step4": "修改设置并保存后会立即反映到所有编辑器。",
+      "step5": "停用插件后，编辑器会自动恢复为默认的 HtmlEditor，内容显示会恢复为默认的 HtmlContent。"
+    }
+  }
+}

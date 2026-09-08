@@ -1,0 +1,111 @@
+{
+  "editor": {
+    "data_source": {
+      "nhnkcpRecord": "实名认证记录",
+      "settings": "实名认证设置"
+    },
+    "state": {
+      "test_mode_on": "测试模式已开启",
+      "test_mode_off": "生产模式",
+      "identity_challenge_nhnkcp": "实名认证引导窗口 (NHN KCP)",
+      "record_verified": "实名认证完成（成年）",
+      "record_birthday_missing": "实名认证完成（未提供出生日期）",
+      "record_none": "无实名认证记录"
+    }
+  },
+  "title": "NHN KCP 手机实名认证",
+  "description": "将 NHN KCP 的手机实名认证服务接入 G7 核心实名认证基础设施的插件。",
+  "settings": {
+    "title": "NHN KCP 手机实名认证设置",
+    "description": "设置生产模式、生产认证信息以及重复注册拦截基准。",
+    "info": {
+      "activation": "实名认证的启用在 [环境设置 > 实名认证] 中设置。",
+      "logs": "认证历史可在 [管理员 > 实名认证历史] 中筛选「NHN KCP 手机实名认证」进行查询。"
+    },
+    "test_mode": "测试模式",
+    "test_mode_hint": "测试模式下将连接 KCP 测试环境，不会产生实际的认证费用。",
+    "live_mode_warning_title": "生产模式启用说明",
+    "live_mode_warning_body": "生产模式将使用实际商户站点代码执行实名认证。请先输入生产站点代码和加密密钥后再投入运营。",
+    "section_live_keys": "生产认证信息（测试模式关闭时必填）",
+    "live_site_cd": "站点代码",
+    "live_site_cd_hint": "请仅输入 KCP 发放的站点代码中去掉开头 SM 后的部分。SM 会自动附加。",
+    "live_enc_key": "加密密钥",
+    "live_enc_key_hint": "保存时会加密存放。",
+    "web_siteid": "网站 ID",
+    "web_siteid_hint": "请输入在 KCP 商户管理后台申领的站点识别码。用于接收重复注册确认信息（DI）。",
+    "section": {
+      "duplicate_field": "拦截重复注册"
+    },
+    "fields": {
+      "duplicate_field": {
+        "label": "重复检查基准",
+        "hint": "DI 仅在本站点内确认是否重复注册，CI 则可在所有机构通用识别。（默认值：DI）"
+      },
+      "duplicate_block_enabled": {
+        "label": "拦截重复注册",
+        "hint": "启用后，若通过实名认证的用户此前曾用其他邮箱注册过，则拒绝其注册。如果存在家庭共用手机或 B2B 场景等一人需要注册多个账户的情况，请停用此项。（默认值：启用）",
+        "note": "无论此设置如何，使用同一邮箱重复注册始终会被拦截（核心默认行为）。"
+      }
+    },
+    "duplicate_field": {
+      "di": "DI — 各站点专属值（推荐）",
+      "ci": "CI — 服务通用专属值",
+      "warning": "运营过程中变更可能导致已注册用户的重复检查暂时不完整。"
+    }
+  },
+  "modal": {
+    "title": "手机实名认证",
+    "description": "请在 KCP 认证窗口中完成运营商认证。",
+    "mobile_description": "将跳转到认证页面。完成认证后会自动返回本页面。",
+    "adult_title": "成人认证",
+    "adult_description": "为确认是否满 19 周岁，将进行手机实名认证。认证后会自动返回上一页面。",
+    "start_button": "开始实名认证",
+    "test_mode_notice": "当前为测试模式。不会发生实际认证。",
+    "in_progress": {
+      "title": "请在认证窗口中完成实名认证",
+      "hint": "如果没有看到认证窗口，请解除浏览器的弹窗拦截。关闭窗口后可以重新尝试。"
+    },
+    "popup_blocked": "弹窗已被拦截。请在浏览器中允许弹窗后重试。",
+    "payload_not_ready": "实名认证尚未准备就绪。请稍后重试。",
+    "mobile_return_success": "实名认证已完成。请继续操作。"
+  },
+  "card": {
+    "title": "实名认证信息",
+    "method": "认证方式",
+    "verified_at": "认证时间",
+    "name": "姓名",
+    "birthday": "出生日期",
+    "phone": "手机",
+    "not_provided": "未提供",
+    "is_adult": {
+      "label": "是否成年",
+      "true": "已确认",
+      "false": "未确认（未满 19 周岁）",
+      "unknown": "无法确认（未提供出生日期）"
+    },
+    "pending": {
+      "title": "目前还没有实名认证记录。",
+      "hint": "在进行需要实名认证的操作（重置密码、变更信息等）时可以进行认证。"
+    },
+    "provider_badge": "NHN KCP"
+  },
+  "errors": {
+    "cancelled": "您已取消实名认证。",
+    "not_adult": "这是需要成人认证的服务。仅限满 19 周岁以上用户使用。",
+    "duplicate": "已存在使用同一身份注册的账户。请使用登录或找回密码功能。",
+    "remote_call_failed": "与认证机构通信失败。请稍后重试。",
+    "decrypt_failed": "不是正常的认证。请重试。",
+    "incomplete_identity": "不是正常的认证。请重试。",
+    "not_found": "认证会话已过期。请从头重新开始。",
+    "already_consumed": "认证会话已过期。请从头重新开始。",
+    "binding_mismatch": "实名认证信息与目标账户不一致。",
+    "storage_failed": "保存实名认证信息失败。请稍后重试。",
+    "verify_failed": "实名认证失败。请重试。"
+  },
+  "purposes": {
+    "adult_verification": {
+      "label": "成人认证（仅限 NHN KCP 实名认证）",
+      "description": "请务必仅映射到 NHN KCP provider。邮件／SMS provider 不返回出生日期，无法判定是否成年。"
+    }
+  }
+}

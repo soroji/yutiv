@@ -1,0 +1,4 @@
+{
+  "name": "NHN KCP 手机实名认证",
+  "description": "将 NHN KCP 手机实名认证（V2 REST）作为 Provider 注册到 G7 核心 IDV 基础设施的插件"
+}

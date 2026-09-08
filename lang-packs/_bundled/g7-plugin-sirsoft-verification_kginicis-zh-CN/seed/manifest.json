@@ -1,0 +1,4 @@
+{
+  "name": "KG Inicis 实名认证",
+  "description": "将 KG Inicis 统合认证的实名认证（reqSvcCd=03）作为 Provider 注册到 G7 核心 IDV 基础设施的插件"
+}

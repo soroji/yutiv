@@ -1,0 +1,18 @@
+{
+  "sirsoft-ckeditor5": {
+    "name": "CKEditor 5 WYSIWYG 编辑器",
+    "description": "CKEditor5 插件提供的权限"
+  },
+  "sirsoft-ckeditor5.uploads": {
+    "name": "编辑器上传图片",
+    "description": "查询及删除通过编辑器上传的图片的权限"
+  },
+  "sirsoft-ckeditor5.uploads.read": {
+    "name": "上传图片查询",
+    "description": "编辑器上传图片列表及引用状态查询"
+  },
+  "sirsoft-ckeditor5.uploads.delete": {
+    "name": "上传图片删除",
+    "description": "删除编辑器上传图片的文件及记录"
+  }
+}

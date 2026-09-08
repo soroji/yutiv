@@ -1,0 +1,56 @@
+{
+  "editor": {
+    "data_source": {
+      "settings": "地址搜索设置"
+    }
+  },
+  "search_address": "地址搜索",
+  "postcode": {
+    "search": "地址搜索",
+    "search_button": "查找地址",
+    "placeholder": "请搜索地址",
+    "zonecode": "邮政编码",
+    "address": "基本地址",
+    "road_address": "街道名地址",
+    "jibun_address": "地番地址",
+    "detail_address": "详细地址",
+    "detail_placeholder": "请输入详细地址",
+    "building_name": "建筑名称",
+    "selected": "已选择地址。",
+    "error": {
+      "load_failed": "加载邮政编码服务失败。",
+      "search_failed": "地址搜索失败。"
+    }
+  },
+  "settings": {
+    "title": "Daum 邮政编码设置",
+    "description": "设置 Daum 邮政编码服务的显示方式和样式。",
+    "notice": "Daum 邮政编码服务无需 API 密钥即可免费使用。",
+    "guide": {
+      "title": "使用说明",
+      "step1": "选择显示方式。弹窗以新窗口打开，图层则以覆盖层显示在当前页面之上。",
+      "step2": "选择弹窗模式时，设置弹窗窗口的大小。",
+      "step3": "可通过设置主题颜色来自定义邮政编码搜索窗口的样式。"
+    },
+    "fields": {
+      "display_mode": {
+        "label": "显示方式",
+        "hint": "选择地址搜索窗口的显示方式。",
+        "popup": "弹窗",
+        "layer": "图层"
+      },
+      "popup_width": {
+        "label": "弹窗宽度 (px)",
+        "hint": "弹窗模式下使用的窗口宽度。"
+      },
+      "popup_height": {
+        "label": "弹窗高度 (px)",
+        "hint": "弹窗模式下使用的窗口高度。"
+      },
+      "theme_color": {
+        "label": "主题颜色",
+        "hint": "邮政编码搜索窗口的主题颜色。（例：#1D4ED8）"
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "editor": {
+    "data_source": {
+      "marketing_settings": "营销接收设置",
+      "settings": "设置"
+    }
+  },
+  "marketing_consent_title": "营销同意信息",
+  "email_subscription": "接收广告类电子邮件",
+  "email_subscription_desc": "接收促销、活动、优惠等营销邮件。",
+  "marketing_consent": "营销同意",
+  "marketing_consent_desc": "同意为营销目的收集和使用个人信息。",
+  "third_party_consent": "第三方提供同意",
+  "third_party_consent_desc": "同意为营销目的向第三方提供个人信息。",
+  "info_disclosure": "信息公开",
+  "info_disclosure_desc": "向其他用户公开个人资料信息。",
+  "agree_marketing_consent": "（可选）营销同意",
+  "agree_third_party_consent": "（可选）第三方提供同意",
+  "agree_info_disclosure": "（可选）信息公开同意",
+  "no_consent_history": "没有同意记录。",
+  "history_date": "日期时间",
+  "history_channel_key": "同意项目",
+  "history_action": "变更",
+  "history_source": "来源",
+  "action_granted": "同意",
+  "action_revoked": "撤回",
+  "source_register": "注册会员",
+  "source_admin": "管理员",
+  "source_profile": "我的页面",
+  "consent_date_prefix": "同意日期:",
+  "not_agreed": "未同意",
+  "marketing_consent_edit_hint": "可在个人资料编辑中修改",
+  "view_terms": "查看",
+  "info_disclosure_warning": "不同意时，部分社区功能的使用可能会受到限制。",
+  "no_terms_content": "尚未登记条款内容。",
+  "terms_published_at": "发布日期",
+  "terms_modal_marketing_consent": "营销同意条款",
+  "terms_modal_email_subscription": "广告类电子邮件接收条款",
+  "terms_modal_third_party_consent": "第三方提供同意条款",
+  "terms_modal_info_disclosure": "信息公开条款",
+  "settings": {
+    "title": "营销同意设置",
+    "description": "管理营销同意项目及条款页面。",
+    "section": {
+      "channels": "营销渠道",
+      "legal": "法律同意项目"
+    },
+    "fields": {
+      "marketing_consent_enabled": {
+        "label": "启用营销同意",
+        "hint": "停用时，所有页面中的营销同意项目都会被隐藏。"
+      },
+      "marketing_consent_terms_slug": {
+        "label": "营销同意条款页面",
+        "hint": "请输入由页面模块管理的条款页面的 SLUG。留空则隐藏查看条款按钮。"
+      },
+      "terms_slug_placeholder": "例：marketing-terms",
+      "channels": {
+        "label": "渠道"
+      },
+      "third_party_consent_enabled": {
+        "label": "启用第三方提供同意",
+        "hint": "停用时，第三方提供同意项目会被隐藏。"
+      },
+      "third_party_consent_terms_slug": {
+        "label": "第三方提供同意条款页面",
+        "hint": "请输入由页面模块管理的条款页面的 SLUG。"
+      },
+      "info_disclosure_enabled": {
+        "label": "启用信息公开同意",
+        "hint": "停用时，信息公开同意项目会被隐藏。"
+      },
+      "info_disclosure_terms_slug": {
+        "label": "信息公开同意条款页面",
+        "hint": "请输入由页面模块管理的条款页面的 SLUG。"
+      }
+    },
+    "channels": {
+      "description": "管理营销同意渠道。每个渠道都是独立的同意项目，会员可在注册和我的页面中分别选择是否接收。",
+      "col_label": "项目名称",
+      "col_slug": "条款 slug",
+      "col_enabled": "使用",
+      "add": "添加渠道",
+      "system_badge": "系统",
+      "delete_success": "渠道已删除。",
+      "save_success": "渠道已保存。",
+      "save_error": "渠道保存失败。"
+    },
+    "channel_modal": {
+      "title": "添加 / 编辑渠道",
+      "enabled": "是否使用",
+      "key": "项目键",
+      "key_hint": "只能使用英文小写字母、数字和下划线（_）。",
+      "key_placeholder": "例：sms_subscription",
+      "label_ko": "项目名称 (韩语)",
+      "label_en": "项目名称 (英语)",
+      "label_placeholder": "例：接收广告类短信",
+      "page_slug": "条款页面 slug",
+      "page_slug_hint": "留空则隐藏查看条款按钮。",
+      "page_slug_placeholder": "例：sms-terms",
+      "save": "保存",
+      "cancel": "取消"
+    },
+    "channel_deactivate_modal": {
+      "title": "无法删除该渠道",
+      "message": "该渠道已有会员同意，因此无法删除。是否改为停用该渠道？",
+      "confirm": "转为停用"
+    }
+  }
+}
