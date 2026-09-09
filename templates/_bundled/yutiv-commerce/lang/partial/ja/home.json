@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "eyebrow": "GLOBAL TREND LIVE COMMERCE",
+    "title": "世界のトレンドに、\n一番早く出会う",
+    "subtitle": "ビューティー・ファッション・ゴルフ・ライフスタイル。いま最も注目される商品を、国境を越えてお届けします。",
+    "cta_primary": "商品を見る",
+    "cta_secondary": "カテゴリーを見る"
+  },
+  "sections": {
+    "categories": "カテゴリー",
+    "categories_eyebrow": "カテゴリーから探す",
+    "new_products": "新着商品",
+    "new_eyebrow": "いち早くチェック",
+    "best_products": "ベスト",
+    "best_eyebrow": "いま人気",
+    "all_products": "すべての商品",
+    "all_eyebrow": "コレクション",
+    "view_all": "すべて見る"
+  },
+  "empty": {
+    "title": "商品を準備しています",
+    "description": "まもなく新しい商品をご紹介します。もうしばらくお待ちください。"
+  },
+  "brand": {
+    "eyebrow": "YUTIV について",
+    "title": "YUTIV が選ばれる理由",
+    "description": "単に商品を販売する場ではなく、商品の価値をリアルに伝えるトレンドコマースプラットフォームです。",
+    "point_1_title": "国境を越えたキュレーション",
+    "point_1_desc": "世界各地のトレンド商品をひとつの場所で。",
+    "point_2_title": "リアルな商品体験",
+    "point_2_desc": "見て、感じる。新しい買い物のかたちを目指します。",
+    "point_3_title": "安心の注文・決済",
+    "point_3_desc": "ご注文から配送まで、全工程を安全に管理します。"
+  }
+}

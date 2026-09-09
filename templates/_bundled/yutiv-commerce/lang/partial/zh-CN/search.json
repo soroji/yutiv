@@ -1,0 +1,57 @@
+{
+  "title": "搜索",
+  "placeholder": "请输入搜索词",
+  "button": "搜索",
+  "submit": "搜索",
+  "results": "搜索结果",
+  "results_count": "{{count}} 个结果",
+  "result_summary": "搜索结果 {{count}} 条",
+  "result_count_suffix": "条",
+  "result_count_suffix_at_least": "条以上",
+  "no_results": "没有搜索结果。",
+  "try_different": "请尝试其他搜索词。",
+  "tabs": {
+    "all": "全部",
+    "posts": "帖子",
+    "products": "商品",
+    "pages": "页面"
+  },
+  "filter": {
+    "all": "全部",
+    "posts": "帖子",
+    "products": "商品",
+    "all_boards": "全部版块"
+  },
+  "sort": {
+    "relevance": "按相关度",
+    "latest": "由新到旧",
+    "popular": "按热度",
+    "price_asc": "价格由低到高",
+    "price_desc": "价格由高到低"
+  },
+  "empty": {
+    "all": "没有搜索结果。",
+    "posts": "没有帖子的搜索结果。",
+    "products": "没有商品的搜索结果。",
+    "pages": "没有页面的搜索结果。",
+    "posts_in_all": "没有帖子的搜索结果",
+    "products_in_all": "没有商品的搜索结果",
+    "pages_in_all": "没有页面的搜索结果",
+    "suggestion": "请尝试其他搜索词"
+  },
+  "failed": {
+    "title": "搜索时发生错误",
+    "suggestion": "请稍后重试"
+  },
+  "page_published_at": "发布日期：{{date}}",
+  "view_more": "更多",
+  "view_all": "查看全部",
+  "initial": {
+    "title": "请输入搜索词",
+    "description": "可以对帖子、商品和页面进行统一搜索。",
+    "hint_title": "搜索技巧",
+    "hint_1": "输入两个以上的词可以获得更准确的结果",
+    "hint_2": "搜索词会在标题和内容中一并检索"
+  },
+  "refine_query_hint": "把搜索词输入得更具体一些，就能看到准确的条数和最后一页。"
+}

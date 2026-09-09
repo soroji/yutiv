@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "is_partial": true,
+    "description": "상품 0건 안내 — API 가 정상이고(_global.homeProductsFailed 아님) 로딩이 끝났으며 세 개 상품 소스가 모두 0건일 때만 표시한다. API 오류를 '상품 없음'으로 단정하지 않기 위한 게이트다. 방문자용 중립 문구만 쓰고 관리자용 등록 안내는 넣지 않는다. 상품이 등록되면 코드 수정 없이 자동으로 사라진다.",
+    "design_reference": "빈 상태에서도 아이콘 배지 박스 대신 여백과 타이포로 버티는 방향은 SuperBify Commerce Minimal(Still Form, MIT, (c) 2026 SuperBify)의 EmptyState 에서 시각적으로 참고했다. 코드·마크업·문구는 차용하지 않았다. NOTICE-DESIGN.md 참조."
+  },
+  "type": "basic",
+  "name": "Div",
+  "if": "{{!_global.homeProductsFailed && !newProducts?.loading && !popularProducts?.loading && !products?.loading && (newProducts?.data ?? []).length === 0 && (popularProducts?.data ?? []).length === 0 && (products?.data?.data ?? []).length === 0}}",
+  "props": { "className": "py-16 text-center" },
+  "children": [
+    {
+      "type": "basic",
+      "name": "Span",
+      "props": { "className": "block text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-gray-500" },
+      "text": "$t:home.sections.all_eyebrow"
+    },
+    {
+      "type": "basic",
+      "name": "H2",
+      "props": { "className": "mt-4 break-keep text-2xl font-light tracking-tight text-gray-900 dark:text-white lg:text-3xl" },
+      "text": "$t:home.empty.title"
+    },
+    {
+      "type": "basic",
+      "name": "P",
+      "props": { "className": "mx-auto mt-4 max-w-xl break-keep text-sm leading-relaxed text-gray-500 dark:text-gray-400" },
+      "text": "$t:home.empty.description"
+    }
+  ]
+}

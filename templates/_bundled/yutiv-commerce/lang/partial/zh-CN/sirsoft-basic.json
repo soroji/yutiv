@@ -1,0 +1,7 @@
+{
+  "address": {
+    "zonecode_placeholder": "邮政编码",
+    "address_placeholder": "请搜索地址",
+    "detail_placeholder": "请输入详细地址"
+  }
+}

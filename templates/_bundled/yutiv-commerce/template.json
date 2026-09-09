@@ -1,0 +1,152 @@
+{
+    "identifier": "yutiv-commerce",
+    "vendor": "yutiv",
+    "name": {
+        "ko": "YUTIV Commerce",
+        "en": "YUTIV Commerce",
+        "ja": "YUTIV Commerce",
+        "zh-CN": "YUTIV Commerce"
+    },
+    "version": "1.0.0",
+    "license": "MIT",
+    "description": {
+        "ko": "YUTIV 상품 중심 쇼핑몰 사용자 템플릿",
+        "en": "YUTIV product-first commerce user template",
+        "ja": "YUTIV 商品中心のショッピングモール向けユーザーテンプレート",
+        "zh-CN": "YUTIV 以商品为中心的商城用户模板"
+    },
+    "type": "user",
+    "locales": [
+        "ko",
+        "en",
+        "ja",
+        "zh-CN"
+    ],
+    "author": {
+        "name": "YUTIV",
+        "email": "",
+        "url": ""
+    },
+    "release_date": "2026-09-08",
+    "g7_version": ">=7.0.9",
+    "dependencies": {
+        "modules": {
+            "sirsoft-board": ">=1.0.0",
+            "sirsoft-ecommerce": ">=1.1.0",
+            "sirsoft-page": ">=1.1.0"
+        },
+        "plugins": {
+            "sirsoft-daum_postcode": ">=1.0.0"
+        }
+    },
+    "assets": {
+        "css": [
+            "dist/css/components.css"
+        ],
+        "js": [
+            "dist/js/components.iife.js"
+        ],
+        "fonts": [],
+        "images": []
+    },
+    "components": {
+        "basic": [
+            "a",
+            "button",
+            "checkbox",
+            "div",
+            "form",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "hr",
+            "icon",
+            "img",
+            "input",
+            "label",
+            "li",
+            "nav",
+            "p",
+            "section",
+            "select",
+            "span",
+            "svg",
+            "table",
+            "tbody",
+            "td",
+            "textarea",
+            "th",
+            "thead",
+            "tr",
+            "ul"
+        ],
+        "composite": [
+            "header",
+            "footer",
+            "mobile-nav",
+            "product-card",
+            "rich-text-editor",
+            "image-gallery",
+            "quantity-selector",
+            "post-reactions",
+            "social-login-buttons",
+            "file-uploader",
+            "card",
+            "modal",
+            "toast",
+            "pagination",
+            "stat-card",
+            "status-badge",
+            "tab-navigation",
+            "empty-state",
+            "loading-spinner",
+            "breadcrumb",
+            "search-bar",
+            "dropdown"
+        ],
+        "layout": [
+            "container",
+            "flex",
+            "grid",
+            "section"
+        ]
+    },
+    "preview": {
+        "thumbnail": "preview/thumbnail.png",
+        "screenshots": []
+    },
+    "error_config": {
+        "layouts": {
+            "401": "errors/401",
+            "403": "errors/403",
+            "404": "errors/404",
+            "500": "errors/500",
+            "503": "errors/503",
+            "maintenance": "errors/maintenance"
+        }
+    },
+    "features": {
+        "dark_mode": true,
+        "responsive": true,
+        "multi_language": true,
+        "multi_currency": true
+    },
+    "github_url": "",
+    "github_changelog_url": "",
+    "externals": [
+        {
+            "id": "fontawesome",
+            "type": "style",
+            "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+            "preconnect": "https://cdnjs.cloudflare.com"
+        },
+        {
+            "id": "pretendard",
+            "type": "webfont",
+            "url": "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css",
+            "preconnect": "https://cdn.jsdelivr.net",
+            "crossorigin": "anonymous"
+        }
+    ]
+}

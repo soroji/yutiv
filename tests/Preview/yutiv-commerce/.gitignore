@@ -1,0 +1,5 @@
+# 프리뷰 생성물과 벤더링한 서드파티 자산은 추적하지 않는다.
+# 재생성: README.md 참조 (node build.cjs)
+output/
+.umd/
+.vendor/

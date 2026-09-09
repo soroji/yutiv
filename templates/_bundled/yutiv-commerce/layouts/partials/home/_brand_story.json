@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "is_partial": true,
+    "description": "브랜드 스토리 — 템플릿 기본(정적) 콘텐츠이며 문구는 전부 번역키다. 운영 DB 값이 아니고 허위 할인·프로모션 정보도 담지 않는다. 상품이 0건이어도 첫 화면이 비어 보이지 않게 하는 역할을 겸하므로 상품 수와 무관하게 항상 표시한다. 전체 폭 밴드라 home.json 의 Container 밖에 놓는다.",
+    "design_reference": "'어두운 전체 폭 밴드 + 큰 경량 서체 + 아이콘 없는 3열 텍스트'라는 구성은 SuperBify Commerce Minimal(Still Form, MIT, (c) 2026 SuperBify)의 BrandStorySection 에서 시각적으로 참고했다. 코드·마크업·문구·자산은 차용하지 않았다. NOTICE-DESIGN.md 참조."
+  },
+  "type": "basic",
+  "name": "Div",
+  "props": { "className": "bg-gray-900 text-white" },
+  "children": [
+    {
+      "type": "layout",
+      "name": "Container",
+      "props": { "className": "px-4 py-20 sm:px-6 lg:px-8" },
+      "children": [
+        {
+          "type": "basic",
+          "name": "Div",
+          "props": { "className": "max-w-3xl" },
+          "children": [
+            {
+              "type": "basic",
+              "name": "Span",
+              "props": { "className": "block text-xs font-medium uppercase tracking-widest text-gray-400" },
+              "text": "$t:home.brand.eyebrow"
+            },
+            {
+              "type": "basic",
+              "name": "H2",
+              "props": { "className": "mt-6 whitespace-pre-line break-keep text-2xl font-light leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl" },
+              "text": "$t:home.brand.title"
+            },
+            {
+              "type": "basic",
+              "name": "P",
+              "props": { "className": "mt-6 max-w-xl break-keep text-sm leading-relaxed text-gray-400 lg:text-base" },
+              "text": "$t:home.brand.description"
+            }
+          ]
+        },
+        {
+          "comment": "3열 텍스트 — 아이콘 원형 배지를 쓰지 않는다(대시보드형 카드 UI 회피). 상단 헤어라인으로만 구분한다.",
+          "type": "basic",
+          "name": "Ul",
+          "props": { "className": "mt-16 grid grid-cols-1 gap-10 sm:grid-cols-3" },
+          "children": [
+            {
+              "type": "basic",
+              "name": "Li",
+              "props": { "className": "border-t border-white/30 pt-6" },
+              "children": [
+                { "type": "basic", "name": "H3", "props": { "className": "text-base font-normal text-white" }, "text": "$t:home.brand.point_1_title" },
+                { "type": "basic", "name": "P", "props": { "className": "mt-3 text-sm leading-relaxed text-gray-400" }, "text": "$t:home.brand.point_1_desc" }
+              ]
+            },
+            {
+              "type": "basic",
+              "name": "Li",
+              "props": { "className": "border-t border-white/30 pt-6" },
+              "children": [
+                { "type": "basic", "name": "H3", "props": { "className": "text-base font-normal text-white" }, "text": "$t:home.brand.point_2_title" },
+                { "type": "basic", "name": "P", "props": { "className": "mt-3 text-sm leading-relaxed text-gray-400" }, "text": "$t:home.brand.point_2_desc" }
+              ]
+            },
+            {
+              "type": "basic",
+              "name": "Li",
+              "props": { "className": "border-t border-white/30 pt-6" },
+              "children": [
+                { "type": "basic", "name": "H3", "props": { "className": "text-base font-normal text-white" }, "text": "$t:home.brand.point_3_title" },
+                { "type": "basic", "name": "P", "props": { "className": "mt-3 text-sm leading-relaxed text-gray-400" }, "text": "$t:home.brand.point_3_desc" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

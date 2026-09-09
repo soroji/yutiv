@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "is_partial": true,
+    "description": "메인 히어로 — 에디토리얼 전체 폭 배너. 운영자 관리형 배너 기능이 코어/이커머스에 없으므로 템플릿 기본 히어로이며 문구는 전부 번역키다(운영 문구 하드코딩 없음). 이미지 자산에 의존하지 않아 상품이 0건이어도 첫 화면 품질이 유지된다.",
+    "design_reference": "큰 경량 서체 + 작은 대문자 자간 eyebrow + 사각 CTA 라는 방향은 SuperBify Commerce Minimal(Still Form, MIT, (c) 2026 SuperBify)의 히어로에서 시각적으로 참고했다. 마크업·클래스·문구·자산은 차용하지 않았다. NOTICE-DESIGN.md 참조.",
+    "class_policy": "className 은 dist/css/components.css 에 존재하는 클래스만 사용한다(Tailwind v4 는 레이아웃 JSON 을 스캔하지 않는다)."
+  },
+  "type": "basic",
+  "name": "Div",
+  "props": {
+    "className": "relative overflow-hidden bg-gray-900 text-white"
+  },
+  "children": [
+    {
+      "comment": "배경 — 이미지 자산 없이 세로 그라디언트만. 상품/배너가 없어도 첫 화면이 비어 보이지 않는다.",
+      "type": "basic",
+      "name": "Div",
+      "props": {
+        "className": "pointer-events-none absolute inset-0 bg-gradient-to-b from-gray-900 to-gray-800",
+        "aria-hidden": "true"
+      }
+    },
+    {
+      "type": "layout",
+      "name": "Container",
+      "props": {
+        "className": "relative px-4 py-20 sm:px-6 lg:px-8"
+      },
+      "responsive": {
+        "mobile": {
+          "comment": "모바일은 세로 여백을 줄여 첫 화면에서 상품 섹션이 더 빨리 보이게 한다",
+          "props": { "className": "relative px-5 py-16" }
+        }
+      },
+      "children": [
+        {
+          "type": "basic",
+          "name": "Div",
+          "props": { "className": "max-w-3xl" },
+          "children": [
+            {
+              "type": "basic",
+              "name": "Span",
+              "props": {
+                "className": "block text-xs font-medium uppercase tracking-widest text-gray-400"
+              },
+              "text": "$t:home.hero.eyebrow"
+            },
+            {
+              "comment": "제목 — 번역 문자열의 줄바꿈을 그대로 살린다(whitespace-pre-line). 로케일마다 줄 나눔 위치를 번역 파일에서 조절할 수 있다.",
+              "type": "basic",
+              "name": "H1",
+              "props": {
+                "className": "mt-6 whitespace-pre-line break-keep text-3xl font-light leading-tight tracking-tight text-white sm:text-3xl lg:text-5xl"
+              },
+              "text": "$t:home.hero.title"
+            },
+            {
+              "type": "basic",
+              "name": "P",
+              "props": {
+                "className": "mt-6 max-w-xl break-keep text-sm leading-relaxed text-gray-400 lg:text-base"
+              },
+              "text": "$t:home.hero.subtitle"
+            },
+            {
+              "type": "basic",
+              "name": "Div",
+              "props": { "className": "mt-10 flex flex-wrap items-center gap-6" },
+              "children": [
+                {
+                  "comment": "주 CTA — 실제 상품 목록 라우트. 라운드 필 대신 사각 블록. px-8 py-4 로 터치 영역 44px 이상. 엔진에 <a href> 가로채기가 없어 Button+navigate 를 쓰고, SEO 봇 렌더러가 <a href> 로 변환한다.",
+                  "type": "basic",
+                  "name": "Button",
+                  "props": {
+                    "type": "button",
+                    "className": "inline-flex items-center gap-2 bg-white px-8 py-4 text-xs font-medium uppercase tracking-widest text-gray-900 transition-colors hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                  },
+                  "actions": [
+                    { "type": "click", "handler": "navigate", "params": { "path": "{{_global.shopBase}}/products" } }
+                  ],
+                  "children": [
+                    { "type": "basic", "name": "Span", "text": "$t:home.hero.cta_primary" },
+                    { "type": "basic", "name": "Icon", "props": { "name": "arrow-right", "className": "text-xs", "aria-hidden": "true" } }
+                  ]
+                },
+                {
+                  "comment": "보조 CTA — 카테고리가 실제로 있을 때만 노출한다(없으면 죽은 앵커가 된다). 밑줄 텍스트 링크 형태.",
+                  "type": "basic",
+                  "name": "A",
+                  "if": "{{(categories?.data ?? []).length > 0}}",
+                  "props": {
+                    "href": "#yutiv-categories",
+                    "className": "inline-flex items-center gap-2 border-b border-white/30 pb-1 text-xs font-medium uppercase tracking-widest text-white transition-colors hover:text-gray-300 focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                  },
+                  "text": "$t:home.hero.cta_secondary"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

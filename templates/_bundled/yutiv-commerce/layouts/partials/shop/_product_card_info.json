@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "is_partial": true,
+    "description": "상품 카드의 정보 영역 — 브랜드 / 상품명 / 판매가 / 정상가 / 할인율. 카드 루트(div[data-product-card])의 두 번째 자식이며 이미지 바로 아래에 온다.",
+    "dom_contract": "`data-product-info` 로 식별한다. 상품명은 `data-product-name` 을 달고 카드당 정확히 하나다. 반복 스코프의 item_var 는 `product` 여야 한다.",
+    "다중통화": "선호 통화가 있으면 multi_currency_* 에서, 없으면 기본 포맷으로 폴백한다 — ProductCard 컴포지트와 동일 규칙.",
+    "왜 inline style 인가": "Button 컴포넌트가 className 앞에 `inline-flex items-center justify-center` 를 붙이는데 빌드된 CSS 에서 `.inline-flex` 가 `.block` 보다 뒤에 있어 클래스로 되돌릴 수 없다. 상품명 링크가 가운데 정렬로 찌그러지지 않도록 인라인 스타일로 고정한다."
+  },
+  "type": "basic",
+  "name": "Div",
+  "props": {
+    "data-product-info": "",
+    "className": "mt-3",
+    "style": { "minWidth": "0" }
+  },
+  "children": [
+    {
+      "comment": "브랜드 — 없으면 대표 카테고리. 둘 다 없으면 렌더하지 않는다(빈 줄 방지).",
+      "type": "basic",
+      "name": "Span",
+      "if": "{{(product.brand_name || product.primary_category || '') !== ''}}",
+      "props": {
+        "data-product-brand": "",
+        "className": "block text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-gray-500 truncate"
+      },
+      "text": "{{product.brand_name || product.primary_category || ''}}"
+    },
+    {
+      "comment": "상품명 — 이미지와 같은 목적지로 가는 두 번째 진입점. 목록에서 이름을 눌러도 상세로 간다.",
+      "type": "basic",
+      "name": "Button",
+      "props": {
+        "type": "button",
+        "className": "focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
+        "style": {
+          "display": "block",
+          "width": "100%",
+          "minWidth": "0",
+          "textAlign": "left"
+        }
+      },
+      "actions": [
+        {
+          "type": "click",
+          "handler": "navigate",
+          "params": {
+            "path": "{{_global.shopBase}}/products/{{product.product_code ?? product.id}}",
+            "mergeQuery": true,
+            "query": {}
+          }
+        }
+      ],
+      "children": [
+        {
+          "type": "basic",
+          "name": "H3",
+          "props": {
+            "data-product-name": "",
+            "className": "mt-1 break-keep text-sm font-normal leading-relaxed text-gray-900 dark:text-white line-clamp-2"
+          },
+          "text": "{{product.name_localized ?? product.name ?? ''}}"
+        }
+      ]
+    },
+    {
+      "type": "basic",
+      "name": "Div",
+      "props": {
+        "data-product-price": "",
+        "className": "mt-2 flex flex-wrap items-baseline gap-2"
+      },
+      "children": [
+        {
+          "comment": "판매가",
+          "type": "basic",
+          "name": "Span",
+          "props": { "className": "text-sm font-medium text-gray-900 dark:text-white" },
+          "text": "{{product.multi_currency_selling_price?.[_global.preferredCurrency]?.formatted ?? product.selling_price_formatted ?? ''}}"
+        },
+        {
+          "comment": "정상가 — 할인 중일 때만",
+          "type": "basic",
+          "name": "Span",
+          "if": "{{(product.discount_rate ?? 0) > 0}}",
+          "props": { "className": "text-xs text-gray-400 line-through dark:text-gray-500" },
+          "text": "{{product.multi_currency_list_price?.[_global.preferredCurrency]?.formatted ?? product.list_price_formatted ?? ''}}"
+        },
+        {
+          "comment": "할인율 — 붉은 배지 대신 텍스트로. 품절·판매중지에는 표시하지 않는다.",
+          "type": "basic",
+          "name": "Span",
+          "if": "{{(product.discount_rate ?? 0) > 0 && product.sales_status === 'on_sale'}}",
+          "props": { "className": "text-xs font-medium text-gray-900 dark:text-white" },
+          "text": "{{product.discount_rate}}%"
+        }
+      ]
+    }
+  ]
+}

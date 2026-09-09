@@ -1,0 +1,161 @@
+{
+    "version": "1.0.0",
+    "layout_name": "home",
+    "permissions": [],
+    "extends": "_user_base",
+    "meta": {
+        "seo": {
+            "enabled": true,
+            "data_sources": [
+                "categories",
+                "newProducts",
+                "popularProducts",
+                "products"
+            ],
+            "priority": 1,
+            "changefreq": "daily",
+            "og": {
+                "type": "website"
+            },
+            "structured_data": {
+                "@type": "WebSite",
+                "name": "{{_global.site_name ?? ''}}",
+                "url": "{{_global.site_url ?? ''}}"
+            }
+        }
+    },
+    "data_sources": [
+        {
+            "_comment": "카테고리 트리 — 쇼핑몰 index 와 동일한 공개 API. 응답은 categories.data 배열이며 각 항목에 id/name_localized/slug/children 이 있다.",
+            "id": "categories",
+            "label_key": "$t:editor.data_source.categories",
+            "type": "api",
+            "endpoint": "/api/modules/sirsoft-ecommerce/categories",
+            "method": "GET",
+            "auto_fetch": true,
+            "loading_strategy": "progressive",
+            "fallback": {
+                "data": []
+            },
+            "onError": {
+                "handler": "setState",
+                "params": {
+                    "target": "global",
+                    "homeCategoriesFailed": true
+                }
+            }
+        },
+        {
+            "_comment": "신상품 — 이커머스 모듈 공개 엔드포인트. 응답은 newProducts.data 배열(ProductListResource).",
+            "id": "newProducts",
+            "label_key": "$t:editor.data_source.newProducts",
+            "type": "api",
+            "endpoint": "/api/modules/sirsoft-ecommerce/products/new?limit=8",
+            "method": "GET",
+            "auto_fetch": true,
+            "loading_strategy": "progressive",
+            "fallback": {
+                "data": []
+            },
+            "onError": {
+                "handler": "setState",
+                "params": {
+                    "target": "global",
+                    "homeProductsFailed": true
+                }
+            }
+        },
+        {
+            "_comment": "인기(베스트) 상품 — 이커머스 모듈 공개 엔드포인트. 응답은 popularProducts.data 배열.",
+            "id": "popularProducts",
+            "label_key": "$t:editor.data_source.popularProducts",
+            "type": "api",
+            "endpoint": "/api/modules/sirsoft-ecommerce/products/popular?limit=8",
+            "method": "GET",
+            "auto_fetch": true,
+            "loading_strategy": "progressive",
+            "fallback": {
+                "data": []
+            },
+            "onError": {
+                "handler": "setState",
+                "params": {
+                    "target": "global",
+                    "homeProductsFailed": true
+                }
+            }
+        },
+        {
+            "_comment": "전체 상품 미리보기 — 목록 API 를 그대로 쓴다(별도 API 신설 없음). 페이지네이션 응답이라 products.data.data / products.data.pagination 구조다.",
+            "id": "products",
+            "label_key": "$t:editor.data_source.products",
+            "type": "api",
+            "endpoint": "/api/modules/sirsoft-ecommerce/products",
+            "method": "GET",
+            "params": {
+                "sort": "latest",
+                "per_page": 8,
+                "page": 1
+            },
+            "auto_fetch": true,
+            "loading_strategy": "progressive",
+            "fallback": {
+                "data": [],
+                "pagination": {
+                    "current_page": 1,
+                    "per_page": 8,
+                    "has_more_pages": false
+                }
+            },
+            "onError": {
+                "handler": "setState",
+                "params": {
+                    "target": "global",
+                    "homeProductsFailed": true
+                }
+            }
+        }
+    ],
+    "slots": {
+        "content": [
+            {
+                "comment": "=== 1. 히어로 (전체 폭) ===",
+                "partial": "partials/home/_hero.json"
+            },
+            {
+                "comment": "=== 2~6. 본문 (카테고리 · 신상품 · 베스트 · 전체 상품 · 0건 안내) — 섹션 간 간격은 각 파셜 루트의 mt-16 이 만든다. 표시 조건이 파셜 안에 있으므로 바깥에서 감싸면 숨겨졌을 때 빈 여백만 남는다.",
+                "type": "layout",
+                "name": "Container",
+                "props": {
+                    "className": "px-4 py-16 sm:px-6 lg:px-8"
+                },
+                "children": [
+                    {
+                        "comment": "=== 2. 카테고리 탐색 (실제 카테고리가 있을 때만) ===",
+                        "partial": "partials/home/_category_nav.json"
+                    },
+                    {
+                        "comment": "=== 3. 신상품 ===",
+                        "partial": "partials/home/_new_products.json"
+                    },
+                    {
+                        "comment": "=== 4. 베스트 ===",
+                        "partial": "partials/home/_best_products.json"
+                    },
+                    {
+                        "comment": "=== 5. 전체 상품 미리보기 ===",
+                        "partial": "partials/home/_all_products.json"
+                    },
+                    {
+                        "comment": "=== 6. 상품 준비 중 안내 (API 정상 + 로딩 완료 + 상품 0건일 때만) ===",
+                        "partial": "partials/home/_no_products.json"
+                    }
+                ]
+            },
+            {
+                "comment": "=== 7. 브랜드 스토리 (전체 폭 밴드 — 상품 수와 무관하게 항상 표시) ===",
+                "partial": "partials/home/_brand_story.json"
+            }
+        ]
+    }
+}

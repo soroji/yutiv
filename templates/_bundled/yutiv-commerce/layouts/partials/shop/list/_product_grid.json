@@ -1,0 +1,175 @@
+{
+    "meta": {
+        "is_partial": true,
+        "description": "상품 그리드 + 페이지네이션 (products 데이터소스 사용, route.path 기반 navigate). 카드는 홈과 같은 에디토리얼 카드 파셜을 쓴다 — 홈과 목록의 상품 표현을 한 곳에서 관리한다. 데이터소스·쿼리 계약·페이지네이션 판정 로직은 종전과 동일하며 표현만 바꿨다.",
+        "design_reference": "이미지 우선 세로 카드와 로딩 스켈레톤 도입은 SuperBify Commerce Minimal(Still Form, MIT, (c) 2026 SuperBify)에서 시각적으로 참고했다. 코드·마크업은 차용하지 않았다. NOTICE-DESIGN.md 참조."
+    },
+    "type": "basic",
+    "name": "Div",
+    "children": [
+        {
+            "comment": "로딩 스켈레톤 — 첫 조회·페이지 이동 중 빈 상태가 먼저 번쩍이는 것을 막는다",
+            "type": "basic",
+            "name": "Div",
+            "if": "{{products?.loading}}",
+            "props": {
+                "className": "mb-12"
+            },
+            "children": [
+                {
+                    "partial": "partials/shop/_product_skeleton.json"
+                }
+            ]
+        },
+        {
+            "comment": "상품 그리드",
+            "type": "basic",
+            "name": "Div",
+            "if": "{{!products?.loading && (products?.data?.data ?? []).length > 0}}",
+            "props": {
+                "className": "grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 mb-12"
+            },
+            "children": [
+                {
+                    "type": "basic",
+                    "name": "Div",
+                    "iteration": {
+                        "source": "{{products?.data?.data ?? []}}",
+                        "item_var": "product"
+                    },
+                    "children": [
+                        {
+                            "partial": "partials/shop/_product_card_image.json"
+                        },
+                        {
+                            "partial": "partials/shop/_product_card_info.json"
+                        }
+                    ],
+                    "comment": "카드 루트 — 반복 1회당 grid 의 direct child 1개다. 이미지와 정보를 grid 의 형제 셀로 내보내면 상품 하나가 두 칸을 차지해 데스크톱에서는 이미지 옆에 이름이 서고 모바일에서는 이웃 카드와 글자가 겹친다.",
+                    "props": {
+                        "data-product-card": "",
+                        "data-product-id": "{{product.id}}",
+                        "className": "min-w-0",
+                        "style": {
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "width": "100%",
+                            "minWidth": "0"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "comment": "빈 상태 — 아이콘 원형 배지를 걷어내고 여백과 타이포만 남긴다(대시보드형 카드 UI 회피). 로딩 중에는 표시하지 않는다.",
+            "type": "basic",
+            "name": "Div",
+            "if": "{{!products?.loading && (products?.data?.data ?? []).length === 0}}",
+            "props": {
+                "className": "py-20 text-center"
+            },
+            "children": [
+                {
+                    "type": "basic",
+                    "name": "P",
+                    "props": {
+                        "className": "text-2xl font-light tracking-tight text-gray-900 dark:text-white"
+                    },
+                    "text": "$t:shop.no_products"
+                },
+                {
+                    "type": "basic",
+                    "name": "P",
+                    "props": {
+                        "className": "mx-auto mt-4 max-w-xl text-sm leading-relaxed text-gray-500 dark:text-gray-400"
+                    },
+                    "text": "$t:shop.no_search_results"
+                }
+            ]
+        },
+        {
+            "comment": "페이지네이션 — 총 건수가 상한에 걸리면 last_page 가 null 로 온다. 그때 last_page 만 보고 판단하면 페이저가 통째로 사라져 1페이지 밖 상품에 도달할 방법이 없어지므로, has_more_pages 와 현재 페이지도 함께 본다. (판정 로직은 종전과 동일 — 표현만 사각 버튼으로 바꿨다)",
+            "type": "basic",
+            "name": "Div",
+            "if": "{{((products?.data?.pagination?.last_page ?? 0) > 1) || (products?.data?.pagination?.has_more_pages ?? false) || ((products?.data?.pagination?.current_page ?? 1) > 1)}}",
+            "props": {
+                "className": "flex justify-center items-center gap-6 mb-16"
+            },
+            "children": [
+                {
+                    "comment": "이전 페이지 버튼",
+                    "type": "basic",
+                    "name": "Button",
+                    "props": {
+                        "className": "p-3 border border-gray-300 dark:border-gray-700 {{(products?.data?.pagination?.current_page ?? 1) <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer'}}",
+                        "disabled": "{{(products?.data?.pagination?.current_page ?? 1) <= 1}}"
+                    },
+                    "children": [
+                        {
+                            "type": "basic",
+                            "name": "Icon",
+                            "props": {
+                                "name": "chevron-left",
+                                "className": "text-xs"
+                            }
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "type": "click",
+                            "handler": "navigate",
+                            "params": {
+                                "path": "{{route.path}}",
+                                "mergeQuery": true,
+                                "query": {
+                                    "page": "{{(products?.data?.pagination?.current_page ?? 1) - 1}}"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "comment": "페이지 번호 표시 — 마지막 페이지를 모를 때(총 건수 상한 초과) 1 로 채우면 '1 / 1' 로 굳어 끝난 것처럼 보인다. 그때는 현재 페이지만 표기한다",
+                    "type": "basic",
+                    "name": "Span",
+                    "props": {
+                        "className": "text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-400"
+                    },
+                    "text": "{{products?.data?.pagination?.last_page ? ((products?.data?.pagination?.current_page ?? 1) + ' / ' + products.data.pagination.last_page) : (products?.data?.pagination?.current_page ?? 1)}}"
+                },
+                {
+                    "comment": "다음 페이지 버튼 — 이동 가능 여부는 총 건수와 무관하게 has_more_pages 가 정확히 말해 준다. last_page 로 판정하면 그 값이 null 인 목록에서 첫 페이지부터 비활성이 된다",
+                    "type": "basic",
+                    "name": "Button",
+                    "props": {
+                        "className": "p-3 border border-gray-300 dark:border-gray-700 {{(products?.data?.pagination?.has_more_pages ?? false) ? 'hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer' : 'opacity-50 cursor-not-allowed'}}",
+                        "disabled": "{{!(products?.data?.pagination?.has_more_pages ?? false)}}"
+                    },
+                    "children": [
+                        {
+                            "type": "basic",
+                            "name": "Icon",
+                            "props": {
+                                "name": "chevron-right",
+                                "className": "text-xs"
+                            }
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "type": "click",
+                            "handler": "navigate",
+                            "params": {
+                                "path": "{{route.path}}",
+                                "mergeQuery": true,
+                                "query": {
+                                    "page": "{{(products?.data?.pagination?.current_page ?? 1) + 1}}"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

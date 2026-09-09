@@ -1,0 +1,2243 @@
+{
+    "version": "1.0.0",
+    "layout_name": "_user_base",
+    "meta": {
+        "title": "$t:user.base_layout_title",
+        "description": "$t:user.base_layout_description",
+        "is_base": true,
+        "seo": {
+            "enabled": false,
+            "data_sources": ["boards"],
+            "vars": {
+                "site_name": "$core_settings:general.site_name"
+            },
+            "og": {
+                "type": "website"
+            }
+        }
+    },
+    "globalHeaders": [
+        {
+            "pattern": "/api/modules/sirsoft-ecommerce/*",
+            "headers": {
+                "X-Cart-Key": "{{_global.cartKey}}",
+                "X-Currency": "{{_global.preferredCurrency ?? _global.defaultCurrency}}",
+                "X-Shipping-Country": "{{_global.preferredShippingCountry ?? _global.modules?.['sirsoft-ecommerce']?.shipping?.default_country ?? 'KR'}}"
+            }
+        },
+        {
+            "pattern": "/api/auth/*",
+            "headers": {
+                "X-Cart-Key": "{{_global.cartKey}}"
+            }
+        },
+        {
+            "_comment": "비회원 주문 후속 액션 (cancel/estimate-refund/update-shipping-address/options/{}/confirm) — 토큰 필수 prefix. 통합 상세조회(user/orders/{N}) 는 헤더가 회원 라우트에 광범위 노출되지 않도록 데이터소스 개별 headers 로 명시 (order_complete.json, guest_order_show.json).",
+            "pattern": "/api/modules/sirsoft-ecommerce/guest/orders/*",
+            "headers": {
+                "X-Guest-Order-Token": "{{_global.guestOrderToken}}"
+            }
+        }
+    ],
+    "transition_overlay": {
+        "enabled": true,
+        "style": "spinner",
+        "target": "main_content_area",
+        "spinner": {
+            "component": "PageLoading"
+        }
+    },
+    "init_actions": [
+        {
+            "handler": "initTheme"
+        },
+        {
+            "handler": "initCartKey"
+        },
+        {
+            "_comment": "기본 통화(default_currency)를 코어 _global.modules 노출값에서 _global 에 주입 (A1-③). loadFromLocalStorage 의 fallback 기준값.",
+            "handler": "setState",
+            "params": {
+                "target": "global",
+                "defaultCurrency": "{{_global.modules?.['sirsoft-ecommerce']?.language_currency?.default_currency}}"
+            }
+        },
+        {
+            "_comment": "선호(표시) 통화를 _global 에 동기 주입. 우선순위 = 로그인 유저 계정 영속 통화(currentUser.ecommerce_preferred_currency, D-LOGIN-CUR) > localStorage 세션값(g7_preferred_currency, ISO형식) > 게스트 사이트 언어(g7_locale) 기반 통화 추정(currencies[].locales 매핑, 회원가입 통화 부여와 동일 입력·우선순위) > default_currency > KRW. 핸들러는 이커머스 모듈 소유(sirsoft-ecommerce.initPreferredCurrency) — 통화=커머스 책임. 모듈 미설치 시 미등록 핸들러로 무동작(통화 globals 자체가 빈 값).",
+            "handler": "sirsoft-ecommerce.initPreferredCurrency",
+            "params": {
+                "defaultCurrency": "{{_global.defaultCurrency}}"
+            }
+        },
+        {
+            "_comment": "셀렉터 통화 목록 주입 (A1-①). is_default 또는 환율>0 인 통화만 (U11-B 미설정 통화 숨김, 백엔드 buildMultiCurrencyPrices 규칙과 1:1 일치).",
+            "handler": "setState",
+            "params": {
+                "target": "global",
+                "availableCurrencies": "{{(_global.modules?.['sirsoft-ecommerce']?.language_currency?.currencies ?? []).filter(c => c.is_default || (c.exchange_rate ?? 0) > 0)}}"
+            }
+        },
+        {
+            "_comment": "선호 배송국가를 _global 에 동기 주입 (MP08 후속). 우선순위 = 계정 영속(currentUser.ecommerce_preferred_shipping_country) > localStorage(g7_preferred_shipping_country) > default_country > KR. 핸들러는 이커머스 모듈 소유 — 배송국가=커머스 책임. 모듈 미설치 시 무동작.",
+            "handler": "sirsoft-ecommerce.initPreferredShippingCountry",
+            "params": {
+                "defaultCountry": "{{_global.modules?.['sirsoft-ecommerce']?.shipping?.default_country ?? 'KR'}}"
+            }
+        },
+        {
+            "_comment": "헤더 배송국가 셀렉터 목록 주입 (MP08 후속). 활성 국가만 {code, name(현지화), flag_class(fi fi-xx)} 형태로. 해외배송 OFF 시 KR 만 활성이라 셀렉터 자연 숨김(2개↑ 게이트). 국가명 $localized(name, fallbackKey): 활성 로케일 키는 서버(localize_catalog_field)가 settings.countries.{code}.name 으로 미리 보강해 통상 즉시 hit 한다. fallbackKey 와 || c.code 는 보강이 실패한 경우의 방어선.",
+            "handler": "setState",
+            "params": {
+                "target": "global",
+                "availableShippingCountries": "{{(_global.modules?.['sirsoft-ecommerce']?.shipping?.available_countries ?? []).filter(c => c.is_active).map(c => ({ code: c.code, name: ($localized(c.name, 'sirsoft-ecommerce::settings.countries.' + (c.code ?? '') + '.name') || c.code), flag_class: ('fi fi-' + (c.code ?? '').toLowerCase()) }))}}"
+            }
+        },
+        {
+            "_comment": "비회원 주문 조회 토큰 (30분 유효) — 커스텀 핸들러가 localStorage 의 g7_guest_order_token 을 G7Core.state.set 으로 _global.guestOrderToken 에 직접 저장. 표준 loadFromLocalStorage 는 context.setState 를 통해 _local 에만 영향을 주므로 _global 에 토큰이 안 들어가는 문제 회피. initCartKey 패턴 동일.",
+            "handler": "initGuestOrderToken"
+        },
+        {
+            "handler": "setState",
+            "params": {
+                "target": "global",
+                "shopBase": "{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : ('/' + (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop'))}}"
+            }
+        }
+    ],
+    "data_sources": [
+        {
+            "id": "boards",
+            "label_key": "$t:editor.data_source.boards",
+            "type": "api",
+            "endpoint": "/api/modules/sirsoft-board/boards/board-menu",
+            "method": "GET",
+            "auto_fetch": true,
+            "loading_strategy": "progressive",
+            "fallback": { "data": [] }
+        },
+        {
+            "id": "current_user",
+            "label_key": "$t:editor.data_source.current_user",
+            "type": "api",
+            "endpoint": "/api/auth/user",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_required": true,
+            "loading_strategy": "progressive",
+            "initGlobal": "currentUser",
+            "fallback": { "data": [] },
+            "onSuccess": [
+                {
+                    "_comment": "로그인 유저 로드 후 선호 통화 재해석 (D-LOGIN-CUR). current_user 는 비동기 data_source 라 init_actions 의 통화 초기화 시점엔 currentUser 가 비어 localStorage 세션값으로 폴백된다. 로드 완료 후 갓 받은 응답값(accountCurrency)을 직접 넘겨 재실행하면 계정 영속 통화(ecommerce_preferred_currency)가 1순위로 덮어쓴다(로그인/새로고침 모두). 핸들러는 이커머스 모듈 소유.",
+                    "handler": "sirsoft-ecommerce.initPreferredCurrency",
+                    "params": {
+                        "accountCurrency": "{{response.data?.data?.ecommerce_preferred_currency ?? response.data?.ecommerce_preferred_currency}}",
+                        "defaultCurrency": "{{_global.defaultCurrency}}"
+                    }
+                },
+                {
+                    "_comment": "로그인 유저 로드 후 선호 배송국가 재해석 (MP08 후속). 계정 영속 배송국가(ecommerce_preferred_shipping_country)를 1순위로 덮어쓴다.",
+                    "handler": "sirsoft-ecommerce.initPreferredShippingCountry",
+                    "params": {
+                        "accountCountry": "{{response.data?.data?.ecommerce_preferred_shipping_country ?? response.data?.ecommerce_preferred_shipping_country}}",
+                        "defaultCountry": "{{_global.modules?.['sirsoft-ecommerce']?.shipping?.default_country ?? 'KR'}}"
+                    }
+                }
+            ],
+            "errorHandling": {
+                "401": {
+                    "comment": "비회원의 /api/auth/user 401은 정상 — fallback 사용, 레이아웃 에러 핸들링으로 전파 방지",
+                    "handler": "suppress"
+                }
+            }
+        },
+        {
+            "id": "cart",
+            "label_key": "$t:editor.data_source.cart",
+            "type": "api",
+            "endpoint": "/api/modules/sirsoft-ecommerce/cart/count",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_mode": "optional",
+            "loading_strategy": "progressive",
+            "headers": {
+                "X-Cart-Key": "{{_global.cartKey}}"
+            },
+            "initGlobal": {
+                "key": "cartCount",
+                "path": "count"
+            },
+            "fallback": { "data": { "count": 0 } }
+        },
+        {
+            "id": "notification_unread_count",
+            "label_key": "$t:editor.data_source.notification_unread_count",
+            "type": "api",
+            "endpoint": "/api/user/notifications/unread-count",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_required": true,
+            "loading_strategy": "progressive",
+            "initGlobal": {
+                "key": "notificationCount",
+                "path": "unread_count"
+            },
+            "fallback": { "data": { "unread_count": 0 } },
+            "errorHandling": {
+                "401": { "handler": "suppress" },
+                "403": { "handler": "suppress" }
+            }
+        },
+        {
+            "comment": "알림 목록 — 드롭다운 NotificationCenter 에서 사용. unreadOnly 토글에 따라 read 필터 동적 적용",
+            "id": "notifications",
+            "label_key": "$t:editor.data_source.notifications",
+            "type": "api",
+            "endpoint": "/api/user/notifications",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_required": true,
+            "loading_strategy": "progressive",
+            "params": {
+                "per_page": 15,
+                "read": "{{(_global.notificationsUnreadOnly ?? true) ? 'unread' : 'all'}}"
+            },
+            "fallback": { "data": { "data": [] } },
+            "errorHandling": {
+                "401": { "handler": "suppress" },
+                "403": { "handler": "suppress" }
+            }
+        },
+        {
+            "id": "user_notification_ws",
+            "label_key": "$t:editor.data_source.user_notification_ws",
+            "type": "websocket",
+            "channel": "core.user.notifications.{{_global.currentUser?.uuid}}",
+            "event": "notification.received",
+            "channel_type": "private",
+            "target_source": "notification_unread_count",
+            "onReceive": [
+                {
+                    "handler": "refetchDataSource",
+                    "params": { "dataSourceId": "notification_unread_count" }
+                },
+                {
+                    "handler": "refetchDataSource",
+                    "params": { "dataSourceId": "notifications" }
+                },
+                {
+                    "handler": "toast",
+                    "params": {
+                        "type": "info",
+                        "message": "{{$args[0].subject ?? '$t:mypage.notifications.new_notification_received'}}",
+                        "duration": 5000
+                    }
+                }
+            ]
+        }
+    ],
+    "components": [
+        {
+            "comment": "통화 선택기 슬롯 주입 앵커 — 이커머스 모듈이 layout_extensions 로 'header_currency' 슬롯 노드를 여기에 주입한다(slot 노드는 원위치 렌더 안 함, SlotContext 등록만 → 헤더의 SlotContainer 가 떙겨 렌더). 미설치 시 빈 슬롯(렌더 영향 0). 헤더는 주입 모듈을 모른다.",
+            "id": "header_currency_inject_anchor",
+            "type": "basic",
+            "name": "Div"
+        },
+        {
+            "id": "global_toast",
+            "type": "composite",
+            "name": "Toast",
+            "props": {
+                "toasts": "{{_global.toasts}}",
+                "position": "bottom-center",
+                "duration": 5000
+            }
+        },
+        {
+            "id": "page_transition_indicator",
+            "type": "composite",
+            "name": "PageTransitionIndicator"
+        },
+        {
+            "id": "user_layout_root",
+            "type": "basic",
+            "name": "Div",
+            "props": {
+                "className": "min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900"
+            },
+            "children": [
+                {
+                    "comment": "=== Extension Point: 모든 사용자 페이지에서 플러그인이 전역 오버레이 영역을 노출할 수 있도록 공용 확장 지점 제공 ===",
+                    "id": "user_global_overlay_slot",
+                    "type": "extension_point",
+                    "name": "user_global_overlay",
+                    "default": []
+                },
+                {
+                    "comment": "=== 모바일 오버레이 (사이드 메뉴 열릴 때) ===",
+                    "id": "mobile_overlay",
+                    "type": "basic",
+                    "name": "Div",
+                    "if": "{{false}}",
+                    "props": {
+                        "className": "fixed inset-0 z-40 bg-black/50"
+                    },
+                    "responsive": {
+                        "portable": {
+                            "if": "{{_global.mobileMenuOpen}}"
+                        }
+                    },
+                    "actions": [
+                        {
+                            "type": "click",
+                            "handler": "setState",
+                            "params": {
+                                "target": "global",
+                                "mobileMenuOpen": false
+                            }
+                        }
+                    ]
+                },
+                {
+                    "comment": "=== 모바일 헤더 (툴바) - 데스크톱에서 숨김 ===",
+                    "id": "mobile_header",
+                    "type": "basic",
+                    "name": "Div",
+                    "props": {
+                        "className": "hidden"
+                    },
+                    "responsive": {
+                        "portable": {
+                            "props": {
+                                "className": "flex items-center justify-between h-14 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30"
+                            }
+                        }
+                    },
+                    "children": [
+                        {
+                            "comment": "모바일 헤더 좌측 - 로고",
+                            "id": "mobile_header_left",
+                            "type": "basic",
+                            "name": "Button",
+                            "props": {
+                                "className": "flex items-center cursor-pointer"
+                            },
+                            "actions": [
+                                {
+                                    "type": "click",
+                                    "handler": "navigate",
+                                    "params": {
+                                        "path": "/"
+                                    }
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "if": "{{_global.settings?.general?.site_logo_url}}",
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Img",
+                                            "props": {
+                                                "src": "{{_global.settings?.general?.site_logo_url}}",
+                                                "alt": "{{_global.settings?.general?.site_name ?? 'Site'}}",
+                                                "className": "h-8 w-auto"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "Span",
+                                    "if": "{{!_global.settings?.general?.site_logo_url}}",
+                                    "props": {
+                                        "className": "text-lg font-bold text-gray-900 dark:text-white"
+                                    },
+                                    "text": "{{_global.settings?.general?.site_name ?? 'Site'}}"
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "모바일 헤더 우측 - 액션 버튼들",
+                            "id": "mobile_header_right",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "flex items-center gap-1"
+                            },
+                            "children": [
+                                {
+                                    "comment": "다크모드 전환",
+                                    "id": "mobile_theme_btn",
+                                    "type": "composite",
+                                    "name": "ThemeToggle",
+                                    "props": {
+                                        "autoText": "$t:common.theme.auto",
+                                        "lightText": "$t:common.theme.light",
+                                        "darkText": "$t:common.theme.dark"
+                                    }
+                                },
+                                {
+                                    "comment": "알림센터 드롭다운 — 모바일 (PC와 동일 순서: 알림 → 장바구니)",
+                                    "id": "mobile_notification_center",
+                                    "type": "composite",
+                                    "name": "NotificationCenter",
+                                    "if": "{{_global.currentUser?.uuid}}",
+                                    "props": {
+                                        "notifications": "{{(notifications?.data?.data ?? []).map(n => ({ id: n.id, title: n.subject ?? '', message: n.body ?? '', time: n.created_at ?? '', read: !!n.read_at, url: n.url ?? '', data: n.data ?? {} }))}}",
+                                        "unreadCount": "{{_global.notificationCount ?? 0}}",
+                                        "hasMore": "{{_global.notificationsHasMore ?? notifications?.data?.pagination?.has_more_pages ?? false}}",
+                                        "loading": "{{_global.notificationsLoadingMore ?? notifications?.loading ?? false}}",
+                                        "titleText": "$t:mypage.notifications.title",
+                                        "emptyText": "$t:mypage.notifications.empty",
+                                        "markAllReadText": "$t:mypage.notifications.mark_all_read",
+                                        "deleteAllText": "$t:mypage.notifications.delete_all",
+                                        "unreadOnlyText": "$t:mypage.notifications.unread_only",
+                                        "unreadOnly": "{{_global.notificationsUnreadOnly ?? true}}",
+                                        "dropdownAlign": "right"
+                                    },
+                                    "actions": [
+                                        {
+                                            "event": "onClose",
+                                            "handler": "sequence",
+                                            "params": {
+                                                "actions": [
+                                                    {
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/user/notifications/read-batch",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": { "ids": "{{$args[0]}}" }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": { "dataSourceId": "notification_unread_count" }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "toast",
+                                                                "params": {
+                                                                    "type": "error",
+                                                                    "message": "{{error.message}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "event": "onNotificationClick",
+                                            "handler": "parallel",
+                                            "params": {
+                                                "actions": [
+                                                    {
+                                                        "handler": "navigate",
+                                                        "params": { "path": "{{$args[0].url ?? '/mypage/notifications'}}" }
+                                                    },
+                                                    {
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/user/notifications/{{$args[0].id}}/read",
+                                                        "params": { "method": "PATCH" },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": { "dataSourceId": "notification_unread_count" }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "toast",
+                                                                "params": {
+                                                                    "type": "error",
+                                                                    "message": "{{error.message}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "event": "onMarkAllRead",
+                                            "handler": "sequence",
+                                            "params": {
+                                                "actions": [
+                                                    {
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/user/notifications/read-all",
+                                                        "params": { "method": "POST" },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "global",
+                                                                    "notificationsCurrentPage": 1,
+                                                                    "notificationsHasMore": null,
+                                                                    "notificationsLoadingMore": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": { "dataSourceId": "notifications" }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": { "dataSourceId": "notification_unread_count" }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "global",
+                                                                    "notificationsLoadingMore": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "toast",
+                                                                "params": {
+                                                                    "type": "error",
+                                                                    "message": "{{error.message}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "event": "onUnreadOnlyToggle",
+                                            "handler": "sequence",
+                                            "params": {
+                                                "actions": [
+                                                    {
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "global",
+                                                            "notificationsUnreadOnly": "{{$args[0]}}",
+                                                            "notificationsCurrentPage": 1,
+                                                            "notificationsHasMore": null,
+                                                            "notificationsLoadingMore": false
+                                                        }
+                                                    },
+                                                    {
+                                                        "handler": "refetchDataSource",
+                                                        "params": { "dataSourceId": "notifications" }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "event": "onDelete",
+                                            "handler": "apiCall",
+                                            "auth_required": true,
+                                            "target": "/api/user/notifications/{{$args[0].id}}",
+                                            "params": { "method": "DELETE" },
+                                            "onSuccess": [
+                                                {
+                                                    "handler": "setState",
+                                                    "params": {
+                                                        "target": "global",
+                                                        "notificationsCurrentPage": 1,
+                                                        "notificationsHasMore": null
+                                                    }
+                                                },
+                                                {
+                                                    "handler": "refetchDataSource",
+                                                    "params": { "dataSourceId": "notifications" }
+                                                },
+                                                {
+                                                    "handler": "refetchDataSource",
+                                                    "params": { "dataSourceId": "notification_unread_count" }
+                                                }
+                                            ],
+                                            "onError": [
+                                                {
+                                                    "handler": "toast",
+                                                    "params": {
+                                                        "type": "error",
+                                                        "message": "{{error.message}}"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "event": "onDeleteAll",
+                                            "handler": "openModal",
+                                            "target": "notification_delete_all_confirm_modal"
+                                        },
+                                        {
+                                            "event": "onLoadMore",
+                                            "handler": "sequence",
+                                            "params": {
+                                                "actions": [
+                                                    {
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "global",
+                                                            "notificationsLoadingMore": true
+                                                        }
+                                                    },
+                                                    {
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/user/notifications",
+                                                        "params": {
+                                                            "method": "GET",
+                                                            "query": {
+                                                                "page": "{{(_global.notificationsCurrentPage ?? notifications?.data?.pagination?.current_page ?? 1) + 1}}",
+                                                                "per_page": 15
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "appendDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "notifications",
+                                                                    "dataPath": "data.data",
+                                                                    "newData": "{{response.data.data ?? []}}"
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "global",
+                                                                    "notificationsCurrentPage": "{{response.data.pagination.current_page}}",
+                                                                    "notificationsHasMore": "{{response.data.pagination.has_more_pages}}",
+                                                                    "notificationsLoadingMore": false
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "global",
+                                                                    "notificationsLoadingMore": false
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "검색 — 모바일 첫 줄에 진입점을 둔다. 드로어(햄버거) 안에도 검색 입력이 있지만, 드로어가 닫혀 있으면 390px 화면에서 검색을 찾을 방법이 없었다. 여기서는 기존 검색 화면(/search) 으로 바로 보낸다 — 새 라우트를 만들지 않는다.",
+                                    "id": "mobile_search_btn",
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "type": "button",
+                                        "className": "p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer",
+                                        "aria-label": "$t:user.search_placeholder",
+                                        "data-testid": "mobile-search"
+                                    },
+                                    "actions": [
+                                        { "type": "click", "handler": "navigate", "params": { "path": "/search" } }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": { "name": "search", "size": "md" }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "장바구니 — PC와 동일 순서 (알림 → 장바구니)",
+                                    "id": "mobile_cart_btn",
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg relative cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "navigate",
+                                            "params": {
+                                                "path": "{{_global.shopBase}}/cart"
+                                            }
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "shopping-cart",
+                                                "size": "md"
+                                            }
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Span",
+                                            "if": "{{_global.cartCount > 0}}",
+                                            "props": {
+                                                "className": "absolute -top-1 -right-1 w-5 h-5 bg-blue-500 dark:bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center"
+                                            },
+                                            "text": "{{_global.cartCount > 99 ? '99+' : _global.cartCount}}"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "사용자 아이콘 (로그인 시) / 로그인 버튼",
+                                    "id": "mobile_user_btn",
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "navigate",
+                                            "params": {
+                                                "path": "{{_global.currentUser ? '/mypage' : '/login'}}"
+                                            }
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "user",
+                                                "size": "md"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "햄버거 메뉴 버튼",
+                                    "id": "mobile_menu_toggle",
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "setState",
+                                            "params": {
+                                                "target": "global",
+                                                "mobileMenuOpen": "{{!_global.mobileMenuOpen}}"
+                                            }
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "menu",
+                                                "size": "md"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "comment": "=== 모바일 사이드 메뉴 (MobileNav 드로어) ===",
+                    "id": "mobile_nav_drawer",
+                    "type": "basic",
+                    "name": "Div",
+                    "props": {
+                        "className": "hidden"
+                    },
+                    "responsive": {
+                        "portable": {
+                            "props": {
+                                "className": "{{_global.mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}} fixed inset-y-0 right-0 z-50 w-80 max-w-full transition-transform duration-300 bg-white dark:bg-gray-800 shadow-xl overflow-y-auto"
+                            }
+                        }
+                    },
+                    "children": [
+                        {
+                            "comment": "드로어 헤더 - 닫기 버튼",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Span",
+                                    "props": {
+                                        "className": "font-semibold text-gray-900 dark:text-white"
+                                    },
+                                    "text": "$t:user.menu"
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "setState",
+                                            "params": {
+                                                "target": "global",
+                                                "mobileMenuOpen": false
+                                            }
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "x",
+                                                "size": "md"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "검색바",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "p-4"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "relative"
+                                    },
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "search",
+                                                "size": "sm",
+                                                "className": "absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                                            }
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Input",
+                                            "props": {
+                                                "type": "text",
+                                                "name": "q",
+                                                "placeholder": "$t:user.search_placeholder",
+                                                "className": "w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "type": "keydown",
+                                                    "key": "Enter",
+                                                    "handler": "sequence",
+                                                    "actions": [
+                                                        {
+                                                            "handler": "setState",
+                                                            "params": { "target": "global", "mobileMenuOpen": false }
+                                                        },
+                                                        {
+                                                            "handler": "navigate",
+                                                            "params": { "path": "/search", "query": { "q": "{{$event.target.value}}" } }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "언어/통화 선택 — 회원·비회원 공통. 헤더 우측 그룹에서 이동(모바일 오버플로 해소). 통화는 이커머스 모듈이 header_currency 슬롯에 주입하므로 SlotContainer 만 배치(모듈 비활성 시 자동 미렌더).",
+                            "id": "mobile_drawer_prefs",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "px-4 pb-4 border-b border-gray-200 dark:border-gray-700 space-y-3"
+                            },
+                            "children": [
+                                {
+                                    "comment": "언어 선택 (여러 언어 지원 시). 접기/펼치기 — 접힘이 기본이고 트리거에 현재 언어를 요약 표기한다. 통화/배송국가(이커머스 주입 슬롯)와는 독립된 토글(_global.mobileLanguageOpen)이라 서로 영향 없음.",
+                                    "id": "mobile_drawer_language",
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "if": "{{$locales.length > 1}}",
+                                    "children": [
+                                        {
+                                            "comment": "트리거 — 좌측 '언어' 라벨, 우측 현재 언어명 + chevron. 접힘 상태에서 현재 값을 알 수 있어야 하므로 요약을 항상 노출한다.",
+                                            "id": "mobile_drawer_language_toggle",
+                                            "type": "basic",
+                                            "name": "Button",
+                                            "props": {
+                                                "type": "button",
+                                                "className": "w-full flex items-center justify-between py-1 cursor-pointer",
+                                                "aria-expanded": "{{_global.mobileLanguageOpen ?? false}}"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "type": "click",
+                                                    "handler": "setState",
+                                                    "params": {
+                                                        "target": "global",
+                                                        "mobileLanguageOpen": "{{!_global.mobileLanguageOpen}}"
+                                                    }
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Span",
+                                                    "props": {
+                                                        "className": "text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"
+                                                    },
+                                                    "text": "$t:common.language"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Span",
+                                                    "props": {
+                                                        "className": "flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300"
+                                                    },
+                                                    "children": [
+                                                        {
+                                                            "comment": "접힘 상태 요약 = 현재 언어명",
+                                                            "type": "basic",
+                                                            "name": "Span",
+                                                            "props": { "className": "font-medium" },
+                                                            "text": "{{_global.appConfig?.localeNames?.[$locale] ?? $locale}}"
+                                                        },
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Icon",
+                                                            "props": {
+                                                                "name": "chevron-down",
+                                                                "className": "{{_global.mobileLanguageOpen ? 'rotate-180' : ''}} text-xs text-gray-400 dark:text-gray-500 transition-transform duration-200"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "comment": "펼침 영역 — 사용자 정보 아코디언과 동일한 max-h/opacity 트랜지션. overflow-hidden 이라 접힘 시 칩이 잘려 사라진다.",
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "overflow-hidden transition-all duration-300 ease-in-out {{_global.mobileLanguageOpen ? 'max-h-screen opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'}}"
+                                            },
+                                            "children": [
+                                        {
+                                            "comment": "가로 나열 칩. iteration 은 반드시 Button 자신에 건다 — 엔진은 iteration 을 가진 노드를 항목 수만큼 복제하므로, flex 컨테이너에 걸면 컨테이너가 복제되어 칩이 세로로 쌓인다.",
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "flex flex-wrap gap-2"
+                                            },
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "iteration": { "source": "{{$locales}}", "item_var": "loc" },
+                                                    "props": {
+                                                        "type": "button",
+                                                        "className": "{{loc === $locale ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 'text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'}} inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-full cursor-pointer whitespace-nowrap",
+                                                        "role": "option",
+                                                        "aria-selected": "{{loc === $locale}}"
+                                                    },
+                                                    "actions": [
+                                                        { "type": "click", "handler": "setLocale", "target": "{{loc}}" }
+                                                    ],
+                                                    "children": [
+                                                        { "type": "basic", "name": "Icon", "props": { "name": "globe", "size": "sm" } },
+                                                        { "type": "basic", "name": "Span", "text": "{{_global.appConfig?.localeNames?.[loc] ?? loc}}" }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "통화 선택 — 이커머스 모듈 주입 슬롯(헤더에서 이동). 모듈 미설치 시 빈 슬롯 → 렌더 영향 0. 헤더는 가로 flex 였으나 드로어는 세로 블록이므로 block 으로 둔다(flex items-center 면 주입 루트가 콘텐츠 폭으로 줄어 펼친 목록이 좁아짐). 주입 루트가 portable 에서 스스로 w-full 을 갖는다.",
+                                    "id": "mobile_drawer_currency_wrap",
+                                    "type": "composite",
+                                    "name": "SlotContainer",
+                                    "props": {
+                                        "slotId": "header_currency",
+                                        "className": "block"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "로그인된 사용자 정보 - 아코디언 토글",
+                            "type": "basic",
+                            "name": "Div",
+                            "if": "{{_global.currentUser?.uuid}}",
+                            "props": {
+                                "className": "px-4 pb-4 border-b border-gray-200 dark:border-gray-700"
+                            },
+                            "children": [
+                                {
+                                    "comment": "사용자 프로필 버튼 (아코디언 토글)",
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "w-full flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "setState",
+                                            "params": {
+                                                "target": "global",
+                                                "mobileUserMenuOpen": "{{!_global.mobileUserMenuOpen}}"
+                                            }
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "composite",
+                                            "name": "Avatar",
+                                            "props": {
+                                                "avatar": "{{_global.currentUser?.avatar}}",
+                                                "name": "{{_global.currentUser?.name ?? '?'}}",
+                                                "size": "md"
+                                            }
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "flex-1 min-w-0 text-left"
+                                            },
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Div",
+                                                    "props": {
+                                                        "className": "font-medium text-gray-900 dark:text-white truncate"
+                                                    },
+                                                    "text": "{{_global.currentUser?.name}}"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Div",
+                                                    "props": {
+                                                        "className": "text-sm text-gray-500 dark:text-gray-400 truncate"
+                                                    },
+                                                    "text": "{{_global.currentUser?.email}}"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "comment": "아코디언 화살표 아이콘",
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "chevron-down",
+                                                "size": "md",
+                                                "className": "{{_global.mobileUserMenuOpen ? 'rotate-180' : ''}} text-gray-400 dark:text-gray-500 transition-transform duration-200"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "아코디언 펼침 영역 - 부드러운 애니메이션",
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "overflow-hidden transition-all duration-300 ease-in-out {{_global.mobileUserMenuOpen ? 'max-h-screen opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'}}"
+                                    },
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "overflow-hidden min-h-0 py-2 bg-gray-100 dark:bg-gray-700/50 rounded-lg"
+                                            },
+                                            "children": [
+                                                {
+                                                    "comment": "관리자 메뉴 (is_admin일 때만) - 하이퍼링크로 전체 페이지 새로고침",
+                                                    "type": "basic",
+                                                    "name": "A",
+                                                    "if": "{{_global.currentUser?.is_admin}}",
+                                                    "props": {
+                                                        "href": "/admin",
+                                                        "className": "w-full flex items-center justify-start gap-3 px-4 py-2.5 text-blue-600 dark:text-blue-400 hover:bg-gray-200 dark:hover:bg-gray-600 font-medium"
+                                                    },
+                                                    "children": [
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Icon",
+                                                            "props": {
+                                                                "name": "settings",
+                                                                "size": "sm"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Span",
+                                                            "text": "$t:common.admin_menu"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "comment": "마이페이지",
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "w-full flex items-center justify-start gap-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false,
+                                                                        "mobileUserMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/mypage"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "children": [
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Icon",
+                                                            "props": {
+                                                                "name": "user",
+                                                                "size": "sm"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Span",
+                                                            "text": "$t:common.mypage"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "comment": "주문 내역",
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "w-full flex items-center justify-start gap-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false,
+                                                                        "mobileUserMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/mypage/orders"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "children": [
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Icon",
+                                                            "props": {
+                                                                "name": "shopping-bag",
+                                                                "size": "sm"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Span",
+                                                            "text": "$t:mypage.tabs.orders"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "comment": "위시리스트",
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "w-full flex items-center justify-start gap-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false,
+                                                                        "mobileUserMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/mypage/wishlist"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "children": [
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Icon",
+                                                            "props": {
+                                                                "name": "heart",
+                                                                "size": "sm"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Span",
+                                                            "text": "$t:mypage.tabs.wishlist"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "comment": "로그아웃 버튼",
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "w-full flex items-center gap-3 px-4 py-2.5 mt-2 pt-2 border-t border-gray-200 dark:border-gray-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "logout",
+                                                            "onSuccess": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false,
+                                                                        "mobileUserMenuOpen": false
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "children": [
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Icon",
+                                                            "props": {
+                                                                "name": "log-out",
+                                                                "size": "sm"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "basic",
+                                                            "name": "Span",
+                                                            "text": "$t:auth.logout"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "비로그인 상태 - 로그인/회원가입 버튼",
+                            "type": "basic",
+                            "name": "Div",
+                            "if": "{{!_global.currentUser?.uuid}}",
+                            "props": {
+                                "className": "px-4 pb-4 border-b border-gray-200 dark:border-gray-700"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "flex gap-2"
+                                    },
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Button",
+                                            "props": {
+                                                "className": "flex-1 py-2.5 text-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium text-sm cursor-pointer"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "type": "click",
+                                                    "handler": "sequence",
+                                                    "actions": [
+                                                        {
+                                                            "handler": "setState",
+                                                            "params": {
+                                                                "target": "global",
+                                                                "mobileMenuOpen": false
+                                                            }
+                                                        },
+                                                        {
+                                                            "handler": "navigate",
+                                                            "params": {
+                                                                "path": "/login"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "text": "$t:auth.login"
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Button",
+                                            "props": {
+                                                "className": "flex-1 py-2.5 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm cursor-pointer"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "type": "click",
+                                                    "handler": "sequence",
+                                                    "actions": [
+                                                        {
+                                                            "handler": "setState",
+                                                            "params": {
+                                                                "target": "global",
+                                                                "mobileMenuOpen": false
+                                                            }
+                                                        },
+                                                        {
+                                                            "handler": "navigate",
+                                                            "params": {
+                                                                "path": "/register"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "text": "$t:auth.register_link"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "comment": "비회원 주문 조회 진입 — 비로그인일 때만 노출 (모바일 nav)",
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "block w-full mt-3 py-2 text-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "sequence",
+                                            "actions": [
+                                                { "handler": "setState", "params": { "target": "global", "mobileMenuOpen": false } },
+                                                { "comment": "주문조회 — 로그인 페이지로 진입 후 redirect 분기. 헤더와 동일 흐름.", "handler": "navigate", "params": { "path": "/login?redirect=/mypage/orders" } }
+                                            ]
+                                        }
+                                    ],
+                                    "text": "$t:shop.guest_order_form.nav_link"
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "메뉴 섹션 - 홈",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "p-4"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "w-full flex items-center justify-start gap-3 px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "sequence",
+                                            "actions": [
+                                                {
+                                                    "handler": "setState",
+                                                    "params": {
+                                                        "target": "global",
+                                                        "mobileMenuOpen": false
+                                                    }
+                                                },
+                                                {
+                                                    "handler": "navigate",
+                                                    "params": {
+                                                        "path": "/"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "home",
+                                                "size": "md"
+                                            }
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Span",
+                                            "text": "$t:user.nav.home"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "w-full flex items-center justify-start gap-3 px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "sequence",
+                                            "actions": [
+                                                {
+                                                    "handler": "setState",
+                                                    "params": {
+                                                        "target": "global",
+                                                        "mobileMenuOpen": false
+                                                    }
+                                                },
+                                                {
+                                                    "handler": "navigate",
+                                                    "params": {
+                                                        "path": "/boards/popular"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "flame",
+                                                "size": "md",
+                                                "className": "text-orange-500"
+                                            }
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Span",
+                                            "text": "$t:user.nav.popular"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "메뉴 섹션 - 게시판",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "px-4 pb-4"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 px-3"
+                                    },
+                                    "text": "$t:user.nav.boards"
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "iteration": {
+                                        "source": "{{boards.data ?? []}}",
+                                        "item_var": "board"
+                                    },
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Button",
+                                            "props": {
+                                                "className": "w-full flex items-center justify-between px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "type": "click",
+                                                    "handler": "sequence",
+                                                    "actions": [
+                                                        {
+                                                            "handler": "setState",
+                                                            "params": {
+                                                                "target": "global",
+                                                                "mobileMenuOpen": false
+                                                            }
+                                                        },
+                                                        {
+                                                            "handler": "navigate",
+                                                            "params": {
+                                                                "path": "/board/{{board.slug}}"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Span",
+                                                    "text": "{{board.name}}"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Span",
+                                                    "if": "{{board.post_count > 0}}",
+                                                    "props": {
+                                                        "className": "text-xs text-gray-500 dark:text-gray-400"
+                                                    },
+                                                    "text": "{{board.post_count}}"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "메뉴 섹션 - 쇼핑",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "px-4 pb-4 border-b border-gray-200 dark:border-gray-700"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 px-3"
+                                    },
+                                    "text": "$t:user.nav.shop"
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "w-full flex items-center justify-start gap-3 px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "sequence",
+                                            "actions": [
+                                                {
+                                                    "handler": "setState",
+                                                    "params": {
+                                                        "target": "global",
+                                                        "mobileMenuOpen": false
+                                                    }
+                                                },
+                                                {
+                                                    "handler": "navigate",
+                                                    "params": {
+                                                        "path": "{{_global.shopBase}}/products"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Icon",
+                                            "props": {
+                                                "name": "shopping-bag",
+                                                "size": "md"
+                                            }
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Span",
+                                            "text": "$t:user.nav.products"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "Button",
+                                    "props": {
+                                        "className": "w-full flex items-center justify-between px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "click",
+                                            "handler": "sequence",
+                                            "actions": [
+                                                {
+                                                    "handler": "setState",
+                                                    "params": {
+                                                        "target": "global",
+                                                        "mobileMenuOpen": false
+                                                    }
+                                                },
+                                                {
+                                                    "handler": "navigate",
+                                                    "params": {
+                                                        "path": "{{_global.shopBase}}/cart"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "flex items-center gap-3"
+                                            },
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Icon",
+                                                    "props": {
+                                                        "name": "shopping-cart",
+                                                        "size": "md"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Span",
+                                                    "text": "$t:user.nav.cart"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Span",
+                                            "if": "{{_global.cartCount > 0}}",
+                                            "props": {
+                                                "className": "px-2 py-0.5 bg-red-500 dark:bg-red-500 text-white text-xs font-bold rounded-full"
+                                            },
+                                            "text": "{{_global.cartCount}}"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "comment": "메뉴 섹션 - 정보/정책",
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "px-4 py-4 border-b border-gray-200 dark:border-gray-700"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "grid grid-cols-2 gap-x-4"
+                                    },
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Div",
+                                                    "props": {
+                                                        "className": "text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"
+                                                    },
+                                                    "text": "$t:user.footer.info"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "block w-full py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-left cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/page/about"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "text": "$t:user.footer.about"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "block w-full py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-left cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/page/faq"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "text": "$t:user.footer.faq"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "block w-full py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-left cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/page/contact"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "text": "$t:user.footer.contact"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Div",
+                                                    "props": {
+                                                        "className": "text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"
+                                                    },
+                                                    "text": "$t:user.footer.policy"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "block w-full py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-left cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/page/terms"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "text": "$t:user.footer.terms"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "block w-full py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-left cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/page/privacy"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "text": "$t:user.footer.privacy"
+                                                },
+                                                {
+                                                    "type": "basic",
+                                                    "name": "Button",
+                                                    "props": {
+                                                        "className": "block w-full py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-left cursor-pointer"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "type": "click",
+                                                            "handler": "sequence",
+                                                            "actions": [
+                                                                {
+                                                                    "handler": "setState",
+                                                                    "params": {
+                                                                        "target": "global",
+                                                                        "mobileMenuOpen": false
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "handler": "navigate",
+                                                                    "params": {
+                                                                        "path": "/page/refund"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "text": "$t:user.footer.refund"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "comment": "=== 데스크톱 헤더 (Header 컴포넌트) - 모바일에서 숨김 ===",
+                    "id": "desktop_header",
+                    "type": "composite",
+                    "name": "Header",
+                    "props": {
+                        "logo": "{{_global.settings?.general?.site_logo_url}}",
+                        "siteName": "{{_global.settings?.general?.site_name ?? 'Site'}}",
+                        "user": "{{_global.currentUser}}",
+                        "cartCount": "{{_global.cartCount ?? 0}}",
+                        "notificationCount": "{{_global.notificationCount ?? 0}}",
+                        "shopBase": "{{_global.shopBase ?? '/shop'}}",
+                        "boards": "{{boards.data ?? []}}",
+                        "maxVisibleBoards": 5,
+                        "availableLocales": "{{$locales}}",
+                        "currentLocale": "{{$locale}}",
+                        "availableCurrencies": "{{_global.availableCurrencies ?? []}}",
+                        "preferredCurrency": "{{_global.preferredCurrency ?? _global.defaultCurrency}}",
+                        "className": "hidden",
+                        "notifications": "{{(notifications?.data?.data ?? []).map(n => ({ id: n.id, title: n.subject ?? '', message: n.body ?? '', time: n.created_at ?? '', read: !!n.read_at, url: n.url ?? '', data: n.data ?? {} }))}}",
+                        "notificationHasMore": "{{_global.notificationsHasMore ?? notifications?.data?.pagination?.has_more_pages ?? false}}",
+                        "notificationLoading": "{{_global.notificationsLoadingMore ?? notifications?.loading ?? false}}",
+                        "notificationUnreadOnly": "{{_global.notificationsUnreadOnly ?? true}}"
+                    },
+                    "responsive": {
+                        "desktop": {
+                            "props": { "className": "block" }
+                        }
+                    },
+                    "actions": [
+                        {
+                            "event": "onNotificationClose",
+                            "handler": "sequence",
+                            "params": {
+                                "actions": [
+                                    {
+                                        "handler": "apiCall",
+                                        "auth_required": true,
+                                        "target": "/api/user/notifications/read-batch",
+                                        "params": {
+                                            "method": "POST",
+                                            "body": { "ids": "{{$args[0]}}" }
+                                        },
+                                        "onSuccess": [
+                                            {
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "global",
+                                                    "notificationsCurrentPage": 1,
+                                                    "notificationsHasMore": null,
+                                                    "notificationsLoadingMore": false
+                                                }
+                                            },
+                                            {
+                                                "handler": "refetchDataSource",
+                                                "params": { "dataSourceId": "notifications" }
+                                            },
+                                            {
+                                                "handler": "refetchDataSource",
+                                                "params": { "dataSourceId": "notification_unread_count" }
+                                            }
+                                        ],
+                                        "onError": [
+                                            {
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "global",
+                                                    "notificationsLoadingMore": false
+                                                }
+                                            },
+                                            {
+                                                "handler": "toast",
+                                                "params": {
+                                                    "type": "error",
+                                                    "message": "{{error.message}}"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "event": "onNotificationClick",
+                            "handler": "sequence",
+                            "params": {
+                                "actions": [
+                                    {
+                                        "handler": "apiCall",
+                                        "auth_required": true,
+                                        "target": "/api/user/notifications/{{$args[0].id}}/read",
+                                        "params": { "method": "PATCH" },
+                                        "onSuccess": [
+                                            {
+                                                "handler": "refetchDataSource",
+                                                "params": { "dataSourceId": "notification_unread_count" }
+                                            }
+                                        ],
+                                        "onError": [
+                                            {
+                                                "handler": "toast",
+                                                "params": {
+                                                    "type": "error",
+                                                    "message": "{{error.message}}"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "handler": "navigate",
+                                        "if": "{{$args[0].url}}",
+                                        "params": { "path": "{{$args[0].url ?? '/mypage/notifications'}}" }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "event": "onNotificationMarkAllRead",
+                            "handler": "sequence",
+                            "params": {
+                                "actions": [
+                                    {
+                                        "handler": "apiCall",
+                                        "auth_required": true,
+                                        "target": "/api/user/notifications/read-all",
+                                        "params": { "method": "POST" },
+                                        "onSuccess": [
+                                            {
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "global",
+                                                    "notificationsCurrentPage": 1,
+                                                    "notificationsHasMore": null,
+                                                    "notificationsLoadingMore": false
+                                                }
+                                            },
+                                            {
+                                                "handler": "refetchDataSource",
+                                                "params": { "dataSourceId": "notifications" }
+                                            },
+                                            {
+                                                "handler": "refetchDataSource",
+                                                "params": { "dataSourceId": "notification_unread_count" }
+                                            }
+                                        ],
+                                        "onError": [
+                                            {
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "global",
+                                                    "notificationsLoadingMore": false
+                                                }
+                                            },
+                                            {
+                                                "handler": "toast",
+                                                "params": {
+                                                    "type": "error",
+                                                    "message": "{{error.message}}"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "event": "onNotificationUnreadOnlyToggle",
+                            "handler": "sequence",
+                            "params": {
+                                "actions": [
+                                    {
+                                        "handler": "setState",
+                                        "params": {
+                                            "target": "global",
+                                            "notificationsUnreadOnly": "{{$args[0]}}",
+                                            "notificationsCurrentPage": 1,
+                                            "notificationsHasMore": null,
+                                            "notificationsLoadingMore": false
+                                        }
+                                    },
+                                    {
+                                        "handler": "refetchDataSource",
+                                        "params": { "dataSourceId": "notifications" }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "event": "onNotificationDelete",
+                            "handler": "apiCall",
+                            "auth_required": true,
+                            "target": "/api/user/notifications/{{$args[0].id}}",
+                            "params": { "method": "DELETE" },
+                            "onSuccess": [
+                                {
+                                    "handler": "setState",
+                                    "params": {
+                                        "target": "global",
+                                        "notificationsCurrentPage": 1,
+                                        "notificationsHasMore": null
+                                    }
+                                },
+                                {
+                                    "handler": "refetchDataSource",
+                                    "params": { "dataSourceId": "notifications" }
+                                },
+                                {
+                                    "handler": "refetchDataSource",
+                                    "params": { "dataSourceId": "notification_unread_count" }
+                                }
+                            ],
+                            "onError": [
+                                {
+                                    "handler": "toast",
+                                    "params": {
+                                        "type": "error",
+                                        "message": "{{error.message}}"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "event": "onNotificationDeleteAll",
+                            "handler": "openModal",
+                            "target": "notification_delete_all_confirm_modal"
+                        },
+                        {
+                            "event": "onNotificationLoadMore",
+                            "handler": "sequence",
+                            "params": {
+                                "actions": [
+                                    {
+                                        "handler": "setState",
+                                        "params": {
+                                            "target": "global",
+                                            "notificationsLoadingMore": true
+                                        }
+                                    },
+                                    {
+                                        "handler": "apiCall",
+                                        "auth_required": true,
+                                        "target": "/api/user/notifications",
+                                        "params": {
+                                            "method": "GET",
+                                            "query": {
+                                                "page": "{{(_global.notificationsCurrentPage ?? notifications?.data?.pagination?.current_page ?? 1) + 1}}",
+                                                "per_page": 15,
+                                                "read": "{{(_global.notificationsUnreadOnly ?? true) ? 'unread' : 'all'}}"
+                                            }
+                                        },
+                                        "onSuccess": [
+                                            {
+                                                "handler": "appendDataSource",
+                                                "params": {
+                                                    "dataSourceId": "notifications",
+                                                    "dataPath": "data.data",
+                                                    "newData": "{{response.data.data ?? []}}"
+                                                }
+                                            },
+                                            {
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "global",
+                                                    "notificationsCurrentPage": "{{response.data.pagination.current_page}}",
+                                                    "notificationsHasMore": "{{response.data.pagination.has_more_pages}}",
+                                                    "notificationsLoadingMore": false
+                                                }
+                                            }
+                                        ],
+                                        "onError": [
+                                            {
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "global",
+                                                    "notificationsLoadingMore": false
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "comment": "=== 메인 콘텐츠 영역 ===",
+                    "id": "main_content_area",
+                    "type": "basic",
+                    "name": "Div",
+                    "props": {
+                        "className": "flex-1"
+                    },
+                    "children": [
+                        {
+                            "id": "main_content",
+                            "type": "layout",
+                            "name": "Container",
+                            "slot": "content",
+                            "props": {
+                                "className": "min-h-fit px-4"
+                            },
+                            "responsive": {
+                                "desktop": {
+                                    "props": {
+                                        "className": "min-h-fit max-w-7xl mx-auto px-8"
+                                    }
+                                }
+                            },
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "comment": "=== 푸터 (Footer 컴포넌트) ===",
+                    "id": "footer",
+                    "type": "composite",
+                    "name": "Footer",
+                    "props": {
+                        "siteName": "{{_global.settings?.general?.site_name ?? 'Site'}}",
+                        "siteDescription": "{{_global.settings?.general?.site_description ?? ''}}",
+                        "copyrightText": "$t:footer.copyright|siteName={{_global.settings?.general?.site_name ?? '그누보드7'}}",
+                        "socialLinks": {
+                            "github": "{{_global.settings?.social?.github}}",
+                            "twitter": "{{_global.settings?.social?.twitter}}",
+                            "discord": "{{_global.settings?.social?.discord}}"
+                        }
+                    }
+                },
+                {
+                    "comment": "=== Extension Point: 모든 사용자 페이지 푸터 직후에 플러그인이 정보 영역을 노출할 수 있도록 공용 확장 지점 제공 ===",
+                    "id": "user_global_footer_slot",
+                    "type": "extension_point",
+                    "name": "user_global_footer",
+                    "default": []
+                }
+            ]
+        }
+    ],
+    "modals": [
+        {
+            "partial": "partials/_identity_challenge_modal.json"
+        },
+        {
+            "partial": "partials/_modal_notification_delete_all_confirm.json"
+        }
+    ]
+}

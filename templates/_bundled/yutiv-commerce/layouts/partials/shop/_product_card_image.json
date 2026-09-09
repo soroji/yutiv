@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "is_partial": true,
+    "description": "상품 카드의 이미지 영역. 반복(iteration) 노드가 카드 루트(div[data-product-card])를 만들고, 이 파셜과 _product_card_info.json 이 그 안의 두 자식이 된다. 파셜은 루트가 하나뿐이라 이미지와 정보를 한 파셜에 담으면 카드 루트를 파셜 밖에서 만들 수 없다 — 그래서 둘로 나눴다.",
+    "dom_contract": "카드 루트의 첫 번째 자식. `data-product-image` 로 식별한다. 반복 스코프의 item_var 는 `product` 여야 한다.",
+    "왜 button 인가": "엔진에 <a href> 가로채기가 없어 실제 앵커를 쓰면 SPA 이동이 아니라 전체 페이지 새로고침이 된다. 템플릿의 표준 관용구는 Button+navigate 이고, SEO 봇 렌더러(ComponentHtmlMapper::applyNavigateLink)가 이 조합을 <a href> 로 변환한다. 키보드 포커스도 button 이 기본으로 받는다.",
+    "왜 inline style 인가": "Button 컴포넌트가 className 앞에 `inline-flex items-center justify-center` 를 붙이고, 빌드된 CSS 에서 `.inline-flex` 가 `.block` 보다 뒤에 있어 클래스로는 display 를 되돌릴 수 없다. 인라인 스타일만이 확실하다 — 이 규칙을 놓쳐 이미지와 상품정보가 가로로 나란히 붙는 결함이 있었다."
+  },
+  "type": "basic",
+  "name": "Button",
+  "props": {
+    "type": "button",
+    "data-product-image": "",
+    "className": "group focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
+    "style": {
+      "display": "block",
+      "width": "100%",
+      "minWidth": "0",
+      "textAlign": "left"
+    }
+  },
+  "actions": [
+    {
+      "comment": "상세 라우팅 식별자는 product_code, 없으면 id 폴백(ProductCard 컴포지트와 동일). mergeQuery 는 #75 목록 컨텍스트 왕복 규약 — 목록에서 상세로 갈 때 page/sort/keyword/category 를 승계해 뒤로가기가 보던 위치로 돌아간다.",
+      "type": "click",
+      "handler": "navigate",
+      "params": {
+        "path": "{{_global.shopBase}}/products/{{product.product_code ?? product.id}}",
+        "mergeQuery": true,
+        "query": {}
+      }
+    }
+  ],
+  "children": [
+    {
+      "comment": "세로 3:4 — aspect-[3/4] 는 빌드 CSS 에 없으므로 style 로 지정한다.",
+      "type": "basic",
+      "name": "Div",
+      "props": {
+        "className": "relative w-full overflow-hidden bg-gray-100 dark:bg-gray-800",
+        "style": { "aspectRatio": "3 / 4" }
+      },
+      "children": [
+        {
+          "comment": "ProductListResource 의 thumbnail_url 은 nullable 이다 (Product::getThumbnailUrl(): ?string). src 가 빈 값이면 브라우저가 깨진 이미지 아이콘을 그리므로 값이 있을 때만 렌더한다.",
+          "type": "basic",
+          "name": "Img",
+          "if": "{{(product.thumbnail_url ?? '') !== ''}}",
+          "props": {
+            "src": "{{product.thumbnail_url}}",
+            "alt": "{{product.name_localized ?? product.name ?? ''}}",
+            "loading": "lazy",
+            "className": "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          }
+        },
+        {
+          "comment": "판매 불가 상태 오버레이 — 라벨 문구는 API 의 sales_status_label 을 그대로 쓴다(템플릿이 번역하지 않는다).",
+          "type": "basic",
+          "name": "Div",
+          "if": "{{product.sales_status && product.sales_status !== 'on_sale'}}",
+          "props": {
+            "data-product-soldout": "",
+            "className": "absolute inset-0 flex items-center justify-center bg-white/90 dark:bg-gray-900/50"
+          },
+          "children": [
+            {
+              "type": "basic",
+              "name": "Span",
+              "props": { "className": "text-xs font-medium uppercase tracking-widest text-gray-900 dark:text-white" },
+              "text": "{{product.sales_status_label ?? product.sales_status}}"
+            }
+          ]
+        },
+        {
+          "comment": "상품 라벨 — 운영자가 등록한 실제 라벨(labels[].name/color)만. 색은 데이터 값이라 style 로 지정한다.",
+          "type": "basic",
+          "name": "Div",
+          "if": "{{(product.labels ?? []).length > 0 && product.sales_status === 'on_sale'}}",
+          "props": { "className": "absolute bottom-0 left-0 flex flex-wrap gap-1 p-2" },
+          "children": [
+            {
+              "type": "basic",
+              "name": "Span",
+              "iteration": { "source": "{{product.labels ?? []}}", "item_var": "labelItem" },
+              "props": {
+                "className": "px-1.5 py-0.5 text-xs font-medium text-white",
+                "style": { "backgroundColor": "{{labelItem.color ?? '#111827'}}" }
+              },
+              "text": "{{labelItem.name}}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

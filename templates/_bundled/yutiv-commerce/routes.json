@@ -1,0 +1,351 @@
+{
+  "version": "1.0.0",
+  "description": "yutiv-commerce 사용자 템플릿 라우트 정의 (sirsoft-basic 계약 상속)",
+  "routes": [
+    {
+      "_comment": "=== 홈 ===",
+      "path": "/",
+      "layout": "home",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.home.page_title"
+      }
+    },
+
+    {
+      "_comment": "=== 인증 ===",
+      "path": "/login",
+      "layout": "auth/login",
+      "auth_required": false,
+      "guest_only": true,
+      "meta": {
+        "title": "$t:user.auth.login_title"
+      }
+    },
+    {
+      "path": "/register",
+      "layout": "auth/register",
+      "auth_required": false,
+      "guest_only": true,
+      "meta": {
+        "title": "$t:user.auth.register_title"
+      }
+    },
+    {
+      "path": "/forgot-password",
+      "layout": "auth/forgot_password",
+      "auth_required": false,
+      "guest_only": true,
+      "meta": {
+        "title": "$t:user.auth.forgot_password_title"
+      }
+    },
+    {
+      "path": "/reset-password",
+      "layout": "auth/reset_password",
+      "auth_required": false,
+      "guest_only": true,
+      "meta": {
+        "title": "$t:user.auth.reset_password_title"
+      }
+    },
+    {
+      "path": "/identity/challenge",
+      "layout": "auth/identity_challenge",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.identity.challenge.title"
+      }
+    },
+
+    {
+      "_comment": "=== 게시판 ===",
+      "path": "/boards",
+      "layout": "board/boards",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.board.boards_title"
+      }
+    },
+    {
+      "path": "/boards/popular",
+      "layout": "board/popular",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.board.popular_title"
+      }
+    },
+    {
+      "path": "/board/:slug",
+      "layout": "board/index",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.board.list_title"
+      }
+    },
+    {
+      "path": "/board/:slug/write",
+      "layout": "board/form",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.board.write_title"
+      }
+    },
+    {
+      "path": "/board/:slug/:id",
+      "layout": "board/show",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.board.show_title"
+      }
+    },
+    {
+      "path": "/board/:slug/:id/edit",
+      "layout": "board/form",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.board.edit_title"
+      }
+    },
+
+    {
+      "_comment": "=== 쇼핑몰 ===",
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/products",
+      "layout": "shop/index",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.list_title"
+      }
+    },
+    {
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/category/:slug",
+      "layout": "shop/category",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.category_title"
+      }
+    },
+    {
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/products/:product_code",
+      "layout": "shop/show",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.show_title"
+      }
+    },
+    {
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/cart",
+      "layout": "shop/cart",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.cart_title"
+      }
+    },
+    {
+      "_comment": "비회원 주문 지원 — 라우트 가드는 false 로 두고, 인증 보호는 백엔드 API(/api/modules/sirsoft-ecommerce/checkout 등의 optional.sanctum) 와 레이아웃 내 _global.currentUser?.uuid 분기가 담당",
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/checkout",
+      "layout": "shop/checkout",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.checkout_title"
+      }
+    },
+    {
+      "_comment": "주문 완료 — 회원/비회원 공유 라우트. 회원은 인증 세션, 비회원은 _global.guestOrderToken(localStorage) + globalHeaders 자동 주입으로 본인 확인. order_complete 레이아웃의 data_sources 가 _global.currentUser?.uuid 로 user/orders ↔ guest/orders 분기.",
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/orders/:id/complete",
+      "layout": "shop/order_complete",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.order_complete_title"
+      }
+    },
+    {
+      "_comment": "비회원 주문 조회 폼 — 주문번호+휴대폰+비밀번호로 본인 확인 후 30분 유효 토큰 발급. 회원도 접근 가능하지만 사용 이유 없음 (마이페이지 사용). 경로는 백엔드 API(guest/orders/*) 와 동일한 guest/orders 진입점으로 통일. 정적 경로이므로 아래 :order_number 상세 라우트보다 먼저 정의되어야 우선 매칭된다.",
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/guest/orders",
+      "layout": "shop/guest_order_form",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.guest_order_form_title"
+      }
+    },
+    {
+      "_comment": "비회원 주문 상세 — 회원 마이페이지 주문 상세와 동등한 partial 재사용. _user_base globalHeaders 가 X-Guest-Order-Token 자동 주입. 401/404 시 토큰 삭제 + 조회 폼(guest/orders)으로 안내.",
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/guest/orders/:order_number",
+      "layout": "shop/guest_order_show",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.shop.guest_order_show_title"
+      }
+    },
+    {
+      "path": "/{{_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop')}}/reorder/:id",
+      "layout": "shop/reorder",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:shop.reorder.title"
+      }
+    },
+
+    {
+      "_comment": "=== 마이페이지 ===",
+      "path": "/mypage",
+      "redirect": "/mypage/profile",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.page_title"
+      }
+    },
+    {
+      "path": "/mypage/profile",
+      "layout": "mypage/profile",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.profile_title"
+      }
+    },
+    {
+      "path": "/mypage/profile/edit",
+      "layout": "mypage/profile-edit",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.profile_edit_title"
+      }
+    },
+    {
+      "path": "/mypage/change-password",
+      "layout": "mypage/change-password",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.change_password_title"
+      }
+    },
+    {
+      "path": "/mypage/orders",
+      "layout": "mypage/orders",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.orders_title"
+      }
+    },
+    {
+      "path": "/mypage/orders/:order_number",
+      "layout": "mypage/orders/show",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.order_detail_title"
+      }
+    },
+    {
+      "path": "/mypage/mileage",
+      "layout": "mypage/mileage",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.mileage_title"
+      }
+    },
+    {
+      "path": "/mypage/wishlist",
+      "layout": "mypage/wishlist",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.wishlist_title"
+      }
+    },
+    {
+      "path": "/mypage/addresses",
+      "layout": "mypage/addresses",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.addresses_title"
+      }
+    },
+    {
+      "path": "/mypage/notifications",
+      "layout": "mypage/notifications",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.notifications_title"
+      }
+    },
+    {
+      "path": "/mypage/board",
+      "layout": "mypage/board",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.board_title"
+      }
+    },
+    {
+      "path": "/mypage/inquiries",
+      "layout": "mypage/inquiries",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:user.mypage.inquiries_title"
+      }
+    },
+
+    {
+      "_comment": "=== 사용자 프로필 ===",
+      "path": "/users/:userId",
+      "layout": "users/show",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.profile.page_title"
+      }
+    },
+    {
+      "path": "/users/:userId/posts",
+      "layout": "users/posts",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.profile.posts_page_title"
+      }
+    },
+
+    {
+      "_comment": "=== 페이지 ===",
+      "path": "/page/:slug",
+      "layout": "page/show",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.page.page_title"
+      }
+    },
+
+    {
+      "_comment": "=== 검색 ===",
+      "path": "/search",
+      "layout": "search/index",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.search.page_title"
+      }
+    },
+
+    {
+      "_comment": "=== 에러 페이지 ===",
+      "path": "/404",
+      "layout": "errors/404",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.errors.not_found_title"
+      }
+    },
+    {
+      "path": "/403",
+      "layout": "errors/403",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.errors.forbidden_title"
+      }
+    },
+    {
+      "path": "/500",
+      "layout": "errors/500",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:user.errors.server_error_title"
+      }
+    }
+  ]
+}

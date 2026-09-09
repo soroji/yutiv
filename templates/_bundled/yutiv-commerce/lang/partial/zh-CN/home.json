@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "eyebrow": "GLOBAL TREND LIVE COMMERCE",
+    "title": "全球潮流，\n抢先一步遇见",
+    "subtitle": "美妆、时尚、高尔夫与生活方式。跨越国界，遇见当下最受关注的商品。",
+    "cta_primary": "去逛商品",
+    "cta_secondary": "查看分类"
+  },
+  "sections": {
+    "categories": "分类",
+    "categories_eyebrow": "按分类选购",
+    "new_products": "新品",
+    "new_eyebrow": "抢先看",
+    "best_products": "热销",
+    "best_eyebrow": "当下最热",
+    "all_products": "全部商品",
+    "all_eyebrow": "全部系列",
+    "view_all": "查看全部"
+  },
+  "empty": {
+    "title": "商品正在准备中",
+    "description": "新商品即将上架，请稍后再来看看。"
+  },
+  "brand": {
+    "eyebrow": "关于 YUTIV",
+    "title": "YUTIV 的不同之处",
+    "description": "这里不只是销售商品的平台，更是生动展现商品价值的潮流电商平台。",
+    "point_1_title": "跨越国界的甄选",
+    "point_1_desc": "在同一个地方遇见世界各地的潮流商品。",
+    "point_2_title": "生动的商品体验",
+    "point_2_desc": "亲眼看见、真实感受，追求全新的购物方式。",
+    "point_3_title": "安心下单与支付",
+    "point_3_desc": "从下单到配送，全流程安全管理。"
+  }
+}
