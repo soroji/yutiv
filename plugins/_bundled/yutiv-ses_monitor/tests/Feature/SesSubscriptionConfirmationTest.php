@@ -29,7 +29,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
     /**
      * @param  array<string, mixed>  $message
      */
-    private function post(array $message): \Illuminate\Testing\TestResponse
+    private function postSnsMessage(array $message): \Illuminate\Testing\TestResponse
     {
         return $this->call(
             'POST',
@@ -52,7 +52,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
     {
         Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertOk()
             ->assertJsonPath('status', 'confirmation_pending');
 
@@ -66,7 +66,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             $captured[] = $log;
         });
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())->assertOk();
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())->assertOk();
 
         $messages = array_column($captured, 'message');
         $this->assertContains('ses_monitor.subscription_confirmation_pending', $messages);
@@ -83,7 +83,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $this->enableAutoConfirm();
         Http::fake([self::SUBSCRIBE_HOST => Http::response('<ConfirmSubscriptionResponse/>', 200)]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertOk()
             ->assertJsonPath('status', 'confirmed');
 
@@ -102,7 +102,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $message = $this->bag->factory()->subscriptionConfirmation();
         $message['Token'] = 'attacker-supplied-token';
 
-        $this->post($message)
+        $this->postSnsMessage($message)
             ->assertForbidden()
             ->assertJsonPath('reason', 'signature_invalid');
 
@@ -118,7 +118,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $this->bindFixtureValidator();
         Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertForbidden()
             ->assertJsonPath('reason', 'topic_mismatch');
 
@@ -131,7 +131,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $this->bindFixtureValidator();
         Http::fake(['*' => Http::response('ok', 200)]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertForbidden()
             ->assertJsonPath('reason', 'region_mismatch');
 
@@ -147,7 +147,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             'Timestamp' => gmdate('Y-m-d\TH:i:s.000\Z', time() - 4000),
         ]);
 
-        $this->post($message)->assertForbidden();
+        $this->postSnsMessage($message)->assertForbidden();
 
         Http::assertNothingSent();
     }
@@ -162,7 +162,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             'SubscribeURL' => 'https://evil.example.com/confirm',
         ]);
 
-        $response = $this->post($message);
+        $response = $this->postSnsMessage($message);
 
         $this->assertContains($response->getStatusCode(), [403]);
         Http::assertNothingSent();
@@ -190,7 +190,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             'evil.example.com/*' => Http::response('should not be reached', 200),
         ]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500)
             ->assertJsonPath('status', 'confirm_failed');
 
@@ -204,7 +204,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $this->enableAutoConfirm();
         Http::fake([self::SUBSCRIBE_HOST => Http::response('server error', 500)]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500)
             ->assertJsonPath('status', 'confirm_failed');
     }
@@ -216,7 +216,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             self::SUBSCRIBE_HOST => fn () => throw new \Illuminate\Http\Client\ConnectionException('timed out'),
         ]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500)
             ->assertJsonPath('status', 'confirm_failed');
     }
@@ -228,11 +228,11 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $message = $this->bag->factory()->subscriptionConfirmation();
 
         Http::fake([self::SUBSCRIBE_HOST => Http::response('err', 500)]);
-        $this->post($message)->assertStatus(500);
+        $this->postSnsMessage($message)->assertStatus(500);
 
         // 실패했으므로 중복 표시가 해제되어야 한다 — 재시도가 통해야 복구된다.
         Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
-        $this->post($message)->assertOk()->assertJsonPath('status', 'confirmed');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'confirmed');
     }
 
     // ── 멱등성 ──────────────────────────────────────────────────────────────
@@ -244,8 +244,8 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
 
         $message = $this->bag->factory()->subscriptionConfirmation();
 
-        $this->post($message)->assertOk()->assertJsonPath('status', 'confirmed');
-        $this->post($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'confirmed');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
 
         Http::assertSentCount(1);
     }
@@ -264,7 +264,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             $captured[] = $log;
         });
 
-        $this->post($message)->assertOk();
+        $this->postSnsMessage($message)->assertOk();
 
         $dump = json_encode(array_map(
             fn ($l) => ['message' => $l->message, 'context' => $l->context],
@@ -290,7 +290,7 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
             $captured[] = $log;
         });
 
-        $this->post($message)->assertStatus(500);
+        $this->postSnsMessage($message)->assertStatus(500);
 
         $dump = json_encode(array_map(
             fn ($l) => ['message' => $l->message, 'context' => $l->context],

@@ -27,7 +27,7 @@ class SesTimestampPolicyTest extends PluginTestCase
     /**
      * @param  array<string, mixed>  $message
      */
-    private function post(array $message): \Illuminate\Testing\TestResponse
+    private function postSnsMessage(array $message): \Illuminate\Testing\TestResponse
     {
         return $this->call(
             'POST',
@@ -48,7 +48,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() - 259200
         );
 
-        $this->post($message)
+        $this->postSnsMessage($message)
             ->assertOk()
             ->assertJsonPath('status', 'stored');
 
@@ -66,7 +66,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() - 2592000
         );
 
-        $this->post($message)->assertOk()->assertJsonPath('status', 'stored');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'stored');
 
         $this->assertSame(1, SesEventLog::where('ses_message_id', 'ancient-1')->count());
     }
@@ -78,15 +78,15 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() - 259200
         );
 
-        $this->post($message)->assertOk()->assertJsonPath('status', 'stored');
-        $this->post($message)->assertOk()->assertJsonPath('status', 'duplicate');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'stored');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'duplicate');
 
         $this->assertSame(1, SesEventLog::where('ses_message_id', 'late-dup')->count());
     }
 
     public function test_오래된_이벤트의_occurred_at_은_SES_시각을_보존한다(): void
     {
-        $this->post($this->bag->factory()->notificationAt(
+        $this->postSnsMessage($this->bag->factory()->notificationAt(
             SnsFixtureFactory::bounceEvent('preserve-1'),
             time() - 259200
         ))->assertOk();
@@ -100,7 +100,7 @@ class SesTimestampPolicyTest extends PluginTestCase
 
     public function test_지연_시간을_조회할_수_있다(): void
     {
-        $this->post($this->bag->factory()->notificationAt(
+        $this->postSnsMessage($this->bag->factory()->notificationAt(
             SnsFixtureFactory::bounceEvent('delay-1'),
             time() - 259200
         ))->assertOk();
@@ -130,7 +130,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() - 2592000
         );
 
-        $this->post($message)->assertOk();
+        $this->postSnsMessage($message)->assertOk();
 
         $messages = array_column($captured, 'message');
         $this->assertContains('ses_monitor.event_delayed', $messages);
@@ -155,7 +155,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() + 3600
         );
 
-        $this->post($message)
+        $this->postSnsMessage($message)
             ->assertForbidden()
             ->assertJsonPath('reason', 'timestamp_future');
 
@@ -170,7 +170,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() + 60
         );
 
-        $this->post($message)->assertOk()->assertJsonPath('status', 'stored');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'stored');
     }
 
     public function test_미래_SubscriptionConfirmation_도_403이고_호출하지_않는다(): void
@@ -183,7 +183,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             'Timestamp' => gmdate('Y-m-d\TH:i:s.000\Z', time() + 3600),
         ]);
 
-        $this->post($message)->assertForbidden();
+        $this->postSnsMessage($message)->assertForbidden();
 
         Http::assertNothingSent();
     }
@@ -199,7 +199,7 @@ class SesTimestampPolicyTest extends PluginTestCase
         // 2시간 전 — 서명은 유효하지만 제어 메시지 상한(1시간)을 넘었다.
         $message = $this->bag->factory()->subscriptionConfirmationAt(time() - 7200);
 
-        $this->post($message)
+        $this->postSnsMessage($message)
             ->assertForbidden()
             ->assertJsonPath('reason', 'timestamp_expired');
 
@@ -212,7 +212,7 @@ class SesTimestampPolicyTest extends PluginTestCase
         $this->bindFixtureValidator();
         Http::fake(['sns.ap-northeast-2.amazonaws.com/*' => Http::response('ok', 200)]);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())
             ->assertOk()
             ->assertJsonPath('status', 'confirmed');
 
@@ -223,7 +223,7 @@ class SesTimestampPolicyTest extends PluginTestCase
     {
         $message = $this->bag->factory()->unsubscribeConfirmationAt(time() - 7200);
 
-        $this->post($message)
+        $this->postSnsMessage($message)
             ->assertForbidden()
             ->assertJsonPath('reason', 'timestamp_expired');
     }
@@ -232,7 +232,7 @@ class SesTimestampPolicyTest extends PluginTestCase
     {
         $message = $this->bag->factory()->unsubscribeConfirmationAt(time() - 60);
 
-        $this->post($message)
+        $this->postSnsMessage($message)
             ->assertOk()
             ->assertJsonPath('status', 'unsubscribe_acknowledged');
     }
@@ -263,7 +263,7 @@ class SesTimestampPolicyTest extends PluginTestCase
             time() - 259200
         );
 
-        $this->post($message)->assertOk()->assertJsonPath('status', 'stored');
+        $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'stored');
     }
 
     public function test_SesConfig_에_예전_접근자가_없다(): void

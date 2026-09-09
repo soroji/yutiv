@@ -658,6 +658,98 @@ check('status: auto-confirm 이 켜져 있으면 경고', strpos($statusSrc, "if
 check('status: TopicArn 은 마스킹해서만 출력', strpos($statusSrc, "\$summary['topic_arn']") !== false
     && strpos($statusSrc, 'SesConfig::topicArn()') === false);
 
+// ── 13. 테스트 helper 이름이 부모 API 와 충돌하지 않는가 ───────────────────
+//
+// PHP 는 부모의 public 메서드를 더 낮은 가시성으로 재정의하면 **클래스 로딩 시점에**
+// Fatal Error 를 낸다. 이건 단일 파일 문법 오류가 아니라 상속 해석 오류라 `php -l` 로는
+// 잡히지 않는다 — 실제로 서버 PHPUnit 첫 실행에서야 드러났다
+// ("Access level to ...::post() must be public").
+//
+// 그래서 이름 충돌 자체를 여기서 정적으로 막는다. 가시성을 public 으로 올려 우연히
+// 부모를 override 하는 것도 금지한다 — 부모 동작을 조용히 가로채기 때문이다.
+
+$laravelTestCaseApi = [
+    'get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'call', 'json',
+    'getJson', 'postJson', 'putJson', 'patchJson', 'deleteJson', 'optionsJson',
+    'createApplication', 'refreshApplication', 'withoutMiddleware', 'withMiddleware',
+    'withHeaders', 'withHeader', 'withToken', 'actingAs', 'be', 'from',
+    'travel', 'travelTo', 'travelBack', 'freezeTime', 'freezeSecond',
+    'mock', 'spy', 'partialMock', 'instance', 'swap', 'seed', 'artisan',
+    'followingRedirects', 'withSession', 'flushSession', 'withCookie', 'withCookies',
+    'assertStatus', 'assertJson', 'assertDatabaseHas', 'assertDatabaseMissing',
+];
+
+// TestCase 계열을 상속한 클래스만 검사한다 (ArrayStore 서브클래스의 get/add 는 정상 override).
+$testCaseParents = ['TestCase', 'PluginTestCase'];
+
+$testFiles = [];
+foreach (['/tests/Feature', '/tests', '/tests/Support'] as $dir) {
+    $path = $pluginDir.$dir;
+    if (! is_dir($path)) {
+        continue;
+    }
+    foreach (glob($path.'/*.php') as $file) {
+        $testFiles[$file] = true;
+    }
+}
+
+$collisions = [];
+$scanned = 0;
+
+foreach (array_keys($testFiles) as $file) {
+    $body = file_get_contents($file);
+
+    // 파일 안의 클래스별 블록을 나눈다 (한 파일에 보조 클래스가 같이 있을 수 있다).
+    if (preg_match_all('/class\s+(\w+)\s+extends\s+(\w+)/', $body, $classes, PREG_OFFSET_CAPTURE) === 0) {
+        continue;
+    }
+
+    $count = count($classes[0]);
+    for ($i = 0; $i < $count; $i++) {
+        $className = $classes[1][$i][0];
+        $parent = $classes[2][$i][0];
+        $start = $classes[0][$i][1];
+        $end = ($i + 1 < $count) ? $classes[0][$i + 1][1] : strlen($body);
+
+        if (! in_array($parent, $testCaseParents, true)) {
+            continue;
+        }
+
+        $scanned++;
+        $block = substr($body, $start, $end - $start);
+
+        preg_match_all('/(public|protected|private)\s+function\s+(\w+)\s*\(/', $block, $methods, PREG_SET_ORDER);
+
+        foreach ($methods as $m) {
+            $visibility = $m[1];
+            $name = $m[2];
+
+            if (in_array($name, $laravelTestCaseApi, true)) {
+                $collisions[] = basename($file).": {$className}::{$name}() ({$visibility})";
+            }
+        }
+    }
+}
+
+check('테스트 helper 이름이 Laravel TestCase API 와 충돌하지 않음',
+    $collisions === [],
+    implode(' / ', $collisions));
+check('TestCase 파생 클래스를 실제로 스캔했다', $scanned >= 5, "스캔 {$scanned}개");
+
+// 이름이 실제로 바뀌었는지 (되돌아가면 즉시 잡힌다)
+$renamed = [
+    'SesSubscriptionClaimTest.php' => 'postSubscriptionConfirmation',
+    'SesSubscriptionConfirmationTest.php' => 'postSnsMessage',
+    'SesTimestampPolicyTest.php' => 'postSnsMessage',
+    'SesWebhookTest.php' => 'postSnsPayload',
+];
+foreach ($renamed as $file => $method) {
+    $body = file_get_contents($pluginDir.'/tests/Feature/'.$file);
+    check("테스트 helper 이름: {$file} → {$method}()",
+        strpos($body, "function {$method}(") !== false
+        && strpos($body, '$this->post(') === false);
+}
+
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {
     foreach ($passes as $p) {

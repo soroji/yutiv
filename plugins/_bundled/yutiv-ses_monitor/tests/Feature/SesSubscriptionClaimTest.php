@@ -36,7 +36,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
     /**
      * @param  array<string, mixed>  $message
      */
-    private function post(array $message): \Illuminate\Testing\TestResponse
+    private function postSubscriptionConfirmation(array $message): \Illuminate\Testing\TestResponse
     {
         return $this->call(
             'POST',
@@ -66,11 +66,11 @@ class SesSubscriptionClaimTest extends PluginTestCase
         $message = $this->bag->factory()->subscriptionConfirmation();
 
         // 첫 요청이 선점 + 호출
-        $this->post($message)->assertOk()->assertJsonPath('status', 'confirmed');
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'confirmed');
         Http::assertSentCount(1);
 
         // 두 번째는 add() 가 false 이고 get() 으로 기존 키가 확인된다 → 중복
-        $this->post($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
 
         Http::assertSentCount(1);
     }
@@ -82,7 +82,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
         // add() 는 false, get() 은 null — "쓰기 실패" 상황
         $this->breakCache('none', addReturnsFalse: true);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSubscriptionConfirmation($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500)
             ->assertJsonPath('status', 'claim_unavailable');
 
@@ -97,7 +97,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
 
         $this->breakCache('add');
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSubscriptionConfirmation($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500)
             ->assertJsonPath('status', 'claim_unavailable');
 
@@ -111,7 +111,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
         // add() 는 false 를 돌려주고 get() 이 던진다 — 상태 확인 불가
         $this->breakCache('get', addReturnsFalse: true);
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSubscriptionConfirmation($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500)
             ->assertJsonPath('status', 'claim_unavailable');
 
@@ -124,7 +124,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
 
         $this->breakCache('both');
 
-        $this->post($this->bag->factory()->subscriptionConfirmation())
+        $this->postSubscriptionConfirmation($this->bag->factory()->subscriptionConfirmation())
             ->assertStatus(500);
 
         Http::assertNothingSent();
@@ -137,12 +137,12 @@ class SesSubscriptionClaimTest extends PluginTestCase
         $message = $this->bag->factory()->subscriptionConfirmation();
 
         Http::fake([self::SUBSCRIBE_HOST => Http::response('err', 500)]);
-        $this->post($message)->assertStatus(500)->assertJsonPath('status', 'confirm_failed');
+        $this->postSubscriptionConfirmation($message)->assertStatus(500)->assertJsonPath('status', 'confirm_failed');
         Http::assertSentCount(1);
 
         // 선점이 해제됐으므로 재시도가 다시 선점하고 호출한다.
         Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
-        $this->post($message)->assertOk()->assertJsonPath('status', 'confirmed');
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'confirmed');
         Http::assertSentCount(1);
     }
 
@@ -152,9 +152,9 @@ class SesSubscriptionClaimTest extends PluginTestCase
 
         $message = $this->bag->factory()->subscriptionConfirmation();
 
-        $this->post($message)->assertOk()->assertJsonPath('status', 'confirmed');
-        $this->post($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
-        $this->post($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'confirmed');
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'already_confirmed');
 
         Http::assertSentCount(1);
     }
@@ -164,7 +164,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
         Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
 
         $message = $this->bag->factory()->subscriptionConfirmation();
-        $this->post($message)->assertOk();
+        $this->postSubscriptionConfirmation($message)->assertOk();
 
         $key = 'yutiv-ses-monitor:sns-confirm:'.sha1($message['MessageId']);
 
@@ -187,7 +187,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
         // 동시 도착을 순차 요청으로 근사한다. add() 가 원자적이므로 첫 요청만 선점하고
         // 나머지는 중복으로 떨어진다 — 어느 경우에도 호출은 누적되지 않는다.
         for ($i = 0; $i < 5; $i++) {
-            $response = $this->post($message);
+            $response = $this->postSubscriptionConfirmation($message);
             $this->assertContains($response->getStatusCode(), [200, 500]);
         }
 
@@ -208,7 +208,7 @@ class SesSubscriptionClaimTest extends PluginTestCase
             $captured[] = $log;
         });
 
-        $this->post($message)->assertStatus(500);
+        $this->postSubscriptionConfirmation($message)->assertStatus(500);
 
         $messages = array_column($captured, 'message');
         $this->assertContains('ses_monitor.subscription_claim_unavailable', $messages);
@@ -273,6 +273,12 @@ class BrokenCacheStore extends ArrayStore
         parent::__construct();
     }
 
+    /**
+     * `add()` 는 `Store` 인터페이스가 아니라 선택 구현이다 — `ArrayStore` 에 있을 수도,
+     * 없을 수도 있다(`Repository::add()` 가 `method_exists` 로 확인한다). 그래서
+     * `parent::add()` 를 부르지 않고 `get`/`put` 으로 동등한 의미를 직접 구현한다.
+     * 부모에 없는 메서드를 호출해 테스트가 프레임워크 버전에 묶이지 않게 한다.
+     */
     public function add($key, $value, $seconds)
     {
         if ($this->failing === 'add' || $this->failing === 'both') {
@@ -283,7 +289,15 @@ class BrokenCacheStore extends ArrayStore
             return false;
         }
 
-        return parent::add($key, $value, $seconds);
+        // 우리 get() 오버라이드를 거치지 않도록 부모 구현으로 확인한다 —
+        // 'get' 고장 모드에서 add() 까지 덩달아 던지면 분기를 갈라 볼 수 없다.
+        if (parent::get($key) !== null) {
+            return false;
+        }
+
+        $this->put($key, $value, $seconds);
+
+        return true;
     }
 
     public function get($key)
