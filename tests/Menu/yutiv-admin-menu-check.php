@@ -533,6 +533,11 @@ check('모듈 재동기화(플러그인 활성): 승격 메뉴가 최상위 유�
 check('모듈 재동기화(플러그인 활성): 전체 배치 그대로', $rowsWithPlugin === $rows);
 
 // 8-b. 플러그인 비활성 상태의 재동기화 — 원본 정의가 그대로 들어간다
+//
+// 이 검사가 확인하는 것은 **재동기화의 효과**이지 비활성화의 효과가 아니다.
+// `plugin:deactivate` 자체는 DB 메뉴를 복원하지 않는다 — 비활성 상태에서 이커머스
+// 메뉴 재동기화가 실제로 실행돼야 원래 모듈 정의 계층이 다시 적용된다.
+// 정상 해제 순서는 `yutiv:admin-menu --rollback` → `plugin:deactivate` 이다.
 $rowsNoPlugin = $rows;
 simulateSync($definition, $rowsNoPlugin);
 $revertedCount = 0;
@@ -543,7 +548,7 @@ foreach (array_keys($topLevelTargets) as $slug) {
         }
     }
 }
-check('플러그인 비활성 시 원래 계층으로 되돌아감 (설계된 폴백)', $revertedCount === 5, '되돌아간 메뉴 '.$revertedCount.'개');
+check('플러그인 비활성 상태에서 이커머스 메뉴 재동기화 시 원래 계층으로 되돌아감', $revertedCount === 5, '되돌아간 메뉴 '.$revertedCount.'개');
 
 // ── 8-c. 코어 메뉴 재동기화 (CoreUpdateService::syncCoreMenus) ───────────────
 // 코어 업데이트 경로다. ExtensionMenuSyncHelper 를 쓰므로 order 가 user_overrides 에

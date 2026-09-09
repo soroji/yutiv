@@ -371,11 +371,17 @@ class YutivAdminMenuLayoutTest extends TestCase
         }
     }
 
-    public function test_플러그인이_없으면_원래_계층으로_되돌아간다(): void
+    /**
+     * 확인 대상은 **재동기화의 효과**이지 비활성화의 효과가 아니다.
+     * `plugin:deactivate` 자체는 DB 메뉴를 복원하지 않는다 — 비활성 상태에서 이커머스
+     * 메뉴 재동기화가 실제로 실행돼야 원래 모듈 정의 계층이 다시 적용된다.
+     * 정상 해제 순서는 `yutiv:admin-menu --rollback` → `plugin:deactivate` 이다.
+     */
+    public function test_플러그인_비활성_상태에서_이커머스_메뉴_재동기화_시_원래_계층으로_되돌아간다(): void
     {
         $this->apply();
 
-        // 필터를 거치지 않은 원본 정의로 동기화 = 플러그인 비활성 상태
+        // 필터를 거치지 않은 원본 정의로 동기화 = 플러그인 비활성 상태의 재동기화
         $this->simulateSync($this->moduleDefinition());
 
         $parentId = Menu::where('slug', 'sirsoft-ecommerce')->value('id');
