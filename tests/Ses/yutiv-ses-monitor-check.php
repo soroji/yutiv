@@ -1273,6 +1273,57 @@ check('격리: 인자 없는 Http::fake() catch-all 을 쓰지 않는다',
 check('격리: 그래도 stray 요청은 막는다',
     strpos($ptcSrc, 'Http::preventStrayRequests();') !== false);
 
+// 한 테스트 안에서 Http::fake() 를 두 번 부르면 stub 이 **병합**되어 먼저 등록한 응답이
+// 계속 이긴다(첫 일치 우선). 게다가 두 번째 fake() 가 recorded 를 비워 전송 횟수 단언까지
+// 가린다 — 재시도 시나리오가 조용히 거짓 통과한다. 순서가 필요한 곳은 sequence 로 쓴다.
+$multiFakeMethods = [];
+$scannedTestMethods = 0;
+foreach ($featureFiles as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    // /u 없이는 \w 가 한글 메서드명을 매칭하지 못해 아무것도 검사하지 못한다.
+    if (preg_match_all('/public function (test_\\w+)\\(\\): void\\s*\\{(.*?)\\n    \\}/su', $code, $methods, PREG_SET_ORDER) === 0) {
+        continue;
+    }
+
+    $scannedTestMethods += count($methods);
+
+    foreach ($methods as $method) {
+        if (substr_count($method[2], 'Http::fake(') > 1) {
+            $multiFakeMethods[] = basename($file).'::'.$method[1];
+        }
+    }
+}
+
+check('격리: 한 테스트에서 Http::fake() 를 두 번 부르지 않는다 (순서는 sequence 로)',
+    $multiFakeMethods === [], implode(' / ', $multiFakeMethods));
+check('격리: 테스트 메서드 스캔이 실제로 동작했다', $scannedTestMethods >= 100, "스캔 {$scannedTestMethods}종");
+
+// 재시도 계약이 실제로 sequence + 전송 2회로 고정돼 있는가
+$retryFiles = [
+    'SesSubscriptionClaimTest.php' => $pluginDir.'/tests/Feature/SesSubscriptionClaimTest.php',
+    'SesSubscriptionConfirmationTest.php' => $pluginDir.'/tests/Feature/SesSubscriptionConfirmationTest.php',
+];
+foreach ($retryFiles as $label => $path) {
+    $code = file_get_contents($path);
+
+    check("재시도: {$label} 이 sequence 로 500 → 200 을 표현한다",
+        strpos($code, 'Http::sequence()') !== false
+        && strpos($code, "->push('err', 500)") !== false
+        && strpos($code, "->push('ok', 200)") !== false);
+    check("재시도: {$label} 이 전송 2회를 단언한다",
+        strpos($code, 'Http::assertSentCount(2);') !== false);
+    check("재시도: {$label} 이 실패 후 선점 해제·성공 후 유지를 단언한다",
+        strpos($code, 'assertNull(Cache::get($claimKey)') !== false
+        && strpos($code, 'assertNotNull(Cache::get($claimKey)') !== false);
+    check("재시도: {$label} 이 실제 SubscribeURL 로 호출했는지 확인한다",
+        strpos($code, "\$request->url() === \$message['SubscribeURL']") !== false);
+    check("재시도: {$label} 이 sequence 소진 후 임의 응답을 허용하지 않는다",
+        strpos($code, 'whenEmpty(') === false
+        && strpos($code, 'dontFailWhenEmpty(') === false);
+}
+
+
 // (2) Cache 파사드 root 를 Repository 로 바꾸지 않는다 (Cache::store() 계약 유지)
 $badCacheSwaps = [];
 foreach ($featureFiles as $file) {

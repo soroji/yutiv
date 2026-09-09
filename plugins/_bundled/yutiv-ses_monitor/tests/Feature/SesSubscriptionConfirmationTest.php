@@ -3,6 +3,7 @@
 namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
 use Illuminate\Http\Client\Request as ClientRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Plugins\Yutiv\SesMonitor\Support\SubscriptionConfirmer;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
@@ -225,13 +226,29 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
         $this->enableAutoConfirm();
 
         $message = $this->bag->factory()->subscriptionConfirmation();
+        $claimKey = 'yutiv-ses-monitor:sns-confirm:'.sha1($message['MessageId']);
 
-        Http::fake([self::SUBSCRIBE_HOST => Http::response('err', 500)]);
-        $this->postSnsMessage($message)->assertStatus(500);
+        // fake() 를 두 번 부르면 stub 이 병합되어 먼저 등록한 500 이 계속 이긴다.
+        // 재시도는 하나의 sequence 로 표현하고, 소진 후 추가 호출은 실패로 남긴다.
+        Http::fake([
+            self::SUBSCRIBE_HOST => Http::sequence()
+                ->push('err', 500)
+                ->push('ok', 200),
+        ]);
+
+        $this->postSnsMessage($message)->assertStatus(500)->assertJsonPath('status', 'confirm_failed');
+
+        Http::assertSentCount(1);
 
         // 실패했으므로 중복 표시가 해제되어야 한다 — 재시도가 통해야 복구된다.
-        Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
+        $this->assertNull(Cache::get($claimKey), '실패 후에도 선점이 남아 있습니다.');
+
         $this->postSnsMessage($message)->assertOk()->assertJsonPath('status', 'confirmed');
+
+        // already_confirmed 로 빠진 것이 아니라 실제로 다시 호출했는지 확인한다.
+        Http::assertSentCount(2);
+        Http::assertSent(fn (ClientRequest $request) => $request->url() === $message['SubscribeURL']);
+        $this->assertNotNull(Cache::get($claimKey), '성공 후 선점이 유지되지 않습니다.');
     }
 
     // ── 멱등성 ──────────────────────────────────────────────────────────────

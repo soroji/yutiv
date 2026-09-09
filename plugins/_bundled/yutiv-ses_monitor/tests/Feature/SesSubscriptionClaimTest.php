@@ -3,6 +3,7 @@
 namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
 use Illuminate\Cache\ArrayStore;
+use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
@@ -147,15 +148,34 @@ class SesSubscriptionClaimTest extends PluginTestCase
     public function test_HTTP_실패_후_선점이_해제되어_다음_재시도에서_1회_호출된다(): void
     {
         $message = $this->bag->factory()->subscriptionConfirmation();
+        $claimKey = 'yutiv-ses-monitor:sns-confirm:'.sha1($message['MessageId']);
 
-        Http::fake([self::SUBSCRIBE_HOST => Http::response('err', 500)]);
+        // ★ fake() 를 두 번 부르면 안 된다. Laravel 은 stub 을 **병합**하고 등록 순서대로
+        //   훑어 첫 일치를 쓰므로, 먼저 등록한 500 이 두 번째 요청까지 계속 이긴다.
+        //   (게다가 두 번째 fake() 가 recorded 를 비워 전송 횟수 단언까지 가려버린다.)
+        //   재시도 시나리오는 하나의 sequence 로 표현한다.
+        //   sequence 가 소진된 뒤 세 번째 호출이 오면 예외로 실패한다 — 그게 맞다.
+        Http::fake([
+            self::SUBSCRIBE_HOST => Http::sequence()
+                ->push('err', 500)
+                ->push('ok', 200),
+        ]);
+
+        // 1차: 실제로 호출했지만 실패 → 500, 선점 해제
         $this->postSubscriptionConfirmation($message)->assertStatus(500)->assertJsonPath('status', 'confirm_failed');
-        Http::assertSentCount(1);
 
-        // 선점이 해제됐으므로 재시도가 다시 선점하고 호출한다.
-        Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
-        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'confirmed');
         Http::assertSentCount(1);
+        $this->assertNull(Cache::get($claimKey), '실패했는데 선점이 남아 있습니다 — 재시도가 영영 막힙니다.');
+
+        // 2차: 다시 선점하고 **실제로** 호출 → 200 (already_confirmed 로 빠지면 안 된다)
+        $this->postSubscriptionConfirmation($message)->assertOk()->assertJsonPath('status', 'confirmed');
+
+        // 전송은 정확히 2회. 1회면 중복 처리로 잘못 통과한 것이다.
+        Http::assertSentCount(2);
+        Http::assertSent(fn (ClientRequest $request) => $request->url() === $message['SubscribeURL']);
+
+        // 성공했으므로 이번 선점은 TTL 동안 남는다.
+        $this->assertNotNull(Cache::get($claimKey), '성공 후 선점이 유지되지 않습니다.');
     }
 
     public function test_성공_후_재전송은_추가_호출_없이_200(): void
