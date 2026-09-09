@@ -764,6 +764,33 @@ foreach ($renamed as $file => $method) {
 //
 // (2) 는 PSR-4 경로 규칙을 가정하지 않고, 파일을 훑어 만든 **실제 심볼 표**와 대조한다.
 
+/**
+ * PHP 소스에서 주석을 걷어낸다.
+ *
+ * "이 코드는 X 를 하지 않는다" 고 설명하는 주석 때문에 검사가 자기 문서를 벌하는 일이
+ * 반복돼서, 금지 토큰 검사는 **실행되는 코드**만 본다. token_get_all 은 파서가 아니라
+ * 토크나이저라 PHP 8 문법 파일도 7.4 에서 안전하게 처리한다.
+ */
+function sesStripComments($source)
+{
+    $out = '';
+
+    foreach (token_get_all($source) as $token) {
+        if (is_array($token)) {
+            if ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
+                continue;
+            }
+            $out .= $token[1];
+
+            continue;
+        }
+
+        $out .= $token;
+    }
+
+    return $out;
+}
+
 /** 디렉토리 아래 PHP 파일 목록. */
 function sesPhpFiles($dir)
 {
@@ -968,6 +995,99 @@ check('라우트: 권한 없음 403 · 권한 있음 200 을 각각 검증',
     && strpos($integrationSrc, '$response->assertOk()->assertJsonPath') !== false);
 check('라우트: 테스트가 URI 를 상수로 공유한다 (오타·표류 방지)',
     strpos($integrationSrc, "'/api/plugins/yutiv-ses_monitor/admin/ses-events'") === false);
+
+// ── 16. PHPUnit 11 · 암호화 키 계약 ────────────────────────────────────────
+//
+// 서버 4차 실행에서 드러난 두 결함을 고정한다.
+//   A. Symfony `Headers::all()` 은 Generator 를 돌려주는데 이를 PHPUnit haystack 으로
+//      직접 넘겨 `GeneratorNotSupportedException` 이 났다 (PHPUnit 11 계약).
+//   B. webhook 은 web 그룹이라 쿠키 암호화를 거치는데 APP_KEY 가 없어
+//      `MissingAppKeyException` 이 났다.
+//
+// 둘 다 문법 오류가 아니라 런타임 계약 위반이라 `php -l` 로 잡히지 않는다.
+
+$ptcSrc = file_get_contents($pluginDir.'/tests/PluginTestCase.php');
+$integrationSrc = file_get_contents($pluginDir.'/tests/Feature/SesMonitorIntegrationTest.php');
+
+// A. Generator 를 haystack 으로 넘기지 않는가 — SES 테스트 전수
+$generatorHaystacks = [];
+foreach (sesPhpFiles($pluginDir.'/tests') as $file) {
+    $body = file_get_contents($file);
+
+    // assertXxx( ... ->all(...) ... ) 처럼 iterable 을 그대로 넘기는 형태.
+    // 줄바꿈을 포함한 인자도 잡도록 s 플래그로 assert 호출 한 덩어리를 본다.
+    if (preg_match_all('/\$this->assert(Count|Contains|NotContains|ContainsEquals|Empty|NotEmpty)\s*\((?:[^();]|\([^()]*\))*\)/s', $body, $calls)) {
+        foreach ($calls[0] as $call) {
+            // materialize 를 거친 호출은 안전하다.
+            if (strpos($call, 'headerValues(') !== false
+                || strpos($call, 'headerBodies(') !== false
+                || strpos($call, 'iterator_to_array(') !== false) {
+                continue;
+            }
+
+            // 헤더 컬렉션·이터레이터를 직접 넘기는 형태만 위반으로 본다.
+            if (preg_match('/->(all|getIterator)\s*\(/', $call) === 1) {
+                $generatorHaystacks[] = basename($file).': '.preg_replace('/\s+/', ' ', substr($call, 0, 70));
+            }
+        }
+    }
+}
+
+check('PHPUnit: assertion haystack 에 Generator/이터레이터를 직접 넘기지 않는다',
+    $generatorHaystacks === [], implode(' / ', $generatorHaystacks));
+
+check('PHPUnit: 헤더를 배열로 확정하는 타입 안전 헬퍼가 있다',
+    strpos($ptcSrc, 'function headerValues(Headers $headers, string $name): array') !== false);
+check('PHPUnit: 헬퍼가 array/Traversable 양쪽을 안전하게 다룬다',
+    strpos($ptcSrc, 'is_array($all) ? array_values($all) : iterator_to_array($all, false)') !== false);
+check('PHPUnit: 본문 문자열 목록 헬퍼도 있다',
+    strpos($ptcSrc, 'function headerBodies(Headers $headers, string $name): array') !== false);
+
+// 원래 계약이 약해지지 않았는가 — 개수 1회 + 비덮어쓰기
+check('계약 유지: configuration-set 헤더 정확히 1회 단언',
+    substr_count($integrationSrc, "\$this->assertCount(1, \$values, '헤더가 없거나 두 번 이상 붙었습니다')") === 1);
+check('계약 유지: 개수와 값을 함께 못박는 단언',
+    strpos($integrationSrc, "\$this->assertSame(\n            ['yutiv-production'],") !== false);
+check('계약 유지: 기존 헤더 비덮어쓰기 단언 (개수 1 + 값 보존)',
+    strpos($integrationSrc, "\$this->assertCount(1, \$this->headerValues(\$headers, AttachSesConfigurationSet::HEADER));") !== false
+    && strpos($integrationSrc, "['already-set'],") !== false
+    && strpos($integrationSrc, "\$this->assertSame('already-set',") !== false);
+check('계약 유지: 헤더 단언을 문자열 전체 검색으로 약화하지 않았다',
+    strpos($integrationSrc, 'assertStringContainsString(AttachSesConfigurationSet::HEADER') === false);
+
+// B. 테스트 전용 APP_KEY
+check('APP_KEY: 결정적 테스트 키 상수가 있다',
+    strpos($ptcSrc, 'TEST_APP_KEY_PLAINTEXT') !== false);
+check('APP_KEY: 키가 AES-256 에 맞는 32바이트',
+    preg_match("/TEST_APP_KEY_PLAINTEXT = '([^']+)'/", $ptcSrc, $km) === 1 && strlen($km[1]) === 32,
+    isset($km[1]) ? strlen($km[1]).'바이트' : '상수 없음');
+check('APP_KEY: base64: 접두로 config 에 넣는다',
+    strpos($ptcSrc, "config(['app.key' => 'base64:'.base64_encode(self::TEST_APP_KEY_PLAINTEXT)]);") !== false);
+check('APP_KEY: 앱 생성 직후(부팅 단계)에 설정한다',
+    strpos($ptcSrc, '$this->afterApplicationCreated(function () {') !== false
+    && strpos($ptcSrc, '$this->useDeterministicTestAppKey();') !== false
+    && strpos($ptcSrc, '$this->useDeterministicTestAppKey();') < strpos($ptcSrc, 'parent::setUp();'));
+check('APP_KEY: 이미 만들어진 encrypter 를 버린다',
+    strpos($ptcSrc, "forgetInstance('encrypter')") !== false
+    && strpos($ptcSrc, 'Crypt::clearResolvedInstances()') !== false);
+
+// 운영 키·파일을 건드리지 않는가
+$envTouch = [];
+foreach (sesPhpFiles($pluginDir.'/tests') as $file) {
+    // 주석은 제외하고 **실행되는 코드**만 본다.
+    $body = sesStripComments(file_get_contents($file));
+
+    foreach (["env('APP_KEY')", 'getenv(\'APP_KEY\')', '$_ENV[\'APP_KEY\']', 'key:generate', 'base_path(\'.env', 'file_put_contents'] as $forbidden) {
+        if (strpos($body, $forbidden) !== false) {
+            $envTouch[] = basename($file).': '.$forbidden;
+        }
+    }
+}
+
+check('APP_KEY: 운영 키나 .env 를 읽거나 쓰지 않는다', $envTouch === [], implode(' / ', $envTouch));
+check('APP_KEY: key:generate 를 실행하지 않는다',
+    strpos(sesStripComments($ptcSrc), 'key:generate') === false
+    && strpos(sesStripComments($integrationSrc), 'key:generate') === false);
 
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {

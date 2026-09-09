@@ -10,12 +10,14 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Transport\ArrayTransport;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Plugins\Yutiv\SesMonitor\Providers\SesMonitorServiceProvider;
 use Plugins\Yutiv\SesMonitor\Support\SesConfig;
 use Plugins\Yutiv\SesMonitor\Tests\Support\TestableSesMonitorServiceProvider;
+use Symfony\Component\Mime\Header\Headers;
 use Tests\TestCase;
 
 /**
@@ -40,6 +42,14 @@ abstract class PluginTestCase extends TestCase
     /** 관리자 API 목록 라우트 URI (운영 prefix 포함). */
     protected const ADMIN_API_URI = 'api/plugins/yutiv-ses_monitor/admin/ses-events';
 
+    /**
+     * 이 플러그인 테스트 전용 암호화 키 (결정적, 운영과 무관).
+     *
+     * 32바이트 평문을 base64 로 감싼 값이라 AES-256-CBC / AES-256-GCM 어느 쪽에도 맞는다.
+     * 운영 APP_KEY 를 읽거나 복사하지 않고, .env 파일도 건드리지 않는다.
+     */
+    protected const TEST_APP_KEY_PLAINTEXT = 'yutiv-ses_monitor-testing-key000';
+
     protected SnsFixtureBag $bag;
 
     /** 프로바이더 boot 재실행을 한 번만 하기 위한 플래그 (중복 등록 방지). */
@@ -47,6 +57,12 @@ abstract class PluginTestCase extends TestCase
 
     protected function setUp(): void
     {
+        // 앱이 만들어지자마자(테스트 본문 이전) 암호화 키를 고정한다.
+        // encrypter 는 지연 해석되므로 이 시점이면 최초 resolve 보다 앞선다.
+        $this->afterApplicationCreated(function () {
+            $this->useDeterministicTestAppKey();
+        });
+
         parent::setUp();
 
         // 바깥으로 나가는 HTTP 는 전부 막는다. SubscribeURL 호출을 검사하려면
@@ -180,6 +196,57 @@ abstract class PluginTestCase extends TestCase
             ->group($routeFile);
 
         $this->refreshRouteLookups();
+    }
+
+    /**
+     * 테스트 전용 APP_KEY 를 강제한다.
+     *
+     * ── 왜 필요한가 ──────────────────────────────────────────────────────
+     * webhook 라우트는 `web` 그룹이라 세션·쿠키 암호화를 거친다. 앱에 키가 없으면
+     * `MissingAppKeyException` 으로 요청 자체가 깨진다. 플러그인 테스트는 루트
+     * `.env` 상태와 무관하게 단독으로도 돌아야 하므로 여기서 결정적 키를 넣는다.
+     *
+     * 주변 환경에 키가 있어도 **덮어쓴다** — 운영 키를 테스트에 끌어다 쓰지 않기
+     * 위해서다. 파일을 쓰거나 `key:generate` 를 돌리지 않는다.
+     */
+    protected function useDeterministicTestAppKey(): void
+    {
+        config(['app.key' => 'base64:'.base64_encode(self::TEST_APP_KEY_PLAINTEXT)]);
+
+        // 이미 encrypter 가 만들어졌다면 옛 키를 들고 있으므로 버린다.
+        $this->app->forgetInstance('encrypter');
+        Crypt::clearResolvedInstances();
+    }
+
+    /**
+     * 특정 헤더의 값들을 **배열로 확정해서** 돌려준다.
+     *
+     * `Symfony\Component\Mime\Header\Headers::all()` 은 `iterable` 을 선언하고 실제로는
+     * Generator 를 돌려준다. PHPUnit 11 은 Generator 를 assertion haystack 으로 받지
+     * 않고 `GeneratorNotSupportedException` 을 던진다(소비하면 되감을 수 없어서다).
+     * 그래서 단언 **전에** 여기서 materialize 한다. 반환 타입이 배열인 버전도 있으므로
+     * 양쪽을 모두 안전하게 다룬다.
+     *
+     * @return array<int, \Symfony\Component\Mime\Header\HeaderInterface>
+     */
+    protected function headerValues(Headers $headers, string $name): array
+    {
+        $all = $headers->all($name);
+
+        return is_array($all) ? array_values($all) : iterator_to_array($all, false);
+    }
+
+    /**
+     * 특정 헤더의 본문 문자열 목록. 개수와 값을 한 번에 단언할 때 쓴다.
+     *
+     * @return array<int, string>
+     */
+    protected function headerBodies(Headers $headers, string $name): array
+    {
+        return array_map(
+            static fn ($header) => $header->getBodyAsString(),
+            $this->headerValues($headers, $name)
+        );
     }
 
     private function refreshRouteLookups(): void

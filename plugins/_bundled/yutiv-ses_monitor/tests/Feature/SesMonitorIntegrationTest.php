@@ -26,10 +26,15 @@ class SesMonitorIntegrationTest extends PluginTestCase
 
         $headers = $this->captureHeadersOfSentMail();
 
-        $this->assertCount(
-            1,
-            $headers->all(AttachSesConfigurationSet::HEADER),
-            '헤더가 없거나 두 번 이상 붙었습니다'
+        // Headers::all() 은 Generator 다 — 단언 전에 배열로 확정한다 (PHPUnit 11 계약).
+        $values = $this->headerValues($headers, AttachSesConfigurationSet::HEADER);
+
+        $this->assertCount(1, $values, '헤더가 없거나 두 번 이상 붙었습니다');
+
+        // 개수와 값을 한 번에 못박는다 — 값이 맞아도 두 번 붙으면 실패한다.
+        $this->assertSame(
+            ['yutiv-production'],
+            $this->headerBodies($headers, AttachSesConfigurationSet::HEADER)
         );
         $this->assertSame(
             'yutiv-production',
@@ -60,7 +65,12 @@ class SesMonitorIntegrationTest extends PluginTestCase
 
         $headers = $captured->getHeaders();
 
-        $this->assertCount(1, $headers->all(AttachSesConfigurationSet::HEADER));
+        // 리스너가 기존 헤더를 덮어쓰지도, 하나 더 붙이지도 않았는지 본다.
+        $this->assertCount(1, $this->headerValues($headers, AttachSesConfigurationSet::HEADER));
+        $this->assertSame(
+            ['already-set'],
+            $this->headerBodies($headers, AttachSesConfigurationSet::HEADER)
+        );
         $this->assertSame('already-set', $headers->get(AttachSesConfigurationSet::HEADER)->getBodyAsString());
     }
 
