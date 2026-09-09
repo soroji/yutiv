@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Mail;
 use Plugins\Yutiv\SesMonitor\Listeners\AttachSesConfigurationSet;
 use Plugins\Yutiv\SesMonitor\Models\SesEventLog;
 use Plugins\Yutiv\SesMonitor\Models\SesMessageLink;
+use Plugins\Yutiv\SesMonitor\Providers\SesMonitorServiceProvider;
+use Plugins\Yutiv\SesMonitor\Support\PendingSentMessage;
+use Plugins\Yutiv\SesMonitor\Support\SesConfig;
+use Plugins\Yutiv\SesMonitor\Support\SesEventParser;
+use Plugins\Yutiv\SesMonitor\Support\SnsMessageValidator;
+use Plugins\Yutiv\SesMonitor\Support\SubscriptionConfirmer;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
 use Plugins\Yutiv\SesMonitor\Tests\Support\SnsFixtureFactory;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
@@ -123,6 +129,59 @@ class SesMonitorIntegrationTest extends PluginTestCase
         });
 
         $this->assertSame($before + 1, $transport->messages()->count(), '메시지가 메모리 전송기에 쌓이지 않았습니다');
+    }
+
+    // ── 컨테이너 바인딩 계약 ────────────────────────────────────────────────
+
+    public function test_플러그인_서비스가_컨테이너에서_해석된다(): void
+    {
+        // register() 가 돌지 않으면 생성자의 필수 primitive 를 채울 수 없어
+        // Unresolvable dependency 로 터진다. 해석 자체를 계약으로 못박는다.
+        $this->assertInstanceOf(SesEventParser::class, app(SesEventParser::class));
+        $this->assertInstanceOf(SnsMessageValidator::class, app(SnsMessageValidator::class));
+        $this->assertInstanceOf(SubscriptionConfirmer::class, app(SubscriptionConfirmer::class));
+    }
+
+    public function test_해석된_parser_의_허용_이벤트가_설정과_일치한다(): void
+    {
+        $parser = app(SesEventParser::class);
+
+        // 설정에 있는 7종은 전부 인식하고,
+        foreach (SesConfig::allowedEventTypes() as $type) {
+            $this->assertNotNull(
+                $parser->eventType(['eventType' => $type]),
+                "{$type} 이 허용 목록에서 빠졌습니다"
+            );
+        }
+
+        // 목록 밖 이벤트는 무시한다 — 빈 배열로 바인딩되지 않았음을 함께 확인한다.
+        $this->assertNull($parser->eventType(['eventType' => 'Open']));
+    }
+
+    public function test_PendingSentMessage_는_요청_범위_싱글턴이다(): void
+    {
+        // 싱글턴이 아니면 MessageSent 와 로그 훅이 서로 다른 인스턴스를 보게 되어
+        // 발송 이력 연결이 조용히 끊긴다.
+        $this->assertSame(app(PendingSentMessage::class), app(PendingSentMessage::class));
+    }
+
+    public function test_프로바이더_생명주기를_반복해도_중복_등록되지_않는다(): void
+    {
+        $routesBefore = $this->countRoutesForUri('webhooks/aws/ses');
+        $apiBefore = $this->countRoutesForUri(self::ADMIN_API_URI, 'GET');
+
+        $this->app->register(SesMonitorServiceProvider::class);
+        $this->app->register(SesMonitorServiceProvider::class);
+        $this->registerPluginApiRoutes();
+
+        $this->assertSame($routesBefore, $this->countRoutesForUri('webhooks/aws/ses'));
+        $this->assertSame($apiBefore, $this->countRoutesForUri(self::ADMIN_API_URI, 'GET'));
+
+        // 메일 리스너가 중복 등록되면 헤더가 두 번 붙을 수 있다 — 계약으로 확인한다.
+        $this->configureSes(['configuration_set' => 'yutiv-production']);
+        $headers = $this->captureHeadersOfSentMail();
+
+        $this->assertCount(1, $this->headerValues($headers, AttachSesConfigurationSet::HEADER));
     }
 
     // ── 관리자 API 권한 ─────────────────────────────────────────────────────
@@ -255,6 +314,10 @@ class SesMonitorIntegrationTest extends PluginTestCase
         )->assertOk();
 
         $after = $log->fresh()->toArray();
+
+        // 이벤트가 실제로 저장됐는지 먼저 본다 — 200 이지만 저장되지 않았다면
+        // "status 가 안 바뀌었다" 는 단언이 공허해진다.
+        $this->assertSame(1, SesEventLog::where('ses_message_id', 'regress-1')->count());
 
         $this->assertSame($before, $after, 'SES 이벤트 수신이 기존 발송 이력 행을 바꿨습니다');
         $this->assertSame('sent', $log->fresh()->status?->value ?? $log->fresh()->status);

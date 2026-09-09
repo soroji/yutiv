@@ -52,8 +52,8 @@ abstract class PluginTestCase extends TestCase
 
     protected SnsFixtureBag $bag;
 
-    /** 프로바이더 boot 재실행을 한 번만 하기 위한 플래그 (중복 등록 방지). */
-    private bool $pluginBooted = false;
+    /** 프로바이더 생명주기 재실행을 한 번만 하기 위한 플래그 (중복 등록 방지). */
+    private bool $pluginRegistered = false;
 
     protected function setUp(): void
     {
@@ -74,13 +74,18 @@ abstract class PluginTestCase extends TestCase
         $this->configureSes();
 
         $this->bag = new SnsFixtureBag;
-        $this->bindFixtureValidator();
 
         // 실제 SMTP 로 나가지 않도록 전송기를 먼저 격리한다 (아래 주석 참조).
         $this->forceArrayMailer();
 
         $this->activatePlugin();
         $this->bootPluginAsActive();
+
+        // ★ 순서 주의: 프로바이더 register() 가 SnsMessageValidator 를 **실제 인증서
+        //   fetcher** 로 바인딩하므로, fixture 바인딩은 그 뒤에 덮어써야 한다.
+        //   앞에 두면 서명 검증이 네트워크로 진짜 인증서를 가지러 간다.
+        $this->bindFixtureValidator();
+
         $this->registerPluginApiRoutes();
     }
 
@@ -147,20 +152,32 @@ abstract class PluginTestCase extends TestCase
     /**
      * 운영 부팅 경로를 그대로 다시 태운다.
      *
-     * 프로바이더의 boot() 는 활성 상태일 때만 webhook 라우트와 메일 리스너를 붙인다.
-     * 그런데 앱 부팅 시점에는 아직 plugins 행이 없어(RefreshDatabase 가 뒤에 돈다)
-     * 둘 다 등록되지 않는다. activatePlugin() 으로 활성 상태를 만든 뒤 **같은 public
-     * boot()** 를 다시 부르면, 테스트가 로직을 복제하지 않고 운영과 동일한 경로로
-     * 등록된다 (그래서 프로바이더의 가시성을 넓힐 필요가 없다).
+     * ── 왜 테스트가 이걸 직접 해야 하는가 ────────────────────────────────
+     * `App\Providers\PluginServiceProvider` 는 `base_path('plugins')` 의 **바로 아래**
+     * 디렉토리만 훑는다(비재귀). 설치된 플러그인은 `plugins/<identifier>` 에 복사되고,
+     * 원본인 `plugins/_bundled/<identifier>` 는 그 스캔 대상이 아니다. 이 저장소에는
+     * `plugins/_bundled` 와 `plugins/_pending` 만 있어 **어떤 플러그인 프로바이더도
+     * 자동 등록되지 않는다.**
+     *
+     * 그래서 register() 가 한 번도 돌지 않았고, register() 에서 하는 컨테이너 바인딩
+     * (SesEventParser · SnsMessageValidator · SubscriptionConfirmer · PendingSentMessage)
+     * 이 전부 없는 상태였다. `app(SesEventParser::class)` 는 생성자의 필수 배열 인자를
+     * 채울 수 없어 `Unresolvable dependency` 로 터진다.
+     *
+     * `Application::register()` 는 register() 를 부르고, 앱이 이미 부팅돼 있으면 boot()
+     * 까지 이어서 부른다 — 운영과 **같은 순서**다. 게다가 같은 프로바이더가 이미
+     * 등록돼 있으면 재실행하지 않으므로(getProvider 검사) 리스너·명령·라우트가
+     * 중복 등록되지 않는다.
      */
     protected function bootPluginAsActive(): void
     {
-        if ($this->pluginBooted) {
+        if ($this->pluginRegistered) {
             return;
         }
 
-        (new SesMonitorServiceProvider($this->app))->boot();
-        $this->pluginBooted = true;
+        // 운영과 동일한 생명주기: register() → boot().
+        $this->app->register(SesMonitorServiceProvider::class);
+        $this->pluginRegistered = true;
 
         $this->refreshRouteLookups();
     }

@@ -957,7 +957,7 @@ check('메일: Mail::fake() 로 전송 파이프라인을 우회하지 않는다
     && preg_match('/^\s*(Mail::fake|\$this->\w*[Mm]ail\w*->fake)\s*\(/m', $ptcSrc) === 0);
 check('메일: MessageSending 리스너가 실제로 붙는 경로를 태운다',
     strpos($ptcSrc, 'bootPluginAsActive') !== false
-    && strpos($ptcSrc, '(new SesMonitorServiceProvider($this->app))->boot();') !== false);
+    && strpos($ptcSrc, '$this->app->register(SesMonitorServiceProvider::class);') !== false);
 
 // B. 관리자 API 라우트
 check('라우트: 테스트 베이스가 플러그인 API 라우트를 명시적으로 로드한다',
@@ -970,8 +970,8 @@ check('라우트: 운영과 동일한 middleware 그룹을 쓴다',
     strpos($ptcSrc, "->middleware('api')") !== false);
 check('라우트: 중복 등록을 막는 가드가 있다',
     strpos($ptcSrc, 'if ($this->countRoutesForUri(self::ADMIN_API_URI') !== false);
-check('라우트: 프로바이더 boot 재실행도 1회로 제한',
-    strpos($ptcSrc, '$this->pluginBooted') !== false);
+check('라우트: 프로바이더 생명주기 재실행도 1회로 제한',
+    strpos($ptcSrc, '$this->pluginRegistered') !== false);
 check('라우트: setUp 이 API 라우트를 등록한다',
     strpos($ptcSrc, '$this->registerPluginApiRoutes();') !== false);
 
@@ -1088,6 +1088,165 @@ check('APP_KEY: 운영 키나 .env 를 읽거나 쓰지 않는다', $envTouch ==
 check('APP_KEY: key:generate 를 실행하지 않는다',
     strpos(sesStripComments($ptcSrc), 'key:generate') === false
     && strpos(sesStripComments($integrationSrc), 'key:generate') === false);
+
+// ── 17. 컨테이너 바인딩 · 프로바이더 생명주기 계약 ────────────────────────
+//
+// 서버 5차 실행에서 드러난 결함: `app(SesEventParser::class)` 가
+// `Unresolvable dependency [array $allowedEventTypes]` 로 터졌다.
+//
+// 원인은 운영이 아니라 테스트였다. `App\Providers\PluginServiceProvider` 는
+// `plugins/` **바로 아래**만 훑는데(비재귀) 이 저장소에는 `_bundled`·`_pending` 뿐이라
+// 플러그인 프로바이더가 자동 등록되지 않는다. 테스트가 boot() 만 다시 불러서
+// register() 의 바인딩이 전부 빠져 있었다.
+//
+// 여기서는 (1) 필수 primitive 를 받는 클래스가 전부 바인딩돼 있는지 (2) 바인딩이 공식
+// config 값을 쓰는지 (3) 테스트가 운영 생명주기를 따르는지를 소스로 고정한다.
+
+$providerSrc = file_get_contents($pluginDir.'/src/Providers/SesMonitorServiceProvider.php');
+$ptcSrc = file_get_contents($pluginDir.'/tests/PluginTestCase.php');
+$integrationSrc = file_get_contents($pluginDir.'/tests/Feature/SesMonitorIntegrationTest.php');
+
+// (1) app()/resolve() 대상 중 필수 primitive 를 받는 클래스는 바인딩이 있어야 한다.
+$productionFiles = array_merge(
+    sesPhpFiles($pluginDir.'/src'),
+    [$pluginDir.'/plugin.php']
+);
+
+$resolvedTargets = [];
+foreach ($productionFiles as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    if (preg_match_all('/\b(?:app|resolve)\(\s*([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)::class\s*\)/', $code, $hits)) {
+        foreach ($hits[1] as $short) {
+            $resolvedTargets[$short] = basename($file);
+        }
+    }
+}
+
+check('컨테이너: 운영 코드의 app()/resolve() 대상을 찾았다',
+    count($resolvedTargets) >= 3, '찾은 대상 '.count($resolvedTargets).'개');
+
+// 플러그인 소유 클래스의 생성자에 필수 primitive 가 있는지 조사
+$needsBinding = [];
+foreach (sesPhpFiles($pluginDir.'/src') as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    if (preg_match('/^(?:abstract\s+|final\s+)?class\s+(\w+)/m', $code, $cls) !== 1) {
+        continue;
+    }
+    $className = $cls[1];
+
+    if (preg_match('/public function __construct\s*\((.*?)\)\s*[:{]/s', $code, $ctor) !== 1) {
+        continue;
+    }
+
+    $params = trim($ctor[1]);
+    if ($params === '') {
+        continue;
+    }
+
+    // 필수(기본값 없음) primitive 타입 인자가 하나라도 있는가
+    $hasRequiredPrimitive = false;
+    foreach (explode(',', $params) as $param) {
+        $param = trim($param);
+        if ($param === '' || strpos($param, '=') !== false) {
+            continue; // 기본값 있음 → 자동 해석 가능
+        }
+        if (preg_match('/\b(array|string|int|float|bool|iterable)\s+\$/', $param) === 1) {
+            $hasRequiredPrimitive = true;
+            break;
+        }
+    }
+
+    if ($hasRequiredPrimitive) {
+        $needsBinding[$className] = basename($file);
+    }
+}
+
+check('컨테이너: 필수 primitive 생성자를 가진 클래스를 찾았다',
+    count($needsBinding) >= 2, implode(', ', array_keys($needsBinding)));
+
+$missingBindings = [];
+foreach ($needsBinding as $className => $file) {
+    // 해석 대상이 아니면 컨테이너를 거치지 않으므로 바인딩이 없어도 된다.
+    if (! isset($resolvedTargets[$className])) {
+        continue;
+    }
+
+    if (strpos($providerSrc, 'bind('.$className.'::class') === false
+        && strpos($providerSrc, 'singleton('.$className.'::class') === false) {
+        $missingBindings[] = $className.' ('.$file.')';
+    }
+}
+
+check('컨테이너: app() 으로 해석되는 primitive 생성자 클래스가 모두 바인딩돼 있다',
+    $missingBindings === [], implode(' / ', $missingBindings));
+
+// (2) 바인딩이 공식 config 값을 쓰는가
+check('바인딩: SesEventParser 가 SesConfig 의 허용 이벤트를 쓴다',
+    preg_match('/bind\(SesEventParser::class.*?SesConfig::allowedEventTypes\(\)/s', $providerSrc) === 1);
+check('바인딩: SnsMessageValidator 가 SesConfig 값을 쓴다',
+    preg_match('/bind\(SnsMessageValidator::class.*?SesConfig::topicArn\(\).*?SesConfig::allowedSnsTypes\(\)/s', $providerSrc) === 1);
+check('바인딩: PendingSentMessage 는 싱글턴',
+    strpos($providerSrc, 'singleton(PendingSentMessage::class)') !== false);
+check('바인딩: 하드코딩 배열로 우회하지 않는다',
+    preg_match("/bind\(SesEventParser::class.*?\[\s*'send'/s", $providerSrc) !== 1);
+
+// (3) 테스트가 운영 생명주기를 따르는가
+check('생명주기: 테스트가 register() → boot() 를 운영과 같은 방식으로 실행',
+    strpos($ptcSrc, '$this->app->register(SesMonitorServiceProvider::class);') !== false);
+check('생명주기: boot() 만 따로 부르지 않는다',
+    strpos($ptcSrc, '(new SesMonitorServiceProvider($this->app))->boot();') === false);
+// 메서드가 존재하는 것과 setUp 이 실제로 부르는 것은 다르다 — 호출까지 고정한다.
+$ptcSetUp = '';
+if (preg_match('/protected function setUp\\(\\): void\\s*\\{(.*?)\\n    \\}/s', $ptcSrc, $setUpMatch) === 1) {
+    $ptcSetUp = $setUpMatch[1];
+}
+
+check('생명주기: setUp 본문을 읽었다', $ptcSetUp !== '');
+check('생명주기: setUp 이 프로바이더 생명주기를 실제로 호출한다',
+    strpos($ptcSetUp, '$this->bootPluginAsActive();') !== false);
+check('생명주기: 활성 시드가 프로바이더 등록보다 앞선다',
+    strpos($ptcSetUp, '$this->activatePlugin();') !== false
+    && strpos($ptcSetUp, '$this->activatePlugin();') < strpos($ptcSetUp, '$this->bootPluginAsActive();'));
+check('생명주기: setUp 이 API 라우트 등록까지 호출한다',
+    strpos($ptcSetUp, '$this->registerPluginApiRoutes();') !== false);
+check('생명주기: 반복 실행을 막는 플래그가 있다',
+    strpos($ptcSrc, '$this->pluginRegistered') !== false);
+check('생명주기: fixture 검증기 바인딩이 프로바이더 등록 뒤에 온다',
+    strpos($ptcSrc, '$this->bootPluginAsActive();') < strpos($ptcSrc, '$this->bindFixtureValidator();'),
+    '순서가 뒤바뀌면 서명 검증이 실제 인증서를 가지러 나간다');
+
+// 테스트가 운영 계약을 복제하지 않는가
+$parserBypass = [];
+foreach (sesPhpFiles($pluginDir.'/tests') as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    foreach (['new SesEventParser(', 'bind(SesEventParser::class'] as $bypass) {
+        if (strpos($code, $bypass) !== false) {
+            $parserBypass[] = basename($file).': '.$bypass;
+        }
+    }
+}
+
+check('생명주기: 테스트가 parser 를 직접 new 하거나 임의 배열로 재바인딩하지 않는다',
+    $parserBypass === [], implode(' / ', $parserBypass));
+
+// (4) 런타임 계약 테스트가 존재하는가
+check('런타임 계약: 컨테이너 해석 테스트가 있다',
+    strpos($integrationSrc, '플러그인_서비스가_컨테이너에서_해석된다') !== false);
+check('런타임 계약: parser 허용 이벤트가 설정과 일치하는지 본다',
+    strpos($integrationSrc, '해석된_parser_의_허용_이벤트가_설정과_일치한다') !== false
+    && strpos($integrationSrc, 'SesConfig::allowedEventTypes()') !== false);
+check('런타임 계약: 싱글턴 계약 테스트가 있다',
+    strpos($integrationSrc, 'PendingSentMessage_는_요청_범위_싱글턴이다') !== false);
+check('런타임 계약: 생명주기 반복 시 중복 등록 없음 테스트가 있다',
+    strpos($integrationSrc, '프로바이더_생명주기를_반복해도_중복_등록되지_않는다') !== false);
+check('런타임 계약: 회귀 테스트가 저장 1건도 함께 단언한다',
+    strpos($integrationSrc, "SesEventLog::where('ses_message_id', 'regress-1')->count()") !== false);
+check('런타임 계약: 500 을 기대값으로 바꾸거나 예외를 숨기지 않는다',
+    strpos($integrationSrc, 'assertStatus(500)') === false
+    && preg_match('/try\s*\{[^}]*webhooks\/aws\/ses/s', $integrationSrc) !== 1);
 
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {
