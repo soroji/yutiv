@@ -1,0 +1,25 @@
+{
+    "identifier": "yutiv-admin_menu",
+    "vendor": "yutiv",
+    "name": {
+        "ko": "YUTIV 쇼핑몰 관리자 메뉴 배치",
+        "en": "YUTIV Store Admin Menu Layout",
+        "ja": "YUTIV ショップ管理メニュー配置",
+        "zh-CN": "YUTIV 商城管理菜单布局"
+    },
+    "version": "1.0.0",
+    "license": "MIT",
+    "description": {
+        "ko": "쇼핑몰 운영 메뉴(주문·상품·카테고리·쿠폰·리뷰)를 관리자 최상위로 올리고 저빈도 설정은 '쇼핑몰 설정' 아래로 모읍니다. 기능을 복제하지 않고 sirsoft-ecommerce 가 선언한 메뉴의 계층과 순서만 바꿉니다.",
+        "en": "Promotes daily store menus (orders, products, categories, coupons, reviews) to the admin top level and groups low-frequency settings under 'Store Settings'. Duplicates no feature — only re-arranges the menus sirsoft-ecommerce already declares.",
+        "ja": "日常運用メニュー(注文・商品・カテゴリー・クーポン・レビュー)を管理画面の最上位に上げ、低頻度の設定は「ショップ設定」にまとめます。機能を複製せず、sirsoft-ecommerce が宣言したメニューの階層と順序だけを変更します。",
+        "zh-CN": "将日常运营菜单(订单、商品、分类、优惠券、评价)提升到管理后台顶层，低频设置归入“商城设置”。不复制任何功能，只调整 sirsoft-ecommerce 已声明菜单的层级与顺序。"
+    },
+    "g7_version": ">=7.0.9",
+    "dependencies": {
+        "modules": {
+            "sirsoft-ecommerce": ">=1.1.0"
+        },
+        "plugins": {}
+    }
+}

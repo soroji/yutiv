@@ -1,0 +1,14 @@
+{
+    "name": "plugins/yutiv-admin_menu",
+    "description": "YUTIV store admin menu layout (re-arranges sirsoft-ecommerce admin menus; no feature duplication)",
+    "type": "library",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Yutiv\\AdminMenu\\": ["src/", "./"]
+        }
+    },
+    "require": {
+        "php": "^8.2"
+    }
+}

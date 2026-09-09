@@ -1,0 +1,180 @@
+{
+  "$comment": [
+    "YUTIV 쇼핑몰 관리자 메뉴 배치 — 이 플러그인의 단일 진실 원천(single source of truth).",
+    "훅 리스너(EcommerceAdminMenuListener)와 아티즌 명령(yutiv:admin-menu)이 **같은 이 파일**을 읽는다.",
+    "둘이 서로 다른 정의를 들면 '적용은 됐는데 모듈 업데이트 후 달라지는' 결함이 생기므로 파일 하나로 묶는다.",
+    "",
+    "중요 제약 — 조사로 확정한 사실:",
+    "  1) ExtensionMenuSyncHelper::syncMenu() 는 parent_id 를 **항상** 확장 정의값으로 덮어쓴다.",
+    "     Menu::$trackableFields 에 parent_id 가 없어 user_overrides 로도 보호되지 않는다.",
+    "     → DB 에서 parent_id 만 바꾸는 방식은 모듈 재동기화 때 되돌아간다.",
+    "  2) ModuleManager::cleanupStaleModuleEntries() 는 **필터를 거치지 않은** 원본",
+    "     getAdminMenus() 의 slug 집합으로 stale 정리를 한다.",
+    "     → 이 배치는 모듈이 원래 선언한 slug 만 쓴다. 새 slug 를 만들면 다음 동기화에서 삭제된다.",
+    "  3) menus 테이블에는 permission 컬럼이 없다. 접근 제어는 menu_permissions(menu_id 기준) 이",
+    "     담당하므로 parent_id/order 변경은 권한에 영향을 주지 않는다."
+  ],
+  "version": 1,
+  "target_module": "sirsoft-ecommerce",
+  "promote": {
+    "$comment": "이커머스 하위였던 고빈도 메뉴를 최상위로 올린다. slug/url/icon 은 모듈 정의 그대로 두고 계층과 순서만 바꾼다.",
+    "sirsoft-ecommerce-orders": {
+      "order": 2
+    },
+    "sirsoft-ecommerce-products": {
+      "order": 3
+    },
+    "sirsoft-ecommerce-categories": {
+      "order": 4
+    },
+    "sirsoft-ecommerce-promotion-coupons": {
+      "order": 5
+    },
+    "sirsoft-ecommerce-reviews": {
+      "order": 6
+    }
+  },
+  "settings_parent": {
+    "$comment": [
+      "기존 '이커머스' 부모 메뉴(slug: sirsoft-ecommerce)를 '쇼핑몰 설정' 으로 재사용한다.",
+      "새 부모를 만들면 제약 2) 에 걸려 다음 동기화에서 삭제되므로, 반드시 기존 slug 를 재사용한다.",
+      "이름은 모듈 정의가 ko/en 만 제공하므로 여기서 ja/zh-CN 을 채워 4개 로케일을 만족시킨다."
+    ],
+    "slug": "sirsoft-ecommerce",
+    "order": 8,
+    "icon": "fas fa-store",
+    "name": {
+      "ko": "쇼핑몰 설정",
+      "en": "Store Settings",
+      "ja": "ショップ設定",
+      "zh-CN": "商城设置"
+    }
+  },
+  "settings_children": {
+    "$comment": "저빈도 설정 메뉴는 '쇼핑몰 설정' 아래에 남긴다. 순서만 지정한다.",
+    "sirsoft-ecommerce-settings": {
+      "order": 1
+    },
+    "sirsoft-ecommerce-brands": {
+      "order": 2
+    },
+    "sirsoft-ecommerce-shipping-policies": {
+      "order": 3
+    },
+    "sirsoft-ecommerce-product-notices": {
+      "order": 4
+    },
+    "sirsoft-ecommerce-common-info": {
+      "order": 5
+    },
+    "sirsoft-ecommerce-mileage-transactions": {
+      "order": 6
+    }
+  },
+  "promoted_names": {
+    "$comment": [
+      "최상위로 올라간 메뉴는 '이커머스' 라는 맥락 없이 단독으로 읽히므로 이름을 그 자리에 맞춘다.",
+      "모듈 정의는 ko/en 만 제공한다. 코어의 다국어 계약은 name 을 로케일 배열로 받으므로",
+      "여기서 ja/zh-CN 을 채워 4개 로케일을 만족시킨다 — 화면 코드에 한국어를 박지 않는다."
+    ],
+    "sirsoft-ecommerce-orders": {
+      "ko": "주문 관리",
+      "en": "Orders",
+      "ja": "注文管理",
+      "zh-CN": "订单管理"
+    },
+    "sirsoft-ecommerce-products": {
+      "ko": "상품 관리",
+      "en": "Products",
+      "ja": "商品管理",
+      "zh-CN": "商品管理"
+    },
+    "sirsoft-ecommerce-categories": {
+      "ko": "카테고리 관리",
+      "en": "Categories",
+      "ja": "カテゴリー管理",
+      "zh-CN": "分类管理"
+    },
+    "sirsoft-ecommerce-promotion-coupons": {
+      "ko": "쿠폰 관리",
+      "en": "Coupons",
+      "ja": "クーポン管理",
+      "zh-CN": "优惠券管理"
+    },
+    "sirsoft-ecommerce-reviews": {
+      "ko": "리뷰 관리",
+      "en": "Reviews",
+      "ja": "レビュー管理",
+      "zh-CN": "评价管理"
+    }
+  },
+  "settings_children_names": {
+    "$comment": "설정 하위 메뉴도 ja/zh-CN 이 비어 있으면 화면에 배열이나 키가 노출될 수 있어 함께 채운다.",
+    "sirsoft-ecommerce-settings": {
+      "ko": "환경설정",
+      "en": "Settings",
+      "ja": "環境設定",
+      "zh-CN": "环境设置"
+    },
+    "sirsoft-ecommerce-brands": {
+      "ko": "브랜드 관리",
+      "en": "Brands",
+      "ja": "ブランド管理",
+      "zh-CN": "品牌管理"
+    },
+    "sirsoft-ecommerce-shipping-policies": {
+      "ko": "배송정책",
+      "en": "Shipping Policies",
+      "ja": "配送ポリシー",
+      "zh-CN": "配送政策"
+    },
+    "sirsoft-ecommerce-product-notices": {
+      "ko": "상품정보제공고시",
+      "en": "Product Notice",
+      "ja": "商品情報提供告示",
+      "zh-CN": "商品信息告示"
+    },
+    "sirsoft-ecommerce-common-info": {
+      "ko": "공통정보 관리",
+      "en": "Common Info",
+      "ja": "共通情報管理",
+      "zh-CN": "通用信息管理"
+    },
+    "sirsoft-ecommerce-mileage-transactions": {
+      "ko": "마일리지 내역",
+      "en": "Mileage History",
+      "ja": "マイレージ履歴",
+      "zh-CN": "积分明细"
+    }
+  },
+  "core_order": {
+    "$comment": [
+      "코어 최상위 메뉴의 **절대 목표 순서**. \"현재값 + N\" 이 아니라 목표값이라 몇 번을 적용해도 누적되지 않는다.",
+      "요청 순서: 1 대시보드 / 2~6 쇼핑몰 운영 / 7 사용자 관리 / 8 쇼핑몰 설정 / 9~ 나머지 코어.",
+      "사용자 관리(admin-users)만 앞으로 당기고, 나머지 코어 메뉴는 기존 상대 순서를 그대로 유지한 채 9번부터 이어 붙인다.",
+      "menus.order 는 정수 컬럼이고 코어가 1~12 를 빈틈없이 쓰므로, 자리를 비우려면 이 재배치가 불가피하다.",
+      "slug / url / menu_permissions / extension ownership 은 건드리지 않는다 — order 만 바꾼다.",
+      "",
+      "내구성 (조사로 확정):",
+      "  - CoreUpdateService::syncCoreMenus() 는 ExtensionMenuSyncHelper 를 쓰므로",
+      "    order 가 user_overrides 에 마킹돼 있으면 보존된다. --apply 가 모델 경유 저장으로 마킹한다.",
+      "  - CoreAdminMenuSeeder 는 코어 메뉴를 삭제 후 재생성한다. 그 경로는 core.menus.config",
+      "    필터를 타므로 CoreAdminMenuListener 가 같은 순서를 다시 넣는다."
+    ],
+    "enabled": true,
+    "orders": {
+      "admin-dashboard": 1,
+      "admin-users": 7,
+      "admin-settings": 9,
+      "admin-notification-logs": 10,
+      "admin-identity-logs": 11,
+      "admin-activity-logs": 12,
+      "admin-menus": 13,
+      "admin-roles": 14,
+      "admin-modules": 15,
+      "admin-plugins": 16,
+      "admin-templates": 17,
+      "admin-schedules": 18
+    }
+  }
+}
