@@ -73,7 +73,7 @@ abstract class PluginTestCase extends TestCase
             ]
         );
 
-        PluginsYutivSesMonitorProvidersSesMonitorServiceProvider::invalidatePluginStatusCache();
+        SesMonitorServiceProvider::invalidatePluginStatusCache();
     }
 
     /**
@@ -84,7 +84,7 @@ abstract class PluginTestCase extends TestCase
         PluginModel::where('identifier', 'yutiv-ses_monitor')
             ->update(['status' => ExtensionStatus::Inactive->value]);
 
-        PluginsYutivSesMonitorProvidersSesMonitorServiceProvider::invalidatePluginStatusCache();
+        SesMonitorServiceProvider::invalidatePluginStatusCache();
     }
 
     /**

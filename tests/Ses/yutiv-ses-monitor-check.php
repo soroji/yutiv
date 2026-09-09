@@ -750,6 +750,138 @@ foreach ($renamed as $file => $method) {
         && strpos($body, '$this->post(') === false);
 }
 
+// ── 14. 테스트의 클래스 참조가 실제로 해석되는가 ───────────────────────────
+//
+// `php -l` 은 단일 파일 문법만 본다. "존재하지 않는 클래스를 정적 호출" 은 문법상
+// 완전하므로 통과하고, 런타임에야 Class not found 로 터진다. 실제로 서버 PHPUnit
+// 2차 실행에서 이 유형이 드러났다 — `Plugins\Yutiv\...\SesMonitorServiceProvider` 의
+// 백슬래시가 통째로 사라져 하나의 긴 토큰이 되어 버린 경우다.
+// (여기에 그 토큰을 그대로 적으면 아래 검사가 자기 자신을 잡으므로 적지 않는다.)
+//
+// 그래서 여기서 두 가지를 본다.
+//   (1) 구분자가 사라진 클래스 토큰이 없는가 (백슬래시 유실 탐지)
+//   (2) 플러그인 소유 클래스 참조가 디스크의 실제 선언과 맞는가
+//
+// (2) 는 PSR-4 경로 규칙을 가정하지 않고, 파일을 훑어 만든 **실제 심볼 표**와 대조한다.
+
+/** 디렉토리 아래 PHP 파일 목록. */
+function sesPhpFiles($dir)
+{
+    if (! is_dir($dir)) {
+        return [];
+    }
+
+    $out = [];
+    $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
+    foreach ($it as $file) {
+        if ($file->isFile() && substr($file->getFilename(), -4) === '.php') {
+            $out[] = str_replace('\\', '/', $file->getPathname());
+        }
+    }
+    sort($out);
+
+    return $out;
+}
+
+// (0) 심볼 표 — 플러그인이 선언하는 모든 클래스의 FQCN
+$declared = [];
+foreach (sesPhpFiles($pluginDir) as $file) {
+    $body = file_get_contents($file);
+
+    if (preg_match('/^namespace\s+([^;]+);/m', $body, $ns) !== 1) {
+        continue;
+    }
+
+    if (preg_match_all('/^(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+(\w+)/m', $body, $types)) {
+        foreach ($types[1] as $type) {
+            $declared[trim($ns[1]).'\\'.$type] = $file;
+        }
+    }
+}
+
+check('심볼 표 구축: 플러그인 클래스를 찾았다', count($declared) >= 20, '찾은 클래스 '.count($declared).'개');
+
+// 검사 대상 — SES 테스트 전부 + 하네스 자신
+$referenceFiles = array_merge(
+    sesPhpFiles($pluginDir.'/tests'),
+    [$root.'/tests/Ses/yutiv-ses-monitor-check.php']
+);
+
+// (1) 구분자 유실 토큰
+$mangled = [];
+foreach ($referenceFiles as $file) {
+    $body = file_get_contents($file);
+
+    // 'Plugins' 'Illuminate' 'App' 'Tests' 'Symfony' 뒤에 곧바로 대문자가 붙는 토큰.
+    // 정상 코드라면 그 자리에는 백슬래시가 있어야 한다.
+    if (preg_match_all('/\b(Plugins|Illuminate|Symfony|Tests)(?=[A-Z])[A-Za-z]{6,}/', $body, $hits)) {
+        foreach (array_unique($hits[0]) as $token) {
+            $mangled[] = basename($file).': '.$token;
+        }
+    }
+}
+
+check('SES 테스트에 구분자 유실 클래스 토큰이 없다', $mangled === [], implode(' / ', $mangled));
+
+// (2) 플러그인 소유 클래스 참조가 실제 선언과 맞는가
+$unresolved = [];
+$checkedRefs = 0;
+$pluginNs = 'Plugins\\Yutiv\\SesMonitor\\';
+
+foreach ($referenceFiles as $file) {
+    $body = file_get_contents($file);
+
+    $refs = [];
+
+    // use 문
+    if (preg_match_all('/^use\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)(?:\s+as\s+\w+)?\s*;/m', $body, $uses)) {
+        foreach ($uses[1] as $fqcn) {
+            $refs[] = $fqcn;
+        }
+    }
+
+    // 인라인 FQCN (\Plugins\... 형태)
+    if (preg_match_all('/\\\\(Plugins\\\\Yutiv\\\\SesMonitor\\\\[A-Za-z0-9_\\\\]+)/', $body, $inline)) {
+        foreach ($inline[1] as $fqcn) {
+            $refs[] = $fqcn;
+        }
+    }
+
+    foreach (array_unique($refs) as $fqcn) {
+        $fqcn = ltrim($fqcn, '\\');
+
+        // 플러그인 소유가 아닌 것(App\, Illuminate\, Tests\)은 vendor/코어라 여기서 판정하지 않는다.
+        if (strpos($fqcn, $pluginNs) !== 0) {
+            continue;
+        }
+
+        $checkedRefs++;
+
+        // 인라인 FQCN 은 뒤에 ::method 가 붙어 잘릴 수 있으니 정확 일치만 본다.
+        if (! isset($declared[$fqcn])) {
+            $unresolved[] = basename($file).': '.$fqcn;
+        }
+    }
+}
+
+check('플러그인 소유 클래스 참조가 모두 실제 선언과 일치', $unresolved === [], implode(' / ', $unresolved));
+check('참조 검사가 실제로 수행됐다', $checkedRefs >= 10, "검사한 참조 {$checkedRefs}건");
+
+// (3) PluginTestCase 의 프로바이더 참조를 콕 집어 고정
+$ptc = file_get_contents($pluginDir.'/tests/PluginTestCase.php');
+
+check('PluginTestCase: 프로바이더를 정상 FQCN 으로 import',
+    strpos($ptc, 'use Plugins\Yutiv\SesMonitor\Providers\SesMonitorServiceProvider;') !== false);
+check('PluginTestCase: import 한 짧은 이름으로 정적 호출',
+    strpos($ptc, 'SesMonitorServiceProvider::invalidatePluginStatusCache();') !== false);
+check('PluginTestCase: 캐시 무효화를 활성/비활성 양쪽에서 호출',
+    substr_count($ptc, 'SesMonitorServiceProvider::invalidatePluginStatusCache();') === 2,
+    '호출 '.substr_count($ptc, 'SesMonitorServiceProvider::invalidatePluginStatusCache();').'회');
+check('PluginTestCase: 참조하는 프로바이더가 실제로 존재',
+    isset($declared['Plugins\Yutiv\SesMonitor\Providers\SesMonitorServiceProvider']));
+check('PluginTestCase: invalidatePluginStatusCache 를 제공하는 trait 이 붙어 있다',
+    strpos(file_get_contents($pluginDir.'/src/Providers/SesMonitorServiceProvider.php'), 'use CachesPluginStatus;') !== false);
+
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {
     foreach ($passes as $p) {
