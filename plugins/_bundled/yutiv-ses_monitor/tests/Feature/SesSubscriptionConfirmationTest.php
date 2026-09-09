@@ -4,7 +4,6 @@ namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Plugins\Yutiv\SesMonitor\Support\SubscriptionConfirmer;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
 use Plugins\Yutiv\SesMonitor\Tests\SnsFixtureBag;
@@ -61,19 +60,19 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
 
     public function test_auto_confirm_false_에서_pending_구조화_로그를_남긴다(): void
     {
-        $captured = [];
-        Log::listen(function ($log) use (&$captured) {
-            $captured[] = $log;
-        });
+        Http::fake([self::SUBSCRIBE_HOST => Http::response('ok', 200)]);
 
         $this->postSnsMessage($this->bag->factory()->subscriptionConfirmation())->assertOk();
 
-        $messages = array_column($captured, 'message');
-        $this->assertContains('ses_monitor.subscription_confirmation_pending', $messages);
+        $this->assertContains('ses_monitor.subscription_confirmation_pending', $this->logSpy->messages());
 
-        $entry = collect($captured)->firstWhere('message', 'ses_monitor.subscription_confirmation_pending');
-        $this->assertFalse($entry->context['subscribe_url_called']);
-        $this->assertFalse($entry->context['auto_confirm']);
+        $entry = $this->logSpy->first('ses_monitor.subscription_confirmation_pending');
+        $this->assertNotNull($entry);
+        $this->assertFalse($entry['context']['subscribe_url_called']);
+        $this->assertFalse($entry['context']['auto_confirm']);
+
+        // 호출하지 않았다는 사실도 함께 못박는다.
+        Http::assertNothingSent();
     }
 
     // ── auto-confirm = true ─────────────────────────────────────────────────
@@ -259,17 +258,11 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
 
         $message = $this->bag->factory()->subscriptionConfirmation();
 
-        $captured = [];
-        Log::listen(function ($log) use (&$captured) {
-            $captured[] = $log;
-        });
-
         $this->postSnsMessage($message)->assertOk();
 
-        $dump = json_encode(array_map(
-            fn ($l) => ['message' => $l->message, 'context' => $l->context],
-            $captured
-        ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $this->assertContains('ses_monitor.subscription_confirmed', $this->logSpy->messages());
+
+        $dump = $this->logSpy->dump();
 
         $this->assertStringNotContainsString($message['Token'], $dump, 'Token 이 로그에 남았습니다');
         $this->assertStringNotContainsString($message['SubscribeURL'], $dump, 'SubscribeURL 전체가 로그에 남았습니다');
@@ -285,17 +278,11 @@ class SesSubscriptionConfirmationTest extends PluginTestCase
 
         $message = $this->bag->factory()->subscriptionConfirmation();
 
-        $captured = [];
-        Log::listen(function ($log) use (&$captured) {
-            $captured[] = $log;
-        });
-
         $this->postSnsMessage($message)->assertStatus(500);
 
-        $dump = json_encode(array_map(
-            fn ($l) => ['message' => $l->message, 'context' => $l->context],
-            $captured
-        ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $this->assertContains('ses_monitor.subscription_confirmation_failed', $this->logSpy->messages());
+
+        $dump = $this->logSpy->dump();
 
         $this->assertStringNotContainsString($message['Token'], $dump);
         $this->assertStringNotContainsString($message['SubscribeURL'], $dump);

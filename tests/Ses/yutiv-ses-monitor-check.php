@@ -1248,6 +1248,116 @@ check('런타임 계약: 500 을 기대값으로 바꾸거나 예외를 숨기�
     strpos($integrationSrc, 'assertStatus(500)') === false
     && preg_match('/try\s*\{[^}]*webhooks\/aws\/ses/s', $integrationSrc) !== 1);
 
+// ── 18. 테스트 격리 계약 (전체 실행에서 드러난 오염) ──────────────────────
+//
+// 104종 전체 실행에서 13건이 깨졌고, 대부분 개별 결함이 아니라 **공유 상태 오염**이었다.
+// 재발을 막을 최소 계약만 고정한다.
+
+$ptcSrc = file_get_contents($pluginDir.'/tests/PluginTestCase.php');
+$featureFiles = sesPhpFiles($pluginDir.'/tests/Feature');
+
+// (1) 인자 없는 Http::fake() 금지
+//     Laravel 은 stub 을 등록 순서대로 훑어 첫 일치를 쓴다. 인자 없는 fake 는 모든 URL 에
+//     매칭되는 catch-all(200) 이라, 뒤에 선언한 500/302 stub 이 영영 쓰이지 않는다.
+$catchAllFakes = [];
+foreach (array_merge($featureFiles, [$pluginDir.'/tests/PluginTestCase.php']) as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    if (preg_match('/Http::fake\(\s*\)/', $code) === 1) {
+        $catchAllFakes[] = basename($file);
+    }
+}
+
+check('격리: 인자 없는 Http::fake() catch-all 을 쓰지 않는다',
+    $catchAllFakes === [], implode(' / ', $catchAllFakes));
+check('격리: 그래도 stray 요청은 막는다',
+    strpos($ptcSrc, 'Http::preventStrayRequests();') !== false);
+
+// (2) Cache 파사드 root 를 Repository 로 바꾸지 않는다 (Cache::store() 계약 유지)
+$badCacheSwaps = [];
+foreach ($featureFiles as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    if (preg_match('/Cache::swap\(\s*new\s+\\\\?(Illuminate\\\\Cache\\\\)?(Cache)?Repository/', $code) === 1) {
+        $badCacheSwaps[] = basename($file);
+    }
+}
+
+check('격리: Cache root 를 Repository 로 바꾸지 않는다 (store() 계약 유지)',
+    $badCacheSwaps === [], implode(' / ', $badCacheSwaps));
+check('격리: 기본 스토어만 고장 내는 CacheManager 를 쓴다',
+    is_file($pluginDir.'/tests/Support/BrokenDefaultCacheManager.php')
+    && strpos($ptcSrc, 'function swapBrokenDefaultCache') !== false);
+
+$brokenManagerSrc = is_file($pluginDir.'/tests/Support/BrokenDefaultCacheManager.php')
+    ? file_get_contents($pluginDir.'/tests/Support/BrokenDefaultCacheManager.php')
+    : '';
+
+check('격리: 이름 지정 스토어는 진짜 저장소로 위임한다',
+    strpos($brokenManagerSrc, 'extends CacheManager') !== false
+    && strpos($brokenManagerSrc, 'return parent::store($name);') !== false);
+check('격리: 이름 없는 기본 접근만 고장 낸다',
+    strpos($brokenManagerSrc, 'if ($name === null)') !== false);
+
+$claimSrc = is_file($pluginDir.'/tests/Feature/SesSubscriptionClaimTest.php')
+    ? file_get_contents($pluginDir.'/tests/Feature/SesSubscriptionClaimTest.php')
+    : '';
+
+check('격리: 두 경로가 다른 저장소를 본다는 것을 테스트가 증명한다',
+    strpos($claimSrc, "Cache::store(config('cache.default'))") !== false
+    && strpos($claimSrc, 'assertNotInstanceOf') !== false);
+check('격리: BrokenCacheStore 에 store() 를 덧붙여 오류만 숨기지 않았다',
+    strpos($claimSrc, 'public function store(') === false);
+
+// (3) 구조화 로그는 이벤트가 아니라 결정적 기록기로 확인한다
+$listenUsers = [];
+foreach ($featureFiles as $file) {
+    $code = sesStripComments(file_get_contents($file));
+
+    if (strpos($code, 'Log::listen(') !== false) {
+        $listenUsers[] = basename($file);
+    }
+}
+
+check('격리: 로그 단언에 Log::listen() 을 쓰지 않는다',
+    $listenUsers === [], implode(' / ', $listenUsers));
+check('격리: 결정적 로그 기록기가 있다',
+    is_file($pluginDir.'/tests/Support/RecordingLogSpy.php')
+    && strpos($ptcSrc, "\$this->app->instance('log', \$this->logSpy);") !== false
+    && strpos($ptcSrc, 'Log::swap($this->logSpy);') !== false);
+
+// (4) tearDown 상태 복원
+check('격리: tearDown 이 시간 여행을 되돌린다',
+    strpos($ptcSrc, 'Carbon::setTestNow();') !== false);
+check('격리: tearDown 이 파사드 root 를 복원한다',
+    strpos($ptcSrc, 'Cache::clearResolvedInstances();') !== false
+    && strpos($ptcSrc, 'Log::clearResolvedInstances();') !== false
+    && strpos($ptcSrc, 'Http::clearResolvedInstances();') !== false);
+check('격리: tearDown 이 프로바이더 재등록 플래그를 되돌린다',
+    preg_match('/protected function tearDown.*?\$this->pluginRegistered = false;/s', $ptcSrc) === 1);
+
+// (5) 테스트 수 동결 — 증상마다 테스트를 늘리지 않는다
+$testCount = 0;
+foreach ($featureFiles as $file) {
+    $testCount += preg_match_all('/public function test_/', file_get_contents($file));
+}
+
+check('격리: SES 테스트 수가 104종으로 유지된다', $testCount === 104, "현재 {$testCount}종");
+
+// (6) 낡은 정책 잔재가 없는가
+$webhookSrc = is_file($pluginDir.'/tests/Feature/SesWebhookTest.php')
+    ? file_get_contents($pluginDir.'/tests/Feature/SesWebhookTest.php')
+    : '';
+
+check('정책: 오래된 Notification 을 거부한다는 낡은 기대가 없다',
+    strpos($webhookSrc, 'test_오래된_timestamp_를_거부한다') === false);
+check('정책: 그 자리는 control 메시지 만료 검사로 재목적화됐다',
+    strpos($webhookSrc, 'test_만료된_control_메시지_timestamp_를_거부한다') !== false);
+check('정책: GET 검사가 405 응답코드가 아니라 라우팅 사실을 본다',
+    strpos($webhookSrc, "assertStatus(405)") === false
+    && strpos($webhookSrc, "assertSame(['POST'], \$methods") !== false
+    && strpos($webhookSrc, "'yutiv.ses-monitor.webhook'") !== false);
+
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {
     foreach ($passes as $p) {

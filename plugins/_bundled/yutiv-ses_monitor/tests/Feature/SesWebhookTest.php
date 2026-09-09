@@ -2,6 +2,8 @@
 
 namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Plugins\Yutiv\SesMonitor\Models\SesEventLog;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
 use Plugins\Yutiv\SesMonitor\Tests\Support\SnsFixtureFactory;
@@ -15,6 +17,9 @@ use Plugins\Yutiv\SesMonitor\Tests\Support\SnsFixtureFactory;
 class SesWebhookTest extends PluginTestCase
 {
     private const ENDPOINT = '/webhooks/aws/ses';
+
+    /** SNS 확인 URL 페이크 패턴. */
+    private const SUBSCRIBE_HOST_PATTERN = 'sns.ap-northeast-2.amazonaws.com/*';
 
     /**
      * @param  array<string, mixed>|string  $payload
@@ -133,15 +138,34 @@ class SesWebhookTest extends PluginTestCase
             ->assertJsonPath('reason', 'region_mismatch');
     }
 
-    public function test_오래된_timestamp_를_거부한다(): void
+    /**
+     * 만료된 **제어 메시지**는 거부한다.
+     *
+     * 이 테스트는 원래 "오래된 Notification 거부" 였다. 그 정책은 폐기됐다 —
+     * 장애·배포로 밀린 정상 SES 재시도를 영구 유실시키기 때문이다(SesTimestampPolicyTest
+     * 가 "오래된 Notification 허용" 을 계약으로 갖는다). 과거 상한이 남아 있는 쪽은
+     * 구독 상태를 바꾸는 제어 메시지뿐이라, 이 자리를 그 검사로 돌린다.
+     */
+    public function test_만료된_control_메시지_timestamp_를_거부한다(): void
     {
-        $message = $this->bag->factory()->notificationAt(SnsFixtureFactory::bounceEvent(), time() - 4000);
+        // 2시간 전 — 서명은 유효하지만 제어 메시지 상한(1시간)을 넘었다.
+        $message = $this->bag->factory()->unsubscribeConfirmationAt(time() - 7200);
 
         $this->postSnsPayload($message)
             ->assertForbidden()
             ->assertJsonPath('reason', 'timestamp_expired');
 
         $this->assertSame(0, SesEventLog::count());
+
+        // 같은 나이의 Notification 은 반대로 통과해야 한다 — 정책이 종류별로 갈린다는
+        // 사실을 이 한 테스트 안에서 대조로 확인한다.
+        $late = $this->bag->factory()->notificationAt(SnsFixtureFactory::deliveryEvent('late-ok'), time() - 7200);
+
+        $this->postSnsPayload($late)
+            ->assertOk()
+            ->assertJsonPath('status', 'stored');
+
+        $this->assertSame(1, SesEventLog::where('ses_message_id', 'late-ok')->count());
     }
 
     // ── 입력 검증 ───────────────────────────────────────────────────────────
@@ -268,8 +292,74 @@ class SesWebhookTest extends PluginTestCase
             ->assertOk();
     }
 
-    public function test_GET_은_허용되지_않는다(): void
+    /**
+     * GET 은 webhook 처리 경로에 들어가지 않는다.
+     *
+     * 405 를 기대하지 않는 이유: 이 앱에는 `routes/web.php` 에 SPA catch-all
+     * `Route::get('/{any?}')` 가 있어 GET 요청을 그쪽이 200 으로 받는다. 즉 200 은
+     * "webhook 이 GET 을 처리했다" 는 뜻이 아니라 "전역 fallback 이 받았다" 는 뜻이다.
+     * 정확한 405 를 만들려고 코어 라우트나 플러그인 라우트를 넓히지 않는다.
+     *
+     * 대신 증명해야 할 것을 직접 검사한다 — webhook 액션에는 POST 만 있고,
+     * GET 으로는 저장·호출·처리 로그가 하나도 일어나지 않는다.
+     */
+    public function test_GET_은_webhook_처리_경로에_들어가지_않는다(): void
     {
-        $this->get(self::ENDPOINT)->assertStatus(405);
+        // (1) 라우트 수준: webhook 액션은 POST 로만 등록돼 있다.
+        $methods = [];
+        foreach ($this->app['router']->getRoutes() as $route) {
+            if ($route->uri() !== ltrim(self::ENDPOINT, '/')) {
+                continue;
+            }
+            $methods = array_merge($methods, $route->methods());
+        }
+
+        $methods = array_values(array_unique($methods));
+        sort($methods);
+
+        // Laravel 은 POST 라우트에 HEAD 를 붙이지 않는다 (GET 에만 붙인다).
+        $this->assertSame(['POST'], $methods, 'webhook 라우트에 POST 외 메서드가 있습니다');
+
+        // (2) 동작 수준: GET 으로는 어떤 부수효과도 없다.
+        Http::fake([self::SUBSCRIBE_HOST_PATTERN => Http::response('ok', 200)]);
+
+        $before = SesEventLog::count();
+
+        // 라우터가 GET 요청을 어디로 보내는지 직접 확인한다 — 200 응답 코드가 아니라
+        // "어떤 라우트가 받았는가" 가 증명해야 할 사실이다.
+        $matched = null;
+        try {
+            $matched = $this->app['router']->getRoutes()->match(
+                Request::create(self::ENDPOINT, 'GET')
+            );
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            // 매칭되는 라우트가 없으면(405/404) 그 자체로 webhook 미도달이다.
+        }
+
+        if ($matched !== null) {
+            $this->assertNotSame(
+                'yutiv.ses-monitor.webhook',
+                $matched->getName(),
+                'GET 이 webhook 라우트로 매칭됐습니다'
+            );
+            $this->assertStringNotContainsString(
+                'SesWebhookController',
+                (string) $matched->getActionName(),
+                'GET 이 webhook 컨트롤러로 들어갔습니다'
+            );
+        }
+
+        $this->get(self::ENDPOINT);
+
+        // 부수효과가 하나도 없어야 한다.
+        $this->assertSame($before, SesEventLog::count(), 'GET 으로 SES 이벤트가 저장됐습니다');
+        Http::assertNothingSent();
+
+        // 코어가 남기는 로그는 무시하고, 우리 webhook 처리 로그만 없어야 한다.
+        $sesLogs = array_values(array_filter(
+            $this->logSpy->messages(),
+            static fn ($message) => str_starts_with($message, 'ses_monitor.')
+        ));
+        $this->assertSame([], $sesLogs, 'GET 이 webhook 처리 로그를 남겼습니다: '.implode(', ', $sesLogs));
     }
 }

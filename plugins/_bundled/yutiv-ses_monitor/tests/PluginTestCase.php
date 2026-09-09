@@ -8,14 +8,18 @@ use App\Models\Permission;
 use App\Models\Plugin as PluginModel;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Transport\ArrayTransport;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Plugins\Yutiv\SesMonitor\Providers\SesMonitorServiceProvider;
 use Plugins\Yutiv\SesMonitor\Support\SesConfig;
+use Plugins\Yutiv\SesMonitor\Tests\Support\RecordingLogSpy;
 use Plugins\Yutiv\SesMonitor\Tests\Support\TestableSesMonitorServiceProvider;
 use Symfony\Component\Mime\Header\Headers;
 use Tests\TestCase;
@@ -55,6 +59,9 @@ abstract class PluginTestCase extends TestCase
     /** 프로바이더 생명주기 재실행을 한 번만 하기 위한 플래그 (중복 등록 방지). */
     private bool $pluginRegistered = false;
 
+    /** 구조화 로그 기록기 (이벤트 대신 직접 받아 적는다). */
+    protected RecordingLogSpy $logSpy;
+
     protected function setUp(): void
     {
         // 앱이 만들어지자마자(테스트 본문 이전) 암호화 키를 고정한다.
@@ -65,10 +72,20 @@ abstract class PluginTestCase extends TestCase
 
         parent::setUp();
 
-        // 바깥으로 나가는 HTTP 는 전부 막는다. SubscribeURL 호출을 검사하려면
-        // "실수로 진짜 요청이 나가는" 경로가 없어야 한다.
+        // 바깥으로 나가는 HTTP 는 전부 막는다. 페이크로 선언하지 않은 요청은 예외가 된다.
+        //
+        // ★ 여기서 인자 없는 Http::fake() 를 부르면 안 된다. Laravel 은 stub 을 등록
+        //   순서대로 훑어 **첫 일치**를 쓰는데, 인자 없는 fake 는 모든 URL 에 매칭되는
+        //   catch-all(200) 이라 각 테스트가 나중에 선언한 500/302 stub 이 영영 쓰이지
+        //   않는다. 실제로 그 때문에 "500 기대, 200 수신" 실패가 무더기로 났다.
+        //   각 테스트가 자기 stub 을 선언한다.
         Http::preventStrayRequests();
-        Http::fake();
+
+        // 구조화 로그를 결정적으로 받아 적는다 (Log::listen 은 채널·디스패처 상태에
+        // 좌우돼 서버에서 재현성 없이 비었다).
+        $this->logSpy = new RecordingLogSpy;
+        $this->app->instance('log', $this->logSpy);
+        Log::swap($this->logSpy);
 
         // 기본 설정 — 각 테스트가 필요에 따라 덮어쓴다.
         $this->configureSes();
@@ -424,6 +441,50 @@ abstract class PluginTestCase extends TestCase
         $user->roles()->attach($role->id);
 
         return $user;
+    }
+
+    /**
+     * 테스트가 건드린 전역 상태를 되돌린다.
+     *
+     * 앱은 테스트마다 새로 만들어지지만 **파사드의 정적 resolved 인스턴스**와
+     * Carbon 의 테스트 시각은 프로세스 전역이라, 여기서 명시적으로 푼다.
+     * 파일 단독 실행과 전체 실행, 그리고 실행 순서가 달라져도 결과가 같아야 한다.
+     */
+    protected function tearDown(): void
+    {
+        // 시간 여행 해제 (travel/freezeTime 을 쓴 테스트가 다음 테스트를 오염시키지 않게)
+        Carbon::setTestNow();
+
+        // 파사드 root 복원 — Cache 는 CacheManager 로, 나머지는 컨테이너 재해석으로
+        Cache::clearResolvedInstances();
+        Log::clearResolvedInstances();
+        Http::clearResolvedInstances();
+        Mail::clearResolvedInstances();
+
+        if (isset($this->logSpy)) {
+            $this->logSpy->reset();
+        }
+
+        $this->pluginRegistered = false;
+
+        parent::tearDown();
+    }
+
+    /**
+     * 기본 캐시 스토어만 고장 낸 CacheManager 로 교체한다.
+     *
+     * `Cache::store($name)` 계약은 그대로 유지되므로 코어 미들웨어는 영향을 받지 않는다.
+     * 자세한 이유는 `Support\BrokenDefaultCacheManager` 의 주석 참조.
+     */
+    protected function swapBrokenDefaultCache(\Illuminate\Contracts\Cache\Store $store): void
+    {
+        $manager = new \Plugins\Yutiv\SesMonitor\Tests\Support\BrokenDefaultCacheManager(
+            $this->app,
+            new \Illuminate\Cache\Repository($store)
+        );
+
+        $this->app->instance('cache', $manager);
+        Cache::swap($manager);
     }
 
     /**

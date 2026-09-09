@@ -295,12 +295,17 @@ class SnsFixtureFactory
      *
      * @return array<string, mixed>
      */
-    public static function bounceEvent(string $sesMessageId = '0100018abc-bounce'): array
+    public static function bounceEvent(string $sesMessageId = '0100018abc-bounce', ?string $occurredAt = null): array
     {
+        // 기본값은 고정 날짜(다른 테스트가 정확한 보존 값을 단언한다).
+        // 지연 도착처럼 **현재 시각과의 거리**가 중요한 테스트만 값을 넘긴다.
+        $mailAt = $occurredAt ?? '2026-09-09T01:00:00.000Z';
+        $bounceAt = $occurredAt ?? '2026-09-09T01:00:05.000Z';
+
         return [
             'eventType' => 'Bounce',
             'mail' => [
-                'timestamp' => '2026-09-09T01:00:00.000Z',
+                'timestamp' => $mailAt,
                 'messageId' => $sesMessageId,
                 'source' => 'no-reply@yutiv.com',
                 'destination' => ['bounced@example.com'],
@@ -308,7 +313,7 @@ class SnsFixtureFactory
             'bounce' => [
                 'bounceType' => 'Permanent',
                 'bounceSubType' => 'General',
-                'timestamp' => '2026-09-09T01:00:05.000Z',
+                'timestamp' => $bounceAt,
                 'bouncedRecipients' => [
                     [
                         'emailAddress' => 'bounced@example.com',

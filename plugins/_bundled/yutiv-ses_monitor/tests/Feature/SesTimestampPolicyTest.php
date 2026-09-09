@@ -3,7 +3,6 @@
 namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Plugins\Yutiv\SesMonitor\Models\SesEventLog;
 use Plugins\Yutiv\SesMonitor\Support\SesConfig;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
@@ -120,25 +119,25 @@ class SesTimestampPolicyTest extends PluginTestCase
 
     public function test_아주_오래된_이벤트는_구조화_warning_을_남기되_개인정보는_없다(): void
     {
-        $captured = [];
-        Log::listen(function ($log) use (&$captured) {
-            $captured[] = $log;
-        });
+        // ★ 이벤트 시각을 **지금 기준**으로 만든다. fixture 의 고정 날짜를 쓰면
+        //   서버 시계가 그 날짜에 가까울 때 지연이 임계값(6시간) 아래가 되어
+        //   경고가 발생하지 않는다 — 실제로 그렇게 실패했다.
+        $occurredAt = gmdate('Y-m-d\\TH:i:s.000\\Z', time() - 2592000);
 
         $message = $this->bag->factory()->notificationAt(
-            SnsFixtureFactory::bounceEvent('warn-1'),
+            SnsFixtureFactory::bounceEvent('warn-1', $occurredAt),
             time() - 2592000
         );
 
         $this->postSnsMessage($message)->assertOk();
 
-        $messages = array_column($captured, 'message');
-        $this->assertContains('ses_monitor.event_delayed', $messages);
+        $this->assertContains('ses_monitor.event_delayed', $this->logSpy->messages());
 
-        $dump = json_encode(array_map(
-            fn ($l) => ['message' => $l->message, 'context' => $l->context],
-            $captured
-        ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $entry = $this->logSpy->first('ses_monitor.event_delayed');
+        $this->assertNotNull($entry);
+        $this->assertGreaterThan(21600, $entry['context']['delay_seconds']);
+
+        $dump = $this->logSpy->dump();
 
         $this->assertStringNotContainsString('bounced@example.com', $dump, '수신자가 로그에 남았습니다');
         $this->assertStringNotContainsString($message['MessageId'], $dump, '전체 MessageId 가 로그에 남았습니다');

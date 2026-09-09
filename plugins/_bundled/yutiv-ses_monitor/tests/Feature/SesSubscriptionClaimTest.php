@@ -3,10 +3,8 @@
 namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
 use Illuminate\Cache\ArrayStore;
-use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
 
 /**
@@ -54,7 +52,21 @@ class SesSubscriptionClaimTest extends PluginTestCase
      */
     private function breakCache(string $failing, bool $addReturnsFalse = false): void
     {
-        Cache::swap(new CacheRepository(new BrokenCacheStore($failing, $addReturnsFalse)));
+        // 기본 스토어만 고장 낸다 — Cache::store('array') 계약은 그대로 살아 있어야
+        // ExtensionMiddlewareGate 같은 코어 미들웨어가 HTTP 요청에서 깨지지 않는다.
+        $this->swapBrokenDefaultCache(new BrokenCacheStore($failing, $addReturnsFalse));
+
+        // 두 경로가 서로 다른 저장소를 본다는 것을 여기서 증명한다.
+        $this->assertInstanceOf(
+            \Illuminate\Cache\Repository::class,
+            Cache::store(config('cache.default')),
+            '이름 지정 스토어가 깨졌습니다 — 코어 미들웨어가 함께 무너집니다.'
+        );
+        $this->assertNotInstanceOf(
+            BrokenCacheStore::class,
+            Cache::store(config('cache.default'))->getStore(),
+            '이름 지정 스토어까지 고장난 저장소를 보고 있습니다.'
+        );
     }
 
     // ── add() = false 인 두 갈래 ────────────────────────────────────────────
@@ -203,23 +215,16 @@ class SesSubscriptionClaimTest extends PluginTestCase
 
         $message = $this->bag->factory()->subscriptionConfirmation();
 
-        $captured = [];
-        Log::listen(function ($log) use (&$captured) {
-            $captured[] = $log;
-        });
-
         $this->postSubscriptionConfirmation($message)->assertStatus(500);
 
-        $messages = array_column($captured, 'message');
-        $this->assertContains('ses_monitor.subscription_claim_unavailable', $messages);
+        $this->assertContains('ses_monitor.subscription_claim_unavailable', $this->logSpy->messages());
 
-        $entry = collect($captured)->firstWhere('message', 'ses_monitor.subscription_claim_unavailable');
-        $this->assertFalse($entry->context['subscribe_url_called']);
+        $entry = $this->logSpy->first('ses_monitor.subscription_claim_unavailable');
+        $this->assertNotNull($entry);
+        $this->assertSame('error', $entry['level']);
+        $this->assertFalse($entry['context']['subscribe_url_called']);
 
-        $dump = json_encode(array_map(
-            fn ($l) => ['message' => $l->message, 'context' => $l->context],
-            $captured
-        ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $dump = $this->logSpy->dump();
 
         $this->assertStringNotContainsString($message['Token'], $dump, 'Token 이 로그에 남았습니다');
         $this->assertStringNotContainsString($message['SubscribeURL'], $dump, 'SubscribeURL 이 로그에 남았습니다');
