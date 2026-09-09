@@ -1,0 +1,391 @@
+{
+    "version": "1.0.0",
+    "layout_name": "ses_event_log",
+    "permissions": [
+        "core.notification-logs.read"
+    ],
+    "extends": "_admin_base",
+    "meta": {
+        "title": "$t:yutiv-ses_monitor.admin.events.title",
+        "description": "$t:yutiv-ses_monitor.admin.events.description"
+    },
+    "transition_overlay": {
+        "wait_for": [
+            "sesEventSummary",
+            "sesEvents"
+        ]
+    },
+    "data_sources": [
+        {
+            "id": "sesEventSummary",
+            "type": "api",
+            "endpoint": "/api/plugins/yutiv-ses_monitor/admin/ses-events/summary",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_required": true,
+            "loading_strategy": "progressive",
+            "fallback": {
+                "data": {
+                    "enabled": false,
+                    "counts": {},
+                    "total": 0,
+                    "unlinked": 0,
+                    "latest_event_at": null
+                }
+            }
+        },
+        {
+            "id": "sesEvents",
+            "type": "api",
+            "endpoint": "/api/plugins/yutiv-ses_monitor/admin/ses-events",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_required": true,
+            "loading_strategy": "progressive",
+            "params": {
+                "page": "{{query.page || 1}}",
+                "per_page": "{{query.per_page || 20}}",
+                "event_type": "{{query.event_type}}",
+                "linked": "{{query.linked}}",
+                "ses_message_id": "{{query.ses_message_id}}"
+            },
+            "errorHandling": {
+                "403": {
+                    "handler": "showErrorPage",
+                    "params": {
+                        "target": "content"
+                    }
+                }
+            },
+            "fallback": {
+                "data": {
+                    "items": [],
+                    "pagination": {
+                        "current_page": 1,
+                        "last_page": 1,
+                        "per_page": 20,
+                        "total": 0
+                    }
+                }
+            }
+        }
+    ],
+    "slots": {
+        "content": [
+            {
+                "id": "ses_event_log_content",
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                    "className": "admin-page-content"
+                },
+                "children": [
+                    {
+                        "id": "ses_page_header",
+                        "type": "basic",
+                        "name": "Div",
+                        "props": {
+                            "className": "flex-between mb-6"
+                        },
+                        "children": [
+                            {
+                                "type": "basic",
+                                "name": "Div",
+                                "children": [
+                                    {
+                                        "type": "basic",
+                                        "name": "H1",
+                                        "props": {
+                                            "className": "text-xl font-semibold text-gray-900 dark:text-gray-100"
+                                        },
+                                        "text": "$t:yutiv-ses_monitor.admin.events.title"
+                                    },
+                                    {
+                                        "type": "basic",
+                                        "name": "P",
+                                        "props": {
+                                            "className": "mt-1 text-sm text-gray-500 dark:text-gray-400"
+                                        },
+                                        "text": "$t:yutiv-ses_monitor.admin.events.subtitle"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "ses_disabled_notice",
+                        "type": "basic",
+                        "name": "Div",
+                        "if": "{{sesEventSummary.data?.enabled === false}}",
+                        "props": {
+                            "className": "mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200"
+                        },
+                        "text": "$t:yutiv-ses_monitor.admin.events.disabled_notice"
+                    },
+                    {
+                        "id": "ses_summary_cards",
+                        "type": "basic",
+                        "name": "Div",
+                        "props": {
+                            "className": "mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4"
+                        },
+                        "iteration": {
+                            "items": "{{[{k:'delivery'},{k:'bounce'},{k:'complaint'},{k:'deliveryDelay'},{k:'send'},{k:'reject'},{k:'renderingFailure'}]}}",
+                            "item_var": "card"
+                        },
+                        "children": [
+                            {
+                                "type": "basic",
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+                                },
+                                "children": [
+                                    {
+                                        "type": "basic",
+                                        "name": "Div",
+                                        "props": {
+                                            "className": "text-xs text-gray-500 dark:text-gray-400"
+                                        },
+                                        "text": "{{card.k}}"
+                                    },
+                                    {
+                                        "type": "basic",
+                                        "name": "Div",
+                                        "props": {
+                                            "className": "mt-1 text-2xl font-semibold text-gray-900 dark:text-gray-100"
+                                        },
+                                        "text": "{{sesEventSummary.data?.counts?.[card.k] ?? 0}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "ses_filter_bar",
+                        "type": "basic",
+                        "name": "Div",
+                        "props": {
+                            "className": "mb-4 flex flex-wrap items-center gap-2"
+                        },
+                        "children": [
+                            {
+                                "type": "basic",
+                                "name": "Span",
+                                "props": {
+                                    "className": "text-sm text-gray-600 dark:text-gray-300"
+                                },
+                                "text": "$t:yutiv-ses_monitor.admin.events.filter_link_state"
+                            },
+                            {
+                                "type": "basic",
+                                "name": "Div",
+                                "props": {
+                                    "className": "inline-flex overflow-hidden rounded-md border border-gray-300 dark:border-gray-600"
+                                },
+                                "iteration": {
+                                    "items": "{{[{v:'',l:'$t:yutiv-ses_monitor.admin.events.filter_all'},{v:'linked',l:'$t:yutiv-ses_monitor.admin.events.filter_linked'},{v:'unlinked',l:'$t:yutiv-ses_monitor.admin.events.filter_unlinked'}]}}",
+                                    "item_var": "tab"
+                                },
+                                "children": [
+                                    {
+                                        "type": "basic",
+                                        "name": "Button",
+                                        "props": {
+                                            "className": "px-3 py-1.5 text-sm {{(query.linked || '') === tab.v ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-200'}}"
+                                        },
+                                        "text": "{{tab.l}}",
+                                        "events": {
+                                            "onClick": {
+                                                "action": "navigate",
+                                                "params": {
+                                                    "url": "/admin/plugins/yutiv-ses_monitor/events?linked={{tab.v}}"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "name": "Span",
+                                "props": {
+                                    "className": "ml-auto text-sm text-gray-500 dark:text-gray-400"
+                                },
+                                "text": "$t:yutiv-ses_monitor.admin.events.unlinked_count"
+                            },
+                            {
+                                "type": "basic",
+                                "name": "Span",
+                                "props": {
+                                    "className": "text-sm font-semibold text-gray-800 dark:text-gray-100"
+                                },
+                                "text": "{{sesEventSummary.data?.unlinked ?? 0}}"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "ses_event_table_section",
+                        "type": "basic",
+                        "name": "Div",
+                        "props": {
+                            "className": "admin-card overflow-x-auto"
+                        },
+                        "children": [
+                            {
+                                "type": "basic",
+                                "name": "Table",
+                                "props": {
+                                    "className": "min-w-full text-sm"
+                                },
+                                "children": [
+                                    {
+                                        "type": "basic",
+                                        "name": "Thead",
+                                        "children": [
+                                            {
+                                                "type": "basic",
+                                                "name": "Tr",
+                                                "props": {
+                                                    "className": "border-b border-gray-200 text-left text-xs uppercase text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                                                },
+                                                "iteration": {
+                                                    "items": "{{['$t:yutiv-ses_monitor.admin.events.col_occurred_at','$t:yutiv-ses_monitor.admin.events.col_event_type','$t:yutiv-ses_monitor.admin.events.col_recipient','$t:yutiv-ses_monitor.admin.events.col_reason','$t:yutiv-ses_monitor.admin.events.col_link','$t:yutiv-ses_monitor.admin.events.col_ses_message_id']}}",
+                                                    "item_var": "col"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Th",
+                                                        "props": {
+                                                            "className": "px-3 py-2 font-medium"
+                                                        },
+                                                        "text": "{{col}}"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "basic",
+                                        "name": "Tbody",
+                                        "iteration": {
+                                            "items": "{{sesEvents.data?.items ?? []}}",
+                                            "item_var": "event"
+                                        },
+                                        "children": [
+                                            {
+                                                "type": "basic",
+                                                "name": "Tr",
+                                                "props": {
+                                                    "className": "border-b border-gray-100 dark:border-gray-800"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Td",
+                                                        "props": {
+                                                            "className": "whitespace-nowrap px-3 py-2 text-gray-700 dark:text-gray-300"
+                                                        },
+                                                        "text": "{{event.occurred_at}}"
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Td",
+                                                        "props": {
+                                                            "className": "px-3 py-2"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "type": "basic",
+                                                                "name": "Span",
+                                                                "props": {
+                                                                    "className": "inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{event.event_type === 'delivery' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : (event.event_type === 'bounce' || event.event_type === 'reject' || event.event_type === 'renderingFailure' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : (event.event_type === 'complaint' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200'))}}"
+                                                                },
+                                                                "text": "{{event.event_type}}"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Td",
+                                                        "props": {
+                                                            "className": "px-3 py-2 text-gray-700 dark:text-gray-300"
+                                                        },
+                                                        "text": "{{(event.recipients_masked ?? []).join(', ')}}"
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Td",
+                                                        "props": {
+                                                            "className": "px-3 py-2 text-gray-600 dark:text-gray-400"
+                                                        },
+                                                        "text": "{{event.bounce_type ? (event.bounce_type + ' / ' + (event.bounce_subtype ?? '')) : (event.complaint_feedback_type ?? '-')}}"
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Td",
+                                                        "props": {
+                                                            "className": "px-3 py-2"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "type": "basic",
+                                                                "name": "Span",
+                                                                "if": "{{event.linked}}",
+                                                                "props": {
+                                                                    "className": "text-blue-600 dark:text-blue-400"
+                                                                },
+                                                                "text": "#{{event.notification_log_id}} {{event.linked_subject ?? ''}}"
+                                                            },
+                                                            {
+                                                                "type": "basic",
+                                                                "name": "Span",
+                                                                "if": "{{!event.linked}}",
+                                                                "props": {
+                                                                    "className": "text-gray-400"
+                                                                },
+                                                                "text": "$t:yutiv-ses_monitor.admin.events.unlinked_badge"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Td",
+                                                        "props": {
+                                                            "className": "px-3 py-2 font-mono text-xs text-gray-500 dark:text-gray-400"
+                                                        },
+                                                        "text": "{{event.ses_message_id ?? '-'}}"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "ses_empty_state",
+                                "type": "basic",
+                                "name": "Div",
+                                "if": "{{(sesEvents.data?.items ?? []).length === 0}}",
+                                "props": {
+                                    "className": "py-12 text-center text-sm text-gray-500 dark:text-gray-400"
+                                },
+                                "text": "$t:yutiv-ses_monitor.admin.events.empty"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "ses_privacy_note",
+                        "type": "basic",
+                        "name": "P",
+                        "props": {
+                            "className": "mt-4 text-xs text-gray-400 dark:text-gray-500"
+                        },
+                        "text": "$t:yutiv-ses_monitor.admin.events.privacy_note"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "identifier": "yutiv-ses_monitor",
+    "vendor": "yutiv",
+    "name": {
+        "ko": "YUTIV Amazon SES 이벤트 모니터",
+        "en": "YUTIV Amazon SES Event Monitor",
+        "ja": "YUTIV Amazon SES イベントモニター",
+        "zh-CN": "YUTIV Amazon SES 事件监控"
+    },
+    "version": "1.0.0",
+    "description": {
+        "ko": "Amazon SES 이벤트(SNS)를 서명 검증 후 append-only 로 기록하고, 알림 발송 이력과 대조해 전달·반송·스팸신고 결과를 확인합니다.",
+        "en": "Verifies Amazon SES event notifications (SNS), records them append-only, and cross-references them with notification send logs for delivery/bounce/complaint visibility.",
+        "ja": "Amazon SES のイベント通知(SNS)を署名検証のうえ追記専用で記録し、通知送信履歴と突き合わせます。",
+        "zh-CN": "对 Amazon SES 事件通知(SNS)进行签名校验并以追加方式记录，与通知发送记录关联查看送达/退信/投诉结果。"
+    },
+    "license": "MIT",
+    "g7_version": ">=7.0.9",
+    "dependencies": {
+        "modules": {},
+        "plugins": {}
+    }
+}

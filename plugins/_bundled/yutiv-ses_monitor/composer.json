@@ -1,0 +1,23 @@
+{
+    "name": "plugins/yutiv-ses_monitor",
+    "description": "Amazon SES event (SNS) monitoring plugin for G7 platform by YUTIV",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "YUTIV",
+            "email": "no-reply@yutiv.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-json": "*",
+        "ext-openssl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Plugins\\Yutiv\\SesMonitor\\": ["src/", "./"]
+        }
+    }
+}

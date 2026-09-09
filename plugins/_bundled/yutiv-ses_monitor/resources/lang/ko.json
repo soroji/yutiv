@@ -1,0 +1,39 @@
+{
+    "event": {
+        "send": "발송",
+        "reject": "거부",
+        "bounce": "반송",
+        "complaint": "스팸 신고",
+        "delivery": "전달 완료",
+        "deliveryDelay": "전달 지연",
+        "renderingFailure": "렌더링 실패"
+    },
+    "admin": {
+        "events": {
+            "title": "SES 이벤트",
+            "subtitle": "Amazon SES 가 알려준 전달·반송·스팸신고 결과입니다. 발송 이력과는 별개의 기록입니다.",
+            "description": "Amazon SES 이벤트 수신 내역",
+            "disabled_notice": "SES_SNS_TOPIC_ARN 이 설정되지 않아 이벤트 수신이 비활성 상태입니다. 환경변수를 설정한 뒤 다시 확인하세요.",
+            "filter_link_state": "연결 상태",
+            "filter_all": "전체",
+            "filter_linked": "연결됨",
+            "filter_unlinked": "미연결",
+            "unlinked_count": "미연결 이벤트",
+            "unlinked_badge": "미연결",
+            "col_occurred_at": "발생 시각",
+            "col_event_type": "이벤트",
+            "col_recipient": "수신자",
+            "col_reason": "사유",
+            "col_link": "발송 이력",
+            "col_ses_message_id": "SES 메시지 ID",
+            "empty": "표시할 SES 이벤트가 없습니다.",
+            "privacy_note": "수신자 주소는 마스킹되어 표시됩니다. 원문 payload 는 이 화면에 노출되지 않습니다."
+        },
+        "panel": {
+            "title": "SES 전달 결과",
+            "view_all": "전체 보기",
+            "note": "이 수치는 Amazon SES 가 보고한 결과이며, 위 발송 이력의 상태값(sent/failed)과는 다른 사실입니다.",
+            "unlinked_link": "발송 이력과 연결되지 않은 이벤트 보기"
+        }
+    }
+}

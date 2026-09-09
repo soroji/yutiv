@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "routes": [
+        {
+            "path": "*/admin/plugins/yutiv-ses_monitor/events",
+            "layout": "ses_event_log",
+            "auth_required": true,
+            "meta": {
+                "title": "$t:yutiv-ses_monitor.admin.events.title",
+                "permission": "core.notification-logs.read"
+            }
+        }
+    ]
+}

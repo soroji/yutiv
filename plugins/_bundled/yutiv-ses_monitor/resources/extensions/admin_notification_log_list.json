@@ -1,0 +1,124 @@
+{
+    "comment": "기존 '알림 발송 이력' 화면 상단에 SES 결과 요약 패널을 얹는다. 코어 레이아웃 파일은 수정하지 않고, 이미 존재하는 컨테이너 id(notification_log_list_content) 에 prepend_child 로 주입한다. extension_point 가 없어도 되는 방식이라 코어 무변경이 가능하다.",
+    "target_layout": "admin_notification_log_list",
+    "injections": [
+        {
+            "target_id": "notification_log_list_content",
+            "position": "prepend_child",
+            "components": [
+                {
+                    "id": "yutiv_ses_summary_panel",
+                    "type": "basic",
+                    "name": "Div",
+                    "if": "{{sesEventSummaryInline.data?.enabled === true}}",
+                    "props": {
+                        "className": "mb-6 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+                    },
+                    "children": [
+                        {
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "flex-between mb-3"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "H3",
+                                    "props": {
+                                        "className": "text-sm font-semibold text-gray-800 dark:text-gray-200"
+                                    },
+                                    "text": "$t:yutiv-ses_monitor.admin.panel.title"
+                                },
+                                {
+                                    "type": "basic",
+                                    "name": "A",
+                                    "props": {
+                                        "className": "text-xs text-blue-600 hover:underline dark:text-blue-400",
+                                        "href": "/admin/plugins/yutiv-ses_monitor/events"
+                                    },
+                                    "text": "$t:yutiv-ses_monitor.admin.panel.view_all"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "basic",
+                            "name": "Div",
+                            "props": {
+                                "className": "grid grid-cols-2 gap-3 sm:grid-cols-4"
+                            },
+                            "iteration": {
+                                "items": "{{[{k:'delivery',l:'$t:yutiv-ses_monitor.event.delivery'},{k:'bounce',l:'$t:yutiv-ses_monitor.event.bounce'},{k:'complaint',l:'$t:yutiv-ses_monitor.event.complaint'},{k:'deliveryDelay',l:'$t:yutiv-ses_monitor.event.deliveryDelay'}]}}",
+                                "item_var": "card"
+                            },
+                            "children": [
+                                {
+                                    "type": "basic",
+                                    "name": "Div",
+                                    "props": {
+                                        "className": "rounded-md bg-gray-50 p-3 dark:bg-gray-900"
+                                    },
+                                    "children": [
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "text-xs text-gray-500 dark:text-gray-400"
+                                            },
+                                            "text": "{{card.l}}"
+                                        },
+                                        {
+                                            "type": "basic",
+                                            "name": "Div",
+                                            "props": {
+                                                "className": "mt-1 text-xl font-semibold text-gray-900 dark:text-gray-100"
+                                            },
+                                            "text": "{{sesEventSummaryInline.data?.counts?.[card.k] ?? 0}}"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "basic",
+                            "name": "P",
+                            "props": {
+                                "className": "mt-3 text-xs text-gray-500 dark:text-gray-400"
+                            },
+                            "text": "$t:yutiv-ses_monitor.admin.panel.note"
+                        },
+                        {
+                            "type": "basic",
+                            "name": "A",
+                            "if": "{{(sesEventSummaryInline.data?.unlinked ?? 0) > 0}}",
+                            "props": {
+                                "className": "mt-1 inline-block text-xs text-blue-600 hover:underline dark:text-blue-400",
+                                "href": "/admin/plugins/yutiv-ses_monitor/events?linked=unlinked"
+                            },
+                            "text": "$t:yutiv-ses_monitor.admin.panel.unlinked_link"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "data_sources": [
+        {
+            "id": "sesEventSummaryInline",
+            "type": "api",
+            "endpoint": "/api/plugins/yutiv-ses_monitor/admin/ses-events/summary",
+            "method": "GET",
+            "auto_fetch": true,
+            "auth_required": true,
+            "loading_strategy": "progressive",
+            "fallback": {
+                "data": {
+                    "enabled": false,
+                    "counts": {},
+                    "total": 0,
+                    "unlinked": 0
+                }
+            }
+        }
+    ]
+}

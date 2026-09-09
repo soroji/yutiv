@@ -1,0 +1,39 @@
+{
+    "event": {
+        "send": "Send",
+        "reject": "Reject",
+        "bounce": "Bounce",
+        "complaint": "Complaint",
+        "delivery": "Delivery",
+        "deliveryDelay": "Delivery delay",
+        "renderingFailure": "Rendering failure"
+    },
+    "admin": {
+        "events": {
+            "title": "SES Events",
+            "subtitle": "Delivery, bounce and complaint results reported by Amazon SES. These are separate facts from send attempts.",
+            "description": "Amazon SES event log",
+            "disabled_notice": "SES_SNS_TOPIC_ARN is not configured, so event ingestion is disabled. Set the environment variable and check again.",
+            "filter_link_state": "Link state",
+            "filter_all": "All",
+            "filter_linked": "Linked",
+            "filter_unlinked": "Unlinked",
+            "unlinked_count": "Unlinked events",
+            "unlinked_badge": "Unlinked",
+            "col_occurred_at": "Occurred at",
+            "col_event_type": "Event",
+            "col_recipient": "Recipient",
+            "col_reason": "Reason",
+            "col_link": "Send log",
+            "col_ses_message_id": "SES message ID",
+            "empty": "No SES events to show.",
+            "privacy_note": "Recipient addresses are masked. Raw payloads are never shown on this screen."
+        },
+        "panel": {
+            "title": "SES delivery results",
+            "view_all": "View all",
+            "note": "These counts come from Amazon SES and are a different fact from the send status (sent/failed) shown above.",
+            "unlinked_link": "View events not linked to a send log"
+        }
+    }
+}
