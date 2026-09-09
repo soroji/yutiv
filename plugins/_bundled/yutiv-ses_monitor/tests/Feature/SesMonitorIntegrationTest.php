@@ -4,12 +4,14 @@ namespace Plugins\Yutiv\SesMonitor\Tests\Feature;
 
 use App\Enums\ExtensionOwnerType;
 use App\Models\NotificationLog;
+use Illuminate\Mail\Transport\ArrayTransport;
 use Illuminate\Support\Facades\Mail;
 use Plugins\Yutiv\SesMonitor\Listeners\AttachSesConfigurationSet;
 use Plugins\Yutiv\SesMonitor\Models\SesEventLog;
 use Plugins\Yutiv\SesMonitor\Models\SesMessageLink;
 use Plugins\Yutiv\SesMonitor\Tests\PluginTestCase;
 use Plugins\Yutiv\SesMonitor\Tests\Support\SnsFixtureFactory;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
 /**
  * 발송 측 헤더 삽입 · 관리자 API 권한 · prune · 기존 발송 이력 회귀 테스트.
@@ -47,6 +49,7 @@ class SesMonitorIntegrationTest extends PluginTestCase
     public function test_이미_헤더가_있으면_덮어쓰지_않는다(): void
     {
         $this->configureSes(['configuration_set' => 'yutiv-production']);
+        $this->assertArrayMailerActive();
 
         $captured = null;
         Mail::raw('body', function ($message) use (&$captured) {
@@ -76,6 +79,9 @@ class SesMonitorIntegrationTest extends PluginTestCase
      */
     private function captureHeadersOfSentMail(): \Symfony\Component\Mime\Header\Headers
     {
+        // 실제 SMTP 로 나갈 가능성을 먼저 배제한다 — 여기서 터지면 환경 오염이다.
+        $this->assertArrayMailerActive();
+
         $captured = null;
 
         Mail::raw('본문', function ($message) use (&$captured) {
@@ -88,29 +94,78 @@ class SesMonitorIntegrationTest extends PluginTestCase
         return $captured->getHeaders();
     }
 
+    public function test_테스트_전송기가_array_이며_네트워크로_나가지_않는다(): void
+    {
+        // 계약 자체를 하나의 테스트로 못박는다. 이게 깨지면 나머지 메일 테스트의
+        // 결과는 신뢰할 수 없다 (실제 SMTP 로 나갔을 수 있으므로).
+        $this->assertArrayMailerActive();
+
+        $transport = Mail::mailer()->getSymfonyTransport();
+
+        // ArrayTransport 는 메시지를 메모리에 쌓을 뿐 소켓을 열지 않는다.
+        $this->assertInstanceOf(ArrayTransport::class, $transport);
+        $this->assertNotInstanceOf(EsmtpTransport::class, $transport);
+
+        $before = $transport->messages()->count();
+
+        Mail::raw('본문', function ($message) {
+            $message->to('nobody@example.com')->subject('격리 확인');
+        });
+
+        $this->assertSame($before + 1, $transport->messages()->count(), '메시지가 메모리 전송기에 쌓이지 않았습니다');
+    }
+
     // ── 관리자 API 권한 ─────────────────────────────────────────────────────
+
+    public function test_관리자_API_라우트가_테스트_앱에_등록되어_있다(): void
+    {
+        // 404 를 성공으로 착각하지 않기 위해, 권한 단언 전에 라우트 존재를 먼저 못박는다.
+        $this->assertSame(
+            1,
+            $this->countRoutesForUri(self::ADMIN_API_URI, 'GET'),
+            '관리자 API 라우트가 없거나 중복 등록됐습니다'
+        );
+    }
+
+    public function test_관리자_API_라우트를_두_번_등록해도_중복되지_않는다(): void
+    {
+        $this->registerPluginApiRoutes();
+        $this->registerPluginApiRoutes();
+
+        $this->assertSame(1, $this->countRoutesForUri(self::ADMIN_API_URI, 'GET'));
+    }
+
 
     public function test_권한이_없으면_이벤트_목록을_볼_수_없다(): void
     {
-        $this->actingAs($this->createAdminWithoutLogPermission())
-            ->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events')
-            ->assertForbidden();
+        $response = $this->actingAs($this->createAdminWithoutLogPermission())
+            ->getJson('/'.self::ADMIN_API_URI);
+
+        // 404 는 "권한 검사에 닿지도 못했다" 는 뜻이라 통과로 인정하지 않는다.
+        $this->assertNotSame(404, $response->getStatusCode(), '라우트가 등록되지 않았습니다 (권한 검사 미도달)');
+        $response->assertForbidden();
     }
 
     public function test_비로그인은_이벤트_목록을_볼_수_없다(): void
     {
-        $this->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events')
-            ->assertUnauthorized();
+        $response = $this->getJson('/'.self::ADMIN_API_URI);
+
+        $this->assertNotSame(404, $response->getStatusCode(), '라우트가 등록되지 않았습니다 (인증 검사 미도달)');
+
+        // API 경로는 redirect 하지 않고 401 JSON 이어야 한다 (bootstrap/app.php 계약).
+        $this->assertNotSame(302, $response->getStatusCode(), 'API 인증 실패가 redirect 되었습니다');
+        $response->assertUnauthorized();
     }
 
     public function test_notification_logs_read_권한이_있으면_목록을_볼_수_있다(): void
     {
         $this->seedEvent('list-1', 'delivery');
 
-        $this->actingAs($this->createNotificationLogReader())
-            ->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events')
-            ->assertOk()
-            ->assertJsonPath('data.items.0.ses_message_id', 'list-1');
+        $response = $this->actingAs($this->createNotificationLogReader())
+            ->getJson('/'.self::ADMIN_API_URI);
+
+        $this->assertNotSame(404, $response->getStatusCode(), '라우트가 등록되지 않았습니다');
+        $response->assertOk()->assertJsonPath('data.items.0.ses_message_id', 'list-1');
     }
 
     public function test_목록_응답은_수신자를_마스킹하고_원문을_노출하지_않는다(): void
@@ -118,7 +173,7 @@ class SesMonitorIntegrationTest extends PluginTestCase
         $this->seedEvent('mask-1', 'bounce', ['alice@example.com']);
 
         $response = $this->actingAs($this->createNotificationLogReader())
-            ->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events')
+            ->getJson('/'.self::ADMIN_API_URI)
             ->assertOk();
 
         $response->assertJsonPath('data.items.0.recipients_masked.0', 'a***e@example.com');
@@ -141,7 +196,7 @@ class SesMonitorIntegrationTest extends PluginTestCase
         ]);
 
         $this->actingAs($this->createNotificationLogReader())
-            ->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events?linked=unlinked')
+            ->getJson('/'.self::ADMIN_API_URI.'?linked=unlinked')
             ->assertOk()
             ->assertJsonCount(1, 'data.items')
             ->assertJsonPath('data.items.0.ses_message_id', 'unlinked-1');
@@ -159,7 +214,7 @@ class SesMonitorIntegrationTest extends PluginTestCase
         ]);
 
         $this->actingAs($this->createNotificationLogReader())
-            ->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events/for-notification-log/'.$log->id)
+            ->getJson('/'.self::ADMIN_API_URI.'/for-notification-log/'.$log->id)
             ->assertOk()
             ->assertJsonPath('data.events.0.event_type', 'delivery');
     }
@@ -169,7 +224,7 @@ class SesMonitorIntegrationTest extends PluginTestCase
         $event = $this->seedEvent('raw-1', 'bounce');
 
         $this->actingAs($this->createNotificationLogReader())
-            ->getJson('/api/plugins/yutiv-ses_monitor/admin/ses-events/'.$event->id.'?include_raw=1')
+            ->getJson('/'.self::ADMIN_API_URI.'/'.$event->id.'?include_raw=1')
             ->assertOk()
             ->assertJsonPath('data.raw_payload', null);
     }

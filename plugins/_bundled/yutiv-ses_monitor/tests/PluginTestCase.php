@@ -9,7 +9,10 @@ use App\Models\Plugin as PluginModel;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Transport\ArrayTransport;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 use Plugins\Yutiv\SesMonitor\Providers\SesMonitorServiceProvider;
 use Plugins\Yutiv\SesMonitor\Support\SesConfig;
 use Plugins\Yutiv\SesMonitor\Tests\Support\TestableSesMonitorServiceProvider;
@@ -34,7 +37,13 @@ abstract class PluginTestCase extends TestCase
 {
     use RefreshDatabase;
 
+    /** 관리자 API 목록 라우트 URI (운영 prefix 포함). */
+    protected const ADMIN_API_URI = 'api/plugins/yutiv-ses_monitor/admin/ses-events';
+
     protected SnsFixtureBag $bag;
+
+    /** 프로바이더 boot 재실행을 한 번만 하기 위한 플래그 (중복 등록 방지). */
+    private bool $pluginBooted = false;
 
     protected function setUp(): void
     {
@@ -51,8 +60,132 @@ abstract class PluginTestCase extends TestCase
         $this->bag = new SnsFixtureBag;
         $this->bindFixtureValidator();
 
+        // 실제 SMTP 로 나가지 않도록 전송기를 먼저 격리한다 (아래 주석 참조).
+        $this->forceArrayMailer();
+
         $this->activatePlugin();
-        $this->registerWebhookRoute();
+        $this->bootPluginAsActive();
+        $this->registerPluginApiRoutes();
+    }
+
+    /**
+     * 메일 전송기를 array 로 강제한다.
+     *
+     * ── 왜 phpunit.xml 의 MAIL_MAILER=array 로 충분하지 않은가 ─────────────
+     * `App\Providers\SettingsServiceProvider::applyMailConfig()` 가 부팅 중
+     * 설정 저장소(g7_settings 의 mail 카테고리)를 읽어 `Config::set('mail.default', ...)`
+     * 로 **env 값을 덮어쓴다.** 운영 설정이 smtp 면 테스트 앱도 smtp 가 된다.
+     * 게다가 `tests/TestCase` 의 settings 디스크 페이크는 `afterApplicationCreated`
+     * 시점이라 그 프로바이더보다 **뒤에** 실행되어 이미 읽힌 값을 되돌리지 못한다.
+     *
+     * 그래서 config 를 다시 array 로 고정하고, **이미 만들어진 mailer 인스턴스를
+     * 버린다.** MailManager 는 mailer 를 이름별로 캐시하므로 config 만 바꾸면
+     * 앞서 resolve 된 smtp transport 가 그대로 쓰인다.
+     *
+     * Mail::fake() 를 쓰지 않는 이유: fake 는 Mailer 자체를 대체해
+     * MessageSending 이벤트와 실제 Symfony 헤더 조립을 우회한다. 우리가 검사하려는
+     * 것이 바로 그 경로라 array transport 로 **진짜 전송 파이프라인**을 태운다.
+     */
+    protected function forceArrayMailer(): void
+    {
+        config([
+            'mail.default' => 'array',
+            'mail.mailers.array' => ['transport' => 'array'],
+        ]);
+
+        // 이미 resolve 된 매니저·mailer 를 버려 다음 접근에서 새 config 로 다시 만들게 한다.
+        if ($this->app->resolved('mail.manager')) {
+            $manager = $this->app->make('mail.manager');
+            if (method_exists($manager, 'forgetMailers')) {
+                $manager->forgetMailers();
+            }
+        }
+
+        $this->app->forgetInstance('mail.manager');
+        $this->app->forgetInstance('mailer');
+        Mail::clearResolvedInstances();
+    }
+
+    /**
+     * 지금 유효한 전송기가 정말 array 인지 단언한다.
+     *
+     * 메일을 보내는 테스트는 **보내기 전에** 이걸 불러 환경 오염을 즉시 드러낸다.
+     * config 값과 실제 transport 인스턴스를 둘 다 본다 — config 만 보면 캐시된
+     * smtp mailer 가 남아 있는 상황을 놓친다.
+     */
+    protected function assertArrayMailerActive(): void
+    {
+        $this->assertSame(
+            'array',
+            config('mail.default'),
+            'mail.default 가 array 가 아닙니다 — 테스트가 실제 SMTP 로 나갈 수 있습니다.'
+        );
+
+        $this->assertInstanceOf(
+            ArrayTransport::class,
+            Mail::mailer()->getSymfonyTransport(),
+            '전송기가 ArrayTransport 가 아닙니다 — 캐시된 smtp mailer 가 남아 있습니다.'
+        );
+    }
+
+    /**
+     * 운영 부팅 경로를 그대로 다시 태운다.
+     *
+     * 프로바이더의 boot() 는 활성 상태일 때만 webhook 라우트와 메일 리스너를 붙인다.
+     * 그런데 앱 부팅 시점에는 아직 plugins 행이 없어(RefreshDatabase 가 뒤에 돈다)
+     * 둘 다 등록되지 않는다. activatePlugin() 으로 활성 상태를 만든 뒤 **같은 public
+     * boot()** 를 다시 부르면, 테스트가 로직을 복제하지 않고 운영과 동일한 경로로
+     * 등록된다 (그래서 프로바이더의 가시성을 넓힐 필요가 없다).
+     */
+    protected function bootPluginAsActive(): void
+    {
+        if ($this->pluginBooted) {
+            return;
+        }
+
+        (new SesMonitorServiceProvider($this->app))->boot();
+        $this->pluginBooted = true;
+
+        $this->refreshRouteLookups();
+    }
+
+    /**
+     * 플러그인 관리자 API 라우트를 테스트 앱에 등록한다.
+     *
+     * ── 왜 404 였는가 ────────────────────────────────────────────────────
+     * `App\Providers\PluginRouteServiceProvider` 는 boot 시점에 **plugins 테이블의
+     * 활성 목록**을 읽어 라우트를 로드한다. 테스트 앱은 RefreshDatabase 가 DB 를
+     * 비우기 **전에** 부팅되므로 그 목록이 비어 있고, `api/plugins/...` 라우트가
+     * 아예 등록되지 않는다 → 권한 미들웨어에 닿기도 전에 404.
+     *
+     * 그래서 운영과 **동일한 prefix / name / middleware** 로 같은 라우트 파일을
+     * 다시 로드한다 (PluginRouteServiceProvider::loadPluginRoutes() 와 같은 값).
+     * 이미 등록돼 있으면 건너뛰어 중복 등록을 만들지 않는다.
+     */
+    protected function registerPluginApiRoutes(): void
+    {
+        $routeFile = base_path('plugins/_bundled/yutiv-ses_monitor/src/routes/api.php');
+
+        if (! is_file($routeFile)) {
+            return;
+        }
+
+        if ($this->countRoutesForUri(self::ADMIN_API_URI, 'GET') > 0) {
+            return;
+        }
+
+        Route::prefix('api/plugins/yutiv-ses_monitor')
+            ->name('api.plugins.yutiv-ses_monitor.')
+            ->middleware('api')
+            ->group($routeFile);
+
+        $this->refreshRouteLookups();
+    }
+
+    private function refreshRouteLookups(): void
+    {
+        $this->app['router']->getRoutes()->refreshNameLookups();
+        $this->app['router']->getRoutes()->refreshActionLookups();
     }
 
     /**
@@ -98,8 +231,7 @@ abstract class PluginTestCase extends TestCase
     {
         $this->testableProvider()->attemptRouteRegistration();
 
-        $this->app['router']->getRoutes()->refreshNameLookups();
-        $this->app['router']->getRoutes()->refreshActionLookups();
+        $this->refreshRouteLookups();
     }
 
     /**

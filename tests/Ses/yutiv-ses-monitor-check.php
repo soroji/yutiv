@@ -882,6 +882,93 @@ check('PluginTestCase: 참조하는 프로바이더가 실제로 존재',
 check('PluginTestCase: invalidatePluginStatusCache 를 제공하는 trait 이 붙어 있다',
     strpos(file_get_contents($pluginDir.'/src/Providers/SesMonitorServiceProvider.php'), 'use CachesPluginStatus;') !== false);
 
+// ── 15. 테스트 격리 계약 (메일 전송기 · 관리자 API 라우트) ─────────────────
+//
+// 서버 PHPUnit 3차 실행에서 드러난 두 결함을 소스 계약으로 고정한다.
+//   A. phpunit.xml 의 MAIL_MAILER=array 가 SettingsServiceProvider 의 DB 설정 주입에
+//      덮여 실제 SMTP(127.0.0.1:587) 로 나갔다.
+//   B. PluginRouteServiceProvider 가 부팅 시점의 빈 plugins 테이블을 읽어
+//      api/plugins/... 라우트를 등록하지 않아 권한 검사 전에 404 가 났다.
+//
+// 둘 다 `php -l` 로도, 서명·파싱 검증으로도 잡히지 않는 부팅 순서 문제다.
+
+$ptcSrc = file_get_contents($pluginDir.'/tests/PluginTestCase.php');
+$integrationSrc = file_get_contents($pluginDir.'/tests/Feature/SesMonitorIntegrationTest.php');
+
+// A. 메일 격리
+check('메일: 테스트 베이스가 mail.default 를 array 로 강제한다',
+    strpos($ptcSrc, "'mail.default' => 'array'") !== false);
+check('메일: array transport 설정도 함께 고정',
+    strpos($ptcSrc, "'mail.mailers.array' => ['transport' => 'array']") !== false);
+check('메일: 이미 resolve 된 mailer 를 버린다 (purge)',
+    strpos($ptcSrc, "forgetInstance('mail.manager')") !== false
+    && strpos($ptcSrc, "forgetInstance('mailer')") !== false);
+check('메일: forgetMailers 도 호출한다', strpos($ptcSrc, 'forgetMailers()') !== false);
+check('메일: 파사드 캐시도 비운다', strpos($ptcSrc, 'Mail::clearResolvedInstances()') !== false);
+check('메일: setUp 에서 격리가 활성화 이전에 수행된다',
+    strpos($ptcSrc, '$this->forceArrayMailer();') !== false
+    && strpos($ptcSrc, '$this->forceArrayMailer();') < strpos($ptcSrc, '$this->activatePlugin();'));
+
+check('메일: effective config 를 단언하는 헬퍼가 있다',
+    strpos($ptcSrc, 'function assertArrayMailerActive') !== false);
+check('메일: 헬퍼가 config 와 실제 transport 인스턴스를 둘 다 본다',
+    strpos($ptcSrc, "config('mail.default')") !== false
+    && strpos($ptcSrc, 'ArrayTransport::class') !== false
+    && strpos($ptcSrc, 'getSymfonyTransport()') !== false);
+
+check('메일: 메일 전송 헬퍼가 보내기 전에 격리를 단언한다',
+    preg_match('/function captureHeadersOfSentMail.*?assertArrayMailerActive\(\).*?Mail::raw/s', $integrationSrc) === 1);
+check('메일: 헤더 덮어쓰기 테스트도 같은 단언을 한다',
+    substr_count($integrationSrc, '$this->assertArrayMailerActive();') >= 3,
+    '단언 '.substr_count($integrationSrc, '$this->assertArrayMailerActive();').'회');
+check('메일: SMTP 전송기가 아님을 명시적으로 단언',
+    strpos($integrationSrc, 'assertNotInstanceOf(EsmtpTransport::class') !== false);
+// 산문(주석)에 이름이 등장하는 것과 **실제 호출**을 구분한다 — 줄 첫머리의 호출문만 본다.
+// (왜 안 쓰는지 설명하는 주석까지 잡으면 검사가 자기 문서를 벌하게 된다.)
+check('메일: Mail::fake() 로 전송 파이프라인을 우회하지 않는다',
+    preg_match('/^\s*(Mail::fake|\$this->\w*[Mm]ail\w*->fake)\s*\(/m', $integrationSrc) === 0
+    && preg_match('/^\s*(Mail::fake|\$this->\w*[Mm]ail\w*->fake)\s*\(/m', $ptcSrc) === 0);
+check('메일: MessageSending 리스너가 실제로 붙는 경로를 태운다',
+    strpos($ptcSrc, 'bootPluginAsActive') !== false
+    && strpos($ptcSrc, '(new SesMonitorServiceProvider($this->app))->boot();') !== false);
+
+// B. 관리자 API 라우트
+check('라우트: 테스트 베이스가 플러그인 API 라우트를 명시적으로 로드한다',
+    strpos($ptcSrc, 'function registerPluginApiRoutes') !== false);
+check('라우트: 운영과 동일한 prefix 를 쓴다',
+    strpos($ptcSrc, "Route::prefix('api/plugins/yutiv-ses_monitor')") !== false);
+check('라우트: 운영과 동일한 name prefix 를 쓴다',
+    strpos($ptcSrc, "->name('api.plugins.yutiv-ses_monitor.')") !== false);
+check('라우트: 운영과 동일한 middleware 그룹을 쓴다',
+    strpos($ptcSrc, "->middleware('api')") !== false);
+check('라우트: 중복 등록을 막는 가드가 있다',
+    strpos($ptcSrc, 'if ($this->countRoutesForUri(self::ADMIN_API_URI') !== false);
+check('라우트: 프로바이더 boot 재실행도 1회로 제한',
+    strpos($ptcSrc, '$this->pluginBooted') !== false);
+check('라우트: setUp 이 API 라우트를 등록한다',
+    strpos($ptcSrc, '$this->registerPluginApiRoutes();') !== false);
+
+check('라우트: webhook 과 관리자 API 를 서로 다른 경로로 다룬다',
+    strpos($ptcSrc, "'api/plugins/yutiv-ses_monitor/admin/ses-events'") !== false
+    && strpos($ptcSrc, "SesConfig::endpointPath()") === false);
+
+// 404 를 성공으로 허용하지 않는가
+check('라우트: 라우트 존재를 먼저 단언하는 테스트가 있다',
+    strpos($integrationSrc, '관리자_API_라우트가_테스트_앱에_등록되어_있다') !== false);
+check('라우트: 중복 등록 방지 테스트가 있다',
+    strpos($integrationSrc, '관리자_API_라우트를_두_번_등록해도_중복되지_않는다') !== false);
+check('라우트: 권한 테스트가 404 를 통과로 인정하지 않는다',
+    substr_count($integrationSrc, "assertNotSame(404, \$response->getStatusCode()") >= 3,
+    '가드 '.substr_count($integrationSrc, "assertNotSame(404, \$response->getStatusCode()").'곳');
+check('라우트: 비로그인은 redirect 가 아니라 401 을 요구한다',
+    strpos($integrationSrc, 'assertNotSame(302, $response->getStatusCode()') !== false
+    && strpos($integrationSrc, 'assertUnauthorized()') !== false);
+check('라우트: 권한 없음 403 · 권한 있음 200 을 각각 검증',
+    strpos($integrationSrc, '$response->assertForbidden();') !== false
+    && strpos($integrationSrc, '$response->assertOk()->assertJsonPath') !== false);
+check('라우트: 테스트가 URI 를 상수로 공유한다 (오타·표류 방지)',
+    strpos($integrationSrc, "'/api/plugins/yutiv-ses_monitor/admin/ses-events'") === false);
+
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {
     foreach ($passes as $p) {
