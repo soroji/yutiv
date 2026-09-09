@@ -44,16 +44,33 @@ function bump(string $key, int $n = 1): void
     $counts[$key] = ($counts[$key] ?? 0) + $n;
 }
 
-/** 디렉토리 아래 모든 파일을 반환합니다. */
+/**
+ * 디렉토리 아래 모든 파일을 반환합니다.
+ *
+ * 빌드 산출물이 아닌 **설치·캐시 디렉토리는 건너뜁니다.** `npm install` 후에는
+ * `node_modules` 안의 서드파티 JSONC·CRLF 파일이 수백 건 잡혀 검사가 무의미해집니다.
+ * `.gitignore` 도 같은 경로를 제외하므로 추적 대상과 검사 대상을 일치시킵니다.
+ */
 function allFiles(string $dir): array
 {
     if (! is_dir($dir)) {
         return [];
     }
+    $skipDirs = ['node_modules', '.vite', '.turbo', '.cache', 'coverage', 'playwright-report', 'test-results'];
+
     $out = [];
-    $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
+    $it = new RecursiveIteratorIterator(
+        new RecursiveCallbackFilterIterator(
+            new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS),
+            function ($current) use ($skipDirs) {
+                return ! ($current->isDir() && in_array($current->getFilename(), $skipDirs, true));
+            }
+        )
+    );
     foreach ($it as $f) {
-        $out[] = $f->getPathname();
+        if ($f->isFile()) {
+            $out[] = $f->getPathname();
+        }
     }
     sort($out);
 
@@ -162,8 +179,61 @@ if (! is_array($manifest)) {
             }
         }
     }
-    if (($manifest['version'] ?? null) !== '1.0.0') {
-        fail('manifest', '초기 버전은 1.0.0 이어야 합니다');
+    // 버전은 고정값이 아니라 CHANGELOG 최신 항목과 일치해야 한다.
+    // (고정값으로 박아 두면 정당한 버전 올림이 검사기에 막힌다 — 1.0.1 릴리스에서 겪었다)
+    $changelog = @file_get_contents($tpl.'/CHANGELOG.md');
+    if ($changelog === false) {
+        fail('manifest', 'CHANGELOG.md 가 없습니다');
+    } elseif (! preg_match('/^##\s*\[(\d+\.\d+\.\d+)\]/m', $changelog, $cm)) {
+        fail('manifest', 'CHANGELOG.md 에서 최신 버전 항목(## [x.y.z])을 찾지 못했습니다');
+    } elseif (($manifest['version'] ?? null) !== $cm[1]) {
+        fail('manifest', sprintf(
+            'template.json version(%s)이 CHANGELOG 최신 항목(%s)과 다릅니다',
+            var_export($manifest['version'] ?? null, true),
+            $cm[1]
+        ));
+    }
+    // package.json 도 같은 버전이어야 lock 파일과 어긋나지 않는다
+    $pkg = json_decode(@file_get_contents($tpl.'/package.json'), true);
+    if (is_array($pkg) && ($pkg['version'] ?? null) !== ($manifest['version'] ?? null)) {
+        fail('manifest', sprintf(
+            'package.json version(%s)이 template.json version(%s)과 다릅니다',
+            var_export($pkg['version'] ?? null, true),
+            var_export($manifest['version'] ?? null, true)
+        ));
+    }
+
+    // ── IIFE 전역 계약 ─────────────────────────────────────────────────────
+    // 코어 로더는 identifier 에서 전역 변수명을 계산해 window[그 이름] 에서 컴포넌트를 꺼낸다
+    // (resources/js/core/template-engine/ComponentRegistry.ts::getGlobalVariableName).
+    // 원본에서 파생하면서 vite 의 build.lib.name 이 남아 있으면 HTTP 200 이어도 브라우저에서
+    // "Component bundle not loaded. Expected global variable: ..." 로 초기화가 실패한다.
+    // 실제 평가 검사는 tests/Preview/yutiv-commerce/iife-global-check.cjs 가 한다.
+    $expectedGlobal = implode('', array_map(
+        fn ($part) => ucfirst(strtolower($part)),
+        preg_split('/[-_]/', (string) ($manifest['identifier'] ?? ''))
+    ));
+    if ($expectedGlobal !== 'YutivCommerce') {
+        fail('manifest', "identifier 에서 계산한 기대 전역 이름이 YutivCommerce 가 아닙니다: $expectedGlobal");
+    }
+    $viteConfig = @file_get_contents($tpl.'/vite.config.ts');
+    if ($viteConfig === false) {
+        fail('manifest', 'vite.config.ts 가 없습니다');
+    } elseif (! preg_match("/name:\s*'([^']+)'/", $viteConfig, $vm)) {
+        fail('manifest', 'vite.config.ts 에서 build.lib.name 을 찾지 못했습니다');
+    } elseif ($vm[1] !== $expectedGlobal) {
+        fail('manifest', "vite.config.ts 의 build.lib.name 이 '{$vm[1]}' 입니다 — '$expectedGlobal' 여야 합니다");
+    }
+    $bundle = $tpl.'/dist/js/components.iife.js';
+    if (! is_file($bundle)) {
+        fail('manifest', 'dist/js/components.iife.js 가 없습니다');
+    } else {
+        $head = (string) file_get_contents($bundle, false, null, 0, 120);
+        if (! preg_match('/^\s*var\s+([A-Za-z_$][\w$]*)\s*=/', $head, $bm)) {
+            fail('manifest', '번들이 var 전역 선언으로 시작하지 않습니다 (IIFE 포맷 확인 필요)');
+        } elseif ($bm[1] !== $expectedGlobal) {
+            fail('manifest', "번들이 'var {$bm[1]}=' 로 시작합니다 — 'var $expectedGlobal=' 여야 합니다 (재빌드 필요)");
+        }
     }
     if (($manifest['license'] ?? null) !== 'MIT') {
         fail('manifest', 'license 는 원본과 동일한 MIT 여야 합니다');

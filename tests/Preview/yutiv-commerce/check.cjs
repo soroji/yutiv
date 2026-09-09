@@ -57,6 +57,25 @@ function textOf(body) {
         .replace(/&gt;/g, '>');
 }
 
+// ── 0. IIFE 전역 계약 (필수 관문) ───────────────────────────────────────────
+//
+// 프리뷰 렌더러는 번들을 자기 샌드박스에서 읽기 때문에, 운영에서 터지는 "전역 이름 불일치"
+// 를 그대로 통과시킬 수 있다. 실제로 그 결함(`SirsoftBasic` 잔존)으로 운영 활성화가
+// 실패했다. 그래서 운영과 **같은 계약**을 재는 검사를 이 파이프라인의 필수 단계로 돌린다.
+{
+    const { spawnSync } = require('child_process');
+    const iife = spawnSync(process.execPath, [path.join(__dirname, 'iife-global-check.cjs')], {
+        encoding: 'utf8',
+    });
+    const out = (iife.stdout || '') + (iife.stderr || '');
+    if (iife.status !== 0) {
+        const lines = out.split('\n').filter((l) => l.trim().startsWith('- ') || l.includes('RESULT'));
+        fail('iife', 'IIFE 전역 계약 검사 실패 — ' + (lines.join(' / ') || out.slice(0, 300)));
+    }
+    const typeofLine = out.split('\n').find((l) => l.includes('typeof window.'));
+    if (typeofLine) counts.iifeGlobal = typeofLine.trim();
+}
+
 // ── 빌드 단계에서 수집된 결과 ────────────────────────────────────────────────
 for (const k of report.missingTranslationKeys || []) {
     fail('i18n', `런타임 번역 미등록 키(G7Core.t): ${k}`);
@@ -407,6 +426,7 @@ if (!fs.existsSync(probePath)) {
 
 // ── 출력 ────────────────────────────────────────────────────────────────────
 const CATEGORIES = {
+    iife: 'IIFE 전역 계약 (운영 로더와 동일)',
     render: '렌더 오류',
     browser: '브라우저 실측 수행 여부',
     'browser-image': '이미지 실제 로드 (naturalWidth>0)',
@@ -425,7 +445,8 @@ const CATEGORIES = {
 };
 
 console.log('=== yutiv-commerce 프리뷰 렌더 검사 ===\n');
-console.log(`페이지 ${counts.pages || 0}개 · <img> ${counts.images || 0}개 · 번역 네임스페이스 ${NAMESPACES.length}종 · 로케일 ${LOCALES.join(', ')}\n`);
+console.log(`페이지 ${counts.pages || 0}개 · <img> ${counts.images || 0}개 · 번역 네임스페이스 ${NAMESPACES.length}종 · 로케일 ${LOCALES.join(', ')}`);
+console.log((counts.iifeGlobal || 'IIFE 전역: 확인 실패') + '\n');
 
 let total = 0;
 for (const [key, label] of Object.entries(CATEGORIES)) {

@@ -23,7 +23,13 @@ export default defineConfig({
     // 라이브러리 모드 설정
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'SirsoftBasic', // 전역 변수명 (IIFE 모드용)
+      // IIFE 전역 변수명 — 코어 로더가 template identifier 에서 계산한 이름과 **정확히** 같아야 한다.
+      // resources/js/core/template-engine/ComponentRegistry.ts:398 getGlobalVariableName()
+      //   identifier.split(/[-_]/).map(첫 글자 대문자 + 나머지 소문자).join('')
+      //   → 'yutiv-commerce' ⇒ 'YutivCommerce'
+      // 원본에서 복사할 때 'SirsoftBasic' 이 남아 있어 운영 활성화 시
+      // "Component bundle not loaded. Expected global variable: YutivCommerce" 로 초기화가 실패했다.
+      name: 'YutivCommerce',
       fileName: 'components',
       formats: ['iife'], // IIFE 포맷만 빌드
     },

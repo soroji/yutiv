@@ -59,6 +59,7 @@ for f in fa-solid-900 fa-regular-400 fa-brands-400 fa-v4compatibility; do \
 
 ```bash
 cd tests/Preview/yutiv-commerce
+node iife-global-check.cjs   # ★ IIFE 전역 계약 (운영 로더와 동일) — 필수 관문
 node build.cjs           # 렌더 → output/
 node browser-probe.cjs   # 헤드리스 Chrome/Edge 로 실측 → output/browser-probe.json
 node check.cjs           # 정적 + 실측 결과 검사 (위반 시 exit 1)
@@ -93,6 +94,7 @@ iframe 폭이 곧 뷰포트라 실제 모바일 렌더가 재현된다.
 
 | 항목 | 내용 |
 |---|---|
+| **IIFE 전역 계약** | 번들을 실제 평가해 `window.YutivCommerce` 존재 확인 — 운영 활성화 실패를 막는 관문 (`check.cjs` 가 필수로 호출) |
 | 렌더 오류 | 레이아웃 렌더 중 예외 |
 | 미해석 번역키 | `$t:` 잔존, `G7Core.t` 미등록 키, 화면·속성에 노출된 dot-path 키 |
 | 미해석 표현식 | `{{ ... }}` 잔존 |

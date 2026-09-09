@@ -86,6 +86,18 @@ function translate(bag, key, params) {
 }
 
 /**
+ * 코어의 `ComponentRegistry.getGlobalVariableName()` 과 같은 규칙으로
+ * 템플릿 식별자에서 IIFE 전역 변수명을 만든다.
+ * (yutiv-commerce → YutivCommerce, sirsoft-admin_basic → SirsoftAdminBasic)
+ */
+function expectedGlobalName(identifier) {
+    return String(identifier)
+        .split(/[-_]/)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join('');
+}
+
+/**
  * 템플릿의 lang/{locale}.json 을 읽어 네임스페이스별 사전으로 펼친다.
  * 진입 파일은 네임스페이스마다 `{ "$partial": "partial/{locale}/x.json" }` 를 담는다.
  */
@@ -260,13 +272,29 @@ function createRuntime(opts) {
 
     run(path.join(templateDir, 'dist/js/components.iife.js'), 'components.iife.js');
 
+    // 번들의 IIFE 전역명은 **코어와 같은 규칙**으로 identifier 에서 계산한다.
+    // 이름을 하드코딩하면(예전엔 'SirsoftBasic' 이었다) 운영에서 터지는 전역 불일치를
+    // 프리뷰가 그대로 통과시킨다 — 실제로 그 결함으로 운영 활성화가 실패했다.
+    // 정식 판정은 iife-global-check.cjs 가 한다. 여기서는 같은 규칙을 쓰기만 한다.
+    const globalVarName = expectedGlobalName(
+        JSON.parse(fs.readFileSync(path.join(templateDir, 'template.json'), 'utf8')).identifier
+    );
+    const lib = win[globalVarName];
+    if (!lib || typeof lib !== 'object') {
+        throw new Error(
+            `번들이 전역 ${globalVarName} 을 노출하지 않습니다. ` +
+            'vite.config.ts 의 build.lib.name 과 재빌드 여부를 확인하세요 ' +
+            '(node tests/Preview/yutiv-commerce/iife-global-check.cjs).'
+        );
+    }
+
     return {
         React: win.React,
         ReactDOMServer: win.ReactDOMServer,
-        // 번들의 IIFE 전역명 — 템플릿 vite.config.ts 의 `build.lib.name`
-        lib: win.SirsoftBasic,
+        globalVarName,
+        lib,
         G7Core,
     };
 }
 
-module.exports = { createRuntime, loadLocale, translate };
+module.exports = { createRuntime, loadLocale, translate, expectedGlobalName };

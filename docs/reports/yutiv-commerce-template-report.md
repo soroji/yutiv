@@ -280,9 +280,16 @@ RESULT: PASS — 위반 0건
 
 ## 14. frontend build 필요 여부와 근거
 
-**불필요합니다.** 근거 3가지:
+**필요합니다 (2026-09-09 정정).** 아래는 철회된 최초 판단이며, 그 근거가 왜 틀렸는지를 함께 남깁니다.
 
-1. **`dist/` 와 `src/` 가 원본과 바이트 동일**
+> **[2026-09-09 정정 — 운영 활성화 실패]** 아래 "dist 가 원본과 바이트 동일 → 프론트엔드 빌드 불필요"
+> 라는 결론은 **틀렸습니다.** 원본과 바이트 동일하다는 사실 자체가 결함이었습니다 — 번들 안에
+> 원본의 IIFE 전역 이름 `SirsoftBasic` 이 박혀 있었기 때문입니다. 코어 로더는 식별자에서 계산한
+> `YutivCommerce` 전역을 찾으므로, 스크립트가 HTTP 200 으로 내려와도 브라우저에서
+> `Component bundle not loaded. Expected global variable: YutivCommerce` 로 초기화가 실패했고
+> **운영은 `sirsoft-basic` 으로 롤백**했습니다. 파생 템플릿은 반드시 자기 소스로 빌드해야 합니다.
+> 조치는 템플릿 CHANGELOG 의 `[1.0.1]` 항목을 보세요.
+1. ~~**`dist/` 와 `src/` 가 원본과 바이트 동일**~~ ← **이것이 결함이었습니다**
    ```
    $ diff -rq templates/_bundled/sirsoft-basic/dist templates/_bundled/yutiv-commerce/dist  → 차이 없음
    $ diff -rq .../sirsoft-basic/src  .../yutiv-commerce/src                                 → differ 0개
@@ -316,7 +323,7 @@ RESULT: PASS — 위반 0건
 | --- | ---: | --- |
 | `layouts/` | 163 | 홈 8개 교체·신규, 나머지 155개는 원본 승계 |
 | `src/` | 125 | 원본 바이트 동일 (재빌드 가능성 유지용) |
-| `dist/` | 109 | 원본 바이트 동일 (런타임 자산) |
+| `dist/` | 109 | ~~원본 바이트 동일~~ → **이 템플릿 소스로 재빌드** (전역 `YutivCommerce`, 1.0.1) |
 | `lang/` | 88 | ko/en 승계 + ja/zh-CN 신규 44 + home 4개 교체 |
 | `editor-spec/` | 13 | 레이아웃 편집기 지원 |
 | 기타 | 6 | `template.json`, `components.json`, `routes.json`, `seo-config.json`, `LICENSE`, `CHANGELOG.md` 등 |
@@ -342,7 +349,7 @@ RESULT: PASS — 위반 0건
 허용 범위 밖 변경은 없습니다. 조사 중 발견해 **그대로 둔** 인수 사항 3건:
 
 1. **`lang/partial/*/sirsoft-basic.json` 네임스페이스** — 원본에서 승계한 주소 입력 문구(`address.*`)입니다. 저장소 전체에서 `$t:sirsoft-basic.*` 참조자를 찾지 못했고(레이아웃·플러그인 모두), Daum 우편번호 확장은 자기 네임스페이스(`sirsoft-daum_postcode.*`)를 씁니다. 참조자가 없어 개명해도 이득이 없고 미발견 경로를 깨뜨릴 위험만 있어 **원본 그대로 두었습니다.**
-2. **커스텀 핸들러 키가 `sirsoft-basic.*` 네임스페이스** — `src/handlers/index.ts` 가 상품 옵션/통화 핸들러를 그 이름으로 등록하고 상품 상세 레이아웃이 같은 이름으로 호출합니다. 엔진은 `customHandlers: Map<string, Handler>` 의 **평범한 문자열 키**로만 조회하므로(`ActionDispatcher.ts:6345`) 번들·레이아웃을 함께 복사한 이 템플릿에서 정상 동작합니다. 개명하면 TS 수정 + **재빌드**가 필요해 §14 의 "빌드 불필요"가 깨지므로 유지했습니다. 활성 템플릿의 자산만 로드되므로(`app.blade.php` 의 `$activeUserTemplate`) 두 템플릿이 동시에 등록되는 충돌도 없습니다.
+2. **커스텀 핸들러 키가 `sirsoft-basic.*` 네임스페이스** — `src/handlers/index.ts` 가 상품 옵션/통화 핸들러를 그 이름으로 등록하고 상품 상세 레이아웃이 같은 이름으로 호출합니다. 엔진은 `customHandlers: Map<string, Handler>` 의 **평범한 문자열 키**로만 조회하므로(`ActionDispatcher.ts:6345`) 번들·레이아웃을 함께 복사한 이 템플릿에서 정상 동작합니다. 개명하면 TS 수정이 필요하고 이번 계약(브라우저 전역 이름)과 무관하므로 유지했습니다. (§14 의 "빌드 불필요" 전제는 2026-09-09 에 철회됐습니다 — 재빌드는 필수입니다.) 활성 템플릿의 자산만 로드되므로(`app.blade.php` 의 `$activeUserTemplate`) 두 템플릿이 동시에 등록되는 충돌도 없습니다.
 3. **`template.json` 의 `preview.thumbnail`** — `preview/thumbnail.png` 를 선언하지만 파일이 없습니다. **원본 `sirsoft-basic` 도 동일**하므로 새로 생긴 문제가 아니며, 파일을 지어내지 않고 원본과 동일한 상태로 두었습니다.
 
 ---

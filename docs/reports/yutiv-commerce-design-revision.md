@@ -26,7 +26,16 @@
 | `sirsoft-basic` / 코어 / `sirsoft-ecommerce` | `git status --short` 에 수정 항목 0건 |
 | 상품 상세·페이지 본문 HTML 렌더 | `extension_point: html_content` → `HtmlContent`(DOMPurify) 경로 그대로 |
 
-`dist/` 와 `src/` 는 여전히 원본과 **바이트 동일**합니다(`diff -rq` 차이 0) → **프론트엔드 빌드 불필요**.
+> **[2026-09-09 정정 — 운영 활성화 실패]** 아래 "dist 가 원본과 바이트 동일 → 프론트엔드 빌드 불필요"
+> 라는 결론은 **틀렸습니다.** 원본과 바이트 동일하다는 사실 자체가 결함이었습니다 — 번들 안에
+> 원본의 IIFE 전역 이름 `SirsoftBasic` 이 박혀 있었기 때문입니다. 코어 로더는 식별자에서 계산한
+> `YutivCommerce` 전역을 찾으므로, 스크립트가 HTTP 200 으로 내려와도 브라우저에서
+> `Component bundle not loaded. Expected global variable: YutivCommerce` 로 초기화가 실패했고
+> **운영은 `sirsoft-basic` 으로 롤백**했습니다. 파생 템플릿은 반드시 자기 소스로 빌드해야 합니다.
+> 조치는 템플릿 CHANGELOG 의 `[1.0.1]` 항목을 보세요.
+~~`dist/` 와 `src/` 는 여전히 원본과 **바이트 동일**합니다(`diff -rq` 차이 0) → **프론트엔드 빌드 불필요**.~~
+
+**현재**: `src/` 는 여전히 원본과 동일하지만 `dist/` 는 **이 템플릿의 소스로 재빌드**했습니다 (`npm run build`, 전역 이름 `YutivCommerce`). 프론트엔드 빌드는 **필수**입니다.
 
 ---
 
@@ -415,7 +424,7 @@ $ git diff --check
 (0건)
 ```
 
-`M` / `D` / `R` 항목 없음. `dist/` 와 `src/` 는 여전히 원본과 바이트 동일 → **프론트엔드 빌드 불필요**.
+`M` / `D` / `R` 항목 없음. ~~`dist/` 와 `src/` 는 여전히 원본과 바이트 동일 → 프론트엔드 빌드 불필요.~~ **정정(2026-09-09)**: `dist/` 는 재빌드가 **필수**였습니다 — 자세한 내용은 문서 상단의 정정 안내와 템플릿 CHANGELOG `[1.0.1]` 참조.
 zh-CN 파리티 검사 6종 전부 PASS.
 
 commit·push·배포·활성 전환 미수행 — 재승인 대기.
