@@ -57,6 +57,57 @@ function twStripComments($source)
     return $out;
 }
 
+/**
+ * 클래스 소스에서 메서드 하나의 본문만 잘라낸다 (중괄호 균형 기준).
+ *
+ * 파일 전체에서 문자열 존재만 보는 검사는 "어딘가에 그 글자가 있다" 만 증명한다.
+ * 실제로 필요한 건 "그 호출이 이 메서드 안에서 저 호출보다 먼저다" 이므로,
+ * 비교는 반드시 같은 본문 안에서 해야 한다. (2차 서버 실패를 놓친 이유가 이것이다)
+ */
+function twMethodBody($code, $name)
+{
+    if (! preg_match('/function\s+'.preg_quote($name, '/').'\s*\([^)]*\)[^{]*\{/u', $code, $m, PREG_OFFSET_CAPTURE)) {
+        return null;
+    }
+
+    $start = $m[0][1] + strlen($m[0][0]);
+    $depth = 1;
+    $len = strlen($code);
+
+    for ($i = $start; $i < $len; $i++) {
+        if ($code[$i] === '{') {
+            $depth++;
+        } elseif ($code[$i] === '}') {
+            $depth--;
+            if ($depth === 0) {
+                return substr($code, $start, $i - $start);
+            }
+        }
+    }
+
+    return null;
+}
+
+/** 본문 안에서 $first 가 $second 보다 먼저 나오는가 (둘 다 있어야 한다). */
+function twOrderedIn($body, $first, $second)
+{
+    if (! is_string($body)) {
+        return false;
+    }
+    $a = strpos($body, $first);
+    $b = strpos($body, $second);
+
+    return $a !== false && $b !== false && $a < $b;
+}
+
+/** 로컬에서 증명할 수 없어 서버 PHPUnit 이 필요한 계약 목록. */
+$serverOnly = [];
+function serverOnly($label)
+{
+    global $serverOnly;
+    $serverOnly[] = $label;
+}
+
 echo "=== TeeWide Phase 0 검증 ===\n\n";
 
 // ── 1. Host 정규화 (실행 검증) ──────────────────────────────────────────────
@@ -264,20 +315,45 @@ check('생명주기: encrypter/Crypt 캐시를 정리한다',
     && strpos($baseCode, 'Crypt::clearResolvedInstances()') !== false);
 
 // [주입 4] provider 등록 제거
-check('생명주기: 부팅 시점에 프로바이더를 등록한다 [주입 4]',
-    strpos($baseCode, 'beforeBootstrapping(BootProviders::class') !== false
-    && strpos($baseCode, '$app->register(BootTimeLiveCommerceServiceProvider::class)') !== false);
-check('생명주기: 그 훅을 쓰는 스위트가 실제로 있다 [주입 4]',
+//
+// 검사는 createApplication() **본문 안**에서만 한다. 파일 어딘가의 문자열이 아니라
+// 실제 호출 위치가 중요하기 때문이다.
+$createBody = twMethodBody($baseCode, 'createApplication');
+
+check('생명주기: createApplication 본문을 찾을 수 있다 [주입 4]', is_string($createBody));
+check('생명주기: 프로바이더를 코어 프로바이더 목록에 넣는다 [주입 4]',
+    is_string($createBody)
+    && strpos($createBody, 'RegisterProviders::merge(') !== false
+    && strpos($createBody, 'BootTimeLiveCommerceServiceProvider::class') !== false);
+check('생명주기: merge 가 bootstrap() 보다 먼저 호출된다 [주입 4]',
+    twOrderedIn($createBody, 'RegisterProviders::merge(', '->bootstrap()'));
+check('생명주기: bootstrap/providers.php 경로를 함께 넘긴다 (코어 목록 보존) [주입 4]',
+    is_string($createBody) && strpos($createBody, 'getBootstrapProvidersPath()') !== false);
+check('생명주기: 앞 테스트의 merge 잔재를 먼저 비운다 [주입 4]',
+    twOrderedIn($createBody, 'RegisterProviders::flushState()', "require Application::inferBasePath()"));
+check('생명주기: 늦게 발화하는 이벤트 훅으로 프로바이더를 등록하지 않는다 [주입 4]',
+    is_string($createBody) && strpos($createBody, 'beforeBootstrapping') === false,
+    'beforeBootstrapping 경로는 서버 2차 실행에서 routes/web.php 뒤에 등록됐다');
+check('생명주기: 그 경로를 쓰는 스위트가 실제로 있다 [주입 4]',
     strpos($routingTestCode, 'function teeWideBootConfig(): ?array') !== false);
+check('생명주기: 부팅 시점 등록 실패를 늦은 등록으로 덮지 않는다 [주입 4]',
+    twOrderedIn(twMethodBody($baseCode, 'bootPlugin'), 'teeWideBootConfig()', '$this->fail('));
 
 // [주입 5] enabled=true 설정을 provider boot 뒤로 이동
-//   설정 주입이 프로바이더 등록보다 **앞**이어야 boot 이 그 값을 읽는다.
-$configSetAt = strpos($baseCode, "\$app['config']->set(TeeWideConfig::KEY");
-$providerRegisterAt = strpos($baseCode, '$app->register(BootTimeLiveCommerceServiceProvider::class)');
-check('생명주기: 설정 주입이 프로바이더 등록보다 먼저다 [주입 5]',
-    $configSetAt !== false && $providerRegisterAt !== false && $configSetAt < $providerRegisterAt);
-check('생명주기: 부팅 시점 등록은 BootProviders 직전이다 (라우트 프로바이더보다 앞) [주입 5]',
-    strpos($baseCode, 'use Illuminate\\Foundation\\Bootstrap\\BootProviders;') !== false);
+//   설정은 프로바이더 자신의 register() 에서, parent::register() 의 mergeConfigFrom
+//   **보다 먼저** 심어야 파일 기본값(비활성)을 이긴다.
+$bootProviderCode = twStripComments($bootProviderSrc);
+$bootRegisterBody = twMethodBody($bootProviderCode, 'register');
+
+check('생명주기: 부팅 설정을 프로바이더 register() 에서 심는다 [주입 5]',
+    is_string($bootRegisterBody)
+    && strpos($bootRegisterBody, 'set(TeeWideConfig::KEY') !== false);
+check('생명주기: 설정 주입이 parent::register() 보다 먼저다 [주입 5]',
+    twOrderedIn($bootRegisterBody, 'set(TeeWideConfig::KEY', 'parent::register()'));
+check('생명주기: createApplication 이 설정을 프로바이더에 넘긴다 [주입 5]',
+    twOrderedIn($createBody, 'BootTimeLiveCommerceServiceProvider::$config', 'RegisterProviders::merge('));
+check('생명주기: 코어 프로바이더 등록 단계를 쓴다 [주입 5]',
+    strpos($baseCode, 'use Illuminate\\Foundation\\Bootstrap\\RegisterProviders;') !== false);
 
 // [주입 6] Route::domain 제거 — 위 4절에서 이미 검사한다(2회 등록).
 //   여기서는 라우트 우선순위 계약을 검사로 고정한다.
@@ -318,9 +394,19 @@ check('생명주기: 부팅 시점 등록과 부팅 후 등록이 중복되지 �
     strpos($baseCode, 'if ($this->providerIsRegistered()) {') !== false);
 
 // 부팅 시점 활성 판정 seam 이 계약을 넓히지 않는지
-check('생명주기: 부팅용 프로바이더는 활성 판정만 고정한다',
-    substr_count($bootProviderSrc, 'protected function ') === 1
-    && strpos($bootProviderSrc, 'function pluginIsActive(): bool') !== false);
+check('생명주기: 부팅용 프로바이더가 활성 판정을 명시값으로 고정한다',
+    strpos($bootProviderSrc, 'function pluginIsActive(): bool') !== false
+    && strpos($bootProviderSrc, 'return static::$pluginActive;') !== false);
+check('생명주기: 부팅용 프로바이더가 라우트 등록을 스스로 하지 않는다 (부모에 위임)',
+    strpos($bootProviderCode, 'Route::domain(') === false
+    && strpos($bootProviderCode, 'parent::boot()') !== false);
+check('생명주기: 전역 정적 상태를 되돌리는 수단이 있다',
+    strpos($bootProviderSrc, 'function resetTestState(): void') !== false
+    && strpos(twStripComments($baseSrc), 'RegisterProviders::flushState()') !== false);
+check('생명주기: 실패 진단에 부팅 추적이 실린다',
+    strpos($bootProviderSrc, 'public static array $trace') !== false
+    && strpos($baseCode, 'lifecycleTrace()') !== false
+    && twOrderedIn(twMethodBody($baseCode, 'routingDiagnostics'), 'implode(', 'lifecycleTrace()'));
 check('생명주기: 부팅용 프로바이더는 테스트 디렉토리에만 있다',
     is_file($pluginDir.'/tests/Support/BootTimeLiveCommerceServiceProvider.php')
     && ! is_file($pluginDir.'/src/Providers/BootTimeLiveCommerceServiceProvider.php'));
@@ -329,6 +415,22 @@ check('생명주기: 부팅용 프로바이더는 테스트 디렉토리에만 �
 check('생명주기: createApplication 오버라이드가 public 이다 (가시성 축소 Fatal 방지)',
     preg_match('/public function createApplication\(/', $baseCode) === 1
     && preg_match('/protected function createApplication\(/', $baseCode) !== 1);
+
+// ── 8. 로컬에서 증명할 수 없는 계약 (서버 PHPUnit 필요) ─────────────────────
+//
+// 이 하네스는 vendor/ 없이 도는 **정적 검사**다. 위 검사가 전부 통과해도 아래 항목은
+// 하나도 증명되지 않는다. 실제로 2차 서버 실행에서 라우트 등록 순서가 뒤집혔는데도
+// 이 하네스는 PASS 였다 — 문자열 존재만 봤기 때문이다(false green). 구조 검사로
+// 바꿔도 "언제 실행되는가" 는 여전히 런타임의 몫이므로, 아래를 명시적으로 남긴다.
+
+serverOnly('프로바이더 register/boot 이 routes/web.php 적재보다 먼저 실행되는가');
+serverOnly('TeeWide 라우트 4종의 컬렉션 순서 < SPA catch-all 순서');
+serverOnly('teewide.test / 요청이 teewide.portal 로 매칭되는가');
+serverOnly('live.teewide.test/golfif 요청이 teewide.live.tenant 로 매칭되는가');
+serverOnly('teewide_session 쿠키 이름·도메인이 실제 응답에 적용되는가');
+serverOnly('teewide.test 와 live.teewide.test 가 세션을 실제로 공유하는가');
+serverOnly('호스트 게이트가 실제 HTTP 요청을 404 로 끊는가');
+serverOnly('RegisterProviders::merge 잔재가 다음 테스트 클래스로 새지 않는가');
 
 // ── 출력 ────────────────────────────────────────────────────────────────────
 if ($verbose) {
@@ -343,11 +445,18 @@ foreach ($violations as $v) {
 
 echo "\n";
 
+echo "서버 PHPUnit 필요 (이 하네스가 증명하지 못하는 계약 ".count($serverOnly)."건):\n";
+foreach ($serverOnly as $item) {
+    echo "  · {$item}\n";
+}
+echo "\n";
+
 if ($violations === []) {
-    echo 'RESULT: PASS — 통과 '.count($passes)."건, 위반 0건\n";
-    echo "주의: 라우트 매칭·세션 공유·차단 동작은 서버 PHPUnit 으로만 증명됩니다.\n";
+    echo 'RESULT: 정적 검사 PASS — 통과 '.count($passes)."건, 위반 0건\n";
+    echo "이 PASS 는 소스 계약만 뜻합니다. 부팅 순서·라우트 매칭·세션 공유는\n";
+    echo "위 '서버 PHPUnit 필요' 목록대로 서버 실행으로만 판정됩니다.\n";
     exit(0);
 }
 
-echo 'RESULT: FAIL — 통과 '.count($passes).'건, 위반 '.count($violations)."건\n";
+echo 'RESULT: 정적 검사 FAIL — 통과 '.count($passes).'건, 위반 '.count($violations)."건\n";
 exit(1);

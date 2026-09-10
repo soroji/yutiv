@@ -5,7 +5,7 @@ namespace Plugins\Yutiv\LiveCommerce\Tests;
 use App\Enums\ExtensionStatus;
 use App\Models\Plugin as PluginModel;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Bootstrap\BootProviders;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
@@ -33,7 +33,7 @@ use Tests\TestCase;
  * 생명주기를 테스트가 직접 태우는데, 검증하려는 대상에 따라 **시점이 달라야 한다.**
  *
  * ① 부팅 시점 등록 — `teeWideBootConfig()` 를 재정의한 스위트
- *    `createApplication()` 이 `BootProviders` 직전에 설정을 넣고 프로바이더를 등록한다.
+ *    `createApplication()` 이 `RegisterProviders::merge()` 로 코어 프로바이더 목록에 넣는다.
  *    운영과 같은 자리라 라우트가 `routes/web.php` 보다 **먼저** 올라간다.
  *    라우트 우선순위·도메인 매칭·세션을 다루는 스위트는 반드시 이 경로를 쓴다.
  *
@@ -96,51 +96,85 @@ abstract class PluginTestCase extends TestCase
     }
 
     /**
-     * 운영과 같은 생명주기로 앱을 만든다.
+     * 운영과 같은 단계에서 플러그인 프로바이더가 등록되도록 앱을 만든다.
      *
-     * 상위 구현과 다른 점은 **딱 한 가지** — `BootProviders` 부트스트래퍼 직전에
-     * 설정을 주입하고 플러그인 프로바이더를 등록한다. 그 자리는 운영에서
-     * `PluginServiceProvider::register()` 가 플러그인 프로바이더를 등록하는 시점과
-     * 같은 구간(코어 프로바이더 등록 완료 ~ 프로바이더 boot 시작 전)이다.
+     * 상위 구현(`Illuminate\Foundation\Testing\TestCase::createApplication()`, v12.62.0)
+     * 과 다른 점은 하나 — `bootstrap()` 전에 `RegisterProviders::merge()` 로 테스트용
+     * 프로바이더를 **코어 프로바이더 목록에 넣는다.** Testbench 의 `getPackageProviders()`
+     * 가 쓰는 것과 같은 경로다(이 프로젝트엔 Testbench 미설치라 직접 호출).
      *
-     * 그래서 순서가 이렇게 된다:
-     *   config 주입 → provider register → provider boot(라우트 등록)
-     *   → withRouting 이 뒤늦게 붙인 라우트 프로바이더 boot(routes/web.php)
+     * 그래서 실제 순서가 이렇게 된다:
+     *   RegisterProviders → (config 주입 + provider register)
+     *   → BootProviders → Application::boot()
+     *       ├ booting 콜백 → withRouting() 이 **이때서야** 라우트 프로바이더를 등록
+     *       └ boot 루프 → 우리 provider boot(TeeWide 라우트) → … → routes/web.php
      *   → HTTP 요청
+     *
+     * 설정은 이벤트 훅이 아니라 프로바이더 자신의 `register()` 에서 심는다
+     * (`BootTimeLiveCommerceServiceProvider::$config`) — config→register→boot 순서가
+     * 한 곳에서 결정돼 훅 발화 시점에 의존하지 않는다.
      *
      * 부팅 뒤에 설정을 바꾸고 라우트만 따로 복제하는 방식은 쓰지 않는다 — 그러면
      * 검증하려는 등록 순서 자체가 재현되지 않는다.
      *
-     * ⚠ 가시성은 반드시 `public` 이다. 헬퍼 이름을 올려 부모를 우연히 가로채는 것과
-     *   달리, 이건 프레임워크가 지정한 확장점을 의도적으로 재정의하는 경우다.
-     *   로컬에 vendor/ 가 없어 부모의 가시성을 확인할 수 없는데, PHP 는 가시성
-     *   **확대**(protected→public)만 허용하고 축소는 로딩 시점 Fatal 이다. 그래서
-     *   public 이 두 경우 모두 안전한 유일한 선택이다. (SES 첫 서버 실행의
-     *   "Access level to ...::post() must be public" 이 같은 계열의 실패였다)
+     * ⚠ 이전 구현은 `beforeBootstrapping(BootProviders::class)` 이벤트 훅을 썼고,
+     *   서버 2차 실행에서 TeeWide 라우트가 #336, SPA catch-all 이 #327 로 나왔다.
+     *   즉 그 경로로는 **routes/web.php 뒤에** 붙었다. 왜 그랬는지는 아직 실행으로
+     *   증명되지 않았고(`lifecycleTrace()` 가 다음 실행에서 기록한다), 이 구현은
+     *   그 답에 의존하지 않는다.
+     *
+     * ⚠ 가시성은 `public` 이어야 한다. 부모(v12.62.0 `Illuminate\Foundation\Testing\`
+     *   `TestCase::createApplication()`)가 public 이므로 protected 로 좁히면 클래스 로딩
+     *   시점에 Fatal 이 난다 — SES 첫 서버 실행의
+     *   "Access level to ...::post() must be public" 이 같은 계열의 실패였다.
      */
     public function createApplication(): Application
     {
+        // 앞 테스트가 남긴 merge 목록을 먼저 비운다. 비우지 않으면 부팅 시점 등록을
+        // 쓰지 않는 스위트(안전 계약)까지 이 프로바이더를 물려받는다.
+        // 뒤이은 Application::configure() 의 withProviders() 가 bootstrap/providers.php
+        // 경로를 다시 세워 주므로, 여기서 비워도 코어 프로바이더 목록은 그대로다.
+        RegisterProviders::flushState();
+        BootTimeLiveCommerceServiceProvider::resetTestState();
+
         $app = require Application::inferBasePath().'/bootstrap/app.php';
 
         $bootConfig = $this->teeWideBootConfig();
 
-        // 정적 값이라 프로세스 전체에 남는다 — 부팅 시점 등록을 쓰지 않는 스위트가
-        // 앞 스위트의 값을 물려받지 않도록 앱마다 무조건 다시 쓴다.
-        BootTimeLiveCommerceServiceProvider::$pluginActive = $this->teeWideBootPluginActive();
-
         if ($bootConfig !== null) {
-            $app->beforeBootstrapping(BootProviders::class, function ($app) use ($bootConfig) {
-                // ① 설정 먼저 — 프로바이더 boot 이 이 값을 읽고 라우트 등록 여부를 정한다.
-                //    (mergeConfigFrom 은 이미 있는 키를 덮지 않으므로 여기 값이 이긴다)
-                $app['config']->set(TeeWideConfig::KEY, $bootConfig);
+            BootTimeLiveCommerceServiceProvider::$config = $bootConfig;
+            BootTimeLiveCommerceServiceProvider::$pluginActive = $this->teeWideBootPluginActive();
 
-                // ② 그다음 프로바이더 등록 — 아직 boot() 전이라 프로바이더 목록에 쌓이고,
-                //    routes/web.php 를 로드하는 프로바이더보다 앞자리를 잡는다.
-                $app->register(BootTimeLiveCommerceServiceProvider::class);
-            });
+            // 코어 프로바이더와 같은 목록·같은 단계에 넣는다. 두 번째 인자로 원래
+            // bootstrap/providers.php 경로를 그대로 넘겨야 한다 — 생략하면
+            // RegisterProviders 가 그 경로를 null 로 덮어써 코어 프로바이더가 통째로
+            // 빠진다 (RegisterProviders::merge / mergeAdditionalProviders 참조).
+            RegisterProviders::merge(
+                [BootTimeLiveCommerceServiceProvider::class],
+                $app->getBootstrapProvidersPath()
+            );
+
+            BootTimeLiveCommerceServiceProvider::$trace[] = 'RegisterProviders::merge 호출됨';
         }
 
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+        BootTimeLiveCommerceServiceProvider::$trace[] = 'bootstrap 완료 (라우트 '
+            .count($app['router']->getRoutes()->getRoutes()).'개)';
+
+        if ($bootConfig !== null) {
+            // RegisterProviders 는 설정이 캐시에서 온 경우 mergeAdditionalProviders() 를
+            // 통째로 건너뛴다(v12.62.0). 그러면 위 merge() 가 조용히 무시되므로,
+            // 그 사실이 실패 메시지에 드러나도록 기록한다.
+            // (해결: 서버에서 `php artisan config:clear` 후 재실행)
+            $cached = $app->bound('config_loaded_from_cache')
+                && $app->make('config_loaded_from_cache') === true;
+
+            BootTimeLiveCommerceServiceProvider::$trace[] = 'config 캐시에서 로드됨: '
+                .var_export($cached, true)
+                .' / 프로바이더 등록됨: '
+                .var_export($app->getProvider(LiveCommerceServiceProvider::class) !== null, true);
+        }
 
         return $app;
     }
@@ -185,6 +219,11 @@ abstract class PluginTestCase extends TestCase
     {
         Crypt::clearResolvedInstances();
         Route::clearResolvedInstances();
+
+        // 프로바이더 목록에 대한 전역 개입을 되돌린다 — 다음 테스트 클래스가
+        // 이 스위트의 부팅 시점 등록을 물려받지 않도록.
+        RegisterProviders::flushState();
+        BootTimeLiveCommerceServiceProvider::resetTestState();
 
         $this->pluginRegistered = false;
 
@@ -262,6 +301,17 @@ abstract class PluginTestCase extends TestCase
             return;
         }
 
+        // 부팅 시점 등록을 기대한 스위트인데 프로바이더가 없다면, 여기서 조용히
+        // 늦게 등록해선 안 된다 — 라우트가 SPA catch-all 뒤에 붙어 "라우트는 있는데
+        // 매칭은 안 되는" 혼란스러운 실패가 된다. 원인이 드러나도록 즉시 실패시킨다.
+        // (서버 1차·2차 실행이 정확히 이 함정을 밟았다)
+        if ($this->teeWideBootConfig() !== null) {
+            $this->fail(
+                '부팅 시점 프로바이더 등록이 이뤄지지 않았습니다 — 늦은 등록으로 대신하지 않습니다.'
+                .$this->lifecycleTrace()
+            );
+        }
+
         $this->app->register(LiveCommerceServiceProvider::class);
         $this->pluginRegistered = true;
 
@@ -330,6 +380,11 @@ abstract class PluginTestCase extends TestCase
 
         $lines[] = "요청: {$method} {$url} (host={$request->getHost()})";
         $lines[] = '프로바이더 등록됨: '.($this->providerIsRegistered() ? 'YES' : 'NO');
+        $lines[] = '프로바이더 클래스: '.($this->providerIsRegistered()
+            ? get_class($this->app->getProvider(LiveCommerceServiceProvider::class))
+            : '(없음)');
+        $catchAll = $this->spaCatchAllRoute();
+        $lines[] = 'SPA catch-all 순서: '.var_export($this->routeIndex($catchAll), true);
         $lines[] = 'config enabled: '.var_export(config(TeeWideConfig::KEY.'.enabled'), true);
         $lines[] = 'config root_host: '.var_export(config(TeeWideConfig::KEY.'.root_host'), true);
         $lines[] = 'config live_host: '.var_export(config(TeeWideConfig::KEY.'.live_host'), true);
@@ -362,7 +417,26 @@ abstract class PluginTestCase extends TestCase
             );
         }
 
-        return "\n".implode("\n", $lines)."\n";
+        return "\n".implode("\n", $lines)."\n".$this->lifecycleTrace();
+    }
+
+    /**
+     * 부팅 생명주기 추적 기록.
+     *
+     * 로컬에는 vendor/ 가 없어 부팅 순서를 실행으로 확인할 수 없다. 그래서 순서를
+     * 주장하는 대신 서버 실행이 스스로 기록하게 하고, 실패 메시지에 그대로 싣는다.
+     * 각 항목의 라우트 수를 SPA catch-all 순서와 비교하면 routes/web.php 적재 전인지
+     * 후인지가 바로 드러난다.
+     */
+    protected function lifecycleTrace(): string
+    {
+        $trace = BootTimeLiveCommerceServiceProvider::$trace;
+
+        if ($trace === []) {
+            return "\n생명주기 추적: (기록 없음 — 부팅 시점 등록이 전혀 시도되지 않았습니다)\n";
+        }
+
+        return "\n생명주기 추적:\n  ".implode("\n  ", $trace)."\n";
     }
 
     /**
