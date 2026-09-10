@@ -241,7 +241,9 @@ check('소스: 세션 미들웨어가 꺼져 있으면 즉시 통과',
 check('소스: 세션 미들웨어가 cookie/domain 만 바꾼다',
     strpos($sessionSrc, "'session.cookie' =>") !== false
     && strpos($sessionSrc, "'session.domain' =>") !== false
-    && strpos(twStripComments($sessionSrc), "'session.driver'") === false);
+    // driver 를 **읽는** 것은 정상이다(전용 Store 를 같은 드라이버로 만들어야 하므로).
+    // 금지는 driver 를 **바꾸는** 것이다.
+    && preg_match("/'session\\.driver'\\s*=>/", twStripComments($sessionSrc)) !== 1);
 
 // ── 세션 설정의 요청 범위 격리 (4차 서버 실패 3건의 원인) ──────────────────
 //
@@ -267,15 +269,57 @@ check('세션범위: 스냅샷이 지역 변수라 중첩 호출이 서로를 �
     && strpos($sessionCode, 'static $snapshot') === false
     && strpos($sessionCode, '$this->snapshot') === false);
 
-// [주입 23] 세션 스토어 이름 복원 제거
-check('세션범위: 스토어를 설정 변경 **전에** 해석한다 [주입 23]',
-    twOrderedIn($handleBody, 'resolveSessionStore()', "'session.cookie' =>"),
-    '설정을 먼저 바꾸면 스토어가 TeeWide 이름으로 생성돼 앱 수명 내내 남는다');
-check('세션범위: 원래 스토어 이름을 확보한다 [주입 23]',
-    twOrderedIn($handleBody, 'getName()', 'setName('));
-check('세션범위: finally 에서 스토어 이름을 되돌린다 [주입 23]',
+// [주입 23] 세션 Store 인스턴스 격리 제거
+//
+// 쿠키 이름만 바꾸는 방식으로는 부족하다. Store 를 공유하면 `loadSession()` 의
+// `array_replace($this->attributes, ...)`(Store.php:114-119) 때문에 이전 요청의
+// attributes 가 그대로 남아 `login_web_<sha1>` 이 TeeWide 요청까지 따라온다.
+// 서버 5차 실행의 마지막 실패가 정확히 이것이었다.
+$scopeSrc = file_get_contents($pluginDir.'/src/Support/TeeWideSessionScope.php');
+$scopeCode = twStripComments($scopeSrc);
+
+check('세션범위: 원래 Store 를 설정 변경 **전에** 확보한다 [주입 23]',
+    twOrderedIn($handleBody, 'resolveHostStore()', "'session.cookie' =>"),
+    '설정을 먼저 바꾸면 원래 Store 가 TeeWide 설정으로 만들어진다');
+check('세션범위: TeeWide 요청은 **별도 Store** 를 쓴다 [주입 23]',
     is_string($handleBody)
-    && preg_match('/finally\\s*\\{.*?setName\\(\\$originalStoreName\\)/s', $handleBody) === 1);
+    && strpos($handleBody, 'TeeWideSessionScope::enter(') !== false
+    && strpos($scopeCode, 'function makeStore(') !== false);
+check('세션범위: 쿠키 이름만 바꾸는 방식으로 끝내지 않는다 [주입 23]',
+    is_string($handleBody) && strpos($handleBody, 'setName(') === false,
+    '같은 객체의 이름만 바꾸면 attributes·started 상태가 그대로 공유된다');
+check('세션범위: 전용 Store 가 핸들러를 공유한다 (세션 레코드 보존) [주입 23]',
+    strpos($scopeCode, '$hostStore->getHandler()') !== false
+    && strpos($scopeCode, 'new Store($cookie, $handler, null, $serialization)') !== false);
+check('세션범위: 저장된 세션을 지우지 않는다 [주입 23]',
+    strpos($scopeCode, '->flush()') === false
+    && strpos($handleBody, '->flush()') === false
+    && strpos($handleBody, '->forget(') === false);
+check('세션범위: finally 에서 스코프를 닫는다 [주입 23]',
+    is_string($handleBody)
+    && preg_match('/finally\\s*\\{.*?TeeWideSessionScope::leave\\(/s', $handleBody) === 1);
+check('세션범위: session.encrypt 면 EncryptedStore 로 만든다',
+    strpos($scopeCode, 'new EncryptedStore(') !== false
+    && strpos($scopeCode, "get('session.encrypt')") !== false);
+
+// [주입 28] 인증 guard 캐시 격리 제거
+//
+// AuthManager 는 guard 생성 시 `$this->app['session.store']` 를 캡처하고
+// (AuthManager.php:122-131) guard 를 캐시한다(65-70). Store 만 바꾸고 guard 를 두면
+// guard 가 옛 Store 를 계속 본다.
+check('세션범위: session.store 바인딩을 전용 Store 로 바꾼다 [주입 28]',
+    strpos($scopeCode, "instance('session.store', \$store)") !== false);
+check('세션범위: guard 캐시를 비워 새 Store 를 보게 한다 [주입 28]',
+    is_string($handleBody)
+    && substr_count($handleBody, 'forgetGuards()') === 2,
+    '진입과 finally 양쪽에서 비워야 한다');
+check('세션범위: 스코프를 닫을 때 원래 인스턴스를 그대로 되돌린다 [주입 28]',
+    strpos($scopeCode, "instance('session.store', \$token['session.store'])") !== false
+    && strpos($scopeCode, "instance('session', \$token['session'])") !== false
+    && strpos($scopeCode, "instance(StartSession::class, \$token['start_session'])") !== false);
+check('세션범위: guard 를 비우는 것이 로그아웃이 아님을 명시한다 [주입 28]',
+    strpos($sessionSrc, 'logout') === false
+    && strpos($sessionSrc, '로그아웃이 아니다') !== false);
 
 // [주입 24] 테스트 tearDown 이 대신 치우는 방식
 $scopeTestSrc = @file_get_contents($pluginDir.'/tests/Feature/TeeWideSessionScopeTest.php');
@@ -681,6 +725,139 @@ serverOnly('임시 manifest 가 tearDown 후 하나도 남지 않는가');
 serverOnly('TeeWide 요청 뒤 session.cookie/domain 이 실제로 복원되는가');
 serverOnly('TeeWide 응답이 teewide_session 만, YUTIV 응답이 g7-session 만 발급하는가');
 serverOnly('YUTIV 로그인 세션 쿠키가 TeeWide 요청을 인증시키지 못하는가');
+
+// ── 11. 세션 경계 회귀 테스트 (5차 실패의 보안 계약) ───────────────────────
+
+$boundarySrc = @file_get_contents($pluginDir.'/tests/Feature/TeeWideSessionBoundaryTest.php');
+$boundaryCode = is_string($boundarySrc) ? twStripComments($boundarySrc) : '';
+
+foreach ([
+    'YUTIV_로그인_세션이_TeeWide_요청으로_넘어가지_않는다',
+    'TeeWide_세션_속성이_YUTIV_요청으로_넘어가지_않는다',
+    'TeeWide_요청은_YUTIV_세션_속성을_상속하지_않는다',
+    'TeeWide_요청은_YUTIV_와_다른_Store_객체를_쓴다',
+    'TeeWide_요청마다_새_Store_객체가_만들어진다',
+    '객체는_달라도_세션_ID_기반_데이터는_유지된다',
+    'TeeWide_요청_뒤에도_YUTIV_로그인_세션_레코드가_남아_있다',
+    '예외가_나도_Store_와_guard_가_복원된다',
+] as $case) {
+    check('세션경계 회귀: '.$case, strpos($boundaryCode, 'function test_'.$case) !== false);
+}
+
+// ── custom creator 수명 (Manager::$customCreators 는 제거 API 가 없다) ──────
+//
+// `Manager::forgetDrivers()`(Manager.php:170-175)는 `$drivers` 인스턴스만 비우고
+// `$customCreators` 는 남긴다. 공식 제거 API 가 없으므로, 호스트 매니저에 creator 를
+// 설치하면 그 드라이버의 생성 경로가 **영구히** 가로채인다 — 이후 Laravel/Octane 이
+// 새 Store 를 만들려 해도 붙잡아 둔 오래된 Store 가 다시 나온다.
+
+// [주입 35] 호스트 SessionManager 에 creator 설치
+check('creator수명: 호스트 SessionManager 에 extend 하지 않는다 [주입 35]',
+    strpos($scopeCode, '$hostManager->extend(') === false
+    && strpos($handleBody ?? '', '->extend(') === false
+    && preg_match('/\\$scopedManager->extend\\(/', $scopeCode) === 1,
+    'creator 는 쓰고 버리는 매니저에만 달아야 한다');
+check('creator수명: 스코프 전용 매니저를 요청마다 새로 만든다 [주입 35]',
+    strpos($scopeCode, 'new SessionManager($app)') !== false);
+check('creator수명: 호스트 매니저의 forgetDrivers 를 부르지 않는다 [주입 35]',
+    strpos($scopeCode, 'forgetDrivers()') === false
+    && strpos(twStripComments($sessionSrc), 'forgetDrivers()') === false,
+    '호스트 캐시를 비우면 YUTIV Store 와 handler 가 함께 날아간다');
+
+// [주입 36] static registry 가 Store/handler/매니저를 붙잡음
+check('creator수명: static 상태로 Store·handler·매니저를 붙잡지 않는다 [주입 36]',
+    preg_match('/private static (?!int )/', $scopeCode) !== 1,
+    'static 으로 객체를 들고 있으면 새 Application 으로 잔재가 넘어간다');
+check('creator수명: 보유하는 static 은 깊이 정수 하나뿐이다 [주입 36]',
+    strpos($scopeCode, 'private static int $depth = 0;') !== false);
+check('creator수명: 복원 정보는 호출별 지역 토큰으로 전달된다 [주입 36]',
+    // leave() 가 토큰을 **인자로 받아야** 한다 — static registry 로 바꾸면
+    // 중첩 호출에서 바깥 상태가 덮인다.
+    preg_match('/function leave\\([^)]*array \\$token[^)]*\\)/', $scopeCode) === 1
+    && preg_match('/function enter\\([^)]*\\): array/', $scopeCode) === 1
+    && strpos(twMethodBody($scopeCode, 'leave') ?? '', '$token[') !== false);
+
+// [주입 37] StartSession 이 호스트 Store 를 받도록 되돌리기
+// enter() 본문 안에서 **새로 만든** StartSession 을 바인딩해야 한다.
+// (leave() 의 복원 바인딩과 `new StartSession(` 이 파일 어딘가에 있다는 사실만으로는
+//  교체가 살아 있음을 증명하지 못한다)
+$enterBody = twMethodBody($scopeCode, 'enter');
+check('creator수명: StartSession 바인딩을 스코프 매니저로 교체한다 [주입 37]',
+    is_string($enterBody)
+    && preg_match('/instance\\(\\s*StartSession::class\\s*,\\s*new StartSession\\(/', $enterBody) === 1);
+check('creator수명: 교체한 StartSession 이 스코프 매니저를 받는다 [주입 37]',
+    is_string($enterBody)
+    && preg_match('/new StartSession\\(\\s*\\$scopedManager\\s*,/', $enterBody) === 1);
+
+// [주입 38] 예외 후 depth 잔류
+check('creator수명: 스코프 깊이를 되돌린다 [주입 38]',
+    strpos($scopeCode, 'self::$depth++') !== false
+    && strpos($scopeCode, 'self::$depth--') !== false
+    && strpos($scopeCode, 'function depth(): int') !== false);
+
+// [주입 29] 경계 판정을 객체 ID 가 아니라 문자열/상수로 위조
+// 개수만 세면 단언 하나가 빠져도 통과한다 — 비교 **쌍** 자체를 대조한다.
+check('세션경계: TeeWide Store 가 YUTIV Store 와 다름을 단언한다 [주입 29]',
+    preg_match('/assertNotSame\\(\\s*\\$hostStoreId\\s*,\\s*\\$seen\\s*,/', $boundaryCode) === 1);
+check('세션경계: 연속 TeeWide 요청의 Store 가 서로 다름을 단언한다 [주입 29]',
+    preg_match('/assertNotSame\\(\\s*\\$ids\\[0\\]\\s*,\\s*\\$ids\\[1\\]\\s*,/', $boundaryCode) === 1);
+check('세션경계: 요청 후 원래 Store 로 복원됨을 단언한다 [주입 29]',
+    preg_match('/assertSame\\(\\s*\\$hostStoreId\\s*,\\s*spl_object_id\\(/', $boundaryCode) === 1);
+check('세션경계: 실제 로그인 키를 SessionGuard 규칙으로 계산한다 [주입 29]',
+    strpos($boundaryCode, "'login_web_'.sha1(SessionGuard::class)") !== false);
+
+// [주입 30] 세션 레코드를 지워서 통과시키기
+check('세션경계: 테스트가 세션 레코드를 지우지 않는다 [주입 30]',
+    strpos($boundaryCode, '->flush()') === false
+    && strpos($boundaryCode, '->invalidate()') === false
+    && strpos($boundaryCode, "->forget('login") === false);
+check('세션경계: YUTIV 로그인 레코드 보존을 실제로 다시 읽어 확인한다 [주입 30]',
+    strpos($boundaryCode, '$store->setId($yutivSessionId)') !== false
+    && strpos($boundaryCode, '$store->get($this->loginKey())') !== false);
+
+// [주입 31] actingAs 복귀 (guard 직접 주입이 다시 섞이는 것)
+check('세션경계: actingAs 를 쓰지 않는다 [주입 31]',
+    strpos($boundaryCode, 'actingAs(') === false,
+    'actingAs 는 guard 인스턴스에 사용자를 꽂아 세션 경계를 증명하지 못한다');
+
+// [주입 32] 앱 간 정적 스코프 누수
+check('세션경계: 앱마다 세션 스코프 정적 상태를 초기화한다 [주입 32]',
+    substr_count($baseCode, 'TeeWideSessionScope::reset()') === 2,
+    'createApplication 과 tearDown 양쪽에서 비워야 한다');
+check('세션경계: 스코프에 초기화 수단이 있다 [주입 32]',
+    strpos($scopeCode, 'function reset(): void') !== false);
+
+// ── custom creator 수명 회귀 테스트 존재 확인 ──────────────────────────────
+$lifecycleSrc = @file_get_contents($pluginDir.'/tests/Feature/TeeWideSessionDriverLifecycleTest.php');
+$lifecycleCode = is_string($lifecycleSrc) ? twStripComments($lifecycleSrc) : '';
+
+foreach ([
+    'TeeWide_요청_후_forgetDrivers_는_새_Store_를_만든다',
+    'forgetDrivers_후_새_Store_는_이전_attributes_를_물려받지_않는다',
+    'driver_설정이_바뀌면_이전_handler_를_재사용하지_않는다',
+    '비활성_스코프에서는_플러그인이_Store_생성에_개입하지_않는다',
+    'StartSession_바인딩이_요청_후_원래_인스턴스로_돌아온다',
+    '스코프_매니저는_요청마다_다른_인스턴스다',
+    '정상_종료_후_스코프_깊이가_0_이다',
+    '중첩_호출_중_예외가_나도_깊이가_0_으로_복원된다',
+    '새_SessionManager_는_플러그인_creator_없이_동작한다',
+    'YUTIV_TeeWide_YUTIV_TeeWide_경계가_각각_독립적이다',
+] as $case) {
+    check('creator수명 회귀: '.$case, strpos($lifecycleCode, 'function test_'.$case) !== false);
+}
+
+check('creator수명: stale Store 재등장을 객체 ID 로 판정한다',
+    preg_match('/assertNotSame\\(\\s*spl_object_id\\(\\$before\\)\\s*,\\s*spl_object_id\\(\\$after\\)/', $lifecycleCode) === 1);
+check('creator수명: 테스트가 세션 레코드를 지워서 통과하지 않는다',
+    strpos($lifecycleCode, '->flush()') === false
+    && strpos($lifecycleCode, '->invalidate()') === false);
+
+serverOnly('forgetDrivers() 후 호스트 매니저가 새 Store 를 만드는가 (creator 잔재 없음)');
+serverOnly('StartSession 이 TeeWide 구간에서 전용 Store 를 받는가');
+serverOnly('중첩 예외 후 스코프 깊이가 0 으로 복원되는가');
+serverOnly('YUTIV 로그인 세션이 TeeWide 요청에서 인증되지 않는가 (yutiv_user_leaked=false)');
+serverOnly('TeeWide 요청의 Store 객체가 YUTIV 와 실제로 다른가');
+serverOnly('TeeWide 요청 뒤 YUTIV 로그인 세션 레코드가 그대로 남는가');
 
 // ── 8. 로컬에서 증명할 수 없는 계약 (서버 PHPUnit 필요) ─────────────────────
 //

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
 use Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideSessionScope;
 use Plugins\Yutiv\LiveCommerce\Tests\Support\BootTimeLiveCommerceServiceProvider;
 use Tests\TestCase;
 
@@ -170,6 +171,10 @@ abstract class PluginTestCase extends TestCase
         // 경로를 다시 세워 주므로, 여기서 비워도 코어 프로바이더 목록은 그대로다.
         RegisterProviders::flushState();
         BootTimeLiveCommerceServiceProvider::resetTestState();
+
+        // 세션 스코프는 프로세스 전역 정적 상태다 — 앞 앱의 Store 를 물려받지 않도록
+        // 새 앱을 만들기 전에 비운다.
+        TeeWideSessionScope::reset();
 
         // 앱을 만들기 **전에** services manifest 경로를 테스트 전용 파일로 돌린다.
         // 이 줄이 없으면 ProviderRepository 가 프로젝트의 bootstrap/cache/services.php 를
@@ -467,6 +472,7 @@ abstract class PluginTestCase extends TestCase
         // 이 스위트의 부팅 시점 등록을 물려받지 않도록.
         RegisterProviders::flushState();
         BootTimeLiveCommerceServiceProvider::resetTestState();
+        TeeWideSessionScope::reset();
 
         // 임시 manifest 삭제 + APP_SERVICES_CACHE 원상 복구. 테스트가 실패하거나
         // 예외로 끝나도 tearDown 은 실행되므로 여기서 되돌린다(마지막 방어선은
