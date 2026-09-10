@@ -12,10 +12,22 @@ use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
  */
 class TeeWideDomainRoutingTest extends PluginTestCase
 {
+    /**
+     * 이 스위트는 **라우트 우선순위**를 검증하므로 운영과 같은 시점에 부팅해야 한다.
+     * 부팅 뒤에 등록하면 `routes/web.php:51` 의 SPA catch-all 이 먼저 등록돼 있어
+     * 언제나 그쪽이 이긴다. (PluginTestCase::createApplication 주석 참조)
+     */
+    protected function teeWideBootConfig(): ?array
+    {
+        return static::teeWideConfigValues();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        // 라우트는 이미 부팅 시점에 올라와 있다. 설정은 부팅 때 쓴 값을 그대로 되풀이해
+        // 부팅 후 코드(미들웨어·컨트롤러)도 같은 값을 읽게 한다.
         $this->configureTeeWide();
         $this->bootPlugin();
         $this->attachHostGate();
@@ -25,7 +37,9 @@ class TeeWideDomainRoutingTest extends PluginTestCase
 
     public function test_teewide_루트가_포털_라우트로_매칭된다(): void
     {
-        $this->assertSame('teewide.portal', $this->matchedRouteName('http://'.self::ROOT_HOST.'/'));
+        $url = 'http://'.self::ROOT_HOST.'/';
+
+        $this->assertSame('teewide.portal', $this->matchedRouteName($url), $this->routingDiagnostics($url));
 
         $this->get('http://'.self::ROOT_HOST.'/')
             ->assertOk()
@@ -36,7 +50,9 @@ class TeeWideDomainRoutingTest extends PluginTestCase
 
     public function test_live_호스트의_업체_slug_가_라이브_라우트로_매칭된다(): void
     {
-        $this->assertSame('teewide.live.tenant', $this->matchedRouteName('http://'.self::LIVE_HOST.'/golfif'));
+        $url = 'http://'.self::LIVE_HOST.'/golfif';
+
+        $this->assertSame('teewide.live.tenant', $this->matchedRouteName($url), $this->routingDiagnostics($url));
 
         $this->get('http://'.self::LIVE_HOST.'/golfif')
             ->assertOk()
@@ -156,6 +172,34 @@ class TeeWideDomainRoutingTest extends PluginTestCase
         $this->refreshRouteLookups();
 
         $this->assertSame($before, count($this->teeWideRoutes()));
+    }
+
+    public function test_TeeWide_라우트가_SPA_catch_all_보다_먼저_등록된다(): void
+    {
+        // `routes/web.php:51` 의 catch-all 은 무명이고 fallback 도 아니며 도메인 제약도
+        // 없다. 즉 `/` 와 `/golfif` 를 모든 호스트에서 삼킨다. RouteCollection 은 먼저
+        // 등록된 라우트부터 훑어 첫 일치를 쓰므로, TeeWide 라우트가 그보다 **앞**에
+        // 있어야만 도메인 라우팅이 성립한다. 이 순서가 깨지면 위 두 매칭 테스트가
+        // 'route name = null' 로 무너진다 — 그 실패의 정확한 원인이 이 단언이다.
+        $catchAll = $this->spaCatchAllRoute();
+
+        $this->assertNotNull($catchAll, 'SPA catch-all 을 찾지 못했습니다 — 전제가 바뀌었습니다.');
+        $this->assertNull($catchAll->getName(), 'catch-all 에 이름이 생겼습니다 — 진단 전제가 바뀌었습니다.');
+        $this->assertFalse($catchAll->isFallback, 'catch-all 이 fallback 이 됐다면 순서 계약이 달라집니다.');
+
+        $catchAllIndex = $this->routeIndex($catchAll);
+        $routes = $this->teeWideRoutes();
+
+        $this->assertNotEmpty($routes, $this->routingDiagnostics('http://'.self::ROOT_HOST.'/'));
+
+        foreach ($routes as $route) {
+            $this->assertLessThan(
+                $catchAllIndex,
+                $this->routeIndex($route),
+                $route->getName().' 가 SPA catch-all 뒤에 등록됐습니다 — 영영 매칭되지 않습니다.'
+                    .$this->routingDiagnostics('http://'.self::ROOT_HOST.'/')
+            );
+        }
     }
 
     public function test_TeeWide_라우트는_모두_도메인_제약을_갖는다(): void

@@ -17,10 +17,22 @@ use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
  */
 class TeeWideSessionIsolationTest extends PluginTestCase
 {
+    /**
+     * 이 스위트는 **라우트 우선순위**를 검증하므로 운영과 같은 시점에 부팅해야 한다.
+     * 부팅 뒤에 등록하면 `routes/web.php:51` 의 SPA catch-all 이 먼저 등록돼 있어
+     * 언제나 그쪽이 이긴다. (PluginTestCase::createApplication 주석 참조)
+     */
+    protected function teeWideBootConfig(): ?array
+    {
+        return static::teeWideConfigValues();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        // 라우트는 이미 부팅 시점에 올라와 있다. 설정은 부팅 때 쓴 값을 그대로 되풀이해
+        // 부팅 후 코드(미들웨어·컨트롤러)도 같은 값을 읽게 한다.
         $this->configureTeeWide();
         $this->bootPlugin();
         $this->attachHostGate();
