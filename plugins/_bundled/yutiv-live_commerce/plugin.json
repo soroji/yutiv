@@ -1,0 +1,23 @@
+{
+    "identifier": "yutiv-live_commerce",
+    "vendor": "yutiv",
+    "name": {
+        "ko": "TeeWide 라이브커머스",
+        "en": "TeeWide Live Commerce",
+        "ja": "TeeWide ライブコマース",
+        "zh-CN": "TeeWide 直播电商"
+    },
+    "version": "0.1.0",
+    "description": {
+        "ko": "TeeWide 멀티업체 라이브 판매 플랫폼. Phase 0 은 도메인·세션 격리 기술 스파이크이며 기본 비활성입니다.",
+        "en": "TeeWide multi-tenant live selling platform. Phase 0 is a domain/session isolation spike and is disabled by default.",
+        "ja": "TeeWide マルチテナント・ライブ販売基盤。Phase 0 はドメイン・セッション分離の技術検証で、既定は無効です。",
+        "zh-CN": "TeeWide 多商户直播销售平台。Phase 0 为域名/会话隔离技术验证，默认关闭。"
+    },
+    "license": "MIT",
+    "g7_version": ">=7.0.9",
+    "dependencies": {
+        "modules": {},
+        "plugins": {}
+    }
+}

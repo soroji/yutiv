@@ -1,0 +1,175 @@
+<?php
+
+namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
+
+use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
+
+/**
+ * 도메인 라우트 격리 — 어느 호스트에서 어느 라우트가 매칭되는가.
+ *
+ * 응답 코드만 보지 않는다. "라우트가 없어서 우연히 404" 와 "우리 라우트가 매칭됐다" 는
+ * 다른 사실이므로, 매칭된 **라우트 이름**을 함께 단언한다.
+ */
+class TeeWideDomainRoutingTest extends PluginTestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->configureTeeWide();
+        $this->bootPlugin();
+        $this->attachHostGate();
+    }
+
+    // ── 매칭돼야 하는 것 ────────────────────────────────────────────────────
+
+    public function test_teewide_루트가_포털_라우트로_매칭된다(): void
+    {
+        $this->assertSame('teewide.portal', $this->matchedRouteName('http://'.self::ROOT_HOST.'/'));
+
+        $this->get('http://'.self::ROOT_HOST.'/')
+            ->assertOk()
+            ->assertJsonPath('platform', 'teewide')
+            ->assertJsonPath('area', 'portal')
+            ->assertJsonPath('route', 'teewide.portal');
+    }
+
+    public function test_live_호스트의_업체_slug_가_라이브_라우트로_매칭된다(): void
+    {
+        $this->assertSame('teewide.live.tenant', $this->matchedRouteName('http://'.self::LIVE_HOST.'/golfif'));
+
+        $this->get('http://'.self::LIVE_HOST.'/golfif')
+            ->assertOk()
+            ->assertJsonPath('area', 'live')
+            ->assertJsonPath('tenant', 'golfif')
+            ->assertJsonPath('route', 'teewide.live.tenant');
+    }
+
+    // ── 매칭되면 안 되는 것 ─────────────────────────────────────────────────
+
+    public function test_yutiv_호스트에서는_TeeWide_라우트가_매칭되지_않는다(): void
+    {
+        // 도메인 제약이 있으므로 포털 라우트로 매칭될 수 없다.
+        $this->assertNotSame('teewide.portal', $this->matchedRouteName('http://'.self::YUTIV_HOST.'/'));
+        $this->assertNotSame('teewide.live.tenant', $this->matchedRouteName('http://'.self::YUTIV_HOST.'/golfif'));
+    }
+
+    public function test_yutiv_에서_golfif_는_TeeWide_로_해석되지_않는다(): void
+    {
+        $name = $this->matchedRouteName('http://'.self::YUTIV_HOST.'/golfif');
+
+        $this->assertTrue(
+            $name === null || ! str_starts_with($name, 'teewide.'),
+            'yutiv.com/golfif 가 TeeWide 라우트로 매칭됐습니다: '.var_export($name, true)
+        );
+    }
+
+    public function test_live_호스트의_루트는_라이브_홈으로_열리지_않는다(): void
+    {
+        // `/` 에는 TeeWide 라우트를 등록하지 않았다. SPA catch-all 이 매칭되더라도
+        // 호스트 게이트가 끊는다.
+        $name = $this->matchedRouteName('http://'.self::LIVE_HOST.'/');
+
+        $this->assertTrue(
+            $name === null || ! str_starts_with($name, 'teewide.'),
+            'live 루트가 TeeWide 라우트로 매칭됐습니다: '.var_export($name, true)
+        );
+
+        $this->get('http://'.self::LIVE_HOST.'/')->assertNotFound();
+    }
+
+    public function test_알_수_없는_업체_slug_는_404(): void
+    {
+        $this->get('http://'.self::LIVE_HOST.'/unknown-tenant')
+            ->assertNotFound();
+    }
+
+    public function test_알_수_없는_호스트는_TeeWide_에_접근하지_못한다(): void
+    {
+        $this->assertNull($this->matchedRouteName('http://evil.example.com/'), 'unknown host 가 포털에 매칭됐습니다');
+
+        $name = $this->matchedRouteName('http://evil.example.com/golfif');
+        $this->assertTrue(
+            $name === null || ! str_starts_with($name, 'teewide.'),
+            'unknown host 가 라이브 라우트에 매칭됐습니다'
+        );
+    }
+
+    public function test_teewide_유사_호스트는_매칭되지_않는다(): void
+    {
+        // 접미사·접두사 위조가 통과하면 안 된다.
+        foreach ([
+            'http://evil-teewide.test/',
+            'http://teewide.test.attacker.net/',
+            'http://xteewide.test/',
+        ] as $url) {
+            $this->assertNotSame('teewide.portal', $this->matchedRouteName($url), $url);
+        }
+    }
+
+    // ── 기존 쇼핑몰 콘텐츠 차단 ─────────────────────────────────────────────
+
+    public function test_teewide_에서_SPA_catch_all_이_노출되지_않는다(): void
+    {
+        // 쇼핑몰 SPA 셸이 떠서는 안 된다.
+        $response = $this->get('http://'.self::ROOT_HOST.'/some-shop-page');
+
+        $response->assertNotFound();
+        $this->assertStringNotContainsString('<html', (string) $response->getContent(), 'SPA 셸이 반환됐습니다');
+    }
+
+    public function test_teewide_에서_통합검색_API_가_차단된다(): void
+    {
+        $this->getJson('http://'.self::ROOT_HOST.'/api/search?q=test')->assertNotFound();
+    }
+
+    public function test_teewide_에서_이커머스_모듈_API_가_차단된다(): void
+    {
+        $this->getJson('http://'.self::ROOT_HOST.'/api/modules/sirsoft-ecommerce/products')->assertNotFound();
+        $this->getJson('http://'.self::ROOT_HOST.'/api/modules/sirsoft-ecommerce/categories')->assertNotFound();
+    }
+
+    public function test_live_에서_yutiv_관리자_경로가_차단된다(): void
+    {
+        $this->get('http://'.self::LIVE_HOST.'/admin')->assertNotFound();
+        $this->getJson('http://'.self::LIVE_HOST.'/api/admin/users')->assertNotFound();
+    }
+
+    public function test_차단은_리다이렉트가_아니다(): void
+    {
+        // 리다이렉트로 yutiv 콘텐츠를 알려주면 안 된다 (정보 노출 · open redirect 표면).
+        $response = $this->get('http://'.self::ROOT_HOST.'/some-shop-page');
+
+        $this->assertNotSame(301, $response->getStatusCode());
+        $this->assertNotSame(302, $response->getStatusCode());
+        $this->assertNull($response->headers->get('Location'));
+    }
+
+    // ── 라우트 등록 위생 ────────────────────────────────────────────────────
+
+    public function test_TeeWide_라우트가_중복_등록되지_않는다(): void
+    {
+        $before = count($this->teeWideRoutes());
+
+        // 프로바이더를 다시 등록해도 Application::register() 가 재실행하지 않는다.
+        $this->app->register(\Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider::class);
+        $this->refreshRouteLookups();
+
+        $this->assertSame($before, count($this->teeWideRoutes()));
+    }
+
+    public function test_TeeWide_라우트는_모두_도메인_제약을_갖는다(): void
+    {
+        $routes = $this->teeWideRoutes();
+
+        $this->assertNotEmpty($routes, 'TeeWide 라우트가 등록되지 않았습니다');
+
+        foreach ($routes as $route) {
+            $this->assertNotNull(
+                $route->getDomain(),
+                $route->getName().' 에 도메인 제약이 없습니다 — 모든 호스트에서 열립니다.'
+            );
+            $this->assertContains($route->getDomain(), [self::ROOT_HOST, self::LIVE_HOST]);
+        }
+    }
+}
