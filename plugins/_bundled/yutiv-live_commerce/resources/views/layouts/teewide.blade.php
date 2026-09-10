@@ -230,6 +230,64 @@
             * { transition: none !important; animation: none !important; }
         }
 
+        /* ── 폼 ───────────────────────────────────────────────────────────── */
+        .tw-form { display: grid; gap: 18px; }
+        .tw-field { display: grid; gap: 7px; }
+        .tw-label { font-size: 14px; font-weight: 600; }
+        .tw-label__req { color: var(--tw-accent); margin-left: 3px; }
+
+        .tw-input {
+            width: 100%;
+            padding: 11px 13px;
+            border-radius: 9px;
+            border: 1px solid var(--tw-border);
+            background: var(--tw-surface-2);
+            color: var(--tw-text);
+            font-size: 15px;
+            font-family: inherit;
+        }
+        .tw-input::placeholder { color: #64748b; }
+        .tw-input:hover { border-color: #35414f; }
+        .tw-input[aria-invalid="true"] { border-color: var(--tw-accent); }
+
+        .tw-help { font-size: 13px; color: var(--tw-muted); }
+
+        /* 오류는 색만으로 알리지 않는다 — 문구와 role 을 함께 준다. */
+        .tw-error { font-size: 13px; color: #ff8a94; }
+
+        .tw-check { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; }
+        .tw-check input { margin-top: 3px; width: 17px; height: 17px; flex: none; accent-color: var(--tw-accent); }
+
+        .tw-alert {
+            border: 1px solid rgba(255, 70, 85, 0.45);
+            background: rgba(255, 70, 85, 0.08);
+            border-radius: 10px;
+            padding: 13px 15px;
+            font-size: 14px;
+            margin: 0 0 20px;
+        }
+
+        .tw-auth { padding: 48px 0 64px; }
+        .tw-auth__card {
+            max-width: 440px;
+            margin: 0 auto;
+            background: var(--tw-surface);
+            border: 1px solid var(--tw-border);
+            border-radius: var(--tw-radius);
+            padding: 32px;
+        }
+        .tw-auth__title { margin: 0 0 8px; font-size: 24px; letter-spacing: -0.02em; }
+        .tw-auth__lead { margin: 0 0 26px; color: var(--tw-muted); font-size: 15px; }
+        .tw-auth__foot { margin: 22px 0 0; font-size: 14px; color: var(--tw-muted); text-align: center; }
+        .tw-auth__foot a { font-weight: 600; color: var(--tw-text); }
+
+        .tw-logout { display: inline; }
+
+        @media (max-width: 640px) {
+            .tw-auth { padding: 32px 0 48px; }
+            .tw-auth__card { padding: 24px 20px; }
+        }
+
         @stack('styles')
     </style>
 </head>

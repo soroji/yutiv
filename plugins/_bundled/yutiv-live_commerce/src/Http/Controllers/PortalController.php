@@ -3,6 +3,7 @@
 namespace Plugins\Yutiv\LiveCommerce\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 
 /**
@@ -21,6 +22,9 @@ class PortalController
     public function index(): View
     {
         return view('teewide::portal.index', [
+            // 인증 판정은 반드시 teewide guard 로만 한다 — auth()->user() 는
+            // 기본 guard(YUTIV web)를 보므로 여기서 쓰면 경계가 무너진다.
+            'teeWideUser' => TeeWideAuth::user(),
             'features' => TeeWidePresenter::portalFeatures(),
             'portalUrl' => TeeWidePresenter::portalUrl(),
             'liveUrl' => TeeWidePresenter::liveUrl(),

@@ -9,7 +9,10 @@ use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
+use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
+use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
 use Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideSessionScope;
@@ -72,6 +75,9 @@ abstract class PluginTestCase extends TestCase
      * 키 값도 일부러 다르게 두어 한쪽 상태가 다른 쪽에 새지 않게 한다.
      */
     protected const TEST_APP_KEY_PLAINTEXT = 'teewide-live_commerce-testing-32';
+
+    /** 테스트 회원의 기본 비밀번호 (테스트 전용 — 운영 시드는 계정을 만들지 않는다). */
+    protected const TEST_USER_PASSWORD = 'teewide-secret-1234';
 
     /** 프로바이더 생명주기 재실행을 한 번만 하기 위한 플래그. */
     private bool $pluginRegistered = false;
@@ -241,6 +247,67 @@ abstract class PluginTestCase extends TestCase
         parent::setUp();
 
         $this->seedPluginRow(ExtensionStatus::Active->value);
+        $this->seedGolfifTenant();
+    }
+
+    /**
+     * 공개 채널 fixture — Phase 1-B 부터 채널은 **DB 가 권위 소스**다.
+     *
+     * 설정의 `known_tenants` 만 믿던 시절에는 아무 것도 준비하지 않아도 `/golfif` 가
+     * 열렸다. 이제는 행이 있어야 열리므로, 그 사실을 테스트가 명시적으로 만든다.
+     * (마이그레이션 시더가 이미 넣지만, 무엇에 기대는지 코드에 드러나야 한다)
+     */
+    protected function seedGolfifTenant(): LiveTenant
+    {
+        return $this->seedLiveTenant([
+            'slug' => 'golfif',
+            'name' => '골프이프',
+            'description' => '골프 용품과 라운드 준비물을 라이브로 소개하는 채널입니다.',
+            'initials' => 'GI',
+            'status' => LiveTenant::STATUS_ACTIVE,
+        ]);
+    }
+
+    /**
+     * 임의의 채널을 만든다 (slug 기준 멱등).
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function seedLiveTenant(array $attributes = []): LiveTenant
+    {
+        $attributes = array_merge([
+            'slug' => 'sample-shop',
+            'name' => '샘플 채널',
+            'description' => '테스트용 채널입니다.',
+            'initials' => 'SC',
+            'status' => LiveTenant::STATUS_ACTIVE,
+        ], $attributes);
+
+        $slug = $attributes['slug'];
+        unset($attributes['slug']);
+
+        return LiveTenant::query()->updateOrCreate(['slug' => $slug], $attributes);
+    }
+
+    /**
+     * TeeWide 회원 fixture.
+     *
+     * 비밀번호는 반드시 해시해서 넣는다 — 평문이 들어가면 로그인 테스트가
+     * 통과하지 못하고, 통과한다면 그게 더 큰 문제다.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    protected function makeTeeWideUser(array $attributes = []): TeeWideUser
+    {
+        $password = $attributes['password'] ?? self::TEST_USER_PASSWORD;
+        unset($attributes['password']);
+
+        return TeeWideUser::query()->create(array_merge([
+            'email' => 'member@teewide.test',
+            'name' => '테스트 회원',
+            'status' => TeeWideUser::STATUS_ACTIVE,
+            'password' => Hash::make($password),
+        ], $attributes));
     }
 
     /**

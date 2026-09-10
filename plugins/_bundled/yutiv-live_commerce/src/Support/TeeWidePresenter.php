@@ -2,17 +2,24 @@
 
 namespace Plugins\Yutiv\LiveCommerce\Support;
 
+use Illuminate\Support\Facades\Log;
+use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
+use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
+
 /**
  * 화면에 넘길 데이터를 만드는 ViewModel.
  *
- * ── 왜 이 클래스가 따로 있는가 ─────────────────────────────────────────────
- * Phase 1-A 에는 아직 `live_tenants` 같은 테이블이 없다. 그렇다고 Blade 안에 문구를
- * 흩뿌리면 Phase 1-B 에서 DB 로 옮길 때 화면마다 다시 찾아다녀야 한다. 그래서 화면이
- * 쓰는 값은 전부 여기서 만들고, 나중에 이 클래스의 내부만 DB 조회로 바꾼다.
+ * ── 권위 소스는 DB 다 ──────────────────────────────────────────────────────
+ * Phase 1-B 부터 공개 채널은 `live_tenants` 테이블이 정한다. 설정의 `known_tenants`
+ * 는 DB 가 아직 없는 초기 부팅(마이그레이션 전) 대비 fallback 으로만 남는다.
+ *
+ * ── DB 오류에 fail-open 하지 않는다 ────────────────────────────────────────
+ * 조회가 실패하면 **아무 채널도 열지 않는다.** "DB 가 죽었으니 전부 열어 준다" 는
+ * 정지·준비 중 채널까지 공개하는 것이므로, 닫는 쪽으로 실패한다.
  *
  * ── 지어내지 않는다 ────────────────────────────────────────────────────────
  * 할인율·시청자 수·주문 수·재고처럼 사실이 아닌 수치는 만들지 않는다. 아직 없는 것은
- * "준비 중" 이라고 말한다 — 빈 배열을 돌려주고, 화면이 그것을 정직한 빈 상태로 그린다.
+ * 빈 배열을 돌려주고, 화면이 그것을 정직한 빈 상태로 그린다.
  */
 final class TeeWidePresenter
 {
@@ -44,10 +51,7 @@ final class TeeWidePresenter
     }
 
     /**
-     * 라이브 홈에 노출할 판매 채널 목록.
-     *
-     * 지금은 `known_tenants` 가 유일한 출처다 — 라우트가 인정하는 tenant 와 화면에 보이는
-     * 채널이 어긋나면 "보이는데 눌러도 404" 가 되므로, 같은 값에서 만든다.
+     * 공개된 판매 채널 목록 (status=active 만).
      *
      * @return array<int, array{slug: string, name: string, description: string, initials: string, status_label: string, url: string}>
      */
@@ -55,29 +59,80 @@ final class TeeWidePresenter
     {
         $channels = [];
 
-        foreach (TeeWideConfig::knownTenants() as $slug) {
-            $channels[] = self::channel($slug);
+        foreach (self::publicTenants() as $tenant) {
+            $channels[] = self::presentTenant($tenant);
         }
 
         return $channels;
     }
 
     /**
-     * 단일 채널의 표시 정보.
+     * 공개된 단일 채널 — 없거나 비공개면 null.
+     *
+     * 라우트가 이 값으로 200/404 를 가른다.
+     *
+     * @return array{slug: string, name: string, description: string, initials: string, status_label: string, url: string}|null
+     */
+    public static function publicChannel(string $slug): ?array
+    {
+        $tenant = self::findPublicTenant($slug);
+
+        return $tenant === null ? null : self::presentTenant($tenant);
+    }
+
+    /**
+     * 공개 채널 조회 — DB 가 권위 소스.
+     *
+     * @return array<int, LiveTenant>
+     */
+    public static function publicTenants(): array
+    {
+        try {
+            return LiveTenant::query()
+                ->public()
+                ->orderBy('name')
+                ->get()
+                ->all();
+        } catch (\Throwable $e) {
+            self::reportTenantLookupFailure($e);
+
+            // 닫는 쪽으로 실패한다 — 목록을 비운다.
+            return [];
+        }
+    }
+
+    /**
+     * 공개 채널 하나를 slug 로 찾는다.
+     */
+    public static function findPublicTenant(string $slug): ?LiveTenant
+    {
+        try {
+            return LiveTenant::query()
+                ->public()
+                ->where('slug', $slug)
+                ->first();
+        } catch (\Throwable $e) {
+            self::reportTenantLookupFailure($e);
+
+            // 열어 주지 않는다. 조회에 실패했다는 이유로 비공개 채널이 열리면 안 된다.
+            return null;
+        }
+    }
+
+    /**
+     * 모델 → 화면 표시 값.
      *
      * @return array{slug: string, name: string, description: string, initials: string, status_label: string, url: string}
      */
-    public static function channel(string $slug): array
+    public static function presentTenant(LiveTenant $tenant): array
     {
-        $profile = TeeWideConfig::tenantProfile($slug);
-
         return [
-            'slug' => $slug,
-            'name' => $profile['name'],
-            'description' => $profile['description'],
-            'initials' => $profile['initials'],
+            'slug' => $tenant->slug,
+            'name' => $tenant->name,
+            'description' => (string) $tenant->description,
+            'initials' => $tenant->initials(),
             'status_label' => '방송 준비 중',
-            'url' => self::liveUrl().'/'.$slug,
+            'url' => self::liveUrl().'/'.$tenant->slug,
         ];
     }
 
@@ -98,7 +153,7 @@ final class TeeWidePresenter
     }
 
     /**
-     * 라이브 상품 목록 — Phase 1-A 에는 데이터 출처가 없다.
+     * 라이브 상품 목록 — Phase 1-B 에는 아직 데이터 출처가 없다.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -107,16 +162,72 @@ final class TeeWidePresenter
         return [];
     }
 
-    /** 현재 진행 중인 방송 — Phase 1-A 에는 데이터 출처가 없다. */
+    /** 현재 진행 중인 방송 — 아직 데이터 출처가 없다. */
     public static function onAir(): array
     {
         return [];
     }
 
-    /** 예정된 방송 — Phase 1-A 에는 데이터 출처가 없다. */
+    /** 예정된 방송 — 아직 데이터 출처가 없다. */
     public static function upcoming(): array
     {
         return [];
+    }
+
+    /**
+     * 마이페이지에 보여 줄 회원 정보.
+     *
+     * 비밀번호 해시·remember token·세션 ID 는 담지 않는다.
+     *
+     * @return array<string, mixed>
+     */
+    public static function account(TeeWideUser $user): array
+    {
+        return [
+            'name' => $user->name,
+            'display_name' => $user->displayName(),
+            'email' => $user->email,
+            'joined_at' => $user->created_at?->format('Y년 n월 j일'),
+            'email_verified' => $user->hasVerifiedEmail(),
+            'email_verified_label' => $user->hasVerifiedEmail() ? '인증 완료' : '미인증',
+        ];
+    }
+
+    /**
+     * 이 회원이 소유한 판매 채널.
+     *
+     * 소유 채널은 `draft` 여도 본인에게는 보여 준다 — 자기 채널의 준비 상태를 알아야 한다.
+     *
+     * @return array<int, array{name: string, slug: string, status_label: string, is_public: bool}>
+     */
+    public static function ownedChannels(TeeWideUser $user): array
+    {
+        try {
+            $tenants = $user->liveTenants()->orderBy('name')->get();
+        } catch (\Throwable $e) {
+            self::reportTenantLookupFailure($e);
+
+            return [];
+        }
+
+        $labels = [
+            LiveTenant::STATUS_ACTIVE => '공개 중',
+            LiveTenant::STATUS_DRAFT => '준비 중',
+            LiveTenant::STATUS_SUSPENDED => '중지됨',
+        ];
+
+        $channels = [];
+
+        foreach ($tenants as $tenant) {
+            $channels[] = [
+                'name' => $tenant->name,
+                'slug' => $tenant->slug,
+                'status_label' => $labels[$tenant->status] ?? $tenant->status,
+                'is_public' => $tenant->status === LiveTenant::STATUS_ACTIVE,
+            ];
+        }
+
+        return $channels;
     }
 
     /**
@@ -147,5 +258,22 @@ final class TeeWidePresenter
         $request = request();
 
         return $request !== null && $request->isSecure() ? 'https' : 'http';
+    }
+
+    /**
+     * 채널 조회 실패를 남긴다.
+     *
+     * 조용히 빈 목록을 돌려주면 "채널이 사라졌다" 는 장애가 원인 없이 묻힌다.
+     */
+    private static function reportTenantLookupFailure(\Throwable $e): void
+    {
+        try {
+            Log::error('TeeWide 채널 조회 실패 — 공개 채널을 열지 않습니다 (fail-closed)', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+        } catch (\Throwable) {
+            // 로깅 실패가 화면을 막지는 않는다.
+        }
     }
 }

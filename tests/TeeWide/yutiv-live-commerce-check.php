@@ -280,16 +280,36 @@ check('화면: 없는 수치를 지어내지 않는다',
 check('화면: 준비 중 상태를 정직하게 표기한다',
     strpos($allViews, '라이브 상품을 준비하고 있습니다') !== false
     && strpos($allViews, '방송 준비 중') !== false);
+// 판매 시작하기는 아직 백엔드가 없다 — 링크가 아니라 눌리지 않는 버튼이어야 한다.
+$headerPartial = (string) @file_get_contents($viewDir.'/partials/portal-header.blade.php');
 check('화면: 준비되지 않은 CTA 를 링크로 두지 않는다',
-    substr_count($viewSources, 'disabled aria-describedby="tw-cta-note"') === 3);
+    strpos($headerPartial, 'disabled aria-describedby="tw-cta-note"') !== false
+    && preg_match('/<a[^>]*>\\s*판매 시작하기/u', $allViews) !== 1);
 
 // ── ViewModel ─────────────────────────────────────────────────────────────
 $presenterSrc = (string) @file_get_contents($pluginDir.'/src/Support/TeeWidePresenter.php');
 $presenterCode = twStripComments($presenterSrc);
 
-check('화면: 채널 목록이 knownTenants() 계약에서 나온다',
-    strpos($presenterCode, 'TeeWideConfig::knownTenants()') !== false,
+// Phase 1-B: 공개 채널의 권위 소스가 설정에서 DB(live_tenants)로 옮겨졌다.
+// 파일 어딘가가 아니라 **그 메서드가** DB 를 보는지 확인한다.
+$publicTenantsBody = twMethodBody($presenterCode, 'publicTenants');
+$findTenantBody = twMethodBody($presenterCode, 'findPublicTenant');
+check('화면: 채널 목록이 DB(live_tenants)에서 나온다',
+    is_string($publicTenantsBody)
+    && strpos($publicTenantsBody, 'LiveTenant::query()') !== false
+    && strpos($publicTenantsBody, '->public()') !== false,
     '보이는 채널과 열리는 채널이 어긋나면 눌러도 404 가 된다');
+check('화면: 단일 채널 조회도 DB 를 본다',
+    is_string($findTenantBody)
+    && strpos($findTenantBody, 'LiveTenant::query()') !== false
+    && strpos($findTenantBody, '->public()') !== false);
+check('화면: 공개 판정이 status=active 로만 이뤄진다',
+    strpos(twStripComments(file_get_contents($pluginDir.'/src/Models/LiveTenant.php')),
+        "where('status', self::STATUS_ACTIVE)") !== false);
+check('화면: 조회 실패에 fail-open 하지 않는다',
+    preg_match('/catch \\(\\\\Throwable \\$e\\) \\{[^}]*reportTenantLookupFailure[^}]*return \\[\\];/s', $presenterCode) === 1
+    && preg_match('/catch \\(\\\\Throwable \\$e\\) \\{[^}]*reportTenantLookupFailure[^}]*return null;/s', $presenterCode) === 1,
+    'DB 오류를 이유로 비공개 채널이 열리면 안 된다');
 check('화면: 아직 없는 데이터는 빈 배열로 정직하게 돌려준다',
     preg_match('/function onAir\(\): array\s*\{\s*return \[\];/', $presenterCode) === 1
     && preg_match('/function liveProducts\([^)]*\): array\s*\{\s*return \[\];/', $presenterCode) === 1);
@@ -316,9 +336,109 @@ check('컨트롤러: 화면 컨트롤러는 View 를 돌려준다',
 check('컨트롤러: 화면 컨트롤러가 JSON 을 돌려주지 않는다',
     strpos(twStripComments($portalSrc), 'response()->json(') === false
     && strpos(twStripComments($liveSrc), 'response()->json(') === false);
-check('컨트롤러: 미등록 tenant 는 knownTenants() 로 판정해 404',
-    strpos($liveSrc, 'in_array($tenant, TeeWideConfig::knownTenants(), true)') !== false
-    && strpos($liveSrc, 'NotFoundHttpException') !== false);
+$channelBody = twMethodBody(twStripComments($liveSrc), 'channel');
+check('컨트롤러: 비공개 tenant 는 DB 판정으로 404',
+    is_string($channelBody)
+    && strpos($channelBody, 'TeeWidePresenter::publicChannel($tenant)') !== false
+    && preg_match('/if \\(\\$channel === null\\) \\{\\s*throw new NotFoundHttpException/', $channelBody) === 1,
+    '조회 결과가 null 인데 화면을 그리면 비공개 채널이 열린다');
+
+// ── Phase 1-B: 회원·인증 ──────────────────────────────────────────────────
+$authSrc = (string) @file_get_contents($pluginDir.'/src/Support/TeeWideAuth.php');
+$loginSrc = (string) @file_get_contents($pluginDir.'/src/Http/Controllers/Auth/LoginController.php');
+$registerSrc = (string) @file_get_contents($pluginDir.'/src/Http/Controllers/Auth/RegisterController.php');
+$userModelSrc = (string) @file_get_contents($pluginDir.'/src/Models/TeeWideUser.php');
+$requireSrc = (string) @file_get_contents($pluginDir.'/src/Http/Middleware/RequireTeeWideUser.php');
+$authCode = twStripComments($authSrc);
+$loginCode = twStripComments($loginSrc);
+$registerCode = twStripComments($registerSrc);
+
+check('인증: TeeWide 전용 guard/provider 를 쓴다',
+    strpos($authCode, "const GUARD = 'teewide'") !== false
+    && strpos($authCode, "const PROVIDER = 'teewide_users'") !== false
+    && strpos($authCode, 'Auth::guard(self::GUARD)') !== false);
+check('인증: 회원 테이블이 YUTIV users 와 분리돼 있다',
+    strpos($userModelSrc, "protected \$table = 'teewide_users';") !== false);
+// ⚠ `TeeWideAuth::user()` 가 `Auth::user()` 를 부분 문자열로 포함한다.
+//   그래서 앞에 다른 식별자 문자가 붙지 않은 경우만 잡는다.
+$authUsage = $loginCode.$registerCode;
+check('인증: 기본 guard 로 TeeWide 인증을 판정하지 않는다',
+    preg_match('/(?<![A-Za-z0-9_])Auth::(user|check|guard)\\(\\)/', $authUsage) !== 1
+    && preg_match('/auth\\(\\)->(user|check)\\(\\)/', $authUsage) !== 1,
+    'Auth::user() / auth()->user() 는 YUTIV web guard 를 본다');
+check('인증: 설정을 통째로 덮어쓰지 않고 두 키만 더한다',
+    strpos($authCode, "'auth.guards.'.self::GUARD") !== false
+    && strpos($authCode, "'auth.providers.'.self::PROVIDER") !== false
+    && preg_match("/config\\(\\['auth' =>/", $providerCode) !== 1);
+check('인증: 비밀번호를 Hash 로 저장한다',
+    strpos($registerCode, 'Hash::make($validated[') !== false
+    && strpos($userModelSrc, "'password' => 'hashed'") !== false);
+check('인증: 로그인 실패 문구가 계정 존재 여부를 구분하지 않는다',
+    substr_count($loginCode, 'self::GENERIC_FAILURE') === 2);
+check('인증: active 계정만 로그인한다',
+    strpos($loginCode, 'canAuthenticate()') !== false
+    && strpos(twStripComments($userModelSrc), "status === self::STATUS_ACTIVE") !== false);
+check('인증: 로그인·회원가입이 세션 ID 를 재발급한다',
+    strpos($loginCode, 'session()->regenerate()') !== false
+    && strpos($registerCode, 'session()->regenerate()') !== false);
+check('인증: 로그아웃이 teewide guard 만 끊는다',
+    strpos($loginCode, 'TeeWideAuth::guard()->logout()') !== false
+    && preg_match('/Auth::logout\\(\\)/', $loginCode) !== 1);
+$logoutBody = twMethodBody($loginCode, 'destroy');
+check('인증: 로그아웃이 세션을 무효화하고 CSRF 토큰을 갱신한다',
+    is_string($logoutBody)
+    && strpos($logoutBody, 'session()->invalidate()') !== false
+    && strpos($logoutBody, 'session()->regenerateToken()') !== false);
+check('인증: 이메일 정규화가 한 곳에서 이뤄진다',
+    strpos($userModelSrc, 'function normalizeEmail(') !== false
+    && substr_count($loginCode.$registerCode, 'TeeWideUser::normalizeEmail(') === 2);
+// 주석에는 "코어는 route('login') 으로 보낸다" 는 설명이 있으므로 주석 제거본을 본다.
+$requireCode = twStripComments($requireSrc);
+check('인증: 비로그인 리다이렉트가 YUTIV 로그인으로 가지 않는다',
+    strpos($requireCode, "route('teewide.login')") !== false
+    && strpos($requireCode, "route('login')") === false);
+check('인증: 쓰기 요청에 throttle 이 걸려 있다',
+    substr_count($providerCode, "middleware('throttle:'.self::AUTH_THROTTLE)") === 2);
+check('인증: 로그아웃 라우트가 POST 전용이다',
+    strpos($providerCode, "Route::post('/logout'") !== false
+    && preg_match("/Route::get\\('\\/logout'/", $providerCode) !== 1);
+check('인증: 인증 라우트가 포털 호스트 그룹 안에만 있다',
+    is_string($routesBody)
+    && twOrderedIn($routesBody, "'teewide.account'", 'liveHost()'),
+    '라이브 호스트에 로그인 폼이 생기면 어느 쪽이 진짜인지 흐려진다');
+check('인증: 인증 라우트의 경로와 이름이 계약대로 짝지어져 있다',
+    is_string($routesBody)
+    && preg_match("/Route::get\\('\\/account'.*?->name\\('teewide\\.account'\\)/s", $routesBody) === 1
+    && preg_match("/Route::get\\('\\/login'.*?->name\\('teewide\\.login'\\)/s", $routesBody) === 1
+    && preg_match("/Route::get\\('\\/register'.*?->name\\('teewide\\.register'\\)/s", $routesBody) === 1
+    && preg_match("/Route::post\\('\\/logout'.*?->name\\('teewide\\.logout'\\)/s", $routesBody) === 1);
+
+// ── Phase 1-B: 마이그레이션·시더 ──────────────────────────────────────────
+$migrationDir = $pluginDir.'/database/migrations';
+$usersMigration = (string) @file_get_contents($migrationDir.'/2026_09_11_000001_create_teewide_users_table.php');
+$tenantsMigration = (string) @file_get_contents($migrationDir.'/2026_09_11_000002_create_live_tenants_table.php');
+$seederSrc = (string) @file_get_contents($pluginDir.'/src/Database/Seeders/LiveTenantSeeder.php');
+
+check('DB: 두 테이블 마이그레이션이 있다',
+    strpos($usersMigration, "Schema::create('teewide_users'") !== false
+    && strpos($tenantsMigration, "Schema::create('live_tenants'") !== false);
+check('DB: 롤백이 가능하다',
+    strpos($usersMigration, "Schema::dropIfExists('teewide_users')") !== false
+    && strpos($tenantsMigration, "Schema::dropIfExists('live_tenants')") !== false);
+check('DB: unique 와 인덱스를 명시한다',
+    substr_count($usersMigration, '->unique()') >= 2
+    && strpos($usersMigration, "index('status'") !== false
+    && strpos($tenantsMigration, "index(['status', 'slug']") !== false);
+check('DB: owner FK 가 teewide_users 를 가리킨다',
+    strpos($tenantsMigration, "->on('teewide_users')") !== false
+    && strpos($tenantsMigration, '->nullOnDelete()') !== false);
+check('DB: 시더가 updateOrCreate 로 멱등하다',
+    strpos($seederSrc, 'updateOrCreate(') !== false
+    && strpos($seederSrc, "['slug' => \$tenant['slug']]") !== false);
+check('DB: 시더가 회원 계정이나 기본 비밀번호를 만들지 않는다',
+    strpos($seederSrc, 'TeeWideUser') === false
+    && strpos($seederSrc, 'Hash::make') === false
+    && stripos($seederSrc, 'password') === false);
 
 check('소스: tenant 라우트에 slug 패턴 제약',
     strpos($providerSrc, "->where('tenant', TeeWideConfig::tenantSlugPattern())") !== false);

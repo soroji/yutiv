@@ -11,10 +11,15 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Plugins\Yutiv\LiveCommerce\Http\Controllers\AccountController;
+use Plugins\Yutiv\LiveCommerce\Http\Controllers\Auth\LoginController;
+use Plugins\Yutiv\LiveCommerce\Http\Controllers\Auth\RegisterController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\DiagnosticsController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\LiveController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\PortalController;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
+use Plugins\Yutiv\LiveCommerce\Http\Middleware\RequireTeeWideUser;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 
 /**
@@ -38,6 +43,14 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
 
     protected string $pluginIdentifier = 'yutiv-live_commerce';
 
+    /**
+     * 인증 쓰기 요청 제한 — 분당 시도 횟수.
+     *
+     * 코어 `routes/api.php` 의 `throttle:10,1`(본인확인 검증) 수준을 따른다.
+     * 사람이 오타를 몇 번 내는 것은 통과하고, 자동 대입은 막히는 선이다.
+     */
+    private const AUTH_THROTTLE = '10,1';
+
     public function register(): void
     {
         parent::register();
@@ -59,8 +72,23 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
             return;
         }
 
+        $this->registerTeeWideAuth();
         $this->registerTeeWideViews();
         $this->registerTeeWideRoutes();
+    }
+
+    /**
+     * TeeWide 전용 인증 guard/provider 를 설정에 더한다.
+     *
+     * 기존 `config/auth.php` 를 **덮어쓰지 않는다.** 점 표기로 두 키만 더하므로
+     * YUTIV 의 `web` guard 와 `users` provider 는 그대로 남는다.
+     *
+     * 설정 파일이 아니라 부팅 시점에 넣기 때문에 `config:cache` 환경에서도 동작한다 —
+     * 캐시된 배열 위에 매 부팅마다 다시 얹힌다.
+     */
+    private function registerTeeWideAuth(): void
+    {
+        config(TeeWideAuth::configValues());
     }
 
     /**
@@ -108,6 +136,32 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
 
                 Route::get('/', [PortalController::class, 'index'])
                     ->name('teewide.portal');
+
+                // ── 회원 (teewide.com 전용) ─────────────────────────────
+                //
+                // 인증 화면은 라이브 호스트에 두지 않는다. 계정은 포털의 몫이고,
+                // 두 호스트에 로그인 폼이 각각 있으면 어느 쪽이 진짜인지 흐려진다.
+                Route::get('/register', [RegisterController::class, 'show'])
+                    ->name('teewide.register');
+                Route::get('/login', [LoginController::class, 'show'])
+                    ->name('teewide.login');
+
+                // 쓰기 요청에는 per-IP 무차별 대입 방어를 건다.
+                // 코어가 `routes/api.php` 에서 쓰는 것과 같은 인라인 throttle 규약이다.
+                Route::post('/register', [RegisterController::class, 'store'])
+                    ->middleware('throttle:'.self::AUTH_THROTTLE)
+                    ->name('teewide.register.store');
+                Route::post('/login', [LoginController::class, 'store'])
+                    ->middleware('throttle:'.self::AUTH_THROTTLE)
+                    ->name('teewide.login.store');
+
+                // 로그아웃은 POST 만 — GET 로그아웃은 링크·이미지로 강제 실행된다.
+                Route::post('/logout', [LoginController::class, 'destroy'])
+                    ->name('teewide.logout');
+
+                Route::get('/account', [AccountController::class, 'index'])
+                    ->middleware(RequireTeeWideUser::class)
+                    ->name('teewide.account');
             });
 
         // ── 라이브 판매: live.teewide.com ───────────────────────────────────
