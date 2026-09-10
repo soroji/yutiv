@@ -76,7 +76,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         $request = \Illuminate\Http\Request::create('http://'.self::YUTIV_HOST.'/', 'GET');
         $before = config('session.cookie');
 
-        (new ConfigureTeeWideSession)->handle($request, fn ($r) => response('ok'));
+        $this->app->make(ConfigureTeeWideSession::class)->handle($request, fn ($r) => response('ok'));
 
         $this->assertSame($before, config('session.cookie'));
         $this->assertFalse($request->attributes->get('teewide.session_configured', false));
@@ -119,25 +119,89 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         $this->assertNotNull($sessionId);
 
         // 같은 쿠키를 yutiv 호스트로 보낸다 — TeeWide 라우트가 없으므로 도달할 수 없다.
-        $response = $this->withUnencryptedCookie('teewide_session', $sessionId)
-            ->get('http://'.self::YUTIV_HOST.'/_teewide/session');
+        $url = 'http://'.self::YUTIV_HOST.'/_teewide/session';
+        $response = $this->withUnencryptedCookie('teewide_session', $sessionId)->get($url);
 
-        $this->assertNotSame(200, $response->getStatusCode(), 'yutiv 호스트에서 TeeWide 진단이 응답했습니다');
+        // ⚠ 상태코드만으로 판정하지 않는다. yutiv 호스트에서 이 경로는 SPA catch-all
+        //   (routes/web.php:51) 에 잡히고, 그 라우트는 등록된 경로면 **정상적으로 200**
+        //   을 돌려준다. 200 자체는 결함이 아니다 — 결함은 TeeWide 진단이 응답하는 것이다.
+        //   그래서 라우트 정체와 응답 본문으로 판정한다.
+        $diagnostics = $this->routingDiagnostics($url);
+
+        $matched = $this->matchedRoute($url);
+        $this->assertTrue(
+            $matched === null || ! str_starts_with((string) $matched->getName(), 'teewide.'),
+            'yutiv 호스트 요청이 TeeWide 라우트에 매칭됐습니다.'.$diagnostics
+        );
+
+        $body = (string) $response->getContent();
+        $this->assertStringNotContainsString('"platform":"teewide"', $body,
+            'yutiv 호스트에서 TeeWide 진단 JSON 이 응답했습니다.'.$diagnostics);
+        $this->assertStringNotContainsString('leak-check', $body,
+            'yutiv 응답에 TeeWide 세션 표식이 새어 나왔습니다.'.$diagnostics);
+        $this->assertStringNotContainsString('session-marker', $body,
+            'yutiv 응답이 TeeWide 진단 area 를 담고 있습니다.'.$diagnostics);
     }
 
     public function test_YUTIV_로그인_세션이_TeeWide_사용자로_인정되지_않는다(): void
     {
         $user = User::factory()->create();
 
-        // YUTIV 세션으로 로그인한 상태에서 TeeWide 진단을 호출한다.
-        $response = $this->actingAs($user)
+        // ⚠ `actingAs()` 를 쓰면 안 된다. 그건 세션이 아니라 **guard 인스턴스에 사용자를
+        //   직접 꽂는다**(SessionGuard::setUser). 그러면 쿠키·세션과 무관하게 어떤 라우트
+        //   에서든 `$request->user()` 가 사용자를 돌려주므로, 쿠키 격리를 전혀 증명하지
+        //   못하고 항상 leaked=true 가 된다. 서버 4차 실행의 3번 실패가 정확히 이것이었다.
+        //
+        //   실제 계약은 "YUTIV **세션 쿠키**가 TeeWide 요청을 인증시키지 못한다" 이므로,
+        //   진짜 로그인 세션을 만들어 그 쿠키를 TeeWide 호스트로 보낸다.
+        $yutivCookie = $this->yutivSessionCookieName();
+        $yutivSessionId = $this->makeYutivLoginSession($user);
+
+        $response = $this->withUnencryptedCookie($yutivCookie, $yutivSessionId)
             ->get('http://'.self::ROOT_HOST.'/_teewide/session');
 
         $response->assertOk();
 
-        // TeeWide 는 전용 guard 를 쓸 예정이므로(Phase 2), 지금은 기존 web guard 사용자가
-        // 새어 들어오지 않는다는 사실만 고정한다.
-        $response->assertJsonPath('yutiv_user_leaked', false);
+        $context = sprintf(
+            "\nYUTIV 쿠키 이름: %s / 세션 ID: %s\nTeeWide 응답 쿠키: %s / route: %s\n",
+            $yutivCookie,
+            $yutivSessionId,
+            var_export($response->json('session_cookie'), true),
+            var_export($response->json('route'), true)
+        );
+
+        // TeeWide 요청은 전용 쿠키 이름을 쓰므로 YUTIV 쿠키를 아예 쳐다보지 않는다.
+        $response->assertJsonPath('session_cookie', 'teewide_session');
+        $response->assertJsonPath('route', 'teewide.portal.session');
+
+        $this->assertFalse(
+            $response->json('yutiv_user_leaked'),
+            'YUTIV 로그인 세션이 TeeWide 사용자로 인정됐습니다.'.$context
+        );
+    }
+
+    /**
+     * YUTIV 쪽 세션 쿠키 이름 (TeeWide 설정을 씌우기 전의 값).
+     */
+    private function yutivSessionCookieName(): string
+    {
+        return (string) config('session.cookie');
+    }
+
+    /**
+     * YUTIV 세션에 실제 로그인 상태를 기록하고 세션 ID 를 돌려준다.
+     *
+     * `SessionGuard` 는 세션에 `login_web_<sha1(SessionGuard::class)>` 키로 사용자 id 를
+     * 넣는다. 같은 키를 직접 써서 "진짜 로그인된 YUTIV 세션" 을 만든다.
+     */
+    private function makeYutivLoginSession(User $user): string
+    {
+        $session = $this->app['session']->driver();
+        $session->start();
+        $session->put('login_web_'.sha1(\Illuminate\Auth\SessionGuard::class), $user->getAuthIdentifier());
+        $session->save();
+
+        return $session->getId();
     }
 
     // ── 미들웨어 순서 (설계 계약) ───────────────────────────────────────────

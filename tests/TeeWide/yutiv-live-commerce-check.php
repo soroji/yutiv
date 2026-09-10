@@ -243,6 +243,87 @@ check('소스: 세션 미들웨어가 cookie/domain 만 바꾼다',
     && strpos($sessionSrc, "'session.domain' =>") !== false
     && strpos(twStripComments($sessionSrc), "'session.driver'") === false);
 
+// ── 세션 설정의 요청 범위 격리 (4차 서버 실패 3건의 원인) ──────────────────
+//
+// config() 는 전역이다. 되돌리지 않으면 같은 Application 을 재사용하는 실행 모델
+// (queue worker · Octane · RoadRunner · 테스트 앱)에서 다음 YUTIV 요청이
+// teewide_session 을 자기 세션 쿠키로 읽는다. 복원 책임은 미들웨어에 있다.
+$sessionCode = twStripComments($sessionSrc);
+$handleBody = twMethodBody($sessionCode, 'handle');
+
+// [주입 22] 요청 종료 후 설정 복원 제거
+check('세션범위: 미들웨어가 finally 로 복원한다 [주입 22]',
+    is_string($handleBody)
+    && preg_match('/try\\s*\\{\\s*return\\s+\\$next\\(\\$request\\);\\s*\\}\\s*finally\\s*\\{/', $handleBody) === 1,
+    '예외가 나가도 복원되어야 하므로 finally 여야 한다');
+check('세션범위: 복원이 스냅샷 배열 통째로 이뤄진다 (없던 키·null·빈문자열·false 보존) [주입 22]',
+    is_string($handleBody)
+    && strpos($handleBody, "\$snapshot = config('session')") !== false
+    && strpos($handleBody, "config(['session' => \$snapshot])") !== false);
+check('세션범위: 스냅샷이 설정 변경보다 먼저 찍힌다 [주입 22]',
+    twOrderedIn($handleBody, "\$snapshot = config('session')", "'session.cookie' =>"));
+check('세션범위: 스냅샷이 지역 변수라 중첩 호출이 서로를 훼손하지 않는다',
+    is_string($handleBody)
+    && strpos($sessionCode, 'static $snapshot') === false
+    && strpos($sessionCode, '$this->snapshot') === false);
+
+// [주입 23] 세션 스토어 이름 복원 제거
+check('세션범위: 스토어를 설정 변경 **전에** 해석한다 [주입 23]',
+    twOrderedIn($handleBody, 'resolveSessionStore()', "'session.cookie' =>"),
+    '설정을 먼저 바꾸면 스토어가 TeeWide 이름으로 생성돼 앱 수명 내내 남는다');
+check('세션범위: 원래 스토어 이름을 확보한다 [주입 23]',
+    twOrderedIn($handleBody, 'getName()', 'setName('));
+check('세션범위: finally 에서 스토어 이름을 되돌린다 [주입 23]',
+    is_string($handleBody)
+    && preg_match('/finally\\s*\\{.*?setName\\(\\$originalStoreName\\)/s', $handleBody) === 1);
+
+// [주입 24] 테스트 tearDown 이 대신 치우는 방식
+$scopeTestSrc = @file_get_contents($pluginDir.'/tests/Feature/TeeWideSessionScopeTest.php');
+$scopeTestCode = is_string($scopeTestSrc) ? twStripComments($scopeTestSrc) : '';
+check('세션범위: 복원을 테스트 tearDown 이 대신하지 않는다 [주입 24]',
+    strpos($scopeTestCode, 'function tearDown') === false
+    && strpos(twStripComments($baseSrc), "config(['session' =>") === false);
+check('세션범위: 회귀 테스트가 미들웨어만 태워 복원을 확인한다 [주입 24]',
+    strpos($scopeTestCode, 'ConfigureTeeWideSession::class') !== false
+    && strpos($scopeTestCode, 'sessionConfigSnapshot()') !== false);
+
+// 요구된 회귀 시나리오가 실제로 테스트로 존재하는가
+foreach ([
+    'YUTIV_TeeWide_YUTIV_순서에서_설정이_복원된다',
+    'TeeWide_live_YUTIV_순서에서_설정이_복원된다',
+    'TeeWide_요청_중_예외가_나도_설정이_복원된다',
+    '원래_설정의_null_빈문자열_false_가_그대로_보존된다',
+    '원래_없던_키는_되살아나지_않는다',
+    '중첩_호출이_바깥_스냅샷을_훼손하지_않는다',
+    'TeeWide_응답은_전용_쿠키_이름과_도메인으로_발급한다',
+    'TeeWide_요청_직후_YUTIV_응답은_YUTIV_쿠키_이름을_쓴다',
+    '연속_TeeWide_요청끼리는_세션을_계속_공유한다',
+] as $case) {
+    check('세션범위 회귀: '.$case, strpos($scopeTestCode, 'function test_'.$case) !== false);
+}
+
+// [주입 25] 실패 2번을 상태코드만으로 판정하는 느슨한 단언
+$isolationSrc = file_get_contents($pluginDir.'/tests/Feature/TeeWideSessionIsolationTest.php');
+$isolationCode = twStripComments($isolationSrc);
+check('세션범위: yutiv 호스트 판정이 상태코드가 아니라 응답 정체로 이뤄진다 [주입 25]',
+    strpos($isolationCode, "assertNotSame(200, \$response->getStatusCode()") === false
+    && strpos($isolationCode, "'\"platform\":\"teewide\"'") !== false);
+check('세션범위: 그 판정이 매칭 라우트도 확인한다 [주입 25]',
+    strpos($isolationCode, 'matchedRoute($url)') !== false
+    && strpos($isolationCode, "str_starts_with((string) \$matched->getName(), 'teewide.')") !== false);
+
+// [주입 26] 실패 3번을 actingAs 로 되돌리기
+check('세션범위: 로그인 누수 판정에 actingAs 를 쓰지 않는다 [주입 26]',
+    strpos($isolationCode, 'actingAs(') === false,
+    'actingAs 는 guard 인스턴스에 사용자를 꽂아 쿠키 격리를 증명하지 못한다');
+check('세션범위: 실제 YUTIV 로그인 세션 쿠키로 판정한다 [주입 26]',
+    strpos($isolationCode, 'makeYutivLoginSession(') !== false
+    && strpos($isolationCode, "'login_web_'.sha1") !== false
+    && strpos($isolationCode, 'withUnencryptedCookie($yutivCookie') !== false);
+check('세션범위: 누수 단언과 함께 TeeWide 쿠키 이름·라우트도 고정한다 [주입 26]',
+    strpos($isolationCode, "assertJsonPath('session_cookie', 'teewide_session')") !== false
+    && strpos($isolationCode, "assertJsonPath('route', 'teewide.portal.session')") !== false);
+
 // ── 5. 기존 코어 무수정 확인 ────────────────────────────────────────────────
 check('격리: 플러그인이 src/routes 를 만들지 않았다 (코어 프리픽스 강제 회피)',
     ! is_dir($pluginDir.'/src/routes'));
@@ -597,6 +678,9 @@ check('격리: 환경변수 복원을 테스트가 단언한다 [주입 21]',
 
 serverOnly('실제 bootstrap/cache/services.php 가 테스트 전후로 바이트 동일한가');
 serverOnly('임시 manifest 가 tearDown 후 하나도 남지 않는가');
+serverOnly('TeeWide 요청 뒤 session.cookie/domain 이 실제로 복원되는가');
+serverOnly('TeeWide 응답이 teewide_session 만, YUTIV 응답이 g7-session 만 발급하는가');
+serverOnly('YUTIV 로그인 세션 쿠키가 TeeWide 요청을 인증시키지 못하는가');
 
 // ── 8. 로컬에서 증명할 수 없는 계약 (서버 PHPUnit 필요) ─────────────────────
 //
