@@ -5,6 +5,7 @@ namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 use App\Models\User as YutivUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\TestResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
 
@@ -195,61 +196,88 @@ class TeeWideAuthTest extends PluginTestCase
         $this->assertSame(1, TeeWideUser::query()->where('email', 'taken@teewide.test')->count());
     }
 
-    public function test_회원가입_검증이_동작한다(): void
+    /**
+     * 회원가입 검증 사례.
+     *
+     * ── 왜 dataset 으로 나누는가 ────────────────────────────────────────
+     * 한 메서드 안에서 POST→redirect→GET 을 여러 번 돌리면 Laravel HTTP 테스트의
+     * `withUnencryptedCookie` 상태가 다음 반복으로 **누적**된다. 앞 사례가 남긴 쿠키가
+     * 뒤 사례의 요청에 섞여, 두 번째 반복부터 flash 된 오류를 엉뚱한 세션에서 찾는다.
+     * dataset 으로 나누면 사례마다 setUp 부터 새로 돌아 쿠키도 Application 도 격리된다.
+     *
+     * @return array<string, array{0: array<string, string>, 1: string, 2: string|null}>
+     */
+    public static function registerValidationCases(): array
     {
-        $cases = [
-            '이름 누락' => [
-                ['name' => '', 'email' => 'a@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234', 'terms' => '1'],
-                'id="tw-name-error"',
-            ],
-            '이메일 형식' => [
-                ['name' => '김', 'email' => 'not-an-email', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234', 'terms' => '1'],
-                'id="tw-email-error"',
-            ],
-            '비밀번호 길이' => [
-                ['name' => '김', 'email' => 'b@teewide.test', 'password' => 'short', 'password_confirmation' => 'short', 'terms' => '1'],
-                'id="tw-password-error"',
-            ],
-            '비밀번호 확인 불일치' => [
-                ['name' => '김', 'email' => 'c@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'different-1234', 'terms' => '1'],
-                'id="tw-password-error"',
-            ],
-            '약관 미동의' => [
-                ['name' => '김', 'email' => 'd@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234'],
-                'id="tw-terms-error"',
-            ],
+        $valid = [
+            'name' => '김테스트',
+            'email' => 'case@teewide.test',
+            'password' => 'teewide-secret-1234',
+            'password_confirmation' => 'teewide-secret-1234',
+            'terms' => '1',
         ];
 
-        foreach ($cases as $label => [$payload, $expectedMarker]) {
-            $response = $this->from($this->portal('/register'))
-                ->post($this->portal('/register'), $payload);
+        return [
+            '이름 누락' => [
+                array_merge($valid, ['name' => '']),
+                'id="tw-name-error"',
+                null,
+            ],
+            '이메일 형식 오류' => [
+                array_merge($valid, ['email' => 'not-an-email']),
+                'id="tw-email-error"',
+                null,
+            ],
+            '비밀번호 길이 부족' => [
+                array_merge($valid, ['password' => 'short', 'password_confirmation' => 'short']),
+                'id="tw-password-error"',
+                null,
+            ],
+            '비밀번호 확인 불일치' => [
+                array_merge($valid, ['password_confirmation' => 'different-1234']),
+                'id="tw-password-error"',
+                null,
+            ],
+            '약관 미동의' => [
+                // 체크박스는 미동의 시 아예 전송되지 않는다.
+                array_diff_key($valid, ['terms' => null]),
+                'id="tw-terms-error"',
+                // 이 문구는 플러그인이 직접 정한 것이라 문구 자체를 고정한다.
+                '이용약관에 동의해야 가입할 수 있습니다.',
+            ],
+        ];
+    }
 
-            $this->assertTrue(
-                $response->isRedirect($this->portal('/register')),
-                $label.' — 검증 실패인데 되돌아가지 않았습니다 (상태 '.$response->getStatusCode().')'
-            );
+    /**
+     * @param  array<string, string>  $payload
+     */
+    #[DataProvider('registerValidationCases')]
+    public function test_회원가입_검증이_동작한다(array $payload, string $errorMarker, ?string $expectedMessage): void
+    {
+        $response = $this->from($this->portal('/register'))
+            ->post($this->portal('/register'), $payload);
 
-            $page = $this->withTeeWideSession($this->teeWideSessionCookie($response))
-                ->get($this->portal('/register'));
+        $this->assertTrue(
+            $response->isRedirect($this->portal('/register')),
+            '검증 실패인데 되돌아가지 않았습니다 (상태 '.$response->getStatusCode().')'
+        );
 
-            $page->assertOk();
-            $page->assertSee('입력한 내용을 다시 확인해 주세요.');
-            $this->assertStringContainsString(
-                $expectedMarker,
-                (string) $page->getContent(),
-                $label.' — 해당 필드의 오류 표시가 화면에 없습니다'
-            );
+        // 오류는 세션에 flash 되므로, 같은 세션으로 돌아가 **렌더된 화면**에서 확인한다.
+        $page = $this->withTeeWideSession($this->teeWideSessionCookie($response))
+            ->get($this->portal('/register'));
+
+        $page->assertOk();
+        $page->assertSee('입력한 내용을 다시 확인해 주세요.');
+
+        $this->assertStringContainsString(
+            $errorMarker,
+            (string) $page->getContent(),
+            '해당 필드의 오류 표시가 화면에 없습니다'
+        );
+
+        if ($expectedMessage !== null) {
+            $page->assertSee($expectedMessage);
         }
-
-        // 약관 문구는 이 플러그인이 직접 정한 것이라 문구 자체를 고정한다.
-        $terms = $this->from($this->portal('/register'))->post($this->portal('/register'), [
-            'name' => '김', 'email' => 'e@teewide.test',
-            'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234',
-        ]);
-        $this->withTeeWideSession($this->teeWideSessionCookie($terms))
-            ->get($this->portal('/register'))
-            ->assertOk()
-            ->assertSee('이용약관에 동의해야 가입할 수 있습니다.');
 
         $this->assertSame(0, TeeWideUser::query()->count(), '검증 실패인데 계정이 만들어졌습니다');
     }
@@ -275,45 +303,60 @@ class TeeWideAuthTest extends PluginTestCase
             ->assertOk();
     }
 
-    public function test_잘못된_로그인은_계정_존재_여부를_알려주지_않는다(): void
+    /**
+     * 로그인 실패가 계정 존재 여부를 드러내지 않는지 확인한다.
+     *
+     * ── 왜 두 사례를 한 메서드에 넣지 않는가 ────────────────────────────
+     * 한 메서드에서 POST→redirect→GET 을 두 번 돌리면 `withUnencryptedCookie` 상태가
+     * 다음 사례로 누적돼, 두 번째 사례가 앞 사례의 쿠키를 함께 보낸다. 그래서
+     * "비밀번호 틀림" 은 통과하고 "없는 계정" 만 실패했다. 사례마다 setUp 부터 새로
+     * 돌도록 테스트를 나눈다.
+     *
+     * "두 결과가 같다" 는 계약은 두 테스트가 **같은 상수**(GENERIC_FAILURE)를 단언하고,
+     * 양쪽 모두 계정 노출 표현이 없음을 확인하는 것으로 유지된다.
+     */
+    private function assertLoginFailureIsGeneric(string $email): void
     {
+        $response = $this->from($this->portal('/login'))->post($this->portal('/login'), [
+            'email' => $email,
+            'password' => 'wrong-password-1234',
+        ]);
+
+        $this->assertTrue(
+            $response->isRedirect($this->portal('/login')),
+            '로그인이 성립했습니다 (상태 '.$response->getStatusCode().')'
+        );
+
+        $page = $this->withTeeWideSession($this->teeWideSessionCookie($response))
+            ->get($this->portal('/login'));
+
+        $page->assertOk();
+
+        $html = (string) $page->getContent();
+
+        $this->assertStringContainsString(self::GENERIC_FAILURE, $html, '일반 오류 문구가 없습니다');
+
+        foreach (['존재하지 않', '등록되지 않', '없는 계정', '가입되지 않', '비밀번호가 틀'] as $leak) {
+            $this->assertStringNotContainsString(
+                $leak,
+                $html,
+                '계정 존재 여부를 드러내는 문구가 있습니다: '.$leak
+            );
+        }
+    }
+
+    public function test_비밀번호가_틀리면_일반_오류만_보여준다(): void
+    {
+        // 이 사례에서만 계정을 만든다 — 다른 사례가 이 fixture 에 기대지 않게 한다.
         $this->makeTeeWideUser(['email' => 'real@teewide.test']);
 
-        $pages = [];
+        $this->assertLoginFailureIsGeneric('real@teewide.test');
+    }
 
-        foreach ([
-            '비밀번호 틀림' => 'real@teewide.test',
-            '없는 계정' => 'ghost@teewide.test',
-        ] as $label => $email) {
-            $response = $this->from($this->portal('/login'))->post($this->portal('/login'), [
-                'email' => $email,
-                'password' => 'wrong-password-1234',
-            ]);
-
-            $this->assertTrue(
-                $response->isRedirect($this->portal('/login')),
-                $label.' — 로그인이 성립했습니다 (상태 '.$response->getStatusCode().')'
-            );
-
-            $page = $this->withTeeWideSession($this->teeWideSessionCookie($response))
-                ->get($this->portal('/login'));
-
-            $page->assertOk();
-            $this->assertStringContainsString(
-                self::GENERIC_FAILURE,
-                (string) $page->getContent(),
-                $label.' — 일반 오류 문구가 없습니다'
-            );
-
-            $pages[$label] = (string) $page->getContent();
-        }
-
-        // 어느 쪽도 계정 존재 여부를 드러내면 안 된다.
-        foreach ($pages as $label => $html) {
-            foreach (['존재하지 않', '등록되지 않', '없는 계정', '가입되지 않', '비밀번호가 틀'] as $leak) {
-                $this->assertStringNotContainsString($leak, $html, $label.' — 계정 존재 여부를 드러내는 문구가 있습니다: '.$leak);
-            }
-        }
+    public function test_없는_계정도_같은_일반_오류만_보여준다(): void
+    {
+        // 계정을 만들지 않는다. 위 테스트와 **같은 문구**가 나와야 계정 열거가 불가능하다.
+        $this->assertLoginFailureIsGeneric('ghost@teewide.test');
     }
 
     public function test_정지된_계정은_로그인할_수_없다(): void

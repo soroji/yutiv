@@ -475,6 +475,71 @@ check('인증테스트: 쿠키가 없으면 명확히 실패시킨다',
     preg_match('/assertNotNull\(\s*\$cookie,/', $authTestCode) === 1);
 
 // 보안 계약이 그대로 남아 있는가 (숫자를 줄여 통과시키지 않았는지)
+// ── 사례별 독립 실행 (쿠키 누적 회귀 방지) ────────────────────────────────
+//
+// 한 메서드 안에서 POST→redirect→GET 을 여러 번 돌리면 Laravel HTTP 테스트의
+// withUnencryptedCookie 상태가 다음 반복으로 누적돼, 두 번째 사례부터 앞 사례의 쿠키가
+// 함께 전송된다. 그래서 사례마다 setUp 부터 새로 도는 실행 단위로 나눠야 한다.
+
+// ⚠ 이 하네스는 PHP 7.4 에서 돈다. 거기서는 `#[` 가 **주석**으로 토큰화되므로
+//   twStripComments() 를 거친 코드에는 속성이 남지 않는다 — 원본에서 확인한다.
+check('인증테스트: 회원가입 검증이 dataset 으로 분리돼 있다',
+    strpos($authTestSrc, 'PHPUnit\\Framework\\Attributes\\DataProvider') !== false
+    && strpos($authTestSrc, "#[DataProvider('registerValidationCases')]") !== false
+    && preg_match('/public static function registerValidationCases\\(\\): array/', $authTestSrc) === 1);
+
+foreach ([
+    '이름 누락' => 'id="tw-name-error"',
+    '이메일 형식 오류' => 'id="tw-email-error"',
+    '비밀번호 길이 부족' => 'id="tw-password-error"',
+    '비밀번호 확인 불일치' => 'id="tw-password-error"',
+    '약관 미동의' => 'id="tw-terms-error"',
+] as $case => $marker) {
+    check('인증테스트 dataset: '.$case,
+        strpos($authTestCode, "'".$case."' => [") !== false);
+}
+
+check('인증테스트: 검증 사례마다 오류 요소를 대조한다',
+    substr_count($authTestCode, 'id="tw-name-error"') >= 1
+    && substr_count($authTestCode, 'id="tw-email-error"') >= 1
+    && substr_count($authTestCode, 'id="tw-password-error"') === 2
+    && substr_count($authTestCode, 'id="tw-terms-error"') >= 1);
+check('인증테스트: 약관 문구를 그대로 고정한다',
+    strpos($authTestCode, '이용약관에 동의해야 가입할 수 있습니다.') !== false);
+check('인증테스트: 검증 실패는 계정을 만들지 않는다',
+    strpos($authTestCode, "assertSame(0, TeeWideUser::query()->count()") !== false);
+
+check('인증테스트: 로그인 실패 두 사례가 독립 테스트다',
+    strpos($authTestCode, 'function test_비밀번호가_틀리면_일반_오류만_보여준다') !== false
+    && strpos($authTestCode, 'function test_없는_계정도_같은_일반_오류만_보여준다') !== false);
+check('인증테스트: 두 사례가 같은 일반 오류 상수를 단언한다',
+    strpos($authTestCode, 'function assertLoginFailureIsGeneric(') !== false
+    && substr_count($authTestCode, 'assertLoginFailureIsGeneric(') === 3,
+    '정의 1회 + 두 사례 호출 2회');
+check('인증테스트: 계정 노출 표현 5종을 모두 막는다',
+    strpos($authTestCode, "'존재하지 않', '등록되지 않', '없는 계정', '가입되지 않', '비밀번호가 틀'") !== false);
+check('인증테스트: 기존 계정 fixture 를 해당 사례에서만 만든다',
+    substr_count($authTestCode, "makeTeeWideUser(['email' => 'real@teewide.test'])") === 1);
+
+// 여러 사례를 helper 안에서 다시 합치지 않았는가.
+$genericHelperBody = twMethodBody($authTestCode, 'assertLoginFailureIsGeneric');
+check('인증테스트: 로그인 helper 가 사례를 다시 묶지 않는다',
+    is_string($genericHelperBody)
+    && substr_count($genericHelperBody, '->post(') === 1,
+    'helper 는 한 사례의 POST→쿠키→GET 까지만 담당한다');
+// GENERIC_FAILURE 는 상수 선언과 다른 테스트에도 등장하므로, **helper 본문 안에서**
+// 실제로 단언하는지를 본다. 파일 전체 검색으로는 단언 삭제를 놓친다.
+check('인증테스트: helper 가 고정 일반 오류 문구를 단언한다',
+    is_string($genericHelperBody)
+    && preg_match('/assertStringContainsString\\(\\s*self::GENERIC_FAILURE\\s*,/', $genericHelperBody) === 1,
+    '두 사례가 같은 문구를 보는지가 계정 열거 차단의 핵심이다');
+
+$registerTestBody = twMethodBody($authTestCode, 'test_회원가입_검증이_동작한다');
+check('인증테스트: 회원가입 검증 테스트가 사례를 다시 묶지 않는다',
+    is_string($registerTestBody)
+    && substr_count($registerTestBody, '->post(') === 1
+    && strpos($registerTestBody, 'foreach') === false);
+
 check('인증테스트: 보안 단언이 유지된다',
     strpos($authTestCode, 'GENERIC_FAILURE') !== false
     && strpos($authTestCode, 'Hash::check(') !== false
