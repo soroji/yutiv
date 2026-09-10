@@ -861,32 +861,48 @@ abstract class PluginTestCase extends TestCase
     /**
      * 진단이 켜진 상태에서 등록돼야 하는 TeeWide 라우트 이름 (정렬됨).
      *
-     * 제품 화면 3종 + 진단 2종. 제품 화면은 `TEEWIDE_DIAGNOSTICS` 와 무관하게 등록된다.
+     * 제품 화면 3종 + 인증·계정 6종 + 진단 2종 = 11종.
+     * 제품 화면과 인증 화면은 `TEEWIDE_DIAGNOSTICS` 와 무관하게 등록된다.
      *
      * @return array<int, string>
      */
     protected static function teeWideRouteNames(): array
     {
         return [
+            'teewide.account',
             'teewide.live.home',
             'teewide.live.session',
             'teewide.live.tenant',
+            'teewide.login',
+            'teewide.login.store',
+            'teewide.logout',
             'teewide.portal',
             'teewide.portal.session',
+            'teewide.register',
+            'teewide.register.store',
         ];
     }
 
     /**
-     * 진단을 끈 상태에서 등록돼야 하는 라우트 이름 (제품 화면만).
+     * 진단을 끈 상태에서 등록돼야 하는 라우트 이름.
+     *
+     * 인증 라우트는 진단 스위치와 무관하므로 그대로 남는다 — 빠지는 것은
+     * `/_teewide/session` 두 개뿐이다.
      *
      * @return array<int, string>
      */
     protected static function teeWideProductRouteNames(): array
     {
         return [
+            'teewide.account',
             'teewide.live.home',
             'teewide.live.tenant',
+            'teewide.login',
+            'teewide.login.store',
+            'teewide.logout',
             'teewide.portal',
+            'teewide.register',
+            'teewide.register.store',
         ];
     }
 
@@ -913,7 +929,15 @@ abstract class PluginTestCase extends TestCase
      */
     protected static function isTeeWideControllerAction(string $action): bool
     {
-        foreach (['PortalController', 'LiveController', 'DiagnosticsController'] as $controller) {
+        foreach ([
+            'PortalController',
+            'LiveController',
+            'DiagnosticsController',
+            'AccountController',
+            // 인증 컨트롤러는 Auth\ 하위 네임스페이스다.
+            'Auth\\LoginController',
+            'Auth\\RegisterController',
+        ] as $controller) {
             if (str_contains($action, 'Plugins\\Yutiv\\LiveCommerce\\Http\\Controllers\\'.$controller)) {
                 return true;
             }

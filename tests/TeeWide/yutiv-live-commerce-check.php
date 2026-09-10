@@ -897,9 +897,42 @@ check('등록판정: 라우트 이름·도메인·액션까지 대조한다 [주
     && strpos($lifecycleBody, 'routeNamesAtBootEnd') !== false
     && strpos($lifecycleBody, 'getDomain()') !== false
     && strpos($lifecycleBody, 'isTeeWideControllerAction(') !== false);
+// 목록을 리터럴로 고정하지 않는다 — 컨트롤러가 늘 때마다 이 검사가 거짓 실패한다.
+// 지켜야 할 계약은 "이 플러그인 네임스페이스 안의 컨트롤러만 허용한다" 이다.
+$allowListBody = twMethodBody($baseCode, 'isTeeWideControllerAction');
+// ── 기대 라우트 목록 ↔ provider 선언 교차 검증 ─────────────────────────────
+//
+// 정확 일치 단언은 런타임(PHPUnit)이 실제 라우터와 비교해 강제한다. 다만 기대 목록에서
+// 이름 하나가 빠지면 서버에 올려야만 드러나므로, 여기서 provider 의 `->name('teewide.…')`
+// 선언과 대조해 미리 잡는다.
+preg_match_all("/->name\('(teewide\.[a-z.]+)'\)/", $providerCode, $declaredNames);
+$declared = array_values(array_unique($declaredNames[1]));
+sort($declared);
+
+preg_match_all("/'(teewide\.[a-z.]+)'/", twMethodBody($baseCode, 'teeWideRouteNames') ?? '', $expectedNames);
+$expected = array_values(array_unique($expectedNames[1]));
+sort($expected);
+
+check('등록판정: 기대 목록이 provider 가 선언한 라우트 이름과 정확히 일치한다',
+    $declared !== [] && $declared === $expected,
+    '선언 '.implode(',', $declared).' / 기대 '.implode(',', $expected));
+
+// 진단 OFF 목록 = 전체 목록에서 /_teewide/session 두 개만 뺀 것이어야 한다.
+preg_match_all("/'(teewide\.[a-z.]+)'/", twMethodBody($baseCode, 'teeWideProductRouteNames') ?? '', $productNames);
+$product = array_values(array_unique($productNames[1]));
+sort($product);
+$expectedProduct = array_values(array_filter($expected, static fn ($n) => substr($n, -8) !== '.session'));
+
+check('등록판정: 진단 OFF 목록은 진단 라우트만 빠진 것이다',
+    $product === $expectedProduct,
+    '기대 '.implode(',', $expectedProduct).' / 실제 '.implode(',', $product));
+
 check('등록판정: 액션 허용 목록이 이 플러그인 컨트롤러로 한정된다',
-    preg_match("/'PortalController', 'LiveController', 'DiagnosticsController'/", $baseCode) === 1
-    && strpos($baseCode, 'Plugins\\\\Yutiv\\\\LiveCommerce\\\\Http\\\\Controllers\\\\') !== false);
+    is_string($allowListBody)
+    && strpos($allowListBody, 'Plugins\\\\Yutiv\\\\LiveCommerce\\\\Http\\\\Controllers\\\\') !== false
+    // 항목 하나라도 맨 'Controller' 면 아무 컨트롤러나 통과한다 (와일드카드).
+    && preg_match("/'Controller'\\s*,/", $allowListBody) !== 1
+    && substr_count($allowListBody, 'Controller') >= 4);
 
 // [주입 15] trace 문자열만 조작하여 거짓 통과
 check('등록판정: 사전검사가 trace 문자열을 판정 근거로 쓰지 않는다 [주입 15]',
