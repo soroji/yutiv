@@ -41,11 +41,16 @@ class TeeWideDomainRoutingTest extends PluginTestCase
 
         $this->assertSame('teewide.portal', $this->matchedRouteName($url), $this->routingDiagnostics($url));
 
-        $this->get('http://'.self::ROOT_HOST.'/')
-            ->assertOk()
-            ->assertJsonPath('platform', 'teewide')
-            ->assertJsonPath('area', 'portal')
-            ->assertJsonPath('route', 'teewide.portal');
+        $response = $this->get($url);
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/html; charset=UTF-8');
+        $response->assertSee('라이브로 연결되는 새로운 쇼핑');
+        $response->assertSee('TeeWide', false);
+
+        // 진단 JSON 이 제품 화면으로 새어 나오지 않는다.
+        $response->assertDontSee('session_configured', false);
+        $response->assertDontSee('yutiv_user_leaked', false);
     }
 
     public function test_live_호스트의_업체_slug_가_라이브_라우트로_매칭된다(): void
@@ -54,11 +59,13 @@ class TeeWideDomainRoutingTest extends PluginTestCase
 
         $this->assertSame('teewide.live.tenant', $this->matchedRouteName($url), $this->routingDiagnostics($url));
 
-        $this->get('http://'.self::LIVE_HOST.'/golfif')
-            ->assertOk()
-            ->assertJsonPath('area', 'live')
-            ->assertJsonPath('tenant', 'golfif')
-            ->assertJsonPath('route', 'teewide.live.tenant');
+        $response = $this->get($url);
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/html; charset=UTF-8');
+        $response->assertSee('골프이프');
+        $response->assertSee('라이브 상품을 준비하고 있습니다');
+        $response->assertDontSee('session_configured', false);
     }
 
     // ── 매칭되면 안 되는 것 ─────────────────────────────────────────────────
@@ -80,18 +87,34 @@ class TeeWideDomainRoutingTest extends PluginTestCase
         );
     }
 
-    public function test_live_호스트의_루트는_라이브_홈으로_열리지_않는다(): void
+    public function test_live_호스트의_루트가_라이브_홈으로_매칭된다(): void
     {
-        // `/` 에는 TeeWide 라우트를 등록하지 않았다. SPA catch-all 이 매칭되더라도
-        // 호스트 게이트가 끊는다.
-        $name = $this->matchedRouteName('http://'.self::LIVE_HOST.'/');
+        // Phase 1-A 부터 라이브 홈이 존재한다 — 더 이상 404 가 아니다.
+        $url = 'http://'.self::LIVE_HOST.'/';
 
-        $this->assertTrue(
-            $name === null || ! str_starts_with($name, 'teewide.'),
-            'live 루트가 TeeWide 라우트로 매칭됐습니다: '.var_export($name, true)
-        );
+        $this->assertSame('teewide.live.home', $this->matchedRouteName($url), $this->routingDiagnostics($url));
 
-        $this->get('http://'.self::LIVE_HOST.'/')->assertNotFound();
+        $response = $this->get($url);
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/html; charset=UTF-8');
+        $response->assertSee('TeeWide Live', false);
+        $response->assertSee('판매 채널');
+
+        // 등록된 채널은 실제로 진입 가능한 링크여야 한다.
+        $response->assertSee('/golfif', false);
+    }
+
+    public function test_라이브_홈은_없는_수치를_만들어_내지_않는다(): void
+    {
+        $body = (string) $this->get('http://'.self::LIVE_HOST.'/')->getContent();
+
+        // 시청자 수·주문 수·할인율처럼 근거 없는 숫자를 화면에 두지 않는다.
+        foreach (['명 시청', '% 할인', '개 남음', '주문 완료'] as $fabricated) {
+            $this->assertStringNotContainsString($fabricated, $body, $fabricated.' 같은 허위 수치가 있습니다');
+        }
+
+        $this->assertStringContainsString('준비', $body, '정직한 준비 상태 표기가 없습니다');
     }
 
     public function test_알_수_없는_업체_slug_는_404(): void
@@ -166,7 +189,7 @@ class TeeWideDomainRoutingTest extends PluginTestCase
     public function test_TeeWide_라우트가_중복_등록되지_않는다(): void
     {
         $before = count($this->teeWideRoutes());
-        $this->assertSame(4, $before, 'TeeWide 라우트가 4개가 아닙니다');
+        $this->assertSame(count(self::teeWideRouteNames()), $before, 'TeeWide 라우트 수가 기대와 다릅니다');
 
         // 등록된 **그 프로바이더**를 다시 등록해도 Application::register() 는
         // 재실행하지 않는다(Application.php:885 의 getProvider() 조기 반환).

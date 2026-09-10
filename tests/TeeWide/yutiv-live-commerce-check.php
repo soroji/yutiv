@@ -212,8 +212,114 @@ check('소스: 세션 설정이 StartSession 보다 앞',
     strpos($providerSrc, 'ConfigureTeeWideSession::class') < strpos($providerSrc, 'StartSession::class'));
 check('소스: YUTIV web 그룹을 쓰지 않는다',
     preg_match("/middleware\(\s*'web'\s*\)/", $providerSrc) !== 1);
-check('소스: 라이브 루트(/)를 등록하지 않는다',
-    preg_match("/liveHost\(\)\).*?Route::get\('\/'/s", $providerSrc) !== 1);
+// Phase 1-A: 라이브 루트가 실제 화면이 됐다. 더 이상 404 로 두지 않는다.
+check('소스: 라이브 루트(/)가 라이브 홈으로 등록된다',
+    strpos($providerCode, "Route::get('/', [LiveController::class, 'home'])") !== false
+    && strpos($providerCode, "->name('teewide.live.home')") !== false);
+check('소스: 포털 루트(/)가 포털 화면으로 등록된다',
+    strpos($providerCode, "Route::get('/', [PortalController::class, 'index'])") !== false
+    && strpos($providerCode, "->name('teewide.portal')") !== false);
+check('소스: 채널 라우트가 LiveController 로 간다',
+    strpos($providerCode, "Route::get('/{tenant}', [LiveController::class, 'channel'])") !== false);
+// ── 진단 스위치와 제품 화면의 분리 (Phase 1-A 구조 변경) ────────────────────
+//
+// Phase 0 에서는 TEEWIDE_DIAGNOSTICS 가 화면까지 함께 껐다. 진단 스위치가 서비스를
+// 끄는 구조는 옳지 않다 — 이제 그 값은 /_teewide/session 만 켜고 끈다.
+$routesBody = twMethodBody($providerCode, 'registerTeeWideRoutes');
+
+check('진단분리: 제품 화면 등록이 진단 스위치 안에 들어가 있지 않다',
+    is_string($routesBody)
+    && preg_match('/if \(\$diagnostics\) \{(?:(?!\}).)*PortalController/s', $routesBody) !== 1
+    && preg_match('/if \(\$diagnostics\) \{(?:(?!\}).)*LiveController/s', $routesBody) !== 1);
+check('진단분리: 진단 라우트만 스위치로 감싼다',
+    is_string($routesBody)
+    && substr_count($routesBody, 'if ($diagnostics) {') === 2
+    && substr_count($routesBody, 'DiagnosticsController::class') === 2);
+check('진단분리: 진단 라우트를 {tenant} 보다 먼저 등록한다',
+    twOrderedIn($routesBody, "'teewide.live.session'", "Route::get('/{tenant}'"),
+    'slug 패턴이 _teewide 를 삼키면 진단이 사라진다');
+check('진단분리: 설정 주석이 화면과 무관함을 명시한다',
+    strpos($configSource, '제품 화면과 무관') !== false);
+
+// ── 화면 자산 ──────────────────────────────────────────────────────────────
+$viewDir = $pluginDir.'/resources/views';
+check('화면: Blade 화면 3종과 레이아웃이 있다',
+    is_file($viewDir.'/layouts/teewide.blade.php')
+    && is_file($viewDir.'/portal/index.blade.php')
+    && is_file($viewDir.'/live/home.blade.php')
+    && is_file($viewDir.'/live/channel.blade.php'));
+check('화면: 플러그인 네임스페이스로 view 를 등록한다',
+    strpos($providerCode, "loadViewsFrom(\$views, 'teewide')") !== false);
+
+$viewSources = '';
+foreach (glob($viewDir.'/*/*.blade.php') as $file) {
+    $viewSources .= file_get_contents($file);
+}
+$layoutSource = (string) @file_get_contents($viewDir.'/layouts/teewide.blade.php');
+$allViews = $viewSources.$layoutSource;
+
+check('화면: 외부 CDN·폰트·이미지를 참조하지 않는다',
+    strpos($allViews, '//cdn.') === false
+    && strpos($allViews, 'fonts.googleapis.com') === false
+    && strpos($allViews, 'fonts.gstatic.com') === false
+    && strpos($allViews, 'unpkg.com') === false
+    && strpos($allViews, 'jsdelivr.net') === false
+    && preg_match('/<img[^>]+src="https?:/', $allViews) !== 1);
+check('화면: 반응형·접근성 기본이 들어 있다',
+    strpos($layoutSource, 'name="viewport"') !== false
+    && strpos($layoutSource, '본문으로 건너뛰기') !== false
+    && strpos($layoutSource, ':focus-visible') !== false
+    && strpos($layoutSource, '@media (max-width: 640px)') !== false);
+check('화면: 진단 필드를 화면에 노출하지 않는다',
+    strpos($allViews, 'session_configured') === false
+    && strpos($allViews, 'yutiv_user_leaked') === false);
+check('화면: 없는 수치를 지어내지 않는다',
+    strpos($allViews, '% 할인') === false
+    && strpos($allViews, '명 시청') === false
+    && strpos($allViews, '개 남음') === false);
+check('화면: 준비 중 상태를 정직하게 표기한다',
+    strpos($allViews, '라이브 상품을 준비하고 있습니다') !== false
+    && strpos($allViews, '방송 준비 중') !== false);
+check('화면: 준비되지 않은 CTA 를 링크로 두지 않는다',
+    substr_count($viewSources, 'disabled aria-describedby="tw-cta-note"') === 3);
+
+// ── ViewModel ─────────────────────────────────────────────────────────────
+$presenterSrc = (string) @file_get_contents($pluginDir.'/src/Support/TeeWidePresenter.php');
+$presenterCode = twStripComments($presenterSrc);
+
+check('화면: 채널 목록이 knownTenants() 계약에서 나온다',
+    strpos($presenterCode, 'TeeWideConfig::knownTenants()') !== false,
+    '보이는 채널과 열리는 채널이 어긋나면 눌러도 404 가 된다');
+check('화면: 아직 없는 데이터는 빈 배열로 정직하게 돌려준다',
+    preg_match('/function onAir\(\): array\s*\{\s*return \[\];/', $presenterCode) === 1
+    && preg_match('/function liveProducts\([^)]*\): array\s*\{\s*return \[\];/', $presenterCode) === 1);
+check('화면: tenant 표시 정보와 접근 판정이 분리돼 있다',
+    strpos($configSource, "'tenant_profiles'") !== false
+    && strpos(file_get_contents($pluginDir.'/src/Support/TeeWideConfig.php'), 'function tenantProfile(') !== false);
+
+// ── 컨트롤러 분리 ─────────────────────────────────────────────────────────
+$portalSrc = (string) @file_get_contents($pluginDir.'/src/Http/Controllers/PortalController.php');
+$liveSrc = (string) @file_get_contents($pluginDir.'/src/Http/Controllers/LiveController.php');
+
+// 이 시점에는 아래쪽에서 쓰는 $controllerCode 가 아직 없다 — 여기서 직접 읽는다.
+$diagCtrlCode = twStripComments(
+    (string) @file_get_contents($pluginDir.'/src/Http/Controllers/DiagnosticsController.php')
+);
+check('컨트롤러: 진단 컨트롤러에는 JSON 진단만 남는다',
+    strpos($diagCtrlCode, 'function sessionMarker(') !== false
+    && strpos($diagCtrlCode, 'function portal(') === false
+    && strpos($diagCtrlCode, 'function live(') === false);
+check('컨트롤러: 화면 컨트롤러는 View 를 돌려준다',
+    strpos($portalSrc, "view('teewide::portal.index'") !== false
+    && strpos($liveSrc, "view('teewide::live.home'") !== false
+    && strpos($liveSrc, "view('teewide::live.channel'") !== false);
+check('컨트롤러: 화면 컨트롤러가 JSON 을 돌려주지 않는다',
+    strpos(twStripComments($portalSrc), 'response()->json(') === false
+    && strpos(twStripComments($liveSrc), 'response()->json(') === false);
+check('컨트롤러: 미등록 tenant 는 knownTenants() 로 판정해 404',
+    strpos($liveSrc, 'in_array($tenant, TeeWideConfig::knownTenants(), true)') !== false
+    && strpos($liveSrc, 'NotFoundHttpException') !== false);
+
 check('소스: tenant 라우트에 slug 패턴 제약',
     strpos($providerSrc, "->where('tenant', TeeWideConfig::tenantSlugPattern())") !== false);
 check('소스: 라우트 액션이 컨트롤러 배열 (route:cache 가능)',
@@ -560,7 +666,7 @@ check('생명주기: 진단이 요구된 항목을 모두 담는다',
 
 // [주입 8] response body 를 고정 route name 으로 만들어 거짓 통과
 check('생명주기: 컨트롤러가 route name 을 라우터에서 읽는다 (하드코딩 아님) [주입 8]',
-    substr_count($controllerCode, "'route' => \$request->route()?->getName()") === 3
+    substr_count($controllerCode, "'route' => \$request->route()?->getName()") === 1
     && preg_match("/'route' => '/", $controllerCode) !== 1);
 
 // [주입 9] provider 상태 초기화 제거
@@ -647,9 +753,21 @@ check('등록판정: 횟수가 실제로 계측된다 (주석 처리 무력화 �
 check('등록판정: boot 종료 라우트 수 < bootstrap 완료 라우트 수 를 단언한다 [주입 14]',
     is_string($lifecycleBody)
     && preg_match('/assertLessThan\\(\\s*\\$this->routeCountAfterBootstrap\\s*,\\s*\\$end\\s*,/', $lifecycleBody) === 1);
-check('등록판정: boot 중 라우트가 정확히 4개 늘었음을 단언한다 [주입 14]',
+check('등록판정: boot 중 늘어난 라우트 수를 기대 목록과 대조한다 [주입 14]',
     is_string($lifecycleBody)
-    && strpos($lifecycleBody, 'assertSame(4, $end - $start') !== false);
+    && strpos($lifecycleBody, 'count($this->expectedTeeWideRouteNames()), $end - $start') !== false);
+// 메서드가 있는지가 아니라 **실제로 분기하는지**를 본다.
+// 고정 목록을 돌려주면 진단 OFF 스위트가 조용히 통과해 버린다.
+$expectedBody = twMethodBody($baseCode, 'expectedTeeWideRouteNames');
+check('등록판정: 기대 목록이 진단 스위치에 따라 달라진다 [주입 14]',
+    is_string($expectedBody)
+    && strpos($expectedBody, "'diagnostics_enabled'") !== false
+    && strpos($expectedBody, 'self::teeWideRouteNames()') !== false
+    && strpos($expectedBody, 'self::teeWideProductRouteNames()') !== false);
+check('등록판정: 제품 전용 목록에 진단 라우트가 없다 [주입 14]',
+    is_string($productNamesBody = twMethodBody($baseCode, 'teeWideProductRouteNames'))
+    && strpos($productNamesBody, 'teewide.live.home') !== false
+    && strpos($productNamesBody, '.session') === false);
 check('등록판정: SPA catch-all 보다 앞선다는 것도 사전검사가 확인한다 [주입 14]',
     is_string($lifecycleBody)
     && strpos($lifecycleBody, 'spaCatchAllRoute()') !== false
@@ -658,7 +776,10 @@ check('등록판정: 라우트 이름·도메인·액션까지 대조한다 [주
     is_string($lifecycleBody)
     && strpos($lifecycleBody, 'routeNamesAtBootEnd') !== false
     && strpos($lifecycleBody, 'getDomain()') !== false
-    && strpos($lifecycleBody, 'DiagnosticsController') !== false);
+    && strpos($lifecycleBody, 'isTeeWideControllerAction(') !== false);
+check('등록판정: 액션 허용 목록이 이 플러그인 컨트롤러로 한정된다',
+    preg_match("/'PortalController', 'LiveController', 'DiagnosticsController'/", $baseCode) === 1
+    && strpos($baseCode, 'Plugins\\\\Yutiv\\\\LiveCommerce\\\\Http\\\\Controllers\\\\') !== false);
 
 // [주입 15] trace 문자열만 조작하여 거짓 통과
 check('등록판정: 사전검사가 trace 문자열을 판정 근거로 쓰지 않는다 [주입 15]',

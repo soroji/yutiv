@@ -97,6 +97,41 @@ class TeeWideConfig
     }
 
     /**
+     * tenant 의 화면 표시 정보.
+     *
+     * ⚠ 이 메서드는 **접근 판정이 아니다.** 여기에 항목이 있다고 해서 채널이 열리지
+     *   않는다 — 열림 여부는 `knownTenants()` 만이 정한다. 설정에 없는 slug 도 안전한
+     *   기본값을 돌려주므로, 화면이 빈 값으로 깨지지 않는다.
+     *
+     * @return array{name: string, description: string, initials: string}
+     */
+    public static function tenantProfile(string $slug): array
+    {
+        $profiles = config(self::KEY.'.tenant_profiles', []);
+        $profile = is_array($profiles) && isset($profiles[$slug]) && is_array($profiles[$slug])
+            ? $profiles[$slug]
+            : [];
+
+        $name = isset($profile['name']) && is_string($profile['name']) && $profile['name'] !== ''
+            ? $profile['name']
+            : $slug;
+
+        $description = isset($profile['description']) && is_string($profile['description'])
+            ? $profile['description']
+            : '';
+
+        $initials = isset($profile['initials']) && is_string($profile['initials']) && $profile['initials'] !== ''
+            ? $profile['initials']
+            : mb_strtoupper(mb_substr($slug, 0, 2));
+
+        return [
+            'name' => $name,
+            'description' => $description,
+            'initials' => $initials,
+        ];
+    }
+
+    /**
      * 이 요청 호스트의 TeeWide 역할.
      */
     public static function roleFor($host): string

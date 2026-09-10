@@ -42,7 +42,8 @@ class TeeWideSessionIsolationTest extends PluginTestCase
 
     public function test_TeeWide_요청은_전용_세션_쿠키를_쓴다(): void
     {
-        $this->get('http://'.self::ROOT_HOST.'/')
+        // 세션 설정 값은 진단 엔드포인트가 알린다 — 제품 화면은 그런 것을 노출하지 않는다.
+        $this->get('http://'.self::ROOT_HOST.'/_teewide/session')
             ->assertOk()
             ->assertJsonPath('session_cookie', 'teewide_session')
             ->assertJsonPath('session_domain', '.teewide.test')
@@ -51,7 +52,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
 
     public function test_라이브_호스트도_같은_세션_설정을_쓴다(): void
     {
-        $this->get('http://'.self::LIVE_HOST.'/golfif')
+        $this->get('http://'.self::LIVE_HOST.'/_teewide/session')
             ->assertOk()
             ->assertJsonPath('session_cookie', 'teewide_session')
             ->assertJsonPath('session_domain', '.teewide.test');

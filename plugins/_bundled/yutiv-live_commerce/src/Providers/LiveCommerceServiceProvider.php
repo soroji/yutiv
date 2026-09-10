@@ -12,6 +12,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\DiagnosticsController;
+use Plugins\Yutiv\LiveCommerce\Http\Controllers\LiveController;
+use Plugins\Yutiv\LiveCommerce\Http\Controllers\PortalController;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 
@@ -57,7 +59,23 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
             return;
         }
 
+        $this->registerTeeWideViews();
         $this->registerTeeWideRoutes();
+    }
+
+    /**
+     * TeeWide 화면(Blade)을 `teewide::` 네임스페이스로 등록한다.
+     *
+     * 확장의 lang 파일을 네임스페이스로 붙이는 `loadExtensionTranslations()` 와 같은 방식이다.
+     * YUTIV 의 `resources/views` 를 건드리지 않고 이 플러그인 안에서만 화면을 갖는다.
+     */
+    private function registerTeeWideViews(): void
+    {
+        $views = dirname(__DIR__, 2).'/resources/views';
+
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'teewide');
+        }
     }
 
     /**
@@ -65,40 +83,48 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
      *
      * `Route::domain()` 은 route:cache 로 컴파일된다. 다만 호스트 문자열이 컴파일 시점에
      * 박히므로, `TEEWIDE_ROOT_HOST` 를 바꾼 뒤에는 `route:cache` 를 다시 만들어야 한다.
+     *
+     * ── 제품 화면과 진단은 분리한다 ────────────────────────────────────────
+     * Phase 0 에서는 `TEEWIDE_DIAGNOSTICS` 가 화면까지 함께 껐다. 진단 스위치를 끄면
+     * 서비스가 사라지는 구조는 옳지 않으므로, 이제 그 스위치는 `/_teewide/session` 만
+     * 켜고 끈다. 포털·라이브 HTML 은 플러그인이 활성이고 `TEEWIDE_ENABLED` 가 켜져 있으면
+     * 항상 등록된다.
      */
     private function registerTeeWideRoutes(): void
     {
         $stack = $this->teeWideStack();
+        $diagnostics = TeeWideConfig::diagnosticsEnabled();
 
         // ── 계정 포털: teewide.com ──────────────────────────────────────────
         Route::domain(TeeWideConfig::rootHost())
             ->middleware($stack)
-            ->group(function () {
-                if (! TeeWideConfig::diagnosticsEnabled()) {
-                    return;
+            ->group(function () use ($diagnostics) {
+                // 진단 라우트를 **먼저** 등록한다. 포털에는 아직 와일드카드가 없지만,
+                // 정적 경로를 앞에 두는 규칙을 두 호스트에서 같게 유지한다.
+                if ($diagnostics) {
+                    Route::get('/_teewide/session', [DiagnosticsController::class, 'sessionMarker'])
+                        ->name('teewide.portal.session');
                 }
 
-                Route::get('/', [DiagnosticsController::class, 'portal'])
+                Route::get('/', [PortalController::class, 'index'])
                     ->name('teewide.portal');
-
-                Route::get('/_teewide/session', [DiagnosticsController::class, 'sessionMarker'])
-                    ->name('teewide.portal.session');
             });
 
-        // ── 라이브 판매: live.teewide.com/{tenant} ──────────────────────────
+        // ── 라이브 판매: live.teewide.com ───────────────────────────────────
         Route::domain(TeeWideConfig::liveHost())
             ->middleware($stack)
-            ->group(function () {
-                if (! TeeWideConfig::diagnosticsEnabled()) {
-                    return;
+            ->group(function () use ($diagnostics) {
+                // ★ `/_teewide/session` 은 `/{tenant}` 보다 **반드시 먼저** 등록한다.
+                //   순서가 뒤바뀌면 slug 패턴이 `_teewide` 를 삼켜 진단이 사라진다.
+                if ($diagnostics) {
+                    Route::get('/_teewide/session', [DiagnosticsController::class, 'sessionMarker'])
+                        ->name('teewide.live.session');
                 }
 
-                Route::get('/_teewide/session', [DiagnosticsController::class, 'sessionMarker'])
-                    ->name('teewide.live.session');
+                Route::get('/', [LiveController::class, 'home'])
+                    ->name('teewide.live.home');
 
-                // `/` 는 의도적으로 등록하지 않는다 — 라이브 홈은 존재하지 않고,
-                // 업체 slug 로만 들어온다. `/` 요청은 호스트 게이트가 404 로 끝낸다.
-                Route::get('/{tenant}', [DiagnosticsController::class, 'live'])
+                Route::get('/{tenant}', [LiveController::class, 'channel'])
                     ->where('tenant', TeeWideConfig::tenantSlugPattern())
                     ->name('teewide.live.tenant');
             });

@@ -232,7 +232,11 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         // 6차 서버 실행에서는 이 경로가 TypeError 로 무너졌다.
         $this->get('http://'.self::ROOT_HOST.'/')
             ->assertOk()
-            ->assertJsonPath('route', 'teewide.portal')
+            ->assertSee('라이브로 연결되는 새로운 쇼핑');
+
+        $this->get('http://'.self::ROOT_HOST.'/_teewide/session')
+            ->assertOk()
+            ->assertJsonPath('route', 'teewide.portal.session')
             ->assertJsonPath('session_cookie', 'teewide_session');
     }
 

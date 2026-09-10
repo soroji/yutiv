@@ -734,8 +734,10 @@ abstract class PluginTestCase extends TestCase
 
         $this->assertNotNull($start, 'boot 진입 시점이 기록되지 않았습니다.'.$diagnostics);
         $this->assertNotNull($end, 'boot 종료 시점이 기록되지 않았습니다.'.$diagnostics);
-        $this->assertSame(4, $end - $start,
-            'provider boot 중 등록된 라우트가 4개가 아닙니다.'.$diagnostics);
+        $this->assertSame($this->expectedTeeWideRouteNames(), BootTimeLiveCommerceServiceProvider::$routeNamesAtBootEnd,
+            'boot 종료 시점의 TeeWide 라우트 구성이 기대와 다릅니다.'.$diagnostics);
+        $this->assertSame(count($this->expectedTeeWideRouteNames()), $end - $start,
+            'provider boot 중 등록된 라우트 수가 기대와 다릅니다.'.$diagnostics);
 
         // ⑤ 늦은 등록이 아니다 — 부팅이 끝난 뒤 등록했다면 두 값이 같아진다.
         $this->assertNotNull($this->routeCountAfterBootstrap,
@@ -746,16 +748,8 @@ abstract class PluginTestCase extends TestCase
             'TeeWide 라우트가 bootstrap 완료 이후에 등록됐습니다 (늦은 등록).'.$diagnostics
         );
 
-        // ⑥ 지금 남아 있는 라우트가 그때 그 4개다 — 이름·도메인·액션까지
-        $expected = [
-            'teewide.live.session',
-            'teewide.live.tenant',
-            'teewide.portal',
-            'teewide.portal.session',
-        ];
-
-        $this->assertSame($expected, BootTimeLiveCommerceServiceProvider::$routeNamesAtBootEnd,
-            'boot 종료 시점의 TeeWide 라우트 구성이 기대와 다릅니다.'.$diagnostics);
+        // ⑥ 지금 남아 있는 라우트가 그때 그것들이다 — 이름·도메인·액션까지
+        $expected = $this->expectedTeeWideRouteNames();
 
         $current = [];
         foreach ($this->teeWideRoutes() as $route) {
@@ -763,8 +757,10 @@ abstract class PluginTestCase extends TestCase
 
             $this->assertContains($route->getDomain(), [self::ROOT_HOST, self::LIVE_HOST],
                 $route->getName().' 에 TeeWide 도메인 제약이 없습니다.'.$diagnostics);
-            $this->assertStringContainsString('DiagnosticsController', (string) $route->getActionName(),
-                $route->getName().' 액션이 운영 컨트롤러가 아닙니다.'.$diagnostics);
+            $this->assertTrue(
+                self::isTeeWideControllerAction((string) $route->getActionName()),
+                $route->getName().' 액션이 운영 컨트롤러가 아닙니다: '.$route->getActionName().$diagnostics
+            );
         }
         sort($current);
 
@@ -783,6 +779,70 @@ abstract class PluginTestCase extends TestCase
                 $route->getName().' 가 SPA catch-all 뒤에 있습니다 — 영영 매칭되지 않습니다.'.$diagnostics
             );
         }
+    }
+
+    /**
+     * 진단이 켜진 상태에서 등록돼야 하는 TeeWide 라우트 이름 (정렬됨).
+     *
+     * 제품 화면 3종 + 진단 2종. 제품 화면은 `TEEWIDE_DIAGNOSTICS` 와 무관하게 등록된다.
+     *
+     * @return array<int, string>
+     */
+    protected static function teeWideRouteNames(): array
+    {
+        return [
+            'teewide.live.home',
+            'teewide.live.session',
+            'teewide.live.tenant',
+            'teewide.portal',
+            'teewide.portal.session',
+        ];
+    }
+
+    /**
+     * 진단을 끈 상태에서 등록돼야 하는 라우트 이름 (제품 화면만).
+     *
+     * @return array<int, string>
+     */
+    protected static function teeWideProductRouteNames(): array
+    {
+        return [
+            'teewide.live.home',
+            'teewide.live.tenant',
+            'teewide.portal',
+        ];
+    }
+
+    /**
+     * 이 스위트의 부팅 설정에서 등록돼야 하는 라우트 이름.
+     *
+     * 진단 스위치가 꺼진 채로 부팅한 스위트는 제품 화면만 갖는다.
+     *
+     * @return array<int, string>
+     */
+    protected function expectedTeeWideRouteNames(): array
+    {
+        $boot = $this->teeWideBootConfig() ?? [];
+        $diagnostics = ! array_key_exists('diagnostics_enabled', $boot)
+            || (bool) $boot['diagnostics_enabled'];
+
+        return $diagnostics ? self::teeWideRouteNames() : self::teeWideProductRouteNames();
+    }
+
+    /**
+     * 액션이 이 플러그인의 운영 컨트롤러인가.
+     *
+     * 클로저 액션(route:cache 불가)과 남의 컨트롤러를 둘 다 걸러낸다.
+     */
+    protected static function isTeeWideControllerAction(string $action): bool
+    {
+        foreach (['PortalController', 'LiveController', 'DiagnosticsController'] as $controller) {
+            if (str_contains($action, 'Plugins\\Yutiv\\LiveCommerce\\Http\\Controllers\\'.$controller)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

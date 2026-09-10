@@ -154,7 +154,10 @@ class TeeWideSafetyTest extends PluginTestCase
                 $action,
                 $route->getName().' 이 클로저 액션입니다 — route:cache 가 실패합니다.'
             );
-            $this->assertStringContainsString('DiagnosticsController', $action);
+            $this->assertTrue(
+                self::isTeeWideControllerAction($action),
+                $route->getName().' 액션이 이 플러그인의 컨트롤러가 아닙니다: '.$action
+            );
         }
     }
 
