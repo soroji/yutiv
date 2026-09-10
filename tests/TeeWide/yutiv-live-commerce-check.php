@@ -336,8 +336,12 @@ check('생명주기: 늦게 발화하는 이벤트 훅으로 프로바이더를 
     'beforeBootstrapping 경로는 서버 2차 실행에서 routes/web.php 뒤에 등록됐다');
 check('생명주기: 그 경로를 쓰는 스위트가 실제로 있다 [주입 4]',
     strpos($routingTestCode, 'function teeWideBootConfig(): ?array') !== false);
+// 부팅 스위트는 늦은 등록으로 되돌아가지 않는다 — 사전검사를 거친 뒤 그대로 반환한다.
+// (register() 호출이 사전검사보다 뒤에 오되, 부팅 스위트는 그 지점에 닿지 않는다)
+$bootPluginBody = twMethodBody($baseCode, 'bootPlugin');
 check('생명주기: 부팅 시점 등록 실패를 늦은 등록으로 덮지 않는다 [주입 4]',
-    twOrderedIn(twMethodBody($baseCode, 'bootPlugin'), 'teeWideBootConfig()', '$this->fail('));
+    twOrderedIn($bootPluginBody, 'teeWideBootConfig()', 'assertBootTimeLifecycle()')
+    && twOrderedIn($bootPluginBody, 'assertBootTimeLifecycle()', '$this->app->register('));
 
 // [주입 5] enabled=true 설정을 provider boot 뒤로 이동
 //   설정은 프로바이더 자신의 register() 에서, parent::register() 의 mergeConfigFrom
@@ -415,6 +419,184 @@ check('생명주기: 부팅용 프로바이더는 테스트 디렉토리에만 �
 check('생명주기: createApplication 오버라이드가 public 이다 (가시성 축소 Fatal 방지)',
     preg_match('/public function createApplication\(/', $baseCode) === 1
     && preg_match('/protected function createApplication\(/', $baseCode) !== 1);
+
+// ── 9. 프로바이더 등록 판정 (3차 실패의 거짓 음성) ──────────────────────────
+//
+// 3차 서버 실행은 프로바이더가 정상 register/boot 됐는데도 사전검사가 false 를 내어
+// 28건이 요청 전에 멈췄다. 원인은 Laravel 12 의 프로바이더 레지스트리가 **구상
+// 클래스명을 키로** 쓰고(Application.php:970-977) `getProvider()` 가 그 키를 정확히
+// 찾는 조회라(933-938), 부모 클래스명으로 물으면 서브클래스를 놓치기 때문이다.
+// 아래 검사는 그 판정이 다시 좁아지지 않도록 못박는다.
+
+$providerCheckBody = twMethodBody($baseCode, 'providerIsRegistered');
+$registeredBody = twMethodBody($baseCode, 'registeredLiveCommerceProviders');
+$lifecycleBody = twMethodBody($baseCode, 'assertBootTimeLifecycle');
+
+// [주입 11] 등록 판정만 false 를 반환
+check('등록판정: providerIsRegistered 가 레지스트리를 실제로 조회한다 [주입 11]',
+    is_string($providerCheckBody)
+    && strpos($providerCheckBody, 'registeredLiveCommerceProviders()') !== false
+    && preg_match('/return\\s+(true|false)\\s*;/', $providerCheckBody) !== 1);
+
+// [주입 12] 정확한 클래스명 비교로 서브클래스를 놓치는 구현
+check('등록판정: instanceof 조회(getProviders)를 쓴다 [주입 12]',
+    is_string($registeredBody)
+    && strpos($registeredBody, 'getProviders(LiveCommerceServiceProvider::class)') !== false);
+check('등록판정: 정확 키 조회(getProvider)로 판정하지 않는다 [주입 12]',
+    is_string($registeredBody)
+    && preg_match('/getProvider\\s*\\(/', $registeredBody) !== 1,
+    'getProvider() 는 구상 클래스명 정확 조회라 서브클래스를 놓친다');
+check('등록판정: 지원 프로바이더가 운영 프로바이더의 subclass 다 [주입 12]',
+    preg_match('/class BootTimeLiveCommerceServiceProvider extends LiveCommerceServiceProvider/', $bootProviderSrc) === 1);
+check('등록판정: 사전검사가 subclass 와 운영 클래스 양쪽을 확인한다 [주입 12]',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, 'assertArrayHasKey(') !== false
+    && strpos($lifecycleBody, 'BootTimeLiveCommerceServiceProvider::class') !== false
+    && strpos($lifecycleBody, 'assertInstanceOf(LiveCommerceServiceProvider::class') !== false);
+
+// [주입 13] register/boot 횟수가 0회 또는 2회
+check('등록판정: register/boot 횟수를 정확히 1회로 단언한다 [주입 13]',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, 'assertSame(1, BootTimeLiveCommerceServiceProvider::$registerCount') !== false
+    && strpos($lifecycleBody, 'assertSame(1, BootTimeLiveCommerceServiceProvider::$bootCount') !== false);
+// 주석 제거본으로 검사한다 — `// static::$bootCount++;` 처럼 주석 처리해
+// 계측만 죽이는 무력화를 문자열 검색으로는 잡지 못한다.
+check('등록판정: 횟수가 실제로 계측된다 (주석 처리 무력화 포함) [주입 13]',
+    strpos($bootProviderCode, 'static::$registerCount++;') !== false
+    && strpos($bootProviderCode, 'static::$bootCount++;') !== false);
+
+// [주입 14] 라우트는 등록됐지만 bootstrap 이후 늦게 등록
+// 이름이 있는지가 아니라 **그 두 값을 실제로 비교하는지**를 본다.
+// (routeCountAfterBootstrap 은 assertNotNull 에도, assertLessThan 은 catch-all
+//  순서 검사에도 따로 등장하므로 존재 검사만으로는 삭제를 놓친다)
+check('등록판정: boot 종료 라우트 수 < bootstrap 완료 라우트 수 를 단언한다 [주입 14]',
+    is_string($lifecycleBody)
+    && preg_match('/assertLessThan\\(\\s*\\$this->routeCountAfterBootstrap\\s*,\\s*\\$end\\s*,/', $lifecycleBody) === 1);
+check('등록판정: boot 중 라우트가 정확히 4개 늘었음을 단언한다 [주입 14]',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, 'assertSame(4, $end - $start') !== false);
+check('등록판정: SPA catch-all 보다 앞선다는 것도 사전검사가 확인한다 [주입 14]',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, 'spaCatchAllRoute()') !== false
+    && strpos($lifecycleBody, 'routeIndex(') !== false);
+check('등록판정: 라우트 이름·도메인·액션까지 대조한다 [주입 14]',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, 'routeNamesAtBootEnd') !== false
+    && strpos($lifecycleBody, 'getDomain()') !== false
+    && strpos($lifecycleBody, 'DiagnosticsController') !== false);
+
+// [주입 15] trace 문자열만 조작하여 거짓 통과
+check('등록판정: 사전검사가 trace 문자열을 판정 근거로 쓰지 않는다 [주입 15]',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, 'BootTimeLiveCommerceServiceProvider::$trace') === false,
+    'trace 는 사람이 읽는 용도이며 손으로 써넣을 수 있어 증명이 되지 못한다');
+check('등록판정: trace 는 실패 메시지로만 쓰인다',
+    is_string($lifecycleBody)
+    && strpos($lifecycleBody, '$diagnostics = $this->lifecycleTrace();') !== false);
+check('등록판정: 계측값은 앱마다 초기화된다',
+    strpos($bootProviderSrc, 'static::$registerCount = 0;') !== false
+    && strpos($bootProviderSrc, 'static::$bootCount = 0;') !== false);
+
+// 사전검사가 실제로 호출되는가 (선언만 하고 안 부르면 무의미하다)
+check('등록판정: bootPlugin 이 부팅 스위트에서 사전검사를 호출한다',
+    twOrderedIn(twMethodBody($baseCode, 'bootPlugin'),
+        'teeWideBootConfig()', 'assertBootTimeLifecycle()'));
+
+serverOnly('사전검사 7항목이 실제 런타임에서 모두 만족되는가');
+
+// ── 10. 테스트 격리: services manifest 오염 방지 ────────────────────────────
+//
+// RegisterProviders::merge() 로 프로바이더 목록이 달라지면 ProviderRepository 의
+// shouldRecompile() 이 참이 되어 services manifest 를 다시 쓴다. 그 대상이 프로젝트의
+// bootstrap/cache/services.php 라면 테스트가 끝난 뒤 운영 부팅이 테스트 전용
+// 프로바이더를 읽으려 든다. 그 파일은 ignore 대상이라 git status 로는 보이지 않는다.
+// 나중에 되돌리는 방식이 아니라 처음부터 다른 파일을 보게 만들어야 한다.
+
+$isolateBody = twMethodBody($baseCode, 'isolateServicesManifestPath');
+$releaseBody = twMethodBody($baseCode, 'releaseIsolatedServicesManifest');
+$setEnvBody = twMethodBody($baseCode, 'setServicesCacheEnv');
+$tearDownBody = twMethodBody($baseCode, 'tearDown');
+$isolationTestSrc = @file_get_contents($pluginDir.'/tests/Feature/TeeWideTestIsolationTest.php');
+$isolationTestCode = is_string($isolationTestSrc) ? twStripComments($isolationTestSrc) : '';
+
+// [주입 16] APP_SERVICES_CACHE 격리 제거
+check('격리: 앱 생성 전에 manifest 경로를 격리한다 [주입 16]',
+    twOrderedIn($createBody, 'isolateServicesManifestPath()', "require Application::inferBasePath()"));
+check('격리: 부팅 전 실제 manifest 지문을 기록한다 [주입 16]',
+    twOrderedIn($createBody, 'snapshotRealServicesManifest()', "require Application::inferBasePath()"));
+check('격리: 공식 지점(APP_SERVICES_CACHE)을 쓴다 [주입 16]',
+    is_string($setEnvBody)
+    && strpos($setEnvBody, "\$_ENV['APP_SERVICES_CACHE']") !== false
+    && strpos($setEnvBody, "\$_SERVER['APP_SERVICES_CACHE']") !== false);
+check('격리: putenv 를 쓰지 않는다 (bootstrap/app.php 가 disablePutenv 한다)',
+    strpos($baseCode, 'putenv(') === false);
+
+// [주입 17] 고정 공용 임시 파일 사용
+check('격리: 임시 manifest 이름이 프로세스·호출마다 고유하다 [주입 17]',
+    is_string($isolateBody)
+    && strpos($isolateBody, 'getmypid()') !== false
+    && strpos($isolateBody, 'random_bytes(') !== false);
+check('격리: 고정된 공용 파일명을 쓰지 않는다 [주입 17]',
+    is_string($isolateBody)
+    && preg_match("/'services(-shared|-test)?\\.php'/", $isolateBody) !== 1);
+check('격리: 임시 파일은 ignore 되는 테스트 디렉토리 아래에 둔다',
+    strpos($baseCode, "ISOLATED_SERVICES_DIR = 'storage/framework/testing/teewide'") !== false
+    && is_file($root.'/storage/framework/testing/.gitignore'));
+
+// [주입 18] tearDown 정리 제거
+check('격리: tearDown 이 임시 manifest 를 지운다 [주입 18]',
+    is_string($tearDownBody)
+    && strpos($tearDownBody, 'releaseIsolatedServicesManifest()') !== false);
+check('격리: tearDown 이 실제 manifest 불변을 확인한다 [주입 18]',
+    is_string($tearDownBody)
+    && strpos($tearDownBody, 'guardRealServicesManifestUnchanged()') !== false);
+check('격리: tearDown 을 못 타도 종료 훅이 잔여 파일을 지운다 [주입 18]',
+    strpos($baseCode, 'register_shutdown_function(') !== false
+    && strpos(twMethodBody($baseCode, 'registerShutdownCleanup') ?? '', 'getmypid()') !== false);
+check('격리: 임시 파일을 실제로 unlink 한다 [주입 18]',
+    is_string($releaseBody) && strpos($releaseBody, 'unlink(') !== false);
+
+// [주입 19] 환경변수 복원 제거
+// $_ENV 와 $_SERVER **양쪽 모두** 기록해야 한다. 한쪽만 남겨 두면 그쪽 문자열이
+// 존재 검사를 통과시켜, 다른 쪽 복원이 사라진 것을 놓친다.
+check('격리: 원래 "없음/빈문자열/값" 상태를 두 superglobal 모두에 기록한다 [주입 19]',
+    is_string($setEnvBody)
+    && substr_count($setEnvBody, "array_key_exists('APP_SERVICES_CACHE'") === 2
+    && substr_count($setEnvBody, "'set' =>") === 2);
+check('격리: 원래 없던 키는 삭제로 복원한다 [주입 19]',
+    is_string($releaseBody)
+    && strpos($releaseBody, "unset(\$_ENV['APP_SERVICES_CACHE'])") !== false
+    && strpos($releaseBody, "unset(\$_SERVER['APP_SERVICES_CACHE'])") !== false);
+check('격리: 원래 있던 값은 그 값 그대로 복원한다 [주입 19]',
+    is_string($releaseBody)
+    && strpos($releaseBody, "\$state['set']") !== false
+    && strpos($releaseBody, "\$state['value']") !== false);
+
+// [주입 20] 실제 bootstrap/cache/services.php 를 직접 사용
+check('격리: 실제 manifest 경로를 격리 경로로 쓰지 않는다 [주입 20]',
+    is_string($isolateBody)
+    && strpos($isolateBody, 'realServicesManifestPath()') === false,
+    '실제 manifest 를 백업·복원하는 방식이 아니라 처음부터 다른 파일을 봐야 한다');
+check('격리: 실제 manifest 경로는 읽기(지문 확인) 용도로만 쓴다 [주입 20]',
+    twOrderedIn(twMethodBody($baseCode, 'guardRealServicesManifestUnchanged'),
+        'snapshotRealServicesManifest()', 'RuntimeException'));
+check('격리: 실제 manifest 경로가 .laravel 규칙을 따른다',
+    strpos(twMethodBody($baseCode, 'realServicesManifestPath') ?? '', "'/.laravel'") !== false);
+
+// [주입 21] 테스트 provider 가 후속 앱에 남는 경우
+check('격리: 후속 앱 누수를 실제 테스트가 확인한다 [주입 21]',
+    strpos($isolationTestCode, 'getProviders(LiveCommerceServiceProvider::class)') !== false
+    && strpos($isolationTestCode, 'RegisterProviders::flushState()') !== false
+    && strpos($isolationTestCode, '->make(Kernel::class)->bootstrap()') !== false);
+check('격리: 실제 manifest 지문 비교를 테스트가 단언한다 [주입 21]',
+    strpos($isolationTestCode, 'manifestFingerprintBeforeBootstrap()') !== false
+    && strpos($isolationTestCode, 'realServicesManifestPath()') !== false);
+check('격리: 환경변수 복원을 테스트가 단언한다 [주입 21]',
+    strpos($isolationTestCode, 'assertArrayNotHasKey(') !== false
+    && strpos($isolationTestCode, 'assertFileDoesNotExist(') !== false);
+
+serverOnly('실제 bootstrap/cache/services.php 가 테스트 전후로 바이트 동일한가');
+serverOnly('임시 manifest 가 tearDown 후 하나도 남지 않는가');
 
 // ── 8. 로컬에서 증명할 수 없는 계약 (서버 PHPUnit 필요) ─────────────────────
 //

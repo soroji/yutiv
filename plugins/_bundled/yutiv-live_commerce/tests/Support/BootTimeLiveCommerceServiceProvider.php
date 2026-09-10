@@ -62,26 +62,59 @@ class BootTimeLiveCommerceServiceProvider extends LiveCommerceServiceProvider
     public static ?array $config = null;
 
     /**
-     * 생명주기 추적 기록.
+     * 생명주기 추적 기록 — **사람이 읽는 용도 전용.**
      *
-     * 로컬에는 vendor/ 가 없어 부팅 순서를 실행으로 확인할 수 없다. 그래서 순서를 주장하는
-     * 대신 **서버 실행이 스스로 남기게** 한다. 각 항목에 그 시점의 라우트 수를 함께 적어,
-     * routes/web.php 적재 전인지 후인지가 숫자로 드러나게 한다.
+     * ⚠ 어떤 판정도 이 문자열을 근거로 삼지 않는다. 문자열은 손으로 써넣을 수 있어
+     *   "trace 에 그런 줄이 있으니 순서가 맞다" 는 증명이 되지 못한다. 판정은 아래
+     *   구조화된 카운터·스냅샷과 살아 있는 라우터/프로바이더 레지스트리로만 한다.
      *
      * @var array<int, string>
      */
     public static array $trace = [];
+
+    /** register() 실행 횟수 — 정확히 1이어야 한다(0=미등록, 2=중복 등록). */
+    public static int $registerCount = 0;
+
+    /** boot() 실행 횟수 — 정확히 1이어야 한다. */
+    public static int $bootCount = 0;
+
+    /** boot() 진입 시점의 전체 라우트 수. */
+    public static ?int $routeCountAtBootStart = null;
+
+    /**
+     * boot() 종료 시점의 전체 라우트 수.
+     *
+     * 이 값이 bootstrap 완료 시점의 라우트 수보다 **작아야** 늦은 등록이 아니다 —
+     * 부팅이 끝난 뒤 등록했다면 두 값이 같아진다.
+     */
+    public static ?int $routeCountAtBootEnd = null;
+
+    /**
+     * boot() 종료 시점에 존재한 TeeWide 라우트 이름 스냅샷.
+     *
+     * 나중에 남아 있는 라우트가 "그때 그 라우트" 인지 대조하는 데 쓴다.
+     *
+     * @var array<int, string>
+     */
+    public static array $routeNamesAtBootEnd = [];
 
     public static function resetTestState(): void
     {
         static::$pluginActive = true;
         static::$config = null;
         static::$trace = [];
+        static::$registerCount = 0;
+        static::$bootCount = 0;
+        static::$routeCountAtBootStart = null;
+        static::$routeCountAtBootEnd = null;
+        static::$routeNamesAtBootEnd = [];
     }
 
     public function register(): void
     {
-        static::$trace[] = 'provider.register 진입 (라우트 '.$this->currentRouteCount().'개)';
+        static::$registerCount++;
+        static::$trace[] = 'provider.register 진입 #'.static::$registerCount
+            .' (라우트 '.$this->currentRouteCount().'개)';
 
         if (static::$config !== null) {
             // 부모의 mergeConfigFrom 보다 먼저 — 그래야 이 값이 파일 기본값을 이긴다.
@@ -93,13 +126,46 @@ class BootTimeLiveCommerceServiceProvider extends LiveCommerceServiceProvider
 
     public function boot(): void
     {
-        static::$trace[] = 'provider.boot 진입 (라우트 '.$this->currentRouteCount().'개)'
+        static::$bootCount++;
+        static::$routeCountAtBootStart = $this->currentRouteCount();
+
+        static::$trace[] = 'provider.boot 진입 #'.static::$bootCount
+            .' (라우트 '.static::$routeCountAtBootStart.'개)'
             .' pluginActive='.var_export(static::$pluginActive, true)
             .' TeeWideConfig::active()='.var_export(TeeWideConfig::active(), true);
 
         parent::boot();
 
-        static::$trace[] = 'provider.boot 종료 (라우트 '.$this->currentRouteCount().'개)';
+        static::$routeCountAtBootEnd = $this->currentRouteCount();
+        static::$routeNamesAtBootEnd = $this->teeWideRouteNames();
+
+        static::$trace[] = 'provider.boot 종료 (라우트 '.static::$routeCountAtBootEnd.'개, TeeWide '
+            .implode(', ', static::$routeNamesAtBootEnd).')';
+    }
+
+    /**
+     * 현재 라우터에 올라와 있는 TeeWide 라우트 이름들.
+     *
+     * @return array<int, string>
+     */
+    private function teeWideRouteNames(): array
+    {
+        $names = [];
+
+        try {
+            foreach ($this->app['router']->getRoutes() as $route) {
+                $name = $route->getName();
+                if (is_string($name) && str_starts_with($name, 'teewide.')) {
+                    $names[] = $name;
+                }
+            }
+        } catch (\Throwable) {
+            return [];
+        }
+
+        sort($names);
+
+        return $names;
     }
 
     protected function pluginIsActive(): bool

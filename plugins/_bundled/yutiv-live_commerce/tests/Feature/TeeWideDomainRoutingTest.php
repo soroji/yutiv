@@ -166,12 +166,28 @@ class TeeWideDomainRoutingTest extends PluginTestCase
     public function test_TeeWide_라우트가_중복_등록되지_않는다(): void
     {
         $before = count($this->teeWideRoutes());
+        $this->assertSame(4, $before, 'TeeWide 라우트가 4개가 아닙니다');
 
-        // 프로바이더를 다시 등록해도 Application::register() 가 재실행하지 않는다.
-        $this->app->register(\Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider::class);
+        // 등록된 **그 프로바이더**를 다시 등록해도 Application::register() 는
+        // 재실행하지 않는다(Application.php:885 의 getProvider() 조기 반환).
+        //
+        // 부모 클래스명으로 물으면 안 된다 — Laravel 12 의 프로바이더 레지스트리는
+        // **구상 클래스명이 키**라(Application.php:970-977), 부모 이름으로 register()
+        // 하면 조기 반환에 걸리지 않고 별개의 프로바이더가 하나 더 등록된다.
+        // 그건 중복 등록 방지 계약이 깨진 게 아니라 다른 클래스를 등록한 것이다.
+        $registered = $this->registeredLiveCommerceProviders();
+        $this->assertCount(1, $registered, '프로바이더가 정확히 1개여야 합니다');
+
+        foreach (array_keys($registered) as $providerClass) {
+            $this->app->register($providerClass);
+        }
         $this->refreshRouteLookups();
 
         $this->assertSame($before, count($this->teeWideRoutes()));
+        $this->assertCount(1, $this->registeredLiveCommerceProviders(),
+            '재등록으로 프로바이더 인스턴스가 늘었습니다');
+        $this->assertSame(1, \Plugins\Yutiv\LiveCommerce\Tests\Support\BootTimeLiveCommerceServiceProvider::$bootCount,
+            '재등록이 boot() 을 다시 실행했습니다');
     }
 
     public function test_TeeWide_라우트가_SPA_catch_all_보다_먼저_등록된다(): void

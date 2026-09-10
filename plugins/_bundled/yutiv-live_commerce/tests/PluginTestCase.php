@@ -75,6 +75,40 @@ abstract class PluginTestCase extends TestCase
     /** 프로바이더 생명주기 재실행을 한 번만 하기 위한 플래그. */
     private bool $pluginRegistered = false;
 
+    /** 임시 services manifest 를 두는 디렉토리 (프로젝트 base 기준 상대경로). */
+    private const ISOLATED_SERVICES_DIR = 'storage/framework/testing/teewide';
+
+    /** 프로세스 종료 시 잔여 임시 manifest 를 지우는 훅을 한 번만 건다. */
+    private static bool $shutdownCleanupRegistered = false;
+
+    /**
+     * 실제 프로젝트 services manifest 의 부팅 전 상태.
+     *
+     * @var array{exists: bool, hash: string|null}|null
+     */
+    private ?array $realServicesManifestState = null;
+
+    /** 이 테스트가 쓰는 임시 manifest 의 절대 경로. */
+    private ?string $isolatedServicesManifestPath = null;
+
+    /**
+     * APP_SERVICES_CACHE 의 원래 상태 (superglobal 별로 정확히 보존).
+     *
+     * "없음" 과 "빈 문자열" 과 "실제 값" 은 서로 다른 상태다 — 복원할 때 뭉뚱그리면
+     * 원래 없던 키를 빈 문자열로 남겨 다음 부팅의 경로 판정을 바꿔 버린다.
+     *
+     * @var array<string, array{set: bool, value: mixed}>
+     */
+    private array $servicesCacheEnvBackup = [];
+
+    /**
+     * bootstrap() 이 끝난 직후의 전체 라우트 수.
+     *
+     * 프로바이더 boot 종료 시점 수와 비교해 "늦은 등록이 아님" 을 증명한다.
+     * 부팅이 끝난 뒤 등록했다면 두 값이 같아진다.
+     */
+    private ?int $routeCountAfterBootstrap = null;
+
     /**
      * 앱 부팅 시점에 주입할 TeeWide 설정. `null` 이면 부팅 시점 등록을 하지 않는다.
      *
@@ -137,6 +171,14 @@ abstract class PluginTestCase extends TestCase
         RegisterProviders::flushState();
         BootTimeLiveCommerceServiceProvider::resetTestState();
 
+        // 앱을 만들기 **전에** services manifest 경로를 테스트 전용 파일로 돌린다.
+        // 이 줄이 없으면 ProviderRepository 가 프로젝트의 bootstrap/cache/services.php 를
+        // 테스트 프로바이더가 포함된 내용으로 다시 쓴다 (RegisterProviders::merge 로
+        // 프로바이더 목록이 달라져 shouldRecompile() 이 참이 되기 때문).
+        // 나중에 되돌리는 방식이 아니라 처음부터 다른 파일을 보게 만든다.
+        $this->realServicesManifestState = $this->snapshotRealServicesManifest();
+        $this->isolateServicesManifestPath();
+
         $app = require Application::inferBasePath().'/bootstrap/app.php';
 
         $bootConfig = $this->teeWideBootConfig();
@@ -159,8 +201,10 @@ abstract class PluginTestCase extends TestCase
 
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
+        $this->routeCountAfterBootstrap = count($app['router']->getRoutes()->getRoutes());
+
         BootTimeLiveCommerceServiceProvider::$trace[] = 'bootstrap 완료 (라우트 '
-            .count($app['router']->getRoutes()->getRoutes()).'개)';
+            .$this->routeCountAfterBootstrap.'개)';
 
         if ($bootConfig !== null) {
             // RegisterProviders 는 설정이 캐시에서 온 경우 mergeAdditionalProviders() 를
@@ -172,8 +216,8 @@ abstract class PluginTestCase extends TestCase
 
             BootTimeLiveCommerceServiceProvider::$trace[] = 'config 캐시에서 로드됨: '
                 .var_export($cached, true)
-                .' / 프로바이더 등록됨: '
-                .var_export($app->getProvider(LiveCommerceServiceProvider::class) !== null, true);
+                .' / 등록된 프로바이더: '
+                .(implode(', ', array_keys($app->getProviders(LiveCommerceServiceProvider::class))) ?: '(없음)');
         }
 
         return $app;
@@ -192,6 +236,205 @@ abstract class PluginTestCase extends TestCase
         parent::setUp();
 
         $this->seedPluginRow(ExtensionStatus::Active->value);
+    }
+
+    /**
+     * 프로젝트 루트 경로 (앱이 아직 없을 때도 쓸 수 있어야 한다).
+     */
+    protected function projectBasePath(): string
+    {
+        return Application::inferBasePath();
+    }
+
+    /**
+     * 실제 프로젝트의 services manifest 경로.
+     *
+     * Laravel 12 는 `.laravel/` 디렉토리가 있으면 그쪽을 bootstrap 경로로 쓴다
+     * (Application::useBootstrapPath 호출부, Application.php:425-429). 같은 규칙을 따른다.
+     */
+    protected function realServicesManifestPath(): string
+    {
+        $base = $this->projectBasePath();
+        $bootstrap = is_dir($base.'/.laravel') ? $base.'/.laravel' : $base.'/bootstrap';
+
+        return $bootstrap.'/cache/services.php';
+    }
+
+    /**
+     * 실제 manifest 의 존재 여부와 내용 해시.
+     *
+     * @return array{exists: bool, hash: string|null}
+     */
+    protected function snapshotRealServicesManifest(): array
+    {
+        $path = $this->realServicesManifestPath();
+
+        if (! is_file($path)) {
+            return ['exists' => false, 'hash' => null];
+        }
+
+        $hash = @hash_file('sha256', $path);
+
+        return ['exists' => true, 'hash' => $hash === false ? null : $hash];
+    }
+
+    /**
+     * services manifest 경로를 이 테스트 전용 임시 파일로 돌린다.
+     *
+     * ── 왜 APP_SERVICES_CACHE 인가 ──────────────────────────────────────────
+     * `Application::getCachedServicesPath()` 는 `normalizeCachePath('APP_SERVICES_CACHE',
+     * 'cache/services.php')` 를 부른다(Application.php:1283-1286). 경로를 바꾸는 공식
+     * setter 는 없고 이 환경변수가 유일한 지점이다.
+     *
+     * ── 왜 상대경로인가 ────────────────────────────────────────────────────
+     * `normalizeCachePath()` 는 값이 `/` 또는 `\` 로 시작할 때만 절대경로로 보고,
+     * 아니면 `basePath()` 기준으로 붙인다(1379-1388, `$absoluteCachePathPrefixes`).
+     * 즉 Windows 절대경로(`C:\...`)를 주면 basePath 뒤에 이어 붙어 깨진다.
+     * 상대경로를 주면 두 플랫폼에서 모두 프로젝트 안의 같은 자리로 해석된다.
+     *
+     * ── 왜 고유 파일명인가 ─────────────────────────────────────────────────
+     * 병렬 실행에서 프로세스끼리 같은 파일을 두고 다투면 안 된다. PID + 난수로
+     * 테스트마다 새 파일을 쓴다.
+     */
+    protected function isolateServicesManifestPath(): void
+    {
+        $this->registerShutdownCleanup();
+
+        $directory = $this->projectBasePath().'/'.self::ISOLATED_SERVICES_DIR;
+
+        if (! is_dir($directory)) {
+            @mkdir($directory, 0777, true);
+        }
+
+        $filename = 'services-'.getmypid().'-'.bin2hex(random_bytes(8)).'.php';
+
+        $this->isolatedServicesManifestPath = $directory.'/'.$filename;
+
+        $this->setServicesCacheEnv(self::ISOLATED_SERVICES_DIR.'/'.$filename);
+    }
+
+    /**
+     * APP_SERVICES_CACHE 를 설정하고 원래 값을 정확히 기록한다.
+     *
+     * `bootstrap/app.php` 가 `Env::disablePutenv()` 를 부르므로 putenv 는 읽히지 않는다.
+     * `Illuminate\Support\Env` 의 기본 어댑터가 보는 `$_ENV` / `$_SERVER` 를 직접 쓴다.
+     */
+    private function setServicesCacheEnv(string $relativePath): void
+    {
+        $this->servicesCacheEnvBackup = [];
+
+        foreach (['ENV', 'SERVER'] as $bucket) {
+            $this->servicesCacheEnvBackup[$bucket] = $bucket === 'ENV'
+                ? ['set' => array_key_exists('APP_SERVICES_CACHE', $_ENV), 'value' => $_ENV['APP_SERVICES_CACHE'] ?? null]
+                : ['set' => array_key_exists('APP_SERVICES_CACHE', $_SERVER), 'value' => $_SERVER['APP_SERVICES_CACHE'] ?? null];
+        }
+
+        $_ENV['APP_SERVICES_CACHE'] = $relativePath;
+        $_SERVER['APP_SERVICES_CACHE'] = $relativePath;
+    }
+
+    /**
+     * 임시 manifest 를 지우고 APP_SERVICES_CACHE 를 원래 상태로 되돌린다.
+     *
+     * "원래 없었음" 은 키 삭제로, "원래 빈 문자열" 은 빈 문자열로 되돌린다.
+     */
+    protected function releaseIsolatedServicesManifest(): void
+    {
+        if ($this->isolatedServicesManifestPath !== null && is_file($this->isolatedServicesManifestPath)) {
+            @unlink($this->isolatedServicesManifestPath);
+        }
+
+        $this->isolatedServicesManifestPath = null;
+
+        foreach ($this->servicesCacheEnvBackup as $bucket => $state) {
+            if ($state['set']) {
+                if ($bucket === 'ENV') {
+                    $_ENV['APP_SERVICES_CACHE'] = $state['value'];
+                } else {
+                    $_SERVER['APP_SERVICES_CACHE'] = $state['value'];
+                }
+
+                continue;
+            }
+
+            if ($bucket === 'ENV') {
+                unset($_ENV['APP_SERVICES_CACHE']);
+            } else {
+                unset($_SERVER['APP_SERVICES_CACHE']);
+            }
+        }
+
+        $this->servicesCacheEnvBackup = [];
+    }
+
+    /**
+     * 실제 프로젝트 manifest 가 이 테스트 동안 바뀌지 않았음을 확인한다.
+     *
+     * 존재 여부와 해시가 모두 같아야 한다. 파일이 없었다면 계속 없어야 한다.
+     */
+    protected function guardRealServicesManifestUnchanged(): void
+    {
+        if ($this->realServicesManifestState === null) {
+            return;
+        }
+
+        $before = $this->realServicesManifestState;
+        $after = $this->snapshotRealServicesManifest();
+
+        $this->realServicesManifestState = null;
+
+        if ($before === $after) {
+            return;
+        }
+
+        throw new \RuntimeException(sprintf(
+            '테스트가 실제 services manifest 를 변경했습니다 (%s). 이전: %s / 이후: %s',
+            $this->realServicesManifestPath(),
+            $before['exists'] ? 'hash '.substr((string) $before['hash'], 0, 12) : '없음',
+            $after['exists'] ? 'hash '.substr((string) $after['hash'], 0, 12) : '없음'
+        ));
+    }
+
+    /**
+     * 프로세스가 어떻게 끝나든 이 프로세스가 만든 임시 manifest 를 지운다.
+     *
+     * tearDown 이 마지막 방어선이 아니다 — 치명적 오류나 강제 종료로 tearDown 이
+     * 건너뛰어질 수 있으므로 종료 훅을 하나 걸어 둔다. 자기 PID 파일만 건드리므로
+     * 병렬 실행 중인 다른 프로세스의 파일을 지우지 않는다.
+     */
+    private function registerShutdownCleanup(): void
+    {
+        if (self::$shutdownCleanupRegistered) {
+            return;
+        }
+
+        self::$shutdownCleanupRegistered = true;
+
+        $pattern = $this->projectBasePath().'/'.self::ISOLATED_SERVICES_DIR.'/services-'.getmypid().'-*.php';
+
+        register_shutdown_function(static function () use ($pattern) {
+            foreach (glob($pattern) ?: [] as $leftover) {
+                @unlink($leftover);
+            }
+        });
+    }
+
+    /**
+     * 이 테스트가 쓰는 임시 manifest 의 절대 경로 (없으면 null).
+     */
+    protected function isolatedServicesManifestPath(): ?string
+    {
+        return $this->isolatedServicesManifestPath;
+    }
+
+    /**
+     * 앱을 부팅하기 **전에** 찍어 둔 실제 manifest 의 지문.
+     *
+     * @return array{exists: bool, hash: string|null}
+     */
+    protected function manifestFingerprintBeforeBootstrap(): array
+    {
+        return $this->realServicesManifestState ?? ['exists' => false, 'hash' => null];
     }
 
     /**
@@ -224,6 +467,16 @@ abstract class PluginTestCase extends TestCase
         // 이 스위트의 부팅 시점 등록을 물려받지 않도록.
         RegisterProviders::flushState();
         BootTimeLiveCommerceServiceProvider::resetTestState();
+
+        // 임시 manifest 삭제 + APP_SERVICES_CACHE 원상 복구. 테스트가 실패하거나
+        // 예외로 끝나도 tearDown 은 실행되므로 여기서 되돌린다(마지막 방어선은
+        // registerShutdownCleanup() 의 종료 훅).
+        $this->releaseIsolatedServicesManifest();
+
+        // 실제 프로젝트 manifest 가 이 테스트 때문에 바뀌지 않았는지 확인한다.
+        // 단언이 아니라 예외로 알린다 — 격리가 깨진 채로 다음 테스트가 이어지면
+        // 오염이 누적되므로 그 자리에서 드러나야 한다.
+        $this->guardRealServicesManifestUnchanged();
 
         $this->pluginRegistered = false;
 
@@ -293,23 +546,20 @@ abstract class PluginTestCase extends TestCase
             return;
         }
 
-        // 부팅 시점에 이미 운영 순서로 등록됐다면 다시 등록하지 않는다 —
-        // 여기서 또 등록하면 라우트가 catch-all 뒤에 한 벌 더 쌓인다.
-        if ($this->providerIsRegistered()) {
+        // 부팅 시점 등록을 기대한 스위트는 여기서 다시 등록하지 않는다 — 또 등록하면
+        // 라우트가 SPA catch-all 뒤에 한 벌 더 쌓인다. 대신 부팅이 실제로 올바르게
+        // 일어났는지 검사한다. 실패하면 조용히 늦게 등록하지 않고 즉시 드러낸다.
+        if ($this->teeWideBootConfig() !== null) {
+            $this->assertBootTimeLifecycle();
             $this->pluginRegistered = true;
 
             return;
         }
 
-        // 부팅 시점 등록을 기대한 스위트인데 프로바이더가 없다면, 여기서 조용히
-        // 늦게 등록해선 안 된다 — 라우트가 SPA catch-all 뒤에 붙어 "라우트는 있는데
-        // 매칭은 안 되는" 혼란스러운 실패가 된다. 원인이 드러나도록 즉시 실패시킨다.
-        // (서버 1차·2차 실행이 정확히 이 함정을 밟았다)
-        if ($this->teeWideBootConfig() !== null) {
-            $this->fail(
-                '부팅 시점 프로바이더 등록이 이뤄지지 않았습니다 — 늦은 등록으로 대신하지 않습니다.'
-                .$this->lifecycleTrace()
-            );
+        if ($this->providerIsRegistered()) {
+            $this->pluginRegistered = true;
+
+            return;
         }
 
         $this->app->register(LiveCommerceServiceProvider::class);
@@ -380,9 +630,13 @@ abstract class PluginTestCase extends TestCase
 
         $lines[] = "요청: {$method} {$url} (host={$request->getHost()})";
         $lines[] = '프로바이더 등록됨: '.($this->providerIsRegistered() ? 'YES' : 'NO');
-        $lines[] = '프로바이더 클래스: '.($this->providerIsRegistered()
-            ? get_class($this->app->getProvider(LiveCommerceServiceProvider::class))
-            : '(없음)');
+        $registered = $this->registeredLiveCommerceProviders();
+        $lines[] = '프로바이더 클래스: '.($registered === []
+            ? '(없음)'
+            : implode(', ', array_keys($registered)));
+        $lines[] = 'register/boot 횟수: '
+            .BootTimeLiveCommerceServiceProvider::$registerCount.'/'
+            .BootTimeLiveCommerceServiceProvider::$bootCount;
         $catchAll = $this->spaCatchAllRoute();
         $lines[] = 'SPA catch-all 순서: '.var_export($this->routeIndex($catchAll), true);
         $lines[] = 'config enabled: '.var_export(config(TeeWideConfig::KEY.'.enabled'), true);
@@ -418,6 +672,111 @@ abstract class PluginTestCase extends TestCase
         }
 
         return "\n".implode("\n", $lines)."\n".$this->lifecycleTrace();
+    }
+
+    /**
+     * 부팅 시점 생명주기가 실제로 올바르게 일어났는지 증명한다.
+     *
+     * ⚠ `$trace` 문자열은 **판정에 쓰지 않는다.** 문자열은 손으로 써넣을 수 있어
+     *   증명이 되지 못한다. 아래는 전부 구조화된 카운터와 살아 있는 레지스트리·라우터를
+     *   읽는다.
+     *
+     * 증명하는 것:
+     *   ① RegisterProviders 단계에서 등록된 인스턴스가 정확히 하나 존재한다
+     *   ② 그 인스턴스가 BootTimeLiveCommerceServiceProvider 이며 동시에 운영
+     *      LiveCommerceServiceProvider 다 (상속 — 운영 register/boot 경로를 그대로 탄다)
+     *   ③ register/boot 이 각각 정확히 1회 실행됐다 (0회=미실행, 2회=중복)
+     *   ④ boot 종료 전에 TeeWide 라우트 4개가 등록됐다
+     *   ⑤ 그 등록이 bootstrap 완료보다 앞이다 (늦은 등록이 아니다)
+     *   ⑥ 지금 남아 있는 라우트가 그때 그 4개이며, 이름·도메인·액션이 운영 계약대로다
+     *   ⑦ 네 라우트 모두 SPA catch-all 보다 앞선다
+     */
+    protected function assertBootTimeLifecycle(): void
+    {
+        $diagnostics = $this->lifecycleTrace();
+
+        // ① · ② 등록된 인스턴스 — 정확 키가 아니라 instanceof 로 찾는다.
+        $registered = $this->registeredLiveCommerceProviders();
+
+        $this->assertCount(
+            1,
+            $registered,
+            'LiveCommerceServiceProvider 계열 프로바이더가 정확히 1개여야 합니다. 실제: '
+                .(implode(', ', array_keys($registered)) ?: '(없음)').$diagnostics
+        );
+
+        $this->assertArrayHasKey(
+            BootTimeLiveCommerceServiceProvider::class,
+            $registered,
+            '레지스트리 키가 구상 클래스명이어야 합니다 (Laravel 12 는 클래스명 키).'.$diagnostics
+        );
+
+        $provider = $registered[BootTimeLiveCommerceServiceProvider::class];
+        $this->assertInstanceOf(LiveCommerceServiceProvider::class, $provider,
+            '테스트 지원 프로바이더가 운영 프로바이더를 상속하지 않습니다 — 운영 경로를 타지 않습니다.'
+                .$diagnostics);
+
+        // ③ 실행 횟수
+        $this->assertSame(1, BootTimeLiveCommerceServiceProvider::$registerCount,
+            'register() 실행 횟수가 1이 아닙니다.'.$diagnostics);
+        $this->assertSame(1, BootTimeLiveCommerceServiceProvider::$bootCount,
+            'boot() 실행 횟수가 1이 아닙니다.'.$diagnostics);
+
+        // ④ boot 중에 라우트가 실제로 늘었다
+        $start = BootTimeLiveCommerceServiceProvider::$routeCountAtBootStart;
+        $end = BootTimeLiveCommerceServiceProvider::$routeCountAtBootEnd;
+
+        $this->assertNotNull($start, 'boot 진입 시점이 기록되지 않았습니다.'.$diagnostics);
+        $this->assertNotNull($end, 'boot 종료 시점이 기록되지 않았습니다.'.$diagnostics);
+        $this->assertSame(4, $end - $start,
+            'provider boot 중 등록된 라우트가 4개가 아닙니다.'.$diagnostics);
+
+        // ⑤ 늦은 등록이 아니다 — 부팅이 끝난 뒤 등록했다면 두 값이 같아진다.
+        $this->assertNotNull($this->routeCountAfterBootstrap,
+            'bootstrap 완료 시점이 기록되지 않았습니다.'.$diagnostics);
+        $this->assertLessThan(
+            $this->routeCountAfterBootstrap,
+            $end,
+            'TeeWide 라우트가 bootstrap 완료 이후에 등록됐습니다 (늦은 등록).'.$diagnostics
+        );
+
+        // ⑥ 지금 남아 있는 라우트가 그때 그 4개다 — 이름·도메인·액션까지
+        $expected = [
+            'teewide.live.session',
+            'teewide.live.tenant',
+            'teewide.portal',
+            'teewide.portal.session',
+        ];
+
+        $this->assertSame($expected, BootTimeLiveCommerceServiceProvider::$routeNamesAtBootEnd,
+            'boot 종료 시점의 TeeWide 라우트 구성이 기대와 다릅니다.'.$diagnostics);
+
+        $current = [];
+        foreach ($this->teeWideRoutes() as $route) {
+            $current[] = $route->getName();
+
+            $this->assertContains($route->getDomain(), [self::ROOT_HOST, self::LIVE_HOST],
+                $route->getName().' 에 TeeWide 도메인 제약이 없습니다.'.$diagnostics);
+            $this->assertStringContainsString('DiagnosticsController', (string) $route->getActionName(),
+                $route->getName().' 액션이 운영 컨트롤러가 아닙니다.'.$diagnostics);
+        }
+        sort($current);
+
+        $this->assertSame($expected, $current,
+            '현재 라우트가 boot 시점 스냅샷과 다릅니다 (중복 등록이거나 늦게 덧붙었습니다).'.$diagnostics);
+
+        // ⑦ SPA catch-all 보다 앞선다
+        $catchAll = $this->spaCatchAllRoute();
+        $this->assertNotNull($catchAll, 'SPA catch-all 을 찾지 못했습니다 — 전제가 바뀌었습니다.'.$diagnostics);
+
+        $catchAllIndex = $this->routeIndex($catchAll);
+        foreach ($this->teeWideRoutes() as $route) {
+            $this->assertLessThan(
+                $catchAllIndex,
+                $this->routeIndex($route),
+                $route->getName().' 가 SPA catch-all 뒤에 있습니다 — 영영 매칭되지 않습니다.'.$diagnostics
+            );
+        }
     }
 
     /**
@@ -479,9 +838,29 @@ abstract class PluginTestCase extends TestCase
     /**
      * 프로바이더가 이 앱에 등록됐는가.
      */
+    /**
+     * LiveCommerceServiceProvider 계열 프로바이더가 앱에 등록돼 있는가.
+     *
+     * ⚠ 반드시 `getProviders()` 여야 한다. Laravel 12 의 `$serviceProviders` 는
+     *   **구상 클래스명이 키**인 배열이고(Application.php:970-977),
+     *   `getProvider()` 는 그 키를 정확히 찾는 조회다(933-938). 그래서 부모 클래스명으로
+     *   물으면 서브클래스로 등록된 인스턴스를 **놓친다** — 3차 서버 실행의 28건 전부가
+     *   이 한 줄 때문이었다(프로바이더는 정상 register/boot 됐는데 판정만 false).
+     *   `getProviders()` 는 `Arr::where(..., instanceof)` 라 서브클래스를 찾는다(946-951).
+     */
     protected function providerIsRegistered(): bool
     {
-        return $this->app->getProvider(LiveCommerceServiceProvider::class) !== null;
+        return $this->registeredLiveCommerceProviders() !== [];
+    }
+
+    /**
+     * 등록된 LiveCommerceServiceProvider 계열 인스턴스들 (구상 클래스명 => 인스턴스).
+     *
+     * @return array<string, \Illuminate\Support\ServiceProvider>
+     */
+    protected function registeredLiveCommerceProviders(): array
+    {
+        return $this->app->getProviders(LiveCommerceServiceProvider::class);
     }
 
     /**
