@@ -519,6 +519,16 @@ abstract class PluginTestCase extends TestCase
             'diagnostics_enabled' => true,
             'tenant_slug_pattern' => '[a-z0-9][a-z0-9-]{0,62}',
             'known_tenants' => ['golfif'],
+            // 설정 전체를 교체하므로 표시 정보도 함께 넣는다 — 빠뜨리면
+            // TeeWideConfig::tenantProfile() 이 fallback(슬러그 그대로)을 돌려줘
+            // 화면이 '골프이프' 대신 'golfif' 를 출력한다.
+            'tenant_profiles' => [
+                'golfif' => [
+                    'name' => '골프이프',
+                    'description' => '골프 용품과 라운드 준비물을 라이브로 소개하는 채널입니다.',
+                    'initials' => 'GI',
+                ],
+            ],
         ], $overrides);
     }
 
