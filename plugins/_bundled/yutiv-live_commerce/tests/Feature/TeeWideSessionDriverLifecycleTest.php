@@ -4,7 +4,10 @@ namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
 use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Session\EncryptedStore;
 use Illuminate\Session\SessionManager;
+use Illuminate\Session\Store;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideSessionScope;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
@@ -97,7 +100,11 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         $this->runTeeWideRequest();
 
         // 드라이버를 바꾸고 다시 만들면 그 드라이버의 handler 여야 한다.
-        config(['session.driver' => 'null']);
+        // `array` 와 `file` 은 SessionManager 에 항상 구현이 있다
+        // (createArrayDriver / createFileDriver) — 환경에 따라 없을 수 있는
+        // 드라이버 이름에 기대지 않는다.
+        $other = config('session.driver') === 'array' ? 'file' : 'array';
+        config(['session.driver' => $other]);
         $manager->forgetDrivers();
 
         $this->assertNotSame(
@@ -158,6 +165,75 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
 
         $this->assertCount(2, $seen);
         $this->assertNotSame($seen[0], $seen[1], '스코프 매니저가 요청 간에 재사용됐습니다');
+    }
+
+    // ── custom creator 반환 계약 ────────────────────────────────────────────
+
+    public function test_스코프_매니저의_creator_는_handler_를_반환한다(): void
+    {
+        // SessionManager::callCustomCreator() 는 콜백 결과를 buildSession() 에 넘긴다
+        // (v12.62.0 SessionManager.php:18-21). 즉 콜백은 handler 를 돌려줘야 한다.
+        // Store 를 돌려주면 new Store($cookie, $store, ...) 가 되어 TypeError 가 난다.
+        $hostHandler = $this->app['session']->driver()->getHandler();
+
+        $manager = new SessionManager($this->app);
+        $manager->extend('array', static fn () => $hostHandler);
+
+        $store = $manager->driver('array');
+
+        $this->assertInstanceOf(Store::class, $store, 'creator 결과로 Store 가 만들어지지 않았습니다');
+        $this->assertSame($hostHandler, $store->getHandler(), 'host handler 가 공유되지 않았습니다');
+    }
+
+    public function test_creator_가_Store_를_반환하면_TypeError_가_난다(): void
+    {
+        // 잘못된 구현을 실제로 태워, 왜 handler 여야 하는지 실행으로 고정한다.
+        $hostStore = $this->app['session']->driver();
+
+        $manager = new SessionManager($this->app);
+        $manager->extend('array', static fn () => $hostStore);
+
+        $this->expectException(\TypeError::class);
+
+        $manager->driver('array');
+    }
+
+    public function test_TeeWide_Store_는_encrypt_설정에_따라_만들어진다(): void
+    {
+        $this->assertFalse((bool) config('session.encrypt'), '이 환경 전제: encrypt=false');
+
+        $seen = null;
+        $this->runTeeWideRequest(function () use (&$seen) {
+            $seen = $this->app['session']->driver();
+        });
+
+        $this->assertInstanceOf(Store::class, $seen);
+        $this->assertNotInstanceOf(EncryptedStore::class, $seen,
+            'encrypt=false 인데 EncryptedStore 가 만들어졌습니다');
+        $this->assertSame(TeeWideConfig::sessionCookie(), $seen->getName());
+    }
+
+    public function test_encrypt_가_켜지면_EncryptedStore_가_만들어진다(): void
+    {
+        config(['session.encrypt' => true]);
+
+        $seen = null;
+        $this->runTeeWideRequest(function () use (&$seen) {
+            $seen = $this->app['session']->driver();
+        });
+
+        $this->assertInstanceOf(EncryptedStore::class, $seen,
+            'session.encrypt 가 켜졌는데 EncryptedStore 가 아닙니다');
+        $this->assertSame(TeeWideConfig::sessionCookie(), $seen->getName());
+    }
+
+    public function test_TeeWide_HTTP_요청이_500_이_아니라_200_이다(): void
+    {
+        // 6차 서버 실행에서는 이 경로가 TypeError 로 무너졌다.
+        $this->get('http://'.self::ROOT_HOST.'/')
+            ->assertOk()
+            ->assertJsonPath('route', 'teewide.portal')
+            ->assertJsonPath('session_cookie', 'teewide_session');
     }
 
     // ── 스코프 깊이 ─────────────────────────────────────────────────────────

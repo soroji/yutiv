@@ -281,16 +281,63 @@ $scopeCode = twStripComments($scopeSrc);
 check('세션범위: 원래 Store 를 설정 변경 **전에** 확보한다 [주입 23]',
     twOrderedIn($handleBody, 'resolveHostStore()', "'session.cookie' =>"),
     '설정을 먼저 바꾸면 원래 Store 가 TeeWide 설정으로 만들어진다');
+$enterBody = twMethodBody($scopeCode, 'enter');
+
 check('세션범위: TeeWide 요청은 **별도 Store** 를 쓴다 [주입 23]',
     is_string($handleBody)
     && strpos($handleBody, 'TeeWideSessionScope::enter(') !== false
-    && strpos($scopeCode, 'function makeStore(') !== false);
+    && is_string($enterBody)
+    && strpos($enterBody, '$scopedManager->driver($driverName)') !== false);
+
+// ── custom creator 반환 계약 (6차 서버 TypeError 24건의 원인) ──────────────
+//
+// `SessionManager` 는 `callCustomCreator()` 를 **오버라이드**한다(SessionManager.php:18-21):
+//     return $this->buildSession(parent::callCustomCreator($driver));
+// 즉 콜백 반환값은 완성된 Store 가 아니라 `buildSession($handler)` 에 넘길
+// SessionHandlerInterface 다(190-200). Store 를 돌려주면 `new Store($cookie, $store, ...)`
+// 가 되어 Store::__construct 의 타입 선언(Store.php:85)에 걸려 TypeError 가 난다.
+
+// [주입 42] 콜백이 Store 를 반환
+check('creator계약: 콜백이 handler 를 반환한다 [주입 42]',
+    is_string($enterBody)
+    && preg_match('/extend\\(\\$driverName,\\s*static fn \\(\\) => \\$handler\\)/', $enterBody) === 1);
+check('creator계약: 콜백이 Store 를 반환하지 않는다 [주입 42]',
+    is_string($enterBody)
+    && preg_match('/extend\\([^)]*=>\\s*(\\$teeWideStore|\\$store|new Store|new EncryptedStore)/', $enterBody) !== 1,
+    'SessionManager 는 콜백 결과를 buildSession() 에 넘긴다 — Store 를 주면 이중 build 로 TypeError');
+check('creator계약: 직접 new Store 하지 않고 Laravel 이 만들게 한다 [주입 42]',
+    strpos($scopeCode, 'new Store(') === false
+    && strpos($scopeCode, 'new EncryptedStore(') === false,
+    'buildSession/buildEncryptedSession 이 encrypt·serialization·cookie 를 처리하게 둔다');
+check('creator계약: handler 를 host Store 에서 가져온다 [주입 42]',
+    is_string($enterBody)
+    && strpos($enterBody, '$hostStore->getHandler()') !== false);
+
+// [주입 43] 타입 단언 제거
+$assertBody = twMethodBody($scopeCode, 'assertScopedStore');
+check('creator계약: handler 타입을 명시적으로 검증한다 [주입 43]',
+    is_string($enterBody)
+    && strpos($enterBody, 'instanceof SessionHandlerInterface') !== false);
+check('creator계약: 생성된 Store 의 타입·정체를 검증한다 [주입 43]',
+    is_string($assertBody)
+    && strpos($assertBody, 'instanceof Store') !== false
+    && strpos($assertBody, '$store === $hostStore') !== false
+    && strpos($assertBody, '$store->getHandler() !== $handler') !== false);
+check('creator계약: encrypt on/off 를 양방향으로 검증한다 [주입 43]',
+    is_string($assertBody)
+    && strpos($assertBody, '$encrypt && ! $store instanceof EncryptedStore') !== false
+    && strpos($assertBody, '! $encrypt && $store instanceof EncryptedStore') !== false);
+check('creator계약: 쿠키 이름을 검증한다 [주입 43]',
+    is_string($assertBody) && strpos($assertBody, '$store->getName() !== $cookie') !== false);
+check('creator계약: 불일치 시 의미 있는 예외로 끊는다 [주입 43]',
+    substr_count($scopeCode, 'throw new LogicException(') >= 6);
 check('세션범위: 쿠키 이름만 바꾸는 방식으로 끝내지 않는다 [주입 23]',
     is_string($handleBody) && strpos($handleBody, 'setName(') === false,
     '같은 객체의 이름만 바꾸면 attributes·started 상태가 그대로 공유된다');
 check('세션범위: 전용 Store 가 핸들러를 공유한다 (세션 레코드 보존) [주입 23]',
     strpos($scopeCode, '$hostStore->getHandler()') !== false
-    && strpos($scopeCode, 'new Store($cookie, $handler, null, $serialization)') !== false);
+    && is_string($assertBody)
+    && strpos($assertBody, 'getHandler() !== $handler') !== false);
 check('세션범위: 저장된 세션을 지우지 않는다 [주입 23]',
     strpos($scopeCode, '->flush()') === false
     && strpos($handleBody, '->flush()') === false
@@ -298,9 +345,11 @@ check('세션범위: 저장된 세션을 지우지 않는다 [주입 23]',
 check('세션범위: finally 에서 스코프를 닫는다 [주입 23]',
     is_string($handleBody)
     && preg_match('/finally\\s*\\{.*?TeeWideSessionScope::leave\\(/s', $handleBody) === 1);
-check('세션범위: session.encrypt 면 EncryptedStore 로 만든다',
-    strpos($scopeCode, 'new EncryptedStore(') !== false
-    && strpos($scopeCode, "get('session.encrypt')") !== false);
+check('세션범위: session.encrypt 처리를 프레임워크에 맡긴다',
+    strpos($scopeCode, 'new EncryptedStore(') === false
+    && strpos($scopeCode, "get('session.encrypt')") !== false
+    && strpos($scopeCode, 'EncryptedStore') !== false,
+    'buildSession() 이 encrypt 를 보고 고르게 두되, 결과 타입은 검증한다');
 
 // [주입 28] 인증 guard 캐시 격리 제거
 //
@@ -308,7 +357,8 @@ check('세션범위: session.encrypt 면 EncryptedStore 로 만든다',
 // (AuthManager.php:122-131) guard 를 캐시한다(65-70). Store 만 바꾸고 guard 를 두면
 // guard 가 옛 Store 를 계속 본다.
 check('세션범위: session.store 바인딩을 전용 Store 로 바꾼다 [주입 28]',
-    strpos($scopeCode, "instance('session.store', \$store)") !== false);
+    is_string($enterBody)
+    && strpos($enterBody, "instance('session.store', \$teeWideStore)") !== false);
 check('세션범위: guard 캐시를 비워 새 Store 를 보게 한다 [주입 28]',
     is_string($handleBody)
     && substr_count($handleBody, 'forgetGuards()') === 2,
@@ -765,9 +815,12 @@ check('creator수명: 호스트 매니저의 forgetDrivers 를 부르지 않는�
     '호스트 캐시를 비우면 YUTIV Store 와 handler 가 함께 날아간다');
 
 // [주입 36] static registry 가 Store/handler/매니저를 붙잡음
+// static **속성**만 검사한다 (private static function 은 정상).
+preg_match_all('/(?:private|protected|public)\\s+static\\s+(?!function)([^;]+);/', $scopeCode, $staticProps);
 check('creator수명: static 상태로 Store·handler·매니저를 붙잡지 않는다 [주입 36]',
-    preg_match('/private static (?!int )/', $scopeCode) !== 1,
-    'static 으로 객체를 들고 있으면 새 Application 으로 잔재가 넘어간다');
+    count($staticProps[1]) === 1 && strpos($staticProps[1][0], 'int $depth') !== false,
+    'static 으로 객체를 들고 있으면 새 Application 으로 잔재가 넘어간다: '
+        .implode(' | ', $staticProps[1]));
 check('creator수명: 보유하는 static 은 깊이 정수 하나뿐이다 [주입 36]',
     strpos($scopeCode, 'private static int $depth = 0;') !== false);
 check('creator수명: 복원 정보는 호출별 지역 토큰으로 전달된다 [주입 36]',
@@ -845,6 +898,26 @@ foreach ([
 ] as $case) {
     check('creator수명 회귀: '.$case, strpos($lifecycleCode, 'function test_'.$case) !== false);
 }
+
+foreach ([
+    '스코프_매니저의_creator_는_handler_를_반환한다',
+    'creator_가_Store_를_반환하면_TypeError_가_난다',
+    'TeeWide_Store_는_encrypt_설정에_따라_만들어진다',
+    'encrypt_가_켜지면_EncryptedStore_가_만들어진다',
+    'TeeWide_HTTP_요청이_500_이_아니라_200_이다',
+] as $case) {
+    check('creator계약 회귀: '.$case, strpos($lifecycleCode, 'function test_'.$case) !== false);
+}
+
+// 잘못된 구현을 **실행으로** 고정하는 테스트가 있어야 한다.
+check('creator계약: 잘못된 반환(Store)이 TypeError 임을 실행 검증한다',
+    strpos($lifecycleCode, 'expectException(\\TypeError::class)') !== false
+    && preg_match('/extend\\(.array., static fn \\(\\) => \\$hostStore\\)/', $lifecycleCode) === 1);
+check('creator계약: 존재가 보장되지 않는 드라이버 이름에 기대지 않는다',
+    strpos($lifecycleCode, "'session.driver' => 'null'") === false);
+
+serverOnly('스코프 매니저가 만든 Store 가 TeeWide 쿠키 이름·타입을 갖는가');
+serverOnly('TeeWide HTTP 요청이 TypeError 없이 200 을 돌려주는가');
 
 check('creator수명: stale Store 재등장을 객체 ID 로 판정한다',
     preg_match('/assertNotSame\\(\\s*spl_object_id\\(\\$before\\)\\s*,\\s*spl_object_id\\(\\$after\\)/', $lifecycleCode) === 1);
