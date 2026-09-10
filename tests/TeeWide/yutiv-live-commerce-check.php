@@ -413,6 +413,77 @@ check('인증: 인증 라우트의 경로와 이름이 계약대로 짝지어져
     && preg_match("/Route::get\\('\\/register'.*?->name\\('teewide\\.register'\\)/s", $routesBody) === 1
     && preg_match("/Route::post\\('\\/logout'.*?->name\\('teewide\\.logout'\\)/s", $routesBody) === 1);
 
+// ── 인증 테스트는 요청 밖에서 세션을 관찰하지 않는다 ──────────────────────
+//
+// ConfigureTeeWideSession 은 TeeWide 요청 **동안에만** 전용 session.store 와 teewide
+// guard 를 설치하고, 쿠키 발급·세션 저장이 끝난 뒤 finally 에서 YUTIV 상태로 되돌린다.
+// 그래서 요청이 끝난 뒤 아래를 보면 TeeWide 가 아니라 복원된 YUTIV 상태를 본다 —
+// 테스트가 관찰하는 대상 자체가 틀린다.
+$authTestSrc = (string) @file_get_contents($pluginDir.'/tests/Feature/TeeWideAuthTest.php');
+$authTestCode = twStripComments($authTestSrc);
+
+check('인증테스트: 요청 밖에서 TeeWide guard 를 관찰하지 않는다',
+    strpos($authTestCode, 'TeeWideAuth::check()') === false
+    && strpos($authTestCode, 'TeeWideAuth::user()') === false,
+    '요청이 끝나면 guard 는 YUTIV 로 복원된다');
+check('인증테스트: 요청 밖에서 세션 ID 를 읽지 않는다',
+    strpos($authTestCode, 'session()->getId()') === false,
+    '요청이 끝나면 session() 은 YUTIV Store 를 가리킨다');
+check('인증테스트: 세션 기반 오류 단언을 쓰지 않는다',
+    strpos($authTestCode, 'assertSessionHasErrors') === false
+    && strpos($authTestCode, '->getSession()') === false,
+    'flash 된 오류는 TeeWide Store 에 있고 그 Store 는 요청 종료와 함께 내려간다');
+
+// actingAs() 는 세션이 아니라 guard 객체에 사용자를 직접 꽂는다(SessionGuard::setUser).
+// 게다가 ConfigureTeeWideSession 이 요청 진입 시 forgetGuards() 를 부르므로 그 주입은
+// TeeWide 요청 안에서 사라진다 — 어느 쪽으로도 **쿠키 격리를 증명하지 못한다.**
+check('인증테스트: YUTIV 경계 검증에 actingAs 를 쓰지 않는다',
+    strpos($authTestCode, 'actingAs(') === false,
+    'actingAs 는 guard 주입이라 실제 쿠키 격리를 증명하지 못한다');
+check('인증테스트: 진짜 YUTIV 로그인 세션 쿠키로 경계를 검증한다',
+    substr_count($authTestCode, 'makeYutivLoginSession(') === 2
+    // 보호화면과 진단 **두 곳 모두** 실제 쿠키를 실어 보내야 한다.
+    // 존재 검사만 하면 한쪽을 지워도 통과한다.
+    && substr_count($authTestCode, 'withUnencryptedCookie($this->yutivSessionCookieName()') === 2);
+check('인증테스트: 그 쿠키로 보호화면과 진단을 모두 확인한다',
+    strpos($authTestCode, "assertRedirect(route('teewide.login'))") !== false
+    && strpos($authTestCode, "assertJsonPath('yutiv_user_leaked', false)") !== false);
+
+// 세 스위트가 같은 "진짜 YUTIV 로그인 세션" 정의를 쓰는가.
+// 이 지점에는 아래쪽에서 쓰는 $baseCode 가 아직 없다 — 여기서 직접 읽는다.
+$pluginBaseCode = twStripComments((string) @file_get_contents($pluginDir.'/tests/PluginTestCase.php'));
+check('인증테스트: YUTIV 세션 헬퍼가 공통 베이스에 하나만 있다',
+    strpos($pluginBaseCode, 'function makeYutivLoginSession(') !== false
+    && strpos($pluginBaseCode, 'function yutivSessionCookieName(') !== false
+    && strpos($pluginBaseCode, 'function yutivLoginSessionKey(') !== false);
+check('인증테스트: 로그인 키가 SessionGuard 규칙 그대로다',
+    strpos($pluginBaseCode, "'login_web_'.sha1(SessionGuard::class)") !== false,
+    'guard 가 실제로 쓰는 키가 아니면 진짜 로그인 세션이 아니다');
+check('인증테스트: 스위트가 그 헬퍼를 중복 정의하지 않는다',
+    strpos($isolationCode, 'function makeYutivLoginSession(') === false
+    && strpos(twStripComments((string) @file_get_contents($pluginDir.'/tests/Feature/TeeWideSessionBoundaryTest.php')),
+        'function makeYutivLoginSession(') === false);
+
+check('인증테스트: 응답 쿠키를 꺼내는 헬퍼가 있다',
+    strpos($authTestCode, "getCookie(self::SESSION_COOKIE, false)") !== false
+    && strpos($authTestCode, 'function teeWideSessionCookie(') !== false);
+check('인증테스트: 다음 요청에 쿠키를 명시적으로 실어 보낸다',
+    strpos($authTestCode, 'withUnencryptedCookie(self::SESSION_COOKIE, $sessionId)') !== false
+    && substr_count($authTestCode, 'withTeeWideSession(') >= 10,
+    '기본 쿠키 자동 전달에 기대면 TeeWide 세션이 이어지지 않는다');
+check('인증테스트: 쿠키가 없으면 명확히 실패시킨다',
+    preg_match('/assertNotNull\(\s*\$cookie,/', $authTestCode) === 1);
+
+// 보안 계약이 그대로 남아 있는가 (숫자를 줄여 통과시키지 않았는지)
+check('인증테스트: 보안 단언이 유지된다',
+    strpos($authTestCode, 'GENERIC_FAILURE') !== false
+    && strpos($authTestCode, 'Hash::check(') !== false
+    && strpos($authTestCode, "auth()->guard('web')->check()") !== false
+    && strpos($authTestCode, 'assertStringNotContainsString') !== false);
+check('인증테스트: 테스트 수가 줄지 않았다',
+    substr_count($authTestCode, 'public function test_') >= 19,
+    '실제 '.substr_count($authTestCode, 'public function test_').'종');
+
 // ── Phase 1-B: 마이그레이션·시더 ──────────────────────────────────────────
 $migrationDir = $pluginDir.'/database/migrations';
 $usersMigration = (string) @file_get_contents($migrationDir.'/2026_09_11_000001_create_teewide_users_table.php');
@@ -636,9 +707,11 @@ check('세션범위: 그 판정이 매칭 라우트도 확인한다 [주입 25]'
 check('세션범위: 로그인 누수 판정에 actingAs 를 쓰지 않는다 [주입 26]',
     strpos($isolationCode, 'actingAs(') === false,
     'actingAs 는 guard 인스턴스에 사용자를 꽂아 쿠키 격리를 증명하지 못한다');
+// 로그인 키 정의는 PluginTestCase 로 옮겼다(세 스위트 공용). 여기서는 이 스위트가
+// 그 공용 헬퍼로 **진짜 세션**을 만들어 쿠키로 보내는지만 본다.
 check('세션범위: 실제 YUTIV 로그인 세션 쿠키로 판정한다 [주입 26]',
     strpos($isolationCode, 'makeYutivLoginSession(') !== false
-    && strpos($isolationCode, "'login_web_'.sha1") !== false
+    && strpos($isolationCode, 'yutivSessionCookieName()') !== false
     && strpos($isolationCode, 'withUnencryptedCookie($yutivCookie') !== false);
 check('세션범위: 누수 단언과 함께 TeeWide 쿠키 이름·라우트도 고정한다 [주입 26]',
     strpos($isolationCode, "assertJsonPath('session_cookie', 'teewide_session')") !== false
@@ -1131,7 +1204,9 @@ check('세션경계: 연속 TeeWide 요청의 Store 가 서로 다름을 단언�
 check('세션경계: 요청 후 원래 Store 로 복원됨을 단언한다 [주입 29]',
     preg_match('/assertSame\\(\\s*\\$hostStoreId\\s*,\\s*spl_object_id\\(/', $boundaryCode) === 1);
 check('세션경계: 실제 로그인 키를 SessionGuard 규칙으로 계산한다 [주입 29]',
-    strpos($boundaryCode, "'login_web_'.sha1(SessionGuard::class)") !== false);
+    // 정의는 PluginTestCase 에 하나뿐이고, 이 스위트는 그것을 그대로 쓴다.
+    strpos($boundaryCode, 'yutivLoginSessionKey()') !== false
+    && strpos($pluginBaseCode, "'login_web_'.sha1(SessionGuard::class)") !== false);
 
 // [주입 30] 세션 레코드를 지워서 통과시키기
 check('세션경계: 테스트가 세션 레코드를 지우지 않는다 [주입 30]',

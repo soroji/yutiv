@@ -181,29 +181,8 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         );
     }
 
-    /**
-     * YUTIV 쪽 세션 쿠키 이름 (TeeWide 설정을 씌우기 전의 값).
-     */
-    private function yutivSessionCookieName(): string
-    {
-        return (string) config('session.cookie');
-    }
-
-    /**
-     * YUTIV 세션에 실제 로그인 상태를 기록하고 세션 ID 를 돌려준다.
-     *
-     * `SessionGuard` 는 세션에 `login_web_<sha1(SessionGuard::class)>` 키로 사용자 id 를
-     * 넣는다. 같은 키를 직접 써서 "진짜 로그인된 YUTIV 세션" 을 만든다.
-     */
-    private function makeYutivLoginSession(User $user): string
-    {
-        $session = $this->app['session']->driver();
-        $session->start();
-        $session->put('login_web_'.sha1(\Illuminate\Auth\SessionGuard::class), $user->getAuthIdentifier());
-        $session->save();
-
-        return $session->getId();
-    }
+    // yutivSessionCookieName() / makeYutivLoginSession() 은 PluginTestCase 로 옮겼다
+    // — 세 스위트가 같은 "진짜 YUTIV 로그인 세션" 정의를 쓰게 하기 위해서다.
 
     // ── 미들웨어 순서 (설계 계약) ───────────────────────────────────────────
 

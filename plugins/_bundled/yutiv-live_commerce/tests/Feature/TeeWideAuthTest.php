@@ -4,19 +4,37 @@ namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
 use App\Models\User as YutivUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Testing\TestResponse;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
-use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
 
 /**
  * TeeWide 전용 회원가입·로그인·마이페이지.
  *
- * ── 지켜야 할 경계 ─────────────────────────────────────────────────────────
- * TeeWide 회원은 `teewide_users` 테이블, `teewide` guard, `teewide_session` 쿠키를 쓴다.
- * YUTIV `users`/`web` guard 와는 어느 방향으로도 통하지 않는다.
+ * ── 왜 요청 밖에서 로그인 상태를 확인하지 않는가 ───────────────────────────
+ * `ConfigureTeeWideSession` 은 TeeWide 요청 **동안에만** 전용 `session.store` 와
+ * `teewide` guard 를 설치하고, 응답 쿠키 발급·세션 저장이 끝난 뒤 `finally` 에서
+ * YUTIV Store 와 guard 를 되돌린다. 그게 이 플러그인의 핵심 보안 계약이다.
+ *
+ * 따라서 HTTP 요청이 끝난 뒤에 아래를 보면 **TeeWide 상태가 아니라 복원된 YUTIV 상태**를
+ * 본다 — 테스트가 관찰하는 대상 자체가 틀린다.
+ *
+ *   TeeWideAuth::check() / TeeWideAuth::user()
+ *   session()->getId()
+ *   TestResponse::assertSessionHasErrors() / getSession()
+ *
+ * 그래서 이 스위트는 브라우저가 하는 것과 똑같이 한다 — 응답에서 `teewide_session`
+ * 쿠키를 꺼내 다음 요청에 명시적으로 실어 보내고, **그 응답으로** 판정한다.
+ * (`TeeWideSessionIsolationTest` · `TeeWideSessionBoundaryTest` 와 같은 방식)
  */
 class TeeWideAuthTest extends PluginTestCase
 {
+    /** TeeWide 전용 세션 쿠키 이름 — YUTIV 의 것과 다르다. */
+    private const SESSION_COOKIE = 'teewide_session';
+
+    /** 로그인 실패 시 언제나 같은 문구 (계정 열거 차단). */
+    private const GENERIC_FAILURE = '이메일 또는 비밀번호가 올바르지 않습니다.';
+
     protected function teeWideBootConfig(): ?array
     {
         return static::teeWideConfigValues();
@@ -34,6 +52,49 @@ class TeeWideAuthTest extends PluginTestCase
     private function portal(string $path): string
     {
         return 'http://'.self::ROOT_HOST.$path;
+    }
+
+    /**
+     * 응답이 발급한 TeeWide 세션 쿠키 값.
+     *
+     * 암호화되지 않은 원본을 읽는다(`getCookie($name, false)`) — 다음 요청에
+     * `withUnencryptedCookie()` 로 그대로 돌려주기 위해서다.
+     */
+    private function teeWideSessionCookie(TestResponse $response): string
+    {
+        $cookie = $response->getCookie(self::SESSION_COOKIE, false);
+
+        $this->assertNotNull(
+            $cookie,
+            'TeeWide 세션 쿠키('.self::SESSION_COOKIE.')가 응답에 없습니다. '
+            .'상태 '.$response->getStatusCode().' — 세션 미들웨어가 붙지 않았거나 요청이 TeeWide 라우트에 닿지 않았습니다.'
+        );
+
+        return (string) $cookie->getValue();
+    }
+
+    /**
+     * 주어진 세션으로 다음 TeeWide 요청을 보낸다.
+     *
+     * 전역 app 세션이나 기본 쿠키 자동 전달에 기대지 않는다 — 그것들은 요청이 끝나면
+     * YUTIV 상태로 복원되므로 TeeWide 세션을 이어 주지 못한다.
+     */
+    private function withTeeWideSession(string $sessionId): self
+    {
+        return $this->withUnencryptedCookie(self::SESSION_COOKIE, $sessionId);
+    }
+
+    /**
+     * 회원을 만들고 로그인해, 그 결과 세션 쿠키를 돌려준다.
+     */
+    private function loginAs(string $email): string
+    {
+        $response = $this->post($this->portal('/login'), [
+            'email' => $email,
+            'password' => self::TEST_USER_PASSWORD,
+        ]);
+
+        return $this->teeWideSessionCookie($response);
     }
 
     // ── 화면 ────────────────────────────────────────────────────────────────
@@ -84,8 +145,13 @@ class TeeWideAuthTest extends PluginTestCase
         $this->assertSame(TeeWideUser::STATUS_ACTIVE, $user->status);
         $this->assertNotNull($user->uuid, '외부 노출용 UUID 가 없습니다');
 
-        $this->assertTrue(TeeWideAuth::check(), '가입 후 TeeWide guard 로 로그인되지 않았습니다');
-        $this->assertSame($user->id, TeeWideAuth::user()?->id);
+        // "가입 후 로그인" 은 다음 요청이 실제로 통과하는지로 증명한다.
+        $account = $this->withTeeWideSession($this->teeWideSessionCookie($response))
+            ->get($this->portal('/account'));
+
+        $account->assertOk();
+        $account->assertSee('김테스트');
+        $account->assertSee('newmember@teewide.test');
     }
 
     public function test_비밀번호는_평문으로_저장되지_않는다(): void
@@ -116,30 +182,74 @@ class TeeWideAuthTest extends PluginTestCase
             'terms' => '1',
         ]);
 
-        $response->assertSessionHasErrors('email');
+        $response->assertRedirect($this->portal('/register'));
+
+        // 오류는 세션에 flash 되므로, 같은 세션으로 돌아가 **렌더된 화면**에서 확인한다.
+        // 문구가 아니라 오류 전용 요소로 판정한다 — 이 span 은 해당 필드에 오류가
+        // 있을 때만 렌더되므로, 번역이 바뀌어도 계약은 그대로다.
+        $this->withTeeWideSession($this->teeWideSessionCookie($response))
+            ->get($this->portal('/register'))
+            ->assertOk()
+            ->assertSee('id="tw-email-error"', false);
+
         $this->assertSame(1, TeeWideUser::query()->where('email', 'taken@teewide.test')->count());
     }
 
     public function test_회원가입_검증이_동작한다(): void
     {
         $cases = [
-            'name' => ['name' => '', 'email' => 'a@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234', 'terms' => '1'],
-            'email' => ['name' => '김', 'email' => 'not-an-email', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234', 'terms' => '1'],
-            'password' => ['name' => '김', 'email' => 'b@teewide.test', 'password' => 'short', 'password_confirmation' => 'short', 'terms' => '1'],
-            'terms' => ['name' => '김', 'email' => 'd@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234'],
+            '이름 누락' => [
+                ['name' => '', 'email' => 'a@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234', 'terms' => '1'],
+                'id="tw-name-error"',
+            ],
+            '이메일 형식' => [
+                ['name' => '김', 'email' => 'not-an-email', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234', 'terms' => '1'],
+                'id="tw-email-error"',
+            ],
+            '비밀번호 길이' => [
+                ['name' => '김', 'email' => 'b@teewide.test', 'password' => 'short', 'password_confirmation' => 'short', 'terms' => '1'],
+                'id="tw-password-error"',
+            ],
+            '비밀번호 확인 불일치' => [
+                ['name' => '김', 'email' => 'c@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'different-1234', 'terms' => '1'],
+                'id="tw-password-error"',
+            ],
+            '약관 미동의' => [
+                ['name' => '김', 'email' => 'd@teewide.test', 'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234'],
+                'id="tw-terms-error"',
+            ],
         ];
 
-        foreach ($cases as $field => $payload) {
-            $this->from($this->portal('/register'))
-                ->post($this->portal('/register'), $payload)
-                ->assertSessionHasErrors($field);
+        foreach ($cases as $label => [$payload, $expectedMarker]) {
+            $response = $this->from($this->portal('/register'))
+                ->post($this->portal('/register'), $payload);
+
+            $this->assertTrue(
+                $response->isRedirect($this->portal('/register')),
+                $label.' — 검증 실패인데 되돌아가지 않았습니다 (상태 '.$response->getStatusCode().')'
+            );
+
+            $page = $this->withTeeWideSession($this->teeWideSessionCookie($response))
+                ->get($this->portal('/register'));
+
+            $page->assertOk();
+            $page->assertSee('입력한 내용을 다시 확인해 주세요.');
+            $this->assertStringContainsString(
+                $expectedMarker,
+                (string) $page->getContent(),
+                $label.' — 해당 필드의 오류 표시가 화면에 없습니다'
+            );
         }
 
-        // 비밀번호 확인 불일치는 password 필드에 오류가 붙는다.
-        $this->from($this->portal('/register'))->post($this->portal('/register'), [
-            'name' => '김', 'email' => 'c@teewide.test',
-            'password' => 'teewide-secret-1234', 'password_confirmation' => 'different-1234', 'terms' => '1',
-        ])->assertSessionHasErrors('password');
+        // 약관 문구는 이 플러그인이 직접 정한 것이라 문구 자체를 고정한다.
+        $terms = $this->from($this->portal('/register'))->post($this->portal('/register'), [
+            'name' => '김', 'email' => 'e@teewide.test',
+            'password' => 'teewide-secret-1234', 'password_confirmation' => 'teewide-secret-1234',
+        ]);
+        $this->withTeeWideSession($this->teeWideSessionCookie($terms))
+            ->get($this->portal('/register'))
+            ->assertOk()
+            ->assertSee('이용약관에 동의해야 가입할 수 있습니다.');
 
         $this->assertSame(0, TeeWideUser::query()->count(), '검증 실패인데 계정이 만들어졌습니다');
     }
@@ -157,35 +267,53 @@ class TeeWideAuthTest extends PluginTestCase
         ]);
 
         $response->assertRedirect(route('teewide.account'));
-        $this->assertTrue(TeeWideAuth::check());
         $this->assertNotNull($user->fresh()->last_login_at, 'last_login_at 이 갱신되지 않았습니다');
+
+        // 로그인 성립은 다음 요청이 실제로 통과하는지로 증명한다.
+        $this->withTeeWideSession($this->teeWideSessionCookie($response))
+            ->get($this->portal('/account'))
+            ->assertOk();
     }
 
     public function test_잘못된_로그인은_계정_존재_여부를_알려주지_않는다(): void
     {
         $this->makeTeeWideUser(['email' => 'real@teewide.test']);
 
-        $wrongPassword = $this->from($this->portal('/login'))->post($this->portal('/login'), [
-            'email' => 'real@teewide.test',
-            'password' => 'wrong-password-1234',
-        ]);
+        $pages = [];
 
-        $noSuchAccount = $this->from($this->portal('/login'))->post($this->portal('/login'), [
-            'email' => 'ghost@teewide.test',
-            'password' => 'wrong-password-1234',
-        ]);
+        foreach ([
+            '비밀번호 틀림' => 'real@teewide.test',
+            '없는 계정' => 'ghost@teewide.test',
+        ] as $label => $email) {
+            $response = $this->from($this->portal('/login'))->post($this->portal('/login'), [
+                'email' => $email,
+                'password' => 'wrong-password-1234',
+            ]);
 
-        $wrongPassword->assertSessionHasErrors('email');
-        $noSuchAccount->assertSessionHasErrors('email');
+            $this->assertTrue(
+                $response->isRedirect($this->portal('/login')),
+                $label.' — 로그인이 성립했습니다 (상태 '.$response->getStatusCode().')'
+            );
 
-        // 두 경우의 문구가 같아야 계정 열거가 불가능하다.
-        $this->assertSame(
-            $wrongPassword->getSession()->get('errors')?->first('email'),
-            $noSuchAccount->getSession()->get('errors')?->first('email'),
-            '계정 존재 여부에 따라 오류 문구가 달라집니다'
-        );
+            $page = $this->withTeeWideSession($this->teeWideSessionCookie($response))
+                ->get($this->portal('/login'));
 
-        $this->assertFalse(TeeWideAuth::check());
+            $page->assertOk();
+            $this->assertStringContainsString(
+                self::GENERIC_FAILURE,
+                (string) $page->getContent(),
+                $label.' — 일반 오류 문구가 없습니다'
+            );
+
+            $pages[$label] = (string) $page->getContent();
+        }
+
+        // 어느 쪽도 계정 존재 여부를 드러내면 안 된다.
+        foreach ($pages as $label => $html) {
+            foreach (['존재하지 않', '등록되지 않', '없는 계정', '가입되지 않', '비밀번호가 틀'] as $leak) {
+                $this->assertStringNotContainsString($leak, $html, $label.' — 계정 존재 여부를 드러내는 문구가 있습니다: '.$leak);
+            }
+        }
     }
 
     public function test_정지된_계정은_로그인할_수_없다(): void
@@ -195,27 +323,49 @@ class TeeWideAuthTest extends PluginTestCase
             'status' => TeeWideUser::STATUS_SUSPENDED,
         ]);
 
-        $this->from($this->portal('/login'))->post($this->portal('/login'), [
+        $response = $this->from($this->portal('/login'))->post($this->portal('/login'), [
             'email' => 'suspended@teewide.test',
             'password' => self::TEST_USER_PASSWORD,
-        ])->assertSessionHasErrors('email');
+        ]);
 
-        $this->assertFalse(TeeWideAuth::check(), '정지 계정이 로그인됐습니다');
+        $this->assertTrue(
+            $response->isRedirect($this->portal('/login')),
+            '정지 계정이 로그인됐습니다 (상태 '.$response->getStatusCode().')'
+        );
+
+        $sessionId = $this->teeWideSessionCookie($response);
+
+        // 정지 사실을 따로 알려 주지 않는다 — 일반 오류 문구 하나뿐이다.
+        $page = $this->withTeeWideSession($sessionId)->get($this->portal('/login'));
+        $page->assertOk();
+        $page->assertSee(self::GENERIC_FAILURE, false);
+        $page->assertDontSee('정지');
+
+        // 같은 세션으로도 보호 화면에 들어갈 수 없다.
+        $this->withTeeWideSession($sessionId)
+            ->get($this->portal('/account'))
+            ->assertRedirect(route('teewide.login'));
     }
 
     public function test_로그인시_세션_ID_가_재발급된다(): void
     {
         $this->makeTeeWideUser(['email' => 'regen@teewide.test']);
 
-        $this->get($this->portal('/login'));
-        $before = session()->getId();
+        // 로그인 전 세션을 실제로 하나 만든다.
+        $before = $this->teeWideSessionCookie($this->get($this->portal('/login')));
 
-        $this->post($this->portal('/login'), [
+        // 그 세션을 그대로 들고 로그인한다 — 세션 고정 공격의 형태다.
+        $response = $this->withTeeWideSession($before)->post($this->portal('/login'), [
             'email' => 'regen@teewide.test',
             'password' => self::TEST_USER_PASSWORD,
         ]);
 
-        $this->assertNotSame($before, session()->getId(), '세션 고정 방어(regenerate)가 없습니다');
+        $after = $this->teeWideSessionCookie($response);
+
+        $this->assertNotSame($before, $after, '로그인 후에도 같은 세션 ID 입니다 — 세션 고정 방어가 없습니다');
+
+        // 새 세션은 정상 동작해야 한다.
+        $this->withTeeWideSession($after)->get($this->portal('/account'))->assertOk();
     }
 
     // ── 로그아웃 ────────────────────────────────────────────────────────────
@@ -223,32 +373,39 @@ class TeeWideAuthTest extends PluginTestCase
     public function test_로그아웃은_POST_만_허용한다(): void
     {
         $this->makeTeeWideUser(['email' => 'out@teewide.test']);
-        $this->post($this->portal('/login'), [
-            'email' => 'out@teewide.test',
-            'password' => self::TEST_USER_PASSWORD,
-        ]);
+        $sessionId = $this->loginAs('out@teewide.test');
 
         // GET 로그아웃은 링크·이미지 프리페치로 강제 실행된다 — 라우트 자체가 없어야 한다.
         $this->assertNull($this->matchedRouteName($this->portal('/logout')));
         $this->assertSame('teewide.logout', $this->matchedRouteName($this->portal('/logout'), 'POST'));
 
-        $this->assertTrue(TeeWideAuth::check(), 'GET 확인 과정에서 로그아웃됐습니다');
+        // GET 을 확인하는 과정에서 로그아웃되지 않았는지 실제 요청으로 본다.
+        $this->withTeeWideSession($sessionId)->get($this->portal('/account'))->assertOk();
     }
 
     public function test_로그아웃하면_세션이_무효화된다(): void
     {
         $this->makeTeeWideUser(['email' => 'bye@teewide.test']);
-        $this->post($this->portal('/login'), [
-            'email' => 'bye@teewide.test',
-            'password' => self::TEST_USER_PASSWORD,
-        ]);
+        $before = $this->loginAs('bye@teewide.test');
 
-        $sessionBefore = session()->getId();
+        $logout = $this->withTeeWideSession($before)->post($this->portal('/logout'));
 
-        $this->post($this->portal('/logout'))->assertRedirect(route('teewide.portal'));
+        $logout->assertRedirect(route('teewide.portal'));
 
-        $this->assertFalse(TeeWideAuth::check(), '로그아웃 후에도 로그인 상태입니다');
-        $this->assertNotSame($sessionBefore, session()->getId(), '세션이 무효화되지 않았습니다');
+        $after = $this->teeWideSessionCookie($logout);
+
+        $this->assertNotSame($before, $after, '로그아웃 후에도 같은 세션 ID 입니다 — 세션이 무효화되지 않았습니다');
+
+        // 새 세션은 물론, 옛 세션으로도 보호 화면에 들어갈 수 없어야 한다.
+        $this->withTeeWideSession($after)
+            ->get($this->portal('/account'))
+            ->assertRedirect(route('teewide.login'));
+
+        $stale = $this->withTeeWideSession($before)->get($this->portal('/account'));
+        $this->assertTrue(
+            $stale->isRedirect(route('teewide.login')),
+            '로그아웃 전 세션이 여전히 유효합니다 (상태 '.$stale->getStatusCode().')'
+        );
     }
 
     // ── 마이페이지 ──────────────────────────────────────────────────────────
@@ -260,8 +417,9 @@ class TeeWideAuthTest extends PluginTestCase
         $response->assertRedirect(route('teewide.login'));
 
         // YUTIV 로그인 화면으로 보내면 안 된다.
-        $this->assertStringContainsString(self::ROOT_HOST, $response->headers->get('Location'));
-        $this->assertStringNotContainsString(self::YUTIV_HOST, (string) $response->headers->get('Location'));
+        $location = (string) $response->headers->get('Location');
+        $this->assertStringContainsString(self::ROOT_HOST, $location);
+        $this->assertStringNotContainsString(self::YUTIV_HOST, $location);
     }
 
     public function test_로그인_account_는_본인_정보를_보여준다(): void
@@ -271,12 +429,8 @@ class TeeWideAuthTest extends PluginTestCase
             'name' => '내이름',
         ]);
 
-        $this->post($this->portal('/login'), [
-            'email' => 'me@teewide.test',
-            'password' => self::TEST_USER_PASSWORD,
-        ]);
-
-        $response = $this->get($this->portal('/account'));
+        $response = $this->withTeeWideSession($this->loginAs('me@teewide.test'))
+            ->get($this->portal('/account'));
 
         $response->assertOk();
         $response->assertSee('내이름');
@@ -293,12 +447,8 @@ class TeeWideAuthTest extends PluginTestCase
         $user = $this->makeTeeWideUser(['email' => 'owner@teewide.test']);
         $this->seedLiveTenant(['slug' => 'my-shop', 'name' => '내 채널', 'owner_user_id' => $user->id]);
 
-        $this->post($this->portal('/login'), [
-            'email' => 'owner@teewide.test',
-            'password' => self::TEST_USER_PASSWORD,
-        ]);
-
-        $response = $this->get($this->portal('/account'));
+        $response = $this->withTeeWideSession($this->loginAs('owner@teewide.test'))
+            ->get($this->portal('/account'));
 
         $response->assertOk();
         $response->assertSee('내 채널');
@@ -308,30 +458,52 @@ class TeeWideAuthTest extends PluginTestCase
 
     // ── YUTIV 와의 경계 ─────────────────────────────────────────────────────
 
-    public function test_YUTIV_로그인은_TeeWide_회원으로_인정되지_않는다(): void
+    public function test_YUTIV_로그인_세션_쿠키로는_TeeWide_보호화면에_들어갈_수_없다(): void
     {
         $yutiv = YutivUser::factory()->create();
 
-        $this->actingAs($yutiv);
+        // ⚠ actingAs() 를 쓰지 않는다. 그건 세션이 아니라 guard 객체에 사용자를 직접
+        //   꽂으므로 쿠키 격리를 전혀 증명하지 못하고, `ConfigureTeeWideSession` 이
+        //   요청 진입 시 forgetGuards() 를 부르는 순간 그 주입은 사라진다.
+        //   진짜 YUTIV 로그인 세션을 만들어 그 쿠키를 실어 보낸다.
+        $yutivSessionId = $this->makeYutivLoginSession($yutiv);
 
-        $this->assertFalse(TeeWideAuth::check(), 'YUTIV 로그인이 TeeWide 회원으로 인정됐습니다');
+        $response = $this->withUnencryptedCookie($this->yutivSessionCookieName(), $yutivSessionId)
+            ->get($this->portal('/account'));
 
-        // /account 는 여전히 TeeWide 로그인으로 보낸다.
-        $this->get($this->portal('/account'))->assertRedirect(route('teewide.login'));
+        $response->assertRedirect(route('teewide.login'));
+
+        // YUTIV 로그인 화면으로 보내지도 않는다.
+        $location = (string) $response->headers->get('Location');
+        $this->assertStringContainsString(self::ROOT_HOST, $location);
+        $this->assertStringNotContainsString(self::YUTIV_HOST, $location);
+    }
+
+    public function test_YUTIV_로그인_세션_쿠키는_TeeWide_진단에서도_사용자로_보이지_않는다(): void
+    {
+        $yutiv = YutivUser::factory()->create();
+        $yutivSessionId = $this->makeYutivLoginSession($yutiv);
+
+        // 같은 실제 쿠키를 TeeWide 진단에 보낸다. TeeWide 는 쿠키 이름이 달라
+        // 이 세션을 아예 쳐다보지 않는다.
+        $this->withUnencryptedCookie($this->yutivSessionCookieName(), $yutivSessionId)
+            ->get($this->portal('/_teewide/session'))
+            ->assertOk()
+            ->assertJsonPath('yutiv_user_leaked', false)
+            ->assertJsonPath('session_cookie', self::SESSION_COOKIE);
     }
 
     public function test_TeeWide_로그인은_YUTIV_사용자로_인정되지_않는다(): void
     {
         $this->makeTeeWideUser(['email' => 'only@teewide.test']);
 
-        $this->post($this->portal('/login'), [
-            'email' => 'only@teewide.test',
-            'password' => self::TEST_USER_PASSWORD,
-        ]);
+        $sessionId = $this->loginAs('only@teewide.test');
 
-        $this->assertTrue(TeeWideAuth::check());
+        // TeeWide 쪽은 통과하고,
+        $this->withTeeWideSession($sessionId)->get($this->portal('/account'))->assertOk();
 
         // 기본 guard(YUTIV web)는 여전히 비로그인이어야 한다.
+        // (요청이 끝나면 미들웨어가 YUTIV guard 를 복원하므로 여기서 볼 수 있다)
         $this->assertFalse(auth()->guard('web')->check(), 'TeeWide 로그인이 YUTIV 로그인으로 새어 나갔습니다');
         $this->assertNull(auth()->guard('web')->user());
     }

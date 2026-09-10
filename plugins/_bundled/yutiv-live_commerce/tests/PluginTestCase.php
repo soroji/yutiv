@@ -9,6 +9,8 @@ use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
+use App\Models\User as YutivUser;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Support\Facades\Hash;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
 use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
@@ -287,6 +289,45 @@ abstract class PluginTestCase extends TestCase
         unset($attributes['slug']);
 
         return LiveTenant::query()->updateOrCreate(['slug' => $slug], $attributes);
+    }
+
+    /**
+     * YUTIV 쪽 세션 쿠키 이름 (TeeWide 설정을 씌우기 전의 값).
+     */
+    protected function yutivSessionCookieName(): string
+    {
+        return (string) config('session.cookie');
+    }
+
+    /**
+     * `SessionGuard` 가 세션에 쓰는 로그인 키.
+     */
+    protected function yutivLoginSessionKey(): string
+    {
+        return 'login_web_'.sha1(SessionGuard::class);
+    }
+
+    /**
+     * YUTIV 세션에 **실제 로그인 상태**를 기록하고 세션 ID 를 돌려준다.
+     *
+     * ── 왜 actingAs() 를 쓰지 않는가 ────────────────────────────────────
+     * `actingAs()` 는 세션이 아니라 **guard 객체에 사용자를 직접 꽂는다**
+     * (`SessionGuard::setUser()`). 그래서 쿠키와 무관하게 인증된 것처럼 보이고,
+     * 게다가 `ConfigureTeeWideSession` 이 요청 진입 시 `forgetGuards()` 를 부르므로
+     * 그 주입은 TeeWide 요청 안에서 사라진다 — 어느 쪽으로도 **쿠키 격리를 증명하지
+     * 못한다.**
+     *
+     * 그래서 `SessionGuard` 가 쓰는 것과 같은 키로 진짜 로그인 세션을 만들고,
+     * 그 세션 ID 를 쿠키로 실어 보낸다 — 브라우저가 하는 것과 같다.
+     */
+    protected function makeYutivLoginSession(YutivUser $user): string
+    {
+        $session = $this->app['session']->driver();
+        $session->start();
+        $session->put($this->yutivLoginSessionKey(), $user->getAuthIdentifier());
+        $session->save();
+
+        return $session->getId();
     }
 
     /**

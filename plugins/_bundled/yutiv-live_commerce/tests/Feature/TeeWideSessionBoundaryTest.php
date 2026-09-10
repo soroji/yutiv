@@ -3,7 +3,6 @@
 namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\Request;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
@@ -35,23 +34,10 @@ class TeeWideSessionBoundaryTest extends PluginTestCase
         $this->attachHostGate();
     }
 
-    /** SessionGuard 가 세션에 쓰는 로그인 키. */
+    /** SessionGuard 가 세션에 쓰는 로그인 키 (PluginTestCase 정의를 그대로 쓴다). */
     private function loginKey(): string
     {
-        return 'login_web_'.sha1(SessionGuard::class);
-    }
-
-    /**
-     * YUTIV 세션에 실제 로그인 상태를 기록하고 세션 ID 를 돌려준다.
-     */
-    private function makeYutivLoginSession(User $user): string
-    {
-        $session = $this->app['session']->driver();
-        $session->start();
-        $session->put($this->loginKey(), $user->getAuthIdentifier());
-        $session->save();
-
-        return $session->getId();
+        return $this->yutivLoginSessionKey();
     }
 
     // ── 양방향 누수 ─────────────────────────────────────────────────────────
