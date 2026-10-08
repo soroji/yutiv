@@ -1,0 +1,18 @@
+{
+  "name": "yutiv/storefront-support",
+  "description": "YUTIV public business information projection",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Plugins\\Yutiv\\StorefrontSupport\\": [
+        "src/",
+        "./"
+      ]
+    }
+  },
+  "require": {
+    "php": "^8.2"
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,104 @@
+{
+  "common": {
+    "$partial": "partial/ja/common.json"
+  },
+  "attachment": {
+    "$partial": "partial/ja/attachment.json"
+  },
+  "user": {
+    "$partial": "partial/ja/user.json"
+  },
+  "nav": {
+    "$partial": "partial/ja/nav.json"
+  },
+  "auth": {
+    "$partial": "partial/ja/auth.json"
+  },
+  "home": {
+    "$partial": "partial/ja/home.json"
+  },
+  "board": {
+    "$partial": "partial/ja/board.json"
+  },
+  "shop": {
+    "$partial": "partial/ja/shop.json"
+  },
+  "mypage": {
+    "$partial": "partial/ja/mypage.json"
+  },
+  "search": {
+    "$partial": "partial/ja/search.json"
+  },
+  "policy": {
+    "$partial": "partial/ja/policy.json"
+  },
+  "error": {
+    "$partial": "partial/ja/error.json"
+  },
+  "upload": {
+    "$partial": "partial/ja/upload.json"
+  },
+  "footer": {
+    "$partial": "partial/ja/footer.json"
+  },
+  "userinfo": {
+    "$partial": "partial/ja/userinfo.json"
+  },
+  "editor": {
+    "$partial": "partial/ja/editor.json"
+  },
+  "countries": {
+    "$partial": "partial/ja/countries.json"
+  },
+  "languages": {
+    "$partial": "partial/ja/languages.json"
+  },
+  "timezones": {
+    "$partial": "partial/ja/timezones.json"
+  },
+  "layout_editor": {
+    "$partial": "partial/ja/layout_editor.json"
+  },
+  "stillform": {
+    "eyebrow": "日々のためのコレクション",
+    "hero_title": "ゆっくり見つける、\n新しい日常。",
+    "hero_body": "商品の細部と可能性を探して、あなたの日常に合うものを見つけてください。",
+    "explore": "コレクションを見る",
+    "story": "ブランドストーリー",
+    "notice": "ショップのお知らせ",
+    "shipping": "配送・交換・返品",
+    "coupons": "マイクーポン",
+    "story_eyebrow": "日常を見つめる",
+    "story_title": "大切なもののための余白。",
+    "story_body": "コレクションの細部を見つけ、ブランドのストーリーをお読みください。",
+    "editorial_eyebrow": "コレクションに注目",
+    "editorial_title": "新しい視点。",
+    "editorial_body": "新着商品とお気に入りを、自分のペースでお楽しみください。",
+    "empty_coupons": "利用できるクーポンはありません。",
+    "coupon_error": "クーポンを読み込めませんでした。もう一度お試しください。",
+    "coupon_download": "クーポンを受け取る",
+    "company": "会社名",
+    "representative": "代表者",
+    "business_number": "事業者登録番号",
+    "mail_order_number": "通信販売業届出番号",
+    "address": "事業所所在地",
+    "phone": "カスタマーサービス",
+    "email": "メール",
+    "hosting": "ホスティング提供者",
+    "verification_url": "事業者情報を確認",
+    "close": "メニューを閉じる",
+    "menu": "メニューを開く",
+    "missing_image": "商品画像は準備中です",
+    "status_all": "すべて",
+    "status_available": "利用可能",
+    "status_used": "利用済み",
+    "status_expired": "期限切れ",
+    "collect_coupons": "受け取れるクーポン",
+    "empty_notices": "公開されたお知らせはありません。",
+    "reward": "予想リワード",
+    "theme_toggle": "テーマを変更"
+  },
+  "yutiv-stillform": {
+    "$partial": "partial/ja/yutiv-stillform.json"
+  }
+}

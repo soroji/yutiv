@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0",
+  "layout_name": "page/notice",
+  "extends": "_user_base",
+  "permissions": [],
+  "data_sources": [
+    {
+      "id": "storeNotices",
+      "label_key": "$t:stillform.notice",
+      "type": "api",
+      "endpoint": "/api/modules/sirsoft-board/boards/{{_global.storefront?.noticeSlug ?? 'store-notice'}}/posts",
+      "method": "GET",
+      "params": {
+        "page": "{{query.page ?? 1}}"
+      },
+      "auto_fetch": true,
+      "auth_required": false,
+      "loading_strategy": "progressive",
+      "onError": {
+        "handler": "setState",
+        "params": {
+          "target": "local",
+          "storeNoticesFailed": true
+        }
+      },
+      "onSuccess": {
+        "handler": "setState",
+        "params": {
+          "target": "local",
+          "storeNoticesFailed": false
+        }
+      },
+      "auth_mode": "optional"
+    }
+  ],
+  "slots": {
+    "content": [
+      {
+        "type": "basic",
+        "name": "Div",
+        "props": {
+          "className": "py-12"
+        },
+        "children": [
+          {
+            "type": "basic",
+            "name": "H1",
+            "props": {
+              "className": "sf-heading"
+            },
+            "text": "$t:stillform.notice"
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "props": {
+              "role": "status"
+            },
+            "text": "$t:common.loading",
+            "if": "{{storeNotices?.loading}}"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {},
+            "if": "{{_local.storeNoticesFailed}}",
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "props": {
+                  "role": "alert"
+                },
+                "text": "$t:common.error"
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "sf-cta"
+                },
+                "text": "$t:common.retry",
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "refetchDataSource",
+                    "params": {
+                      "dataSourceId": "storeNotices"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "props": {},
+            "text": "$t:stillform.empty_notices",
+            "if": "{{!storeNotices?.loading && !_local.storeNoticesFailed && !(storeNotices?.data?.data?.length ?? 0)}}"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {},
+            "children": [
+              {
+                "type": "basic",
+                "name": "A",
+                "props": {
+                  "className": "block border-b border-gray-200 py-5",
+                  "href": "{{'/board/' + (_global.storefront?.noticeSlug ?? 'store-notice') + '/' + post.id}}"
+                },
+                "text": "{{post?.subject ?? \"\"}}",
+                "iteration": {
+                  "item_var": "post",
+                  "source": "{{storeNotices?.data?.data ?? []}}"
+                }
+              }
+            ]
+          },
+          {
+            "type": "composite",
+            "name": "Pagination",
+            "props": {
+              "currentPage": "{{storeNotices?.data?.pagination?.current_page ?? 1}}",
+              "totalPages": "{{storeNotices?.data?.pagination?.last_page ?? 1}}"
+            },
+            "actions": [
+              {
+                "event": "onPageChange",
+                "handler": "navigate",
+                "params": {
+                  "path": "/notice",
+                  "query": {
+                    "page": "{{$args[0]}}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

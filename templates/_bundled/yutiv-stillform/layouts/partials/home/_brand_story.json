@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "is_partial": true
+  },
+  "type": "basic",
+  "name": "Div",
+  "props": {
+    "className": "sf-story-band"
+  },
+  "children": [
+    {
+      "type": "extension_point",
+      "name": "stillform_story_media",
+      "default": [
+        {
+          "type": "basic",
+          "name": "Div",
+          "props": {
+            "className": "sf-composition",
+            "aria-hidden": true
+          },
+          "children": [
+            {
+              "type": "basic",
+              "name": "Div",
+              "props": {
+                "className": "sf-object sf-object-vase"
+              }
+            },
+            {
+              "type": "basic",
+              "name": "Div",
+              "props": {
+                "className": "sf-object sf-object-disc"
+              }
+            },
+            {
+              "type": "basic",
+              "name": "Div",
+              "props": {
+                "className": "sf-object sf-object-plinth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "basic",
+      "name": "Div",
+      "props": {
+        "className": "sf-story-copy"
+      },
+      "children": [
+        {
+          "type": "basic",
+          "name": "Span",
+          "props": {
+            "className": "sf-eyebrow"
+          },
+          "text": "$t:stillform.story_eyebrow"
+        },
+        {
+          "type": "basic",
+          "name": "H2",
+          "props": {
+            "className": "sf-heading"
+          },
+          "text": "$t:stillform.story_title"
+        },
+        {
+          "type": "basic",
+          "name": "P",
+          "props": {
+            "className": "sf-intro"
+          },
+          "text": "$t:stillform.story_body"
+        },
+        {
+          "type": "basic",
+          "name": "A",
+          "props": {
+            "href": "/story",
+            "className": "sf-link"
+          },
+          "text": "$t:stillform.story"
+        }
+      ]
+    }
+  ]
+}

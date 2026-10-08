@@ -1,0 +1,104 @@
+{
+  "common": {
+    "$partial": "partial/zh-CN/common.json"
+  },
+  "attachment": {
+    "$partial": "partial/zh-CN/attachment.json"
+  },
+  "user": {
+    "$partial": "partial/zh-CN/user.json"
+  },
+  "nav": {
+    "$partial": "partial/zh-CN/nav.json"
+  },
+  "auth": {
+    "$partial": "partial/zh-CN/auth.json"
+  },
+  "home": {
+    "$partial": "partial/zh-CN/home.json"
+  },
+  "board": {
+    "$partial": "partial/zh-CN/board.json"
+  },
+  "shop": {
+    "$partial": "partial/zh-CN/shop.json"
+  },
+  "mypage": {
+    "$partial": "partial/zh-CN/mypage.json"
+  },
+  "search": {
+    "$partial": "partial/zh-CN/search.json"
+  },
+  "policy": {
+    "$partial": "partial/zh-CN/policy.json"
+  },
+  "error": {
+    "$partial": "partial/zh-CN/error.json"
+  },
+  "upload": {
+    "$partial": "partial/zh-CN/upload.json"
+  },
+  "footer": {
+    "$partial": "partial/zh-CN/footer.json"
+  },
+  "userinfo": {
+    "$partial": "partial/zh-CN/userinfo.json"
+  },
+  "editor": {
+    "$partial": "partial/zh-CN/editor.json"
+  },
+  "countries": {
+    "$partial": "partial/zh-CN/countries.json"
+  },
+  "languages": {
+    "$partial": "partial/zh-CN/languages.json"
+  },
+  "timezones": {
+    "$partial": "partial/zh-CN/timezones.json"
+  },
+  "layout_editor": {
+    "$partial": "partial/zh-CN/layout_editor.json"
+  },
+  "stillform": {
+    "eyebrow": "为日常精选",
+    "hero_title": "慢慢发现，\n全新的日常。",
+    "hero_body": "探索商品的细节与可能，寻找适合您日常生活的选择。",
+    "explore": "探索精选商品",
+    "story": "品牌故事",
+    "notice": "商城公告",
+    "shipping": "配送与退换货",
+    "coupons": "我的优惠券",
+    "story_eyebrow": "重新看待日常",
+    "story_title": "为重要之物留白。",
+    "story_body": "发现精选商品的细节，阅读品牌背后的故事。",
+    "editorial_eyebrow": "聚焦精选商品",
+    "editorial_title": "全新的视角。",
+    "editorial_body": "按照自己的节奏，探索新品与熟悉的心仪商品。",
+    "empty_coupons": "暂无可用优惠券。",
+    "coupon_error": "无法加载优惠券，请重试。",
+    "coupon_download": "领取优惠券",
+    "company": "企业名称",
+    "representative": "负责人",
+    "business_number": "企业登记号",
+    "mail_order_number": "通信销售登记号",
+    "address": "营业地址",
+    "phone": "客户服务",
+    "email": "联系邮箱",
+    "hosting": "托管服务商",
+    "verification_url": "验证企业信息",
+    "close": "关闭菜单",
+    "menu": "打开菜单",
+    "missing_image": "商品图片暂未提供",
+    "status_all": "全部",
+    "status_available": "可使用",
+    "status_used": "已使用",
+    "status_expired": "已过期",
+    "collect_coupons": "领取优惠券",
+    "empty_notices": "暂无公告。",
+    "reward": "预计奖励",
+    "theme_toggle": "切换主题"
+  },
+  "yutiv-stillform": {
+    "$partial": "partial/zh-CN/yutiv-stillform.json"
+  }
+}

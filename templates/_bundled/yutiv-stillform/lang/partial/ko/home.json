@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "eyebrow": "GLOBAL TREND LIVE COMMERCE",
+    "title": "세계의 트렌드를,\n가장 빠르게 만나다",
+    "subtitle": "뷰티·패션·골프·라이프스타일. 지금 가장 주목받는 상품을 국경 없이 만나보세요.",
+    "cta_primary": "상품 둘러보기",
+    "cta_secondary": "카테고리 보기"
+  },
+  "sections": {
+    "categories": "카테고리",
+    "categories_eyebrow": "카테고리로 둘러보기",
+    "new_products": "신상품",
+    "new_eyebrow": "가장 먼저 만나는",
+    "best_products": "베스트",
+    "best_eyebrow": "지금 가장 인기 있는",
+    "all_products": "전체 상품",
+    "all_eyebrow": "전체 컬렉션",
+    "view_all": "전체 보기"
+  },
+  "empty": {
+    "title": "상품을 준비하고 있습니다",
+    "description": "곧 새로운 상품으로 찾아뵙겠습니다. 조금만 기다려 주세요."
+  },
+  "brand": {
+    "eyebrow": "YUTIV 소개",
+    "title": "YUTIV 는 이렇게 다릅니다",
+    "description": "단순히 물건을 파는 공간이 아니라, 상품의 가치를 생생하게 보여주는 트렌드 커머스 플랫폼입니다.",
+    "point_1_title": "국경 없는 큐레이션",
+    "point_1_desc": "세계 각지의 트렌드 상품을 한곳에서 만나보세요.",
+    "point_2_title": "생생한 상품 경험",
+    "point_2_desc": "눈으로 보고 감각으로 느끼는 새로운 쇼핑 방식을 지향합니다.",
+    "point_3_title": "안심 주문·결제",
+    "point_3_desc": "주문부터 배송까지 전 과정을 안전하게 관리합니다."
+  }
+}

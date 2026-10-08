@@ -1,0 +1,104 @@
+{
+  "common": {
+    "$partial": "partial/ko/common.json"
+  },
+  "attachment": {
+    "$partial": "partial/ko/attachment.json"
+  },
+  "user": {
+    "$partial": "partial/ko/user.json"
+  },
+  "nav": {
+    "$partial": "partial/ko/nav.json"
+  },
+  "auth": {
+    "$partial": "partial/ko/auth.json"
+  },
+  "home": {
+    "$partial": "partial/ko/home.json"
+  },
+  "board": {
+    "$partial": "partial/ko/board.json"
+  },
+  "shop": {
+    "$partial": "partial/ko/shop.json"
+  },
+  "mypage": {
+    "$partial": "partial/ko/mypage.json"
+  },
+  "search": {
+    "$partial": "partial/ko/search.json"
+  },
+  "policy": {
+    "$partial": "partial/ko/policy.json"
+  },
+  "error": {
+    "$partial": "partial/ko/error.json"
+  },
+  "upload": {
+    "$partial": "partial/ko/upload.json"
+  },
+  "footer": {
+    "$partial": "partial/ko/footer.json"
+  },
+  "userinfo": {
+    "$partial": "partial/ko/userinfo.json"
+  },
+  "editor": {
+    "$partial": "partial/ko/editor.json"
+  },
+  "countries": {
+    "$partial": "partial/ko/countries.json"
+  },
+  "languages": {
+    "$partial": "partial/ko/languages.json"
+  },
+  "timezones": {
+    "$partial": "partial/ko/timezones.json"
+  },
+  "layout_editor": {
+    "$partial": "partial/ko/layout_editor.json"
+  },
+  "stillform": {
+    "eyebrow": "일상을 위한 컬렉션",
+    "hero_title": "천천히 발견하는\n새로운 일상.",
+    "hero_body": "상품의 세부와 가능성을 살펴보세요. 당신의 일상에 어울리는 선택을 만나보세요.",
+    "explore": "컬렉션 둘러보기",
+    "story": "브랜드 이야기",
+    "notice": "쇼핑몰 공지",
+    "shipping": "배송 및 교환·반품",
+    "coupons": "내 쿠폰",
+    "story_eyebrow": "일상을 바라보는 시선",
+    "story_title": "소중한 것들을 위한 여백.",
+    "story_body": "컬렉션의 작은 세부를 발견하고, 브랜드의 이야기를 읽어보세요.",
+    "editorial_eyebrow": "컬렉션을 가까이",
+    "editorial_title": "새로운 시선.",
+    "editorial_body": "새로운 상품과 익숙한 즐겨찾기를 당신의 속도로 만나보세요.",
+    "empty_coupons": "사용 가능한 쿠폰이 없습니다.",
+    "coupon_error": "쿠폰을 불러오지 못했습니다. 다시 시도해 주세요.",
+    "coupon_download": "쿠폰 받기",
+    "company": "상호",
+    "representative": "대표자",
+    "business_number": "사업자등록번호",
+    "mail_order_number": "통신판매업 신고번호",
+    "address": "사업장 주소",
+    "phone": "고객센터",
+    "email": "이메일",
+    "hosting": "호스팅 제공자",
+    "verification_url": "사업자정보 확인",
+    "close": "메뉴 닫기",
+    "menu": "메뉴 열기",
+    "missing_image": "상품 이미지 준비 중",
+    "status_all": "전체",
+    "status_available": "사용 가능",
+    "status_used": "사용 완료",
+    "status_expired": "만료",
+    "collect_coupons": "받을 수 있는 쿠폰",
+    "empty_notices": "등록된 공지가 없습니다.",
+    "reward": "예상 리워드",
+    "theme_toggle": "테마 변경"
+  },
+  "yutiv-stillform": {
+    "$partial": "partial/ko/yutiv-stillform.json"
+  }
+}

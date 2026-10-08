@@ -1,0 +1,10 @@
+{
+  "identifier": "yutiv-storefront_support",
+  "vendor": "yutiv",
+  "name": {"ko":"YUTIV 공개 쇼핑몰 정보","en":"YUTIV Storefront Support","ja":"YUTIV 公開ショップ情報","zh-CN":"YUTIV 商城公开信息"},
+  "version": "1.0.0",
+  "description": {"ko":"공개 사업자정보 허용 목록 API","en":"Allowlisted public business information API"},
+  "license":"MIT",
+  "g7_version":">=7.0.9",
+  "dependencies":{"modules":{"sirsoft-ecommerce":">=1.2.0"},"plugins":{}}
+}

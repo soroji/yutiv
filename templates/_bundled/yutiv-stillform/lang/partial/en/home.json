@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "eyebrow": "GLOBAL TREND LIVE COMMERCE",
+    "title": "The world’s trends,\ndiscovered first",
+    "subtitle": "Beauty, fashion, golf and lifestyle — meet the products everyone is talking about, without borders.",
+    "cta_primary": "Shop now",
+    "cta_secondary": "Browse categories"
+  },
+  "sections": {
+    "categories": "Categories",
+    "categories_eyebrow": "Shop by category",
+    "new_products": "New arrivals",
+    "new_eyebrow": "First look",
+    "best_products": "Best sellers",
+    "best_eyebrow": "Most wanted",
+    "all_products": "All products",
+    "all_eyebrow": "The collection",
+    "view_all": "View all"
+  },
+  "empty": {
+    "title": "Our shop is getting ready",
+    "description": "New products are on the way. Please check back soon."
+  },
+  "brand": {
+    "eyebrow": "About YUTIV",
+    "title": "What makes YUTIV different",
+    "description": "More than a place to shop — a trend commerce platform that brings the value of every product to life.",
+    "point_1_title": "Curation without borders",
+    "point_1_desc": "Trending products from around the world, gathered in one place.",
+    "point_2_title": "A vivid product experience",
+    "point_2_desc": "See it and feel it — a new way to shop.",
+    "point_3_title": "Secure orders and payments",
+    "point_3_desc": "Every step from order to delivery is handled safely."
+  }
+}

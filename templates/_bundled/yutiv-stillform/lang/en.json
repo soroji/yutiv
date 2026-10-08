@@ -1,0 +1,104 @@
+{
+  "common": {
+    "$partial": "partial/en/common.json"
+  },
+  "attachment": {
+    "$partial": "partial/en/attachment.json"
+  },
+  "user": {
+    "$partial": "partial/en/user.json"
+  },
+  "nav": {
+    "$partial": "partial/en/nav.json"
+  },
+  "auth": {
+    "$partial": "partial/en/auth.json"
+  },
+  "home": {
+    "$partial": "partial/en/home.json"
+  },
+  "board": {
+    "$partial": "partial/en/board.json"
+  },
+  "shop": {
+    "$partial": "partial/en/shop.json"
+  },
+  "mypage": {
+    "$partial": "partial/en/mypage.json"
+  },
+  "search": {
+    "$partial": "partial/en/search.json"
+  },
+  "policy": {
+    "$partial": "partial/en/policy.json"
+  },
+  "error": {
+    "$partial": "partial/en/error.json"
+  },
+  "upload": {
+    "$partial": "partial/en/upload.json"
+  },
+  "footer": {
+    "$partial": "partial/en/footer.json"
+  },
+  "userinfo": {
+    "$partial": "partial/en/userinfo.json"
+  },
+  "editor": {
+    "$partial": "partial/en/editor.json"
+  },
+  "countries": {
+    "$partial": "partial/en/countries.json"
+  },
+  "languages": {
+    "$partial": "partial/en/languages.json"
+  },
+  "timezones": {
+    "$partial": "partial/en/timezones.json"
+  },
+  "layout_editor": {
+    "$partial": "partial/en/layout_editor.json"
+  },
+  "stillform": {
+    "eyebrow": "A considered collection",
+    "hero_title": "A quieter way\nto discover.",
+    "hero_body": "Explore products, details and possibilities. Find what belongs in your everyday.",
+    "explore": "Explore the collection",
+    "story": "Our story",
+    "notice": "Store notices",
+    "shipping": "Shipping & returns",
+    "coupons": "My coupons",
+    "story_eyebrow": "The everyday, considered",
+    "story_title": "Room for what matters.",
+    "story_body": "Look closer. Discover the details behind the collection and read our story.",
+    "editorial_eyebrow": "The collection, in focus",
+    "editorial_title": "A new perspective.",
+    "editorial_body": "Explore new arrivals and familiar favourites, at your own pace.",
+    "empty_coupons": "No coupons available.",
+    "coupon_error": "Coupons could not be loaded. Please try again.",
+    "coupon_download": "Collect coupon",
+    "company": "Company",
+    "representative": "Representative",
+    "business_number": "Business registration",
+    "mail_order_number": "Mail order registration",
+    "address": "Public address",
+    "phone": "Customer service",
+    "email": "Contact email",
+    "hosting": "Hosting provider",
+    "verification_url": "Verify business information",
+    "close": "Close menu",
+    "menu": "Open menu",
+    "missing_image": "Product image unavailable",
+    "status_all": "All",
+    "status_available": "Available",
+    "status_used": "Used",
+    "status_expired": "Expired",
+    "collect_coupons": "Collect coupons",
+    "empty_notices": "No notices have been published.",
+    "reward": "Expected reward",
+    "theme_toggle": "Change theme"
+  },
+  "yutiv-stillform": {
+    "$partial": "partial/en/yutiv-stillform.json"
+  }
+}

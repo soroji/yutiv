@@ -1,0 +1,643 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "yutiv-stillform 템플릿 SEO 페이지 생성 설정",
+  "text_props": [
+    "text",
+    "label",
+    "value",
+    "title"
+  ],
+  "attr_map": {
+    "className": "class",
+    "htmlFor": "for"
+  },
+  "allowed_attrs": [
+    "class",
+    "id",
+    "href",
+    "src",
+    "alt",
+    "title",
+    "name",
+    "type",
+    "placeholder",
+    "for",
+    "target",
+    "rel",
+    "width",
+    "height",
+    "role",
+    "aria-label",
+    "aria-describedby",
+    "data-testid",
+    "style"
+  ],
+  "stylesheets": [],
+  "self_closing": [
+    "img",
+    "input",
+    "hr",
+    "br"
+  ],
+  "seo_overrides": {
+    "_local": {
+      "collapsedReplies": {
+        "*": false
+      },
+      "activeTab": [
+        "info",
+        "reviews",
+        "qna"
+      ]
+    }
+  },
+  "render_modes": {
+    "image_gallery": {
+      "type": "iterate",
+      "source": "$props_source",
+      "item_tag": "img",
+      "item_attrs": {
+        "src": "{url|download_url|src|image_url}",
+        "alt": "{alt_text_current|alt_text|alt}"
+      }
+    },
+    "tab_list": {
+      "type": "iterate",
+      "source": "$props_source",
+      "item_tag": "span",
+      "item_content": "{label}",
+      "badge_field": "badge"
+    },
+    "select_options": {
+      "type": "iterate",
+      "source": "$props_source",
+      "item_tag": "option",
+      "item_attrs": {
+        "value": "{value}"
+      },
+      "item_content": "{label|label_key|text|name}"
+    },
+    "text_format": {
+      "type": "format"
+    },
+    "html_content": {
+      "type": "raw",
+      "source": "$props_source"
+    },
+    "pagination_links": {
+      "type": "pagination",
+      "max_links": 10
+    },
+    "header_nav": {
+      "type": "fields",
+      "source": "$all_props",
+      "fields": [
+        {
+          "tag": "a",
+          "attrs": {
+            "href": "/"
+          },
+          "content": "{siteName}"
+        },
+        {
+          "tag": "nav",
+          "children": [
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/"
+              },
+              "content": "$t:nav.home"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/boards/popular"
+              },
+              "content": "$t:nav.popular"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "{shopHref}"
+              },
+              "content": "$t:nav.shop"
+            }
+          ]
+        },
+        {
+          "tag": "nav",
+          "iterate": "boards",
+          "item_tag": "a",
+          "item_content": "{name}",
+          "item_attrs": {
+            "href": "/board/{slug}"
+          }
+        }
+      ]
+    },
+    "footer_nav": {
+      "type": "fields",
+      "source": "$all_props",
+      "fields": [
+        {
+          "tag": "h3",
+          "content": "{siteName}"
+        },
+        {
+          "tag": "p",
+          "content": "{siteDescription}",
+          "if": "{siteDescription}"
+        },
+        {
+          "tag": "nav",
+          "children": [
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "{shopHref}"
+              },
+              "content": "$t:nav.shop"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/story"
+              },
+              "content": "$t:stillform.story"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/notice"
+              },
+              "content": "$t:stillform.notice"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/shipping"
+              },
+              "content": "$t:stillform.shipping"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/page/terms"
+              },
+              "content": "$t:footer.terms"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/page/privacy"
+              },
+              "content": "$t:footer.privacy"
+            },
+            {
+              "tag": "a",
+              "attrs": {
+                "href": "/page/refund"
+              },
+              "content": "$t:footer.refund"
+            }
+          ]
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.company: {businessInfo.company}",
+          "if": "{businessInfo.company}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.representative: {businessInfo.representative}",
+          "if": "{businessInfo.representative}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.business_number: {businessInfo.business_number}",
+          "if": "{businessInfo.business_number}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.mail_order_number: {businessInfo.mail_order_number}",
+          "if": "{businessInfo.mail_order_number}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.address: {businessInfo.address}",
+          "if": "{businessInfo.address}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.phone: {businessInfo.phone}",
+          "if": "{businessInfo.phone}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.email: {businessInfo.email}",
+          "if": "{businessInfo.email}"
+        },
+        {
+          "tag": "p",
+          "content": "$t:stillform.hosting: {businessInfo.hosting}",
+          "if": "{businessInfo.hosting}"
+        },
+        {
+          "tag": "a",
+          "attrs": {
+            "href": "{businessInfo.verification_url}",
+            "target": "_blank",
+            "rel": "noopener noreferrer"
+          },
+          "content": "$t:stillform.verification_url",
+          "if": "{businessInfo.verification_url}"
+        },
+        {
+          "tag": "p",
+          "content": "{copyrightText}",
+          "if": "{copyrightText}"
+        }
+      ]
+    },
+    "product_card_view": {
+      "type": "fields",
+      "source": "$props_source",
+      "link": {
+        "href": "/products/{product_code}",
+        "base_url": "$var:shopBase"
+      },
+      "fields": [
+        {
+          "tag": "img",
+          "attrs": {
+            "src": "{thumbnail_url}",
+            "alt": "{name_localized|name}"
+          }
+        },
+        {
+          "tag": "h3",
+          "content": "{name_localized|name}"
+        },
+        {
+          "tag": "p",
+          "children": [
+            {
+              "tag": "span",
+              "content": "{primary_category}",
+              "if": "{primary_category}"
+            },
+            {
+              "tag": "span",
+              "content": "{brand_name}",
+              "if": "{brand_name}"
+            }
+          ]
+        },
+        {
+          "tag": "p",
+          "children": [
+            {
+              "tag": "span",
+              "content": "{selling_price_formatted}"
+            },
+            {
+              "tag": "del",
+              "content": "{list_price_formatted}",
+              "if": "{discount_rate}"
+            },
+            {
+              "tag": "span",
+              "content": "{discount_rate}%",
+              "if": "{discount_rate}"
+            }
+          ]
+        },
+        {
+          "tag": "p",
+          "iterate": "labels",
+          "item_tag": "span",
+          "item_content": "{name}"
+        },
+        {
+          "tag": "span",
+          "content": "{sales_status_label}",
+          "if": "{sales_status}"
+        }
+      ]
+    }
+  },
+  "component_map": {
+    "Div": {
+      "tag": "div"
+    },
+    "Span": {
+      "tag": "span"
+    },
+    "P": {
+      "tag": "p"
+    },
+    "H1": {
+      "tag": "h1"
+    },
+    "H2": {
+      "tag": "h2"
+    },
+    "H3": {
+      "tag": "h3"
+    },
+    "H4": {
+      "tag": "h4"
+    },
+    "H5": {
+      "tag": "h5"
+    },
+    "H6": {
+      "tag": "h6"
+    },
+    "A": {
+      "tag": "a"
+    },
+    "Button": {
+      "tag": "button"
+    },
+    "Img": {
+      "tag": "img"
+    },
+    "Input": {
+      "tag": "input"
+    },
+    "Form": {
+      "tag": "form"
+    },
+    "Ul": {
+      "tag": "ul"
+    },
+    "Ol": {
+      "tag": "ol"
+    },
+    "Li": {
+      "tag": "li"
+    },
+    "Nav": {
+      "tag": "nav"
+    },
+    "Header": {
+      "tag": "header",
+      "render": "header_nav"
+    },
+    "Footer": {
+      "tag": "footer",
+      "render": "footer_nav"
+    },
+    "Main": {
+      "tag": "main"
+    },
+    "Section": {
+      "tag": "section"
+    },
+    "Article": {
+      "tag": "article"
+    },
+    "Icon": {
+      "tag": "i",
+      "name_to_class": "fas fa-{name}"
+    },
+    "Table": {
+      "tag": "table"
+    },
+    "Thead": {
+      "tag": "thead"
+    },
+    "Tbody": {
+      "tag": "tbody"
+    },
+    "Tr": {
+      "tag": "tr"
+    },
+    "Th": {
+      "tag": "th"
+    },
+    "Td": {
+      "tag": "td"
+    },
+    "Label": {
+      "tag": "label"
+    },
+    "Select": {
+      "tag": "select",
+      "render": "select_options",
+      "props_source": "options"
+    },
+    "Option": {
+      "tag": "option"
+    },
+    "Textarea": {
+      "tag": "textarea"
+    },
+    "Strong": {
+      "tag": "strong"
+    },
+    "Em": {
+      "tag": "em"
+    },
+    "Small": {
+      "tag": "small"
+    },
+    "Hr": {
+      "tag": "hr"
+    },
+    "Br": {
+      "tag": "br"
+    },
+    "Fragment": {
+      "tag": ""
+    },
+    "ProductImageViewer": {
+      "tag": "div",
+      "render": "image_gallery",
+      "props_source": "images"
+    },
+    "TabNavigation": {
+      "tag": "nav",
+      "render": "tab_list",
+      "props_source": "tabs"
+    },
+    "StarRating": {
+      "tag": "span",
+      "render": "text_format",
+      "format": "{value} / {max}",
+      "defaults": {
+        "max": "5"
+      }
+    },
+    "Pagination": {
+      "tag": "nav",
+      "render": "pagination_links"
+    },
+    "FormField": {
+      "tag": "div"
+    },
+    "Modal": {
+      "tag": "div",
+      "skip": true
+    },
+    "ConfirmDialog": {
+      "tag": "div",
+      "skip": true
+    },
+    "Accordion": {
+      "tag": "div"
+    },
+    "AccordionItem": {
+      "tag": "div"
+    },
+    "Tabs": {
+      "tag": "div"
+    },
+    "Badge": {
+      "tag": "span"
+    },
+    "Alert": {
+      "tag": "div"
+    },
+    "Toast": {
+      "tag": "div",
+      "skip": true
+    },
+    "Tooltip": {
+      "tag": "span"
+    },
+    "Dropdown": {
+      "tag": "div"
+    },
+    "Breadcrumb": {
+      "tag": "nav"
+    },
+    "FileUploader": {
+      "tag": "div",
+      "skip": true
+    },
+    "HtmlEditor": {
+      "tag": "div",
+      "skip": true
+    },
+    "DatePicker": {
+      "tag": "div",
+      "skip": true
+    },
+    "Toggle": {
+      "tag": "div",
+      "skip": true
+    },
+    "Checkbox": {
+      "tag": "div"
+    },
+    "Radio": {
+      "tag": "div"
+    },
+    "TagInput": {
+      "tag": "div",
+      "skip": true
+    },
+    "Sortable": {
+      "tag": "div",
+      "skip": true
+    },
+    "DynamicFieldList": {
+      "tag": "div",
+      "skip": true
+    },
+    "ProductCard": {
+      "tag": "article",
+      "render": "product_card_view",
+      "props_source": "product"
+    },
+    "ImageGallery": {
+      "tag": "div",
+      "render": "image_gallery",
+      "props_source": "images"
+    },
+    "QuantitySelector": {
+      "tag": "div",
+      "skip": true
+    },
+    "PostReactions": {
+      "tag": "div",
+      "skip": true
+    },
+    "SocialLoginButtons": {
+      "tag": "div",
+      "skip": true
+    },
+    "SearchBar": {
+      "tag": "div"
+    },
+    "Avatar": {
+      "tag": "span",
+      "render": "text_format",
+      "format": "{author.name}"
+    },
+    "UserInfo": {
+      "tag": "span",
+      "render": "text_format",
+      "format": "{author.name} · {subText}"
+    },
+    "HtmlContent": {
+      "tag": "div",
+      "render": "html_content",
+      "props_source": "content"
+    },
+    "ExpandableContent": {
+      "tag": "div"
+    },
+    "ThemeToggle": {
+      "tag": "div",
+      "skip": true
+    },
+    "PageTransitionIndicator": {
+      "tag": "div",
+      "skip": true
+    },
+    "MobileNav": {
+      "tag": "nav",
+      "skip": true
+    },
+    "RichTextEditor": {
+      "tag": "div",
+      "skip": true
+    },
+    "AvatarUploader": {
+      "tag": "div",
+      "skip": true
+    },
+    "PasswordInput": {
+      "tag": "div",
+      "skip": true
+    },
+    "Container": {
+      "tag": "div"
+    },
+    "Flex": {
+      "tag": "div"
+    },
+    "Grid": {
+      "tag": "div"
+    },
+    "SectionLayout": {
+      "tag": "section"
+    },
+    "ThreeColumnLayout": {
+      "tag": "div"
+    },
+    "DataGrid": {
+      "tag": "table"
+    },
+    "PageHeader": {
+      "tag": "header"
+    },
+    "Card": {
+      "tag": "article"
+    }
+  }
+}

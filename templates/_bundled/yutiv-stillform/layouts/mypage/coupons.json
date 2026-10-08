@@ -1,0 +1,419 @@
+{
+  "version": "1.0.0",
+  "layout_name": "mypage/coupons",
+  "extends": "_user_base",
+  "permissions": [],
+  "computed": {
+    "currentTab": "coupons"
+  },
+  "data_sources": [
+    {
+      "id": "coupons",
+      "label_key": "$t:stillform.coupons",
+      "type": "api",
+      "endpoint": "/api/modules/sirsoft-ecommerce/user/coupons",
+      "method": "GET",
+      "params": {
+        "page": "{{query.page ?? 1}}",
+        "status": "{{query.status ?? \"\"}}",
+        "per_page": 10
+      },
+      "auto_fetch": true,
+      "auth_required": true,
+      "loading_strategy": "progressive",
+      "onError": {
+        "handler": "setState",
+        "params": {
+          "target": "local",
+          "couponsFailed": true
+        }
+      },
+      "onSuccess": {
+        "handler": "setState",
+        "params": {
+          "target": "local",
+          "couponsFailed": false
+        }
+      }
+    },
+    {
+      "id": "downloadable",
+      "label_key": "$t:stillform.coupons",
+      "type": "api",
+      "endpoint": "/api/modules/sirsoft-ecommerce/user/coupons/downloadable",
+      "method": "GET",
+      "params": {
+        "page": "{{query.download_page ?? 1}}",
+        "per_page": 8
+      },
+      "auto_fetch": true,
+      "auth_required": true,
+      "loading_strategy": "progressive",
+      "onError": {
+        "handler": "setState",
+        "params": {
+          "target": "local",
+          "downloadableFailed": true
+        }
+      },
+      "onSuccess": {
+        "handler": "setState",
+        "params": {
+          "target": "local",
+          "downloadableFailed": false
+        }
+      }
+    }
+  ],
+  "slots": {
+    "content": [
+      {
+        "type": "basic",
+        "name": "Div",
+        "props": {
+          "className": "py-12"
+        },
+        "children": [
+          {
+            "partial": "partials/mypage/_tab_navigation.json"
+          },
+          {
+            "type": "basic",
+            "name": "H1",
+            "props": {
+              "className": "sf-heading"
+            },
+            "text": "$t:stillform.coupons"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "flex flex-wrap gap-4 mb-8"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "A",
+                "props": {
+                  "href": "/mypage/coupons",
+                  "className": "sf-link"
+                },
+                "text": "$t:stillform.status_all"
+              },
+              {
+                "type": "basic",
+                "name": "A",
+                "props": {
+                  "href": "/mypage/coupons?status=available",
+                  "className": "sf-link"
+                },
+                "text": "$t:stillform.status_available"
+              },
+              {
+                "type": "basic",
+                "name": "A",
+                "props": {
+                  "href": "/mypage/coupons?status=used",
+                  "className": "sf-link"
+                },
+                "text": "$t:stillform.status_used"
+              },
+              {
+                "type": "basic",
+                "name": "A",
+                "props": {
+                  "href": "/mypage/coupons?status=expired",
+                  "className": "sf-link"
+                },
+                "text": "$t:stillform.status_expired"
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {},
+            "if": "{{coupons?.loading}}",
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "props": {
+                  "role": "status"
+                },
+                "text": "$t:common.loading"
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {},
+            "if": "{{_local.couponsFailed}}",
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "props": {
+                  "role": "alert"
+                },
+                "text": "$t:stillform.coupon_error"
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "sf-cta"
+                },
+                "text": "$t:common.retry",
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "refetchDataSource",
+                    "params": {
+                      "dataSourceId": "coupons"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "props": {},
+            "text": "$t:stillform.empty_coupons",
+            "if": "{{!coupons?.loading && !_local.couponsFailed && !(coupons?.data?.coupons?.data?.length ?? 0)}}"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "grid gap-4 md:grid-cols-2"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                  "className": "border border-gray-200 p-6"
+                },
+                "iteration": {
+                  "item_var": "coupon",
+                  "source": "{{coupons?.data?.coupons?.data ?? []}}"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "H3",
+                    "props": {
+                      "className": "text-lg"
+                    },
+                    "text": "{{coupon?.coupon_code ?? \"\"}}"
+                  },
+                  {
+                    "type": "basic",
+                    "name": "P",
+                    "props": {},
+                    "text": "{{coupon?.status_label ?? \"\"}}"
+                  },
+                  {
+                    "type": "basic",
+                    "name": "P",
+                    "props": {},
+                    "text": "{{coupon?.expired_at ?? \"\"}}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "composite",
+            "name": "Pagination",
+            "if": "{{(coupons?.data?.coupons?.pagination?.last_page ?? 1) > 1}}",
+            "props": {
+              "currentPage": "{{coupons?.data?.coupons?.pagination?.current_page ?? 1}}",
+              "totalPages": "{{coupons?.data?.coupons?.pagination?.last_page ?? 1}}"
+            },
+            "actions": [
+              {
+                "event": "onPageChange",
+                "handler": "navigate",
+                "params": {
+                  "path": "/mypage/coupons",
+                  "query": {
+                    "page": "{{$args[0]}}"
+                  },
+                  "mergeQuery": true
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "H2",
+            "props": {
+              "className": "sf-heading mt-12"
+            },
+            "text": "$t:stillform.collect_coupons"
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "props": {
+              "role": "status"
+            },
+            "text": "$t:common.loading",
+            "if": "{{downloadable?.loading}}"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {},
+            "if": "{{_local.downloadableFailed}}",
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "props": {
+                  "role": "alert"
+                },
+                "text": "$t:stillform.coupon_error"
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "sf-cta"
+                },
+                "text": "$t:common.retry",
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "refetchDataSource",
+                    "params": {
+                      "dataSourceId": "downloadable"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "props": {},
+            "text": "$t:stillform.empty_coupons",
+            "if": "{{!downloadable?.loading && !_local.downloadableFailed && !(downloadable?.data?.data?.length ?? 0)}}"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "grid gap-4 md:grid-cols-2"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                  "className": "border border-gray-200 p-6"
+                },
+                "iteration": {
+                  "item_var": "coupon",
+                  "source": "{{downloadable?.data?.data ?? []}}"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "H3",
+                    "props": {},
+                    "text": "{{coupon?.localized_name ?? \"\"}}"
+                  },
+                  {
+                    "type": "basic",
+                    "name": "P",
+                    "props": {},
+                    "text": "{{coupon?.valid_period_formatted ?? \"\"}}"
+                  },
+                  {
+                    "type": "basic",
+                    "name": "P",
+                    "props": {},
+                    "text": "{{coupon?.min_order_amount_formatted ?? \"\"}}"
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Button",
+                    "props": {
+                      "type": "button",
+                      "className": "sf-cta mt-4"
+                    },
+                    "text": "$t:stillform.coupon_download",
+                    "actions": [
+                      {
+                        "event": "click",
+                        "handler": "apiCall",
+                        "auth_required": true,
+                        "target": "/api/modules/sirsoft-ecommerce/user/coupons/{{coupon.coupon_id}}/download",
+                        "params": {
+                          "method": "POST"
+                        },
+                        "onSuccess": [
+                          {
+                            "handler": "refetchDataSource",
+                            "params": {
+                              "dataSourceId": "coupons"
+                            }
+                          },
+                          {
+                            "handler": "refetchDataSource",
+                            "params": {
+                              "dataSourceId": "downloadable"
+                            }
+                          }
+                        ],
+                        "onError": {
+                          "handler": "toast",
+                          "params": {
+                            "type": "error",
+                            "message": "{{error.message ?? \"\"}}"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "composite",
+            "name": "Pagination",
+            "if": "{{(downloadable?.data?.last_page ?? 1) > 1}}",
+            "props": {
+              "currentPage": "{{downloadable?.data?.current_page ?? 1}}",
+              "totalPages": "{{downloadable?.data?.last_page ?? 1}}"
+            },
+            "actions": [
+              {
+                "event": "onPageChange",
+                "handler": "navigate",
+                "params": {
+                  "path": "/mypage/coupons",
+                  "mergeQuery": true,
+                  "query": {
+                    "download_page": "{{$args[0]}}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

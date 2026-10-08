@@ -1,0 +1,27 @@
+feature: yutiv-stillform
+scope: isolated bundled template and public support plugin; no application or database lifecycle
+axes:
+  locale: [ko, en, ja, zh-CN]
+  currency: [USD, JPY, EUR]
+  viewport: [360, 390, 430, 768, 1440]
+  auth: [guest, member]
+  products: [loaded, loading, empty, error, missing_image, unavailable]
+  prefix: [configured, no_route]
+  business_info: [populated, empty, failed, malicious]
+effects:
+  - product click uses configured prefix and product_code; mutation IDs stay numeric
+  - currency subscription selects server formatted data then base formatted data
+  - coupon download refetches wallet and downloadable list; errors remain visible
+  - unapproved/broken images use only the neutral local placeholder
+  - footer never exposes unknown settings or invents business identity
+  - mobile drawer is inert when closed; focus trap/ESC/restoration when opened
+  - original route/auth/redirect parity; policy content remains CMS-owned
+coverage:
+  - template src/components/composite/__tests__/Stillform.test.tsx
+  - template __tests__/layouts/stillform.test.tsx
+  - template tools/check-static.cjs
+  - tests/Preview/yutiv-stillform/browser-probe.cjs
+  - plugin tests/Unit/PublicBusinessInfoTest.php
+deferred:
+  - DB-backed auth/IDV/cart/checkout/PG/refund/reorder in disposable environment
+  - install/activate and actual module currency/shipping-country injection

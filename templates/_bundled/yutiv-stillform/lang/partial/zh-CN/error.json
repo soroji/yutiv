@@ -1,0 +1,36 @@
+{
+  "401": {
+    "title": "需要登录",
+    "description": "查看该页面需要先登录。",
+    "back_to_home": "返回首页"
+  },
+  "403": {
+    "title": "没有访问权限",
+    "description": "您没有访问该页面的权限。",
+    "back_to_home": "返回首页"
+  },
+  "404": {
+    "title": "找不到页面",
+    "description": "您请求的页面不存在或已被移动。",
+    "back_to_home": "返回首页"
+  },
+  "500": {
+    "title": "发生服务器错误",
+    "description": "抱歉，服务器出现了问题。请稍后重试。",
+    "back_to_home": "返回首页"
+  },
+  "maintenance": {
+    "title": "系统维护中",
+    "description": "当前正在进行系统更新。请稍后再访问。",
+    "back_to_home": "返回首页"
+  },
+  "503": {
+    "title": "服务暂时中断",
+    "description": "当前无法使用该服务。",
+    "unmet_dependencies": "所需的扩展功能尚未启用。",
+    "required_modules": "所需的模块",
+    "required_plugins": "所需的插件",
+    "contact_admin": "请联系管理员启用所需的扩展功能。",
+    "back_to_home": "返回首页"
+  }
+}
