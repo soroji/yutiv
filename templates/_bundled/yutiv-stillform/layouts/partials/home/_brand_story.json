@@ -43,7 +43,10 @@
             }
           ]
         }
-      ]
+      ],
+      "props": {
+        "className": "sf-story-media"
+      }
     },
     {
       "type": "basic",

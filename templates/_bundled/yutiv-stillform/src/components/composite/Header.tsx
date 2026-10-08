@@ -302,7 +302,7 @@ const Header: React.FC<HeaderProps> = ({
       className={`sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 ${className}`}
     >
       {/* 상단 바 */}
-      <Div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Div className="sf-container">
         <Div className="flex items-center justify-between h-16">
           {/* 로고 */}
           <Button onClick={() => navigate('/')} className="flex items-center gap-2 flex-shrink-0 cursor-pointer">
@@ -315,7 +315,7 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* 검색바 (데스크톱 전용) */}
           {!isMobile && (
-            <Form onSubmit={handleSearch} className="flex flex-1 max-w-lg mx-8">
+            <Form onSubmit={handleSearch} className="flex flex-1 min-w-0 max-w-lg mx-4 xl:mx-8">
               <Div className="relative w-full">
                 <Input
                   aria-label={t('common.search')}
@@ -544,7 +544,7 @@ const Header: React.FC<HeaderProps> = ({
       {/* 탭 네비게이션 (데스크톱 전용) */}
       {!isMobile && (
       <Nav className="border-t border-gray-200 dark:border-gray-800">
-        <Div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Div className="sf-container">
           <Div className="flex items-center gap-1 h-12 overflow-x-auto">
             <Button onClick={() => navigate('/')} className={getNavButtonClass(isActiveRoute('/', true))} data-testid="nav-home">
               {t('nav.home')}

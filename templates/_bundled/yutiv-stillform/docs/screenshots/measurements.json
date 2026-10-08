@@ -1,0 +1,501 @@
+{
+  "verification": "Real remote G7 page, browser-only local template response substitution; no server deployment",
+  "metrics": [
+    {
+      "width": 1440,
+      "scroll": 1440,
+      "hero": {
+        "x": 92,
+        "y": 200.390625,
+        "width": 1256,
+        "height": 526.21875,
+        "top": 200.390625,
+        "right": 1348,
+        "bottom": 726.609375,
+        "left": 92
+      },
+      "copy": {
+        "x": 92,
+        "y": 292.25,
+        "width": 526.21875,
+        "height": 342.5,
+        "top": 292.25,
+        "right": 618.21875,
+        "bottom": 634.75,
+        "left": 92
+      },
+      "media": {
+        "x": 690.21875,
+        "y": 200.390625,
+        "width": 657.78125,
+        "height": 526.21875,
+        "top": 200.390625,
+        "right": 1348,
+        "bottom": 726.609375,
+        "left": 690.21875
+      },
+      "title": {
+        "x": 92,
+        "y": 333.84375,
+        "width": 526.21875,
+        "height": 135.90625,
+        "top": 333.84375,
+        "right": 618.21875,
+        "bottom": 469.75,
+        "left": 92
+      },
+      "titleCss": {
+        "display": "block",
+        "columns": "none",
+        "fontSize": "57.6px",
+        "wordBreak": "keep-all",
+        "overflowWrap": "break-word"
+      },
+      "gridCss": {
+        "display": "grid",
+        "columns": "526.219px 657.781px",
+        "fontSize": "16px",
+        "wordBreak": "normal",
+        "overflowWrap": "normal"
+      },
+      "story": {
+        "x": 92,
+        "y": 1079.75,
+        "width": 1256,
+        "height": 749,
+        "top": 1079.75,
+        "right": 1348,
+        "bottom": 1828.75,
+        "left": 92
+      },
+      "empty": {
+        "x": 92,
+        "y": 845,
+        "width": 1256,
+        "height": 154.75,
+        "top": 845,
+        "right": 1348,
+        "bottom": 999.75,
+        "left": 92
+      },
+      "products": {
+        "x": 92,
+        "y": 813,
+        "width": 1256,
+        "height": 218.75,
+        "top": 813,
+        "right": 1348,
+        "bottom": 1031.75,
+        "left": 92
+      },
+      "footer": {
+        "x": 0,
+        "y": 2313.25,
+        "width": 1440,
+        "height": 353.5,
+        "top": 2313.25,
+        "right": 1440,
+        "bottom": 2666.75,
+        "left": 0
+      },
+      "footerCopy": "일상에 어울리는 물건과 새로운 시선을 만납니다."
+    },
+    {
+      "width": 390,
+      "scroll": 390,
+      "hero": {
+        "x": 20,
+        "y": 88,
+        "width": 350,
+        "height": 581.15625,
+        "top": 88,
+        "right": 370,
+        "bottom": 669.15625,
+        "left": 20
+      },
+      "copy": {
+        "x": 20,
+        "y": 88,
+        "width": 350,
+        "height": 286.65625,
+        "top": 88,
+        "right": 370,
+        "bottom": 374.65625,
+        "left": 20
+      },
+      "media": {
+        "x": 20,
+        "y": 406.65625,
+        "width": 350,
+        "height": 262.5,
+        "top": 406.65625,
+        "right": 370,
+        "bottom": 669.15625,
+        "left": 20
+      },
+      "title": {
+        "x": 20,
+        "y": 129.59375,
+        "width": 350,
+        "height": 80.0625,
+        "top": 129.59375,
+        "right": 370,
+        "bottom": 209.65625,
+        "left": 20
+      },
+      "titleCss": {
+        "display": "block",
+        "columns": "none",
+        "fontSize": "33.93px",
+        "wordBreak": "keep-all",
+        "overflowWrap": "break-word"
+      },
+      "gridCss": {
+        "display": "grid",
+        "columns": "350px",
+        "fontSize": "16px",
+        "wordBreak": "normal",
+        "overflowWrap": "normal"
+      },
+      "story": {
+        "x": 20,
+        "y": 946.65625,
+        "width": 350,
+        "height": 517.484375,
+        "top": 946.65625,
+        "right": 370,
+        "bottom": 1464.140625,
+        "left": 20
+      },
+      "empty": {
+        "x": 20,
+        "y": 717.15625,
+        "width": 350,
+        "height": 165.5,
+        "top": 717.15625,
+        "right": 370,
+        "bottom": 882.65625,
+        "left": 20
+      },
+      "products": {
+        "x": 20,
+        "y": 701.15625,
+        "width": 350,
+        "height": 197.5,
+        "top": 701.15625,
+        "right": 370,
+        "bottom": 898.65625,
+        "left": 20
+      },
+      "footer": {
+        "x": 0,
+        "y": 1849.125,
+        "width": 390,
+        "height": 718,
+        "top": 1849.125,
+        "right": 390,
+        "bottom": 2567.125,
+        "left": 0
+      },
+      "footerCopy": "일상에 어울리는 물건과 새로운 시선을 만납니다."
+    },
+    {
+      "width": 768,
+      "scroll": 768,
+      "hero": {
+        "x": 23.03125,
+        "y": 102.078125,
+        "width": 721.9375,
+        "height": 303.796875,
+        "top": 102.078125,
+        "right": 744.96875,
+        "bottom": 405.875,
+        "left": 23.03125
+      },
+      "copy": {
+        "x": 23.03125,
+        "y": 110.5625,
+        "width": 303.796875,
+        "height": 286.8125,
+        "top": 110.5625,
+        "right": 326.828125,
+        "bottom": 397.375,
+        "left": 23.03125
+      },
+      "media": {
+        "x": 365.21875,
+        "y": 102.078125,
+        "width": 379.75,
+        "height": 303.796875,
+        "top": 102.078125,
+        "right": 744.96875,
+        "bottom": 405.875,
+        "left": 365.21875
+      },
+      "title": {
+        "x": 23.03125,
+        "y": 152.15625,
+        "width": 303.796875,
+        "height": 80.21875,
+        "top": 152.15625,
+        "right": 326.828125,
+        "bottom": 232.375,
+        "left": 23.03125
+      },
+      "titleCss": {
+        "display": "block",
+        "columns": "none",
+        "fontSize": "34px",
+        "wordBreak": "keep-all",
+        "overflowWrap": "break-word"
+      },
+      "gridCss": {
+        "display": "grid",
+        "columns": "303.797px 379.75px",
+        "fontSize": "16px",
+        "wordBreak": "normal",
+        "overflowWrap": "normal"
+      },
+      "story": {
+        "x": 23.03125,
+        "y": 714.703125,
+        "width": 721.9375,
+        "height": 431.203125,
+        "top": 714.703125,
+        "right": 744.96875,
+        "bottom": 1145.90625,
+        "left": 23.03125
+      },
+      "empty": {
+        "x": 23.03125,
+        "y": 483.953125,
+        "width": 721.9375,
+        "height": 150.75,
+        "top": 483.953125,
+        "right": 744.96875,
+        "bottom": 634.703125,
+        "left": 23.03125
+      },
+      "products": {
+        "x": 23.03125,
+        "y": 451.953125,
+        "width": 721.9375,
+        "height": 214.75,
+        "top": 451.953125,
+        "right": 744.96875,
+        "bottom": 666.703125,
+        "left": 23.03125
+      },
+      "footer": {
+        "x": 0,
+        "y": 1547.171875,
+        "width": 768,
+        "height": 565.5,
+        "top": 1547.171875,
+        "right": 768,
+        "bottom": 2112.671875,
+        "left": 0
+      },
+      "footerCopy": "일상에 어울리는 물건과 새로운 시선을 만납니다."
+    },
+    {
+      "width": 1024,
+      "scroll": 1024,
+      "hero": {
+        "x": 30.71875,
+        "y": 175.4375,
+        "width": 962.5625,
+        "height": 500,
+        "top": 175.4375,
+        "right": 993.28125,
+        "bottom": 675.4375,
+        "left": 30.71875
+      },
+      "copy": {
+        "x": 30.71875,
+        "y": 273.828125,
+        "width": 405.046875,
+        "height": 303.21875,
+        "top": 273.828125,
+        "right": 435.765625,
+        "bottom": 577.046875,
+        "left": 30.71875
+      },
+      "media": {
+        "x": 486.953125,
+        "y": 175.4375,
+        "width": 506.328125,
+        "height": 500,
+        "top": 175.4375,
+        "right": 993.28125,
+        "bottom": 675.4375,
+        "left": 486.953125
+      },
+      "title": {
+        "x": 30.71875,
+        "y": 315.421875,
+        "width": 405.046875,
+        "height": 96.625,
+        "top": 315.421875,
+        "right": 435.765625,
+        "bottom": 412.046875,
+        "left": 30.71875
+      },
+      "titleCss": {
+        "display": "block",
+        "columns": "none",
+        "fontSize": "40.96px",
+        "wordBreak": "keep-all",
+        "overflowWrap": "break-word"
+      },
+      "gridCss": {
+        "display": "grid",
+        "columns": "405.047px 506.328px",
+        "fontSize": "16px",
+        "wordBreak": "normal",
+        "overflowWrap": "normal"
+      },
+      "story": {
+        "x": 30.71875,
+        "y": 1003.625,
+        "width": 962.5625,
+        "height": 575.984375,
+        "top": 1003.625,
+        "right": 993.28125,
+        "bottom": 1579.609375,
+        "left": 30.71875
+      },
+      "empty": {
+        "x": 30.71875,
+        "y": 768.875,
+        "width": 962.5625,
+        "height": 154.75,
+        "top": 768.875,
+        "right": 993.28125,
+        "bottom": 923.625,
+        "left": 30.71875
+      },
+      "products": {
+        "x": 30.71875,
+        "y": 736.875,
+        "width": 962.5625,
+        "height": 218.75,
+        "top": 736.875,
+        "right": 993.28125,
+        "bottom": 955.625,
+        "left": 30.71875
+      },
+      "footer": {
+        "x": 0,
+        "y": 2007.34375,
+        "width": 1024,
+        "height": 353.5,
+        "top": 2007.34375,
+        "right": 1024,
+        "bottom": 2360.84375,
+        "left": 0
+      },
+      "footerCopy": "일상에 어울리는 물건과 새로운 시선을 만납니다."
+    },
+    {
+      "width": 320,
+      "scroll": 320,
+      "hero": {
+        "x": 20,
+        "y": 88,
+        "width": 280,
+        "height": 519.375,
+        "top": 88,
+        "right": 300,
+        "bottom": 607.375,
+        "left": 20
+      },
+      "copy": {
+        "x": 20,
+        "y": 88,
+        "width": 280,
+        "height": 277.375,
+        "top": 88,
+        "right": 300,
+        "bottom": 365.375,
+        "left": 20
+      },
+      "media": {
+        "x": 20,
+        "y": 397.375,
+        "width": 280,
+        "height": 210,
+        "top": 397.375,
+        "right": 300,
+        "bottom": 607.375,
+        "left": 20
+      },
+      "title": {
+        "x": 20,
+        "y": 129.59375,
+        "width": 280,
+        "height": 70.78125,
+        "top": 129.59375,
+        "right": 300,
+        "bottom": 200.375,
+        "left": 20
+      },
+      "titleCss": {
+        "display": "block",
+        "columns": "none",
+        "fontSize": "30px",
+        "wordBreak": "keep-all",
+        "overflowWrap": "break-word"
+      },
+      "gridCss": {
+        "display": "grid",
+        "columns": "280px",
+        "fontSize": "16px",
+        "wordBreak": "normal",
+        "overflowWrap": "normal"
+      },
+      "story": {
+        "x": 20,
+        "y": 884.875,
+        "width": 280,
+        "height": 501.375,
+        "top": 884.875,
+        "right": 300,
+        "bottom": 1386.25,
+        "left": 20
+      },
+      "empty": {
+        "x": 20,
+        "y": 655.375,
+        "width": 280,
+        "height": 165.5,
+        "top": 655.375,
+        "right": 300,
+        "bottom": 820.875,
+        "left": 20
+      },
+      "products": {
+        "x": 20,
+        "y": 639.375,
+        "width": 280,
+        "height": 197.5,
+        "top": 639.375,
+        "right": 300,
+        "bottom": 836.875,
+        "left": 20
+      },
+      "footer": {
+        "x": 0,
+        "y": 1771.234375,
+        "width": 320,
+        "height": 746.5,
+        "top": 1771.234375,
+        "right": 320,
+        "bottom": 2517.734375,
+        "left": 0
+      },
+      "footerCopy": "일상에 어울리는 물건과 새로운 시선을 만납니다."
+    }
+  ],
+  "errors": []
+}

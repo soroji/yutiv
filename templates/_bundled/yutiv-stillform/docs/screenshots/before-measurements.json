@@ -1,0 +1,134 @@
+[
+  {
+    "width": 1440,
+    "scroll": 1440,
+    "hero": {
+      "x": 108,
+      "y": 114,
+      "width": 1224,
+      "height": 962.5,
+      "top": 114,
+      "right": 1332,
+      "bottom": 1076.5,
+      "left": 108
+    },
+    "grid": "612px 612px",
+    "children": [
+      {
+        "cls": "sf-hero-copy",
+        "rect": {
+          "x": 108,
+          "y": 114,
+          "width": 612,
+          "height": 492.5,
+          "top": 114,
+          "right": 720,
+          "bottom": 606.5,
+          "left": 108
+        }
+      },
+      {
+        "cls": "",
+        "rect": {
+          "x": 720,
+          "y": 360.25,
+          "width": 612,
+          "height": 0,
+          "top": 360.25,
+          "right": 1332,
+          "bottom": 360.25,
+          "left": 720
+        }
+      },
+      {
+        "cls": "",
+        "rect": {
+          "x": 108,
+          "y": 606.5,
+          "width": 612,
+          "height": 470,
+          "top": 606.5,
+          "right": 720,
+          "bottom": 1076.5,
+          "left": 108
+        }
+      }
+    ],
+    "products": {
+      "x": 108,
+      "y": 1076.5,
+      "width": 1224,
+      "height": 362.75,
+      "top": 1076.5,
+      "right": 1332,
+      "bottom": 1439.25,
+      "left": 108
+    }
+  },
+  {
+    "width": 390,
+    "scroll": 390,
+    "hero": {
+      "x": 20,
+      "y": 56,
+      "width": 350,
+      "height": 672.65625,
+      "top": 56,
+      "right": 370,
+      "bottom": 728.65625,
+      "left": 20
+    },
+    "grid": "350px",
+    "children": [
+      {
+        "cls": "sf-hero-copy",
+        "rect": {
+          "x": 20,
+          "y": 56,
+          "width": 350,
+          "height": 372.65625,
+          "top": 56,
+          "right": 370,
+          "bottom": 428.65625,
+          "left": 20
+        }
+      },
+      {
+        "cls": "",
+        "rect": {
+          "x": 20,
+          "y": 428.65625,
+          "width": 350,
+          "height": 0,
+          "top": 428.65625,
+          "right": 370,
+          "bottom": 428.65625,
+          "left": 20
+        }
+      },
+      {
+        "cls": "",
+        "rect": {
+          "x": 20,
+          "y": 428.65625,
+          "width": 350,
+          "height": 300,
+          "top": 428.65625,
+          "right": 370,
+          "bottom": 728.65625,
+          "left": 20
+        }
+      }
+    ],
+    "products": {
+      "x": 20,
+      "y": 728.65625,
+      "width": 350,
+      "height": 381.5,
+      "top": 728.65625,
+      "right": 370,
+      "bottom": 1110.15625,
+      "left": 20
+    }
+  }
+]

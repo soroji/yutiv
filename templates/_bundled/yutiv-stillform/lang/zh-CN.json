@@ -96,7 +96,8 @@
     "collect_coupons": "领取优惠券",
     "empty_notices": "暂无公告。",
     "reward": "预计奖励",
-    "theme_toggle": "切换主题"
+    "theme_toggle": "切换主题",
+    "footer_body": "发现适合日常的物件与全新视角。"
   },
   "yutiv-stillform": {
     "$partial": "partial/zh-CN/yutiv-stillform.json"

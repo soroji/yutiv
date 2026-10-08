@@ -96,7 +96,8 @@
     "collect_coupons": "받을 수 있는 쿠폰",
     "empty_notices": "등록된 공지가 없습니다.",
     "reward": "예상 리워드",
-    "theme_toggle": "테마 변경"
+    "theme_toggle": "테마 변경",
+    "footer_body": "일상에 어울리는 물건과 새로운 시선을 만납니다."
   },
   "yutiv-stillform": {
     "$partial": "partial/ko/yutiv-stillform.json"

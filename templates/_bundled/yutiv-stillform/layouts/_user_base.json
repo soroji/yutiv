@@ -840,7 +840,7 @@
           "responsive": {
             "portable": {
               "props": {
-                "className": "{{_global.mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}} fixed inset-y-0 right-0 z-50 w-80 max-w-full transition-transform duration-300 bg-white dark:bg-gray-800 shadow-xl overflow-y-auto"
+                "className": "{{_global.mobileMenuOpen ? '' : 'hidden'}} fixed inset-y-0 right-0 z-50 w-80 max-w-full bg-white dark:bg-gray-800 shadow-xl overflow-y-auto"
               }
             }
           },
@@ -2353,7 +2353,7 @@
           "name": "Footer",
           "props": {
             "siteName": "{{_global.settings?.general?.site_name ?? 'YUTIV'}}",
-            "siteDescription": "{{_global.settings?.general?.site_description ?? ''}}",
+            "siteDescription": "$t:stillform.footer_body",
             "socialLinks": {
               "github": "{{_global.settings?.social?.github}}",
               "twitter": "{{_global.settings?.social?.twitter}}",

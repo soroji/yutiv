@@ -96,7 +96,8 @@
     "collect_coupons": "Collect coupons",
     "empty_notices": "No notices have been published.",
     "reward": "Expected reward",
-    "theme_toggle": "Change theme"
+    "theme_toggle": "Change theme",
+    "footer_body": "Thoughtful objects and a fresh perspective for everyday life."
   },
   "yutiv-stillform": {
     "$partial": "partial/en/yutiv-stillform.json"

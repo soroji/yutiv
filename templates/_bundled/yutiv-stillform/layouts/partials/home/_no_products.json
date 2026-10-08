@@ -8,7 +8,7 @@
   "name": "Div",
   "if": "{{!_global.homeProductsFailed && !newProducts?.loading && !popularProducts?.loading && !products?.loading && (newProducts?.data ?? []).length === 0 && (popularProducts?.data ?? []).length === 0 && (products?.data?.data ?? []).length === 0}}",
   "props": {
-    "className": "py-16 text-center"
+    "className": "sf-empty text-center"
   },
   "children": [
     {

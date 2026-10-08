@@ -20,7 +20,14 @@ describe('actual DynamicRenderer layout contracts',()=>{
   });
   it.each([true,false])('hero resolves configured/no-route product link %s',noRoute=>{
     const test=createLayoutTest({components:[hero]} as any,{componentRegistry:registry(),translations:{stillform:english.stillform},initialState:{_global:{modules:{'sirsoft-ecommerce':{basic_info:{route_path:'catalog',no_route:noRoute}}}}}});
-    return test.render().then(({container})=>{try{expect(container.querySelector('a.sf-cta')).toHaveAttribute('href',(noRoute?'':'/catalog')+'/products');expect(container.textContent).toContain(english.stillform.hero_title);}finally{test.cleanup();}});
+    return test.render().then(({container})=>{try{expect(container.querySelector('a.sf-cta')).toHaveAttribute('href',(noRoute?'':'/catalog')+'/products');expect(container.textContent).toContain(english.stillform.hero_title);
+      // Actual G7 extension points produce DOM wrappers, even with no injection.
+      const grid=container.querySelector('.sf-hero-grid')!;
+      expect(grid.children).toHaveLength(2);
+      expect(grid.children[0]).toHaveClass('sf-hero-copy');
+      expect(grid.children[1]).toHaveClass('sf-hero-media');
+      expect(grid.nextElementSibling?.tagName).toBe('DIV');
+    }finally{test.cleanup();}});
   });
   it.each(['loaded','empty','error','loading'])('coupon wallet handles %s without fake values',async mode=>{
     const content=structuredClone(wallet.slots.content);content[0].children=content[0].children.filter((n:any)=>!n.partial);

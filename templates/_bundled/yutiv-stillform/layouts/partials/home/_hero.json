@@ -12,59 +12,108 @@
       "type": "basic",
       "name": "Div",
       "props": {
-        "className": "sf-hero-copy"
+        "className": "sf-hero-grid"
       },
       "children": [
         {
           "type": "basic",
-          "name": "Span",
-          "props": {
-            "className": "sf-eyebrow"
-          },
-          "text": "$t:stillform.eyebrow"
-        },
-        {
-          "type": "basic",
-          "name": "H1",
-          "props": {
-            "className": "sf-display"
-          },
-          "text": "$t:stillform.hero_title"
-        },
-        {
-          "type": "basic",
-          "name": "P",
-          "props": {
-            "className": "sf-intro"
-          },
-          "text": "$t:stillform.hero_body"
-        },
-        {
-          "type": "basic",
           "name": "Div",
           "props": {
-            "className": "sf-actions"
+            "className": "sf-hero-copy"
           },
           "children": [
             {
               "type": "basic",
-              "name": "A",
+              "name": "Span",
               "props": {
-                "href": "{{(_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : ('/' + (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop'))) + '/products'}}",
-                "className": "sf-cta"
+                "className": "sf-eyebrow"
               },
-              "text": "$t:stillform.explore"
+              "text": "$t:stillform.eyebrow"
             },
             {
               "type": "basic",
-              "name": "A",
+              "name": "H1",
               "props": {
-                "href": "/story",
-                "className": "sf-link"
+                "className": "sf-display"
               },
-              "text": "$t:stillform.story"
+              "text": "$t:stillform.hero_title"
+            },
+            {
+              "type": "basic",
+              "name": "P",
+              "props": {
+                "className": "sf-intro"
+              },
+              "text": "$t:stillform.hero_body"
+            },
+            {
+              "type": "basic",
+              "name": "Div",
+              "props": {
+                "className": "sf-actions"
+              },
+              "children": [
+                {
+                  "type": "basic",
+                  "name": "A",
+                  "props": {
+                    "href": "{{(_global.modules?.['sirsoft-ecommerce']?.basic_info?.no_route ? '' : ('/' + (_global.modules?.['sirsoft-ecommerce']?.basic_info?.route_path ?? 'shop'))) + '/products'}}",
+                    "className": "sf-cta"
+                  },
+                  "text": "$t:stillform.explore"
+                },
+                {
+                  "type": "basic",
+                  "name": "A",
+                  "props": {
+                    "href": "/story",
+                    "className": "sf-link"
+                  },
+                  "text": "$t:stillform.story"
+                }
+              ]
             }
           ]
+        },
+        {
+          "type": "extension_point",
+          "name": "stillform_hero_media",
+          "default": [
+            {
+              "type": "basic",
+              "name": "Div",
+              "props": {
+                "className": "sf-composition",
+                "aria-hidden": true
+              },
+              "children": [
+                {
+                  "type": "basic",
+                  "name": "Div",
+                  "props": {
+                    "className": "sf-object sf-object-vase"
+                  }
+                },
+                {
+                  "type": "basic",
+                  "name": "Div",
+                  "props": {
+                    "className": "sf-object sf-object-disc"
+                  }
+                },
+                {
+                  "type": "basic",
+                  "name": "Div",
+                  "props": {
+                    "className": "sf-object sf-object-plinth"
+                  }
+                }
+              ]
+            }
+          ],
+          "props": {
+            "className": "sf-hero-media"
+          }
         }
       ]
     },
@@ -72,43 +121,6 @@
       "type": "extension_point",
       "name": "stillform_store_banner",
       "default": []
-    },
-    {
-      "type": "extension_point",
-      "name": "stillform_hero_media",
-      "default": [
-        {
-          "type": "basic",
-          "name": "Div",
-          "props": {
-            "className": "sf-composition",
-            "aria-hidden": true
-          },
-          "children": [
-            {
-              "type": "basic",
-              "name": "Div",
-              "props": {
-                "className": "sf-object sf-object-vase"
-              }
-            },
-            {
-              "type": "basic",
-              "name": "Div",
-              "props": {
-                "className": "sf-object sf-object-disc"
-              }
-            },
-            {
-              "type": "basic",
-              "name": "Div",
-              "props": {
-                "className": "sf-object sf-object-plinth"
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }

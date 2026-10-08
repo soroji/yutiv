@@ -127,7 +127,7 @@
         "type": "layout",
         "name": "Container",
         "props": {
-        "className": "py-16 sm:px-6 lg:px-8"
+          "className": "sf-home-products"
         },
         "children": [
           {

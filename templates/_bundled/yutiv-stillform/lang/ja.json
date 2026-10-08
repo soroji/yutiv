@@ -96,7 +96,8 @@
     "collect_coupons": "受け取れるクーポン",
     "empty_notices": "公開されたお知らせはありません。",
     "reward": "予想リワード",
-    "theme_toggle": "テーマを変更"
+    "theme_toggle": "テーマを変更",
+    "footer_body": "日常に寄り添うものと、新しい視点に出会う。"
   },
   "yutiv-stillform": {
     "$partial": "partial/ja/yutiv-stillform.json"
