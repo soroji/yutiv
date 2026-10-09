@@ -160,6 +160,7 @@ return [
 
     // Error messages
     'errors' => [
+        'bundled_source_invalid' => ':module bundled source is missing or its module.json identifier/version is invalid. Check the _bundled directory and manifest.',
         'force_update_no_source' => 'Cannot force update :module. Neither bundle nor GitHub URL is available.',
         'downgrade_blocked' => 'Downgrade blocked (:from → :to). Use --force to allow intentional downgrades.',
         'zip_open_failed' => 'Failed to open ZIP file: :error',

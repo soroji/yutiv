@@ -4342,7 +4342,7 @@ class ModuleManager implements ModuleManagerInterface
             $bundled = $this->getBundledVersion($identifier);
             if ($bundled === null) {
                 throw new \RuntimeException(
-                    __('modules.errors.force_update_no_source', ['module' => $identifier])
+                    __('modules.errors.bundled_source_invalid', ['module' => $identifier])
                 );
             }
             $updateSource = 'bundled';
@@ -4702,13 +4702,12 @@ class ModuleManager implements ModuleManagerInterface
      */
     private function getBundledVersion(string $identifier): ?string
     {
-        if (isset($this->bundledModules[$identifier]['version'])) {
-            return $this->bundledModules[$identifier]['version'];
-        }
-
+        // 설치 후보 캐시는 활성 모듈을 제외하므로 실제 디렉터리에서 읽는다.
         $meta = ExtensionPendingHelper::loadBundledExtensions($this->modulesPath, 'module.json');
 
-        return $meta[$identifier]['version'] ?? null;
+        $version = $meta[$identifier]['version'] ?? null;
+
+        return is_string($version) && preg_match('/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/D', $version) ? $version : null;
     }
 
     /**

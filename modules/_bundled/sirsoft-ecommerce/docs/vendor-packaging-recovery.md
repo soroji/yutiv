@@ -16,6 +16,14 @@ Git에 포함할 산출물은 `vendor-bundle.json`과 `vendor-bundle.zip`이다.
 
 ## 소스 선택 확인
 
+### 활성 모듈 강제 업데이트 판정 수정
+
+c1d2d691의 CLI 사전 판정은 `getBundledModules()`를 사용했으나 이 목록은 활성 모듈과 pending 모듈을 제외하는 설치 후보 목록이다. 따라서 활성 sirsoft-ecommerce에서는 실제 번들이 있어도 소스 없음 오류로 중단됐다. 기존 CLI 테스트가 이 목록을 인위적으로 채워 문제를 놓쳤다.
+
+CLI와 Manager는 이제 실제 `_bundled` 디렉터리의 module.json을 읽어 판정한다. 번들이 없거나 JSON·식별자·버전이 잘못되면 번들 전용 오류로 중단하며 GitHub로 우회하지 않는다. vendor ZIP 무결성 검증은 기존 설치 준비 경로에서 계속 수행한다.
+
+실제 명령 진입점에 `--source=bundled --vendor-mode=bundled --force --layout-strategy=overwrite --no-interaction`을 전달해 설치 1.2.0 → 번들 1.2.1 및 설치 1.2.1 → 동일 버전 강제 업데이트를 검증했다. 설치 후보 캐시는 빈 상태로 두고 실제 Manager의 pending 복사·무결성 검증·압축 해제까지 수행한 뒤 파일 교체 직전에 의도적으로 중단한다. 이 중단 때문에 테스트 명령의 종료 코드는 1이며, 정상 준비 경로 도달은 별도로 검사한다. 번들 없음과 잘못된 manifest는 준비 단계에 진입하지 않는 것을 검사한다. 서버 설치 완료를 검증한 것은 아니다.
+
 기존 CLI 사전 안내는 GitHub 우선 업데이트 조회 결과를 출력했지만, ModuleManager의 sourceOverride는 실제 설치 준비 단계에서 bundled 경로를 선택했다. 따라서 해당 안내만으로 GitHub 파일을 설치했다고 볼 수 없다. 이번 수정은 CLI 표시와 Manager 사전 조회 모두 강제 bundled 선택을 따르게 한다.
 
 회귀 테스트는 실제 ModuleManager → 번들 경로 → pending 복사 → VendorResolver → 무결성 검증 → ZIP 압축 해제를 실행한다. GitHub 조회·다운로드 호출을 금지하고, 파일 적용 직전 단계의 번들 원본 및 vendor 파일을 확인한 후 중단한다. 활성 파일 교체, migration, 실제 모듈 설치 완료는 이 테스트 범위 밖이다.

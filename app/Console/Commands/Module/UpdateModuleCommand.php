@@ -7,6 +7,7 @@ use App\Console\Commands\Traits\HasUnifiedConfirm;
 use App\Console\Commands\Traits\RebuildsSearchIndex;
 use App\Contracts\Repositories\ModuleRepositoryInterface;
 use App\Enums\LayoutSourceType;
+use App\Extension\Helpers\ExtensionPendingHelper;
 use App\Extension\ModuleManager;
 use App\Extension\Vendor\VendorMode;
 use App\Services\LayoutExtensionService;
@@ -106,9 +107,9 @@ class UpdateModuleCommand extends Command
                 // 명시한 번들은 설치 단계와 동일한 manifest 버전으로 안내한다.
                 // GitHub 우선 조회 결과를 표시하면 실제 staging 소스와 달라진다.
                 if ($sourceOverride === 'bundled') {
-                    $bundled = $this->moduleManager->getBundledModules()[$identifier] ?? null;
-                    if (! isset($bundled['version'])) {
-                        $this->error('❌ '.__('modules.errors.force_update_no_source', ['module' => $identifier]));
+                    $bundled = ExtensionPendingHelper::loadBundledExtensions(base_path('modules'), 'module.json')[$identifier] ?? null;
+                    if (! is_string($bundled['version'] ?? null) || ! preg_match('/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/D', $bundled['version'])) {
+                        $this->error('❌ '.__('modules.errors.bundled_source_invalid', ['module' => $identifier]));
 
                         return Command::FAILURE;
                     }

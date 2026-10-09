@@ -160,6 +160,7 @@ return [
 
     // 오류 메시지
     'errors' => [
+        'bundled_source_invalid' => ':module 번들 소스가 없거나 module.json의 식별자·버전이 올바르지 않습니다. _bundled 디렉터리와 manifest를 확인하세요.',
         'force_update_no_source' => ':module 을(를) 강제 업데이트할 소스를 찾을 수 없습니다. 번들 및 GitHub URL이 모두 없습니다.',
         'downgrade_blocked' => '다운그레이드가 차단되었습니다 (:from → :to). 의도적 다운그레이드는 --force 옵션을 사용하세요.',
         'zip_open_failed' => 'ZIP 파일을 열 수 없습니다: :error',
