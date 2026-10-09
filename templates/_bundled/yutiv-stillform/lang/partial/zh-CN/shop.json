@@ -482,6 +482,7 @@
     "dbank_payment_desc": "直接汇款到指定账户",
     "dbank_info": "请选择以下账户进行汇款。",
     "dbank_select_account": "选择汇款账户",
+    "dbank_unavailable": "目前没有可用的收款账户。管理员需要在商城设置中登记并启用收款账户。暂时无法通过银行转账付款。",
     "dbank_due_notice": "汇款期限：{{days}} 天内",
     "dbank_no_accounts": "没有已登记的汇款账户。",
     "order_failed": "订单处理过程中发生错误。",

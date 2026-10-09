@@ -1227,6 +1227,19 @@
             "type": "CSSProperties",
             "required": false,
             "description": "인라인 스타일"
+          },
+          "stickyActions": {
+            "type": "boolean",
+            "default": false,
+            "description": "Pin actions column inside table scroll"
+          },
+          "primaryActionId": {
+            "type": "string",
+            "description": "Expose this existing row action as a button"
+          },
+          "moreActionsLabel": {
+            "type": "string",
+            "description": "Label for remaining row actions"
           }
         }
       },

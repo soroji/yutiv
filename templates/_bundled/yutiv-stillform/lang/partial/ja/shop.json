@@ -449,6 +449,7 @@
     "dbank_payment_desc": "指定口座への直接入金",
     "dbank_info": "以下の口座を選択して入金してください。",
     "dbank_select_account": "入金口座選択",
+    "dbank_unavailable": "利用できる入金口座がありません。管理者がショップ設定で入金口座を登録し、有効にする必要があります。現在、銀行振込ではお支払いいただけません。",
     "dbank_due_notice": "入金期限：{{days}}日以内",
     "dbank_no_accounts": "登録された入金口座がありません。",
     "order_failed": "注文処理中にエラーが発生しました。",

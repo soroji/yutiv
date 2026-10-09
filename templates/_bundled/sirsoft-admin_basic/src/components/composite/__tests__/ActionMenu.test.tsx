@@ -5,6 +5,28 @@ import { ActionMenu, ActionMenuItem } from '../ActionMenu';
 import { IconName } from '../../basic/IconTypes';
 
 describe('ActionMenu', () => {
+  it('keyboard skips disabled actions, selects with Enter and restores focus on Escape', async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(<ActionMenu triggerLabel="More" items={[
+      { id: 'blocked', label: 'Blocked', disabled: true },
+      { id: 'edit', label: 'Edit', onClick: onSelect },
+      { id: 'delete', label: 'Delete' },
+    ]} />);
+    const trigger = screen.getByRole('button', { name: 'More' });
+    await user.click(trigger);
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(trigger).toHaveFocus();
+    await user.click(trigger);
+    await user.keyboard('{End}');
+    expect(screen.getByRole('menuitem', { name: 'Delete' })).toHaveFocus();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
   const mockItems: ActionMenuItem[] = [
     { id: 1, label: '수정', iconName: IconName.Edit, onClick: vi.fn() },
     { id: 2, label: '삭제', iconName: IconName.Trash, variant: 'danger', onClick: vi.fn() },
@@ -39,7 +61,7 @@ describe('ActionMenu', () => {
     const trigger = screen.getByRole('button');
     await user.click(trigger);
 
-    const menuItem = screen.getByText('수정').closest('div');
+    const menuItem = screen.getByText('수정').closest('[role=menuitem]');
     fireEvent.click(menuItem!);
 
     expect(onClickMock).toHaveBeenCalledTimes(1);
@@ -101,7 +123,7 @@ describe('ActionMenu', () => {
     await user.click(trigger);
 
     const menuItem = screen.getByText('삭제');
-    expect(menuItem.closest('div')).toHaveClass('text-red-600');
+    expect(menuItem.closest('[role=menuitem]')).toHaveClass('text-red-600');
   });
 
   it('position prop이 올바르게 동작함', async () => {

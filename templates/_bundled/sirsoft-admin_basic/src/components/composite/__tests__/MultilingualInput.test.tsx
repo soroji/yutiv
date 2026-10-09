@@ -27,6 +27,16 @@ const DEFAULT_LOCALES: LocaleOption[] = [
 ];
 
 describe('MultilingualInput 컴포넌트', () => {
+  it('compact language controls preserve Korean edits when switching languages', () => {
+    const onChange = vi.fn();
+    render(<MultilingualInput layout="compact" name="product_name" value={{ ko: '상품', en: 'Product' }} onChange={onChange} availableLocales={DEFAULT_LOCALES} defaultLocale="ko" />);
+    fireEvent.change(screen.getByDisplayValue('상품'), { target: { value: '수정 상품' } });
+    fireEvent.click(screen.getByRole('button', { name: /^EN/ }));
+    fireEvent.change(screen.getByDisplayValue('Product'), { target: { value: 'Updated product' } });
+    fireEvent.click(screen.getByRole('button', { name: /^KO/ }));
+    expect(screen.getByDisplayValue('수정 상품')).toBeInTheDocument();
+    expect(onChange.mock.calls[onChange.mock.calls.length - 1][0].target.value).toEqual({ ko: '수정 상품', en: 'Updated product' });
+  });
   describe('타입 정의', () => {
     it('MultilingualValue 타입이 올바르게 정의되어 있다', () => {
       const value: MultilingualValue = {

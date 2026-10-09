@@ -15,7 +15,7 @@
           {
             "field": "thumbnail",
             "header": "$t:sirsoft-ecommerce.admin.product.table.column.image",
-            "width": "140px",
+            "width": "112px",
             "sortable": false,
             "required": true,
             "cellChildren": [
@@ -23,7 +23,7 @@
                 "type": "basic",
                 "name": "Div",
                 "props": {
-                  "className": "w-full aspect-square md:w-20 md:h-20 flex-shrink-0 {{row.thumbnail_url ? '' : 'bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center'}}"
+                  "className": "w-16 h-16 flex-shrink-0 {{row.thumbnail_url ? '' : 'bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center'}}"
                 },
                 "children": [
                   {
@@ -54,7 +54,7 @@
             "header": "$t:sirsoft-ecommerce.admin.product.table.column.product_name",
             "sortable": true,
             "required": true,
-            "width": "200px",
+            "width": "340px",
             "cellChildren": [
               {
                 "type": "basic",
@@ -73,7 +73,7 @@
                         "props": {
                           "value": "{{row.name}}",
                           "availableLocales": "{{(_global.appConfig?.supportedLocales ?? ['ko', 'en']).map(l => ({ code: l, name: _global.appConfig?.localeNames?.[l] ?? l, nativeName: _global.appConfig?.localeNames?.[l] ?? l }))}}",
-                          "layout": "tabs",
+                          "layout": "compact",
                           "inputType": "text",
                           "compact": true,
                           "className": "w-full",
@@ -566,7 +566,7 @@
         "visibleColumns": "{{_local.visibleColumns}}",
         "columnSelectorId": "admin_product_list_columns",
         "emptyMessage": "$t:sirsoft-ecommerce.admin.product.table.no_data",
-        "actionsColumnHeader": "$t:sirsoft-ecommerce.admin.product.table.column.actions",
+        "actionsColumnHeader": "$t:sirsoft-ecommerce.admin.product.table.column.management",
         "columnSelectorText": "$t:common.column_selector",
         "selectedCountText": "",
         "responsiveBreakpoint": 768,
@@ -1579,7 +1579,10 @@
               }
             ]
           }
-        ]
+        ],
+        "stickyActions": true,
+        "primaryActionId": "edit",
+        "moreActionsLabel": "$t:sirsoft-ecommerce.admin.product.action.more"
       },
       "actions": [
         {

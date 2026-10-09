@@ -270,6 +270,9 @@ export interface DataGridProps {
   columnSelectorText?: string;
   emptyMessage?: string;
   actionsColumnHeader?: string;
+  stickyActions?: boolean;
+  primaryActionId?: string;
+  moreActionsLabel?: string;
   requiredText?: string;
   selectedCountText?: string;
   loadErrorMessage?: string;
@@ -685,6 +688,9 @@ export const DataGrid: React.FC<DataGridProps> = ({
   columnSelectorText,
   emptyMessage,
   actionsColumnHeader,
+  stickyActions = false,
+  primaryActionId,
+  moreActionsLabel,
   requiredText,
   selectedCountText,
   // 페이지네이션 옵션
@@ -1153,6 +1159,20 @@ export const DataGrid: React.FC<DataGridProps> = ({
   );
 
   // 확장 행 콘텐츠 렌더링 (Phase 2-1: G7Core.renderExpandContent API 사용으로 간소화)
+  const renderRowActions = (row: any) => {
+    const items = resolveRowActions(row);
+    const primary = items.find(item => item.id === primaryActionId && !item.divider && item.if !== false);
+    if (!primary) {
+      return <ActionMenu items={items} triggerLabel={moreActionsLabel ?? ''} triggerIconName={IconName.EllipsisHorizontal} position="right" />;
+    }
+    return (
+      <Div className="flex items-center justify-end gap-2 whitespace-nowrap">
+        {primary && <Button type="button" disabled={primary.disabled} onClick={primary.onClick} className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">{primary.label}</Button>}
+        <ActionMenu items={items.filter(item => item !== primary)} triggerLabel={moreActionsLabel ?? ''} triggerIconName={IconName.EllipsisHorizontal} position="right" />
+      </Div>
+    );
+  };
+
   const renderExpandedContent = useCallback(
     (row: any) => {
       // expandedRowRender 함수가 제공된 경우 우선 사용
@@ -1242,11 +1262,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
           </Div>
           {rowActions && rowActions.length > 0 && (
             <Div className="ml-2">
-              <ActionMenu
-                items={resolveRowActions(row)}
-                triggerLabel=""
-                triggerIconName={IconName.EllipsisHorizontal}
-              />
+              {renderRowActions(row)}
             </Div>
           )}
         </Div>
@@ -1274,7 +1290,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
   // 모바일 카드 뷰
   if (isMobileView) {
     return (
-      <Div id={id} className={`w-full ${className}`} style={style} {...editorAttrs}>
+      <Div id={id} className={`w-full min-w-0 max-w-full ${className}`} style={style} {...editorAttrs}>
         {/* 컬럼 선택 메뉴 */}
         {showColumnSelector && (
           <Div className="mb-4 flex justify-end">
@@ -1394,7 +1410,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
   // 데스크톱 테이블 뷰
   return (
-    <Div id={id} className={`w-full ${className}`} style={style} {...editorAttrs}>
+    <Div id={id} className={`w-full min-w-0 max-w-full ${className}`} style={style} {...editorAttrs}>
       {/* 컬럼 선택 메뉴 */}
       {showColumnSelector && (
         <Div className="mb-4 flex justify-end">
@@ -1451,7 +1467,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
       )}
 
       {/* 테이블 — body wrapper 에 `${id}__body` 부여 (pagination 제외 영역) */}
-      <Div id={id ? `${id}__body` : undefined} className="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+      <Div id={id ? `${id}__body` : undefined} className="min-w-0 max-w-full overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
         <Table className="w-full">
           <Thead className="bg-gray-50 dark:bg-gray-700">
             <Tr>
@@ -1501,7 +1517,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
               {/* 액션 컬럼 */}
               {rowActions && rowActions.length > 0 && (
-                <Th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">
+                <Th className={`py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${stickyActions ? 'px-3 whitespace-nowrap bg-gray-50 dark:bg-gray-700' : 'px-6 w-24'}`} style={stickyActions ? { position: 'sticky', right: 0, zIndex: 20, minWidth: '148px', boxShadow: '-1px 0 0 #9ca3af' } : undefined}>
                   {resolvedActionsColumnHeader}
                 </Th>
               )}
@@ -1574,15 +1590,11 @@ export const DataGrid: React.FC<DataGridProps> = ({
                       {/* 액션 메뉴 */}
                       {rowActions && rowActions.length > 0 && (
                         <Td
-                          className="px-6 py-4 text-right"
+                          className={`text-right ${stickyActions ? 'px-3 py-3 bg-white dark:bg-gray-800' : 'px-6 py-4'}`}
+                          style={stickyActions ? { position: 'sticky', right: 0, zIndex: 10, minWidth: '148px', boxShadow: '-1px 0 0 #9ca3af' } : undefined}
                           onClick={(e: React.MouseEvent) => e.stopPropagation()}
                         >
-                          <ActionMenu
-                            items={resolveRowActions(row)}
-                            triggerLabel=""
-                            triggerIconName={IconName.EllipsisHorizontal}
-                            position="right"
-                          />
+                          {renderRowActions(row)}
                         </Td>
                       )}
                     </Tr>

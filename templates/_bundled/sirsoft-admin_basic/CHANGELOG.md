@@ -4,6 +4,15 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [Unreleased]
+
+### Fixed
+
+- Select 메뉴 폭을 트리거와 분리하고 내용에 맞춰 확장하며, 긴 항목은 화면 폭 안에서 한 줄로 생략합니다. 체크 표시와 스크롤바 공간을 확보하고 화면 가장자리 위치를 보정합니다.
+- Select/ActionMenu의 방향키·Home/End 이동, 비활성 항목 건너뛰기, ESC 및 선택 후 포커스 복원을 보강했습니다. 메뉴는 기존 body portal을 유지합니다.
+- DataGrid에 선택적 `stickyActions`, `primaryActionId`, `moreActionsLabel`을 추가했습니다. 기존 수정 권한과 행 이벤트를 재사용하고 기본 사용 화면의 작업 메뉴를 유지합니다.
+- PHP 공개 API, 의존성 및 버전 제약은 변경하지 않았습니다. 상품 목록 레이아웃과 함께 강제 업데이트해야 신규 UI 속성이 적용됩니다.
+
 ## [1.0.8] - 2026-09-08
 
 ### Changed

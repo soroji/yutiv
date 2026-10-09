@@ -4,6 +4,47 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Select } from '../Select';
 
+describe('Select menu sizing and focus', () => {
+  it.each([1920, 1440, 1280, 768, 390])('separates trigger/menu width and clamps at %ipx (mock geometry)', (viewport) => {
+    const originalWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: viewport });
+    const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      return { x: 0, y: 20, top: 20, bottom: 52, height: 32, left: viewport - 80, right: viewport - 16, width: this.getAttribute('role') === 'listbox' ? 240 : 64, toJSON() {} };
+    });
+    try {
+      render(<Select value="one" options={[{ value: 'one', label: '판매중' }, { value: 'two', label: '긴 카테고리 이름' }]} />);
+      fireEvent.click(screen.getByRole('button'));
+      const menu = screen.getByRole('listbox');
+      expect(menu.style.width).toBe('max-content');
+      expect(menu.style.minWidth).toBe('64px');
+      expect(Number.parseFloat(menu.style.left) + 240).toBeLessThanOrEqual(viewport - 8);
+      expect(menu.parentElement).toBe(document.body);
+      expect(screen.getByRole('option', { name: '판매중' }).querySelector('span')).toHaveClass('truncate');
+    } finally {
+      spy.mockRestore();
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth });
+    }
+  });
+
+  it('skips disabled options with arrows and restores focus on selection/ESC', () => {
+    const change = vi.fn();
+    render(<Select value="one" onChange={change} options={[{ value: 'one', label: 'One' }, { value: 'disabled', label: 'Disabled', disabled: true }, { value: 'two', label: 'Two' }]} />);
+    const trigger = screen.getByRole('button');
+    fireEvent.click(trigger);
+    fireEvent.keyDown(document, { key: 'ArrowDown' });
+    expect(screen.getByRole('option', { name: 'One' })).toHaveFocus();
+    fireEvent.keyDown(document, { key: 'ArrowDown' });
+    expect(screen.getByRole('option', { name: 'Two' })).toHaveFocus();
+    fireEvent.click(screen.getByRole('option', { name: 'Two' }));
+    expect(change).toHaveBeenCalledWith(expect.objectContaining({ target: { value: 'two' } }));
+    expect(trigger).toHaveFocus();
+    fireEvent.click(trigger);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+});
+
 describe('Select 컴포넌트', () => {
   describe('기본 렌더링 (children 모드)', () => {
     it('select 요소가 렌더링된다', () => {

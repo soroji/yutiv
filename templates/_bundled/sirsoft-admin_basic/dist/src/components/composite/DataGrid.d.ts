@@ -146,6 +146,9 @@ export interface DataGridProps {
     columnSelectorText?: string;
     emptyMessage?: string;
     actionsColumnHeader?: string;
+    stickyActions?: boolean;
+    primaryActionId?: string;
+    moreActionsLabel?: string;
     requiredText?: string;
     selectedCountText?: string;
     loadErrorMessage?: string;

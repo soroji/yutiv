@@ -88,7 +88,8 @@
     "search": "검색",
     "reset": "초기화",
     "save_preset": "프리셋 저장",
-    "view_user_page": "유저 화면 보기"
+    "view_user_page": "유저 화면 보기",
+    "more": "더보기"
   },
   "bulk_apply": "일괄 적용",
   "bulk_success": "선택한 상품이 일괄 변경되었습니다.",
@@ -159,7 +160,8 @@
       "category": "카테고리",
       "brand": "브랜드",
       "min_purchase_qty": "최소수량",
-      "max_purchase_qty": "최대구매수량"
+      "max_purchase_qty": "최대구매수량",
+      "management": "관리"
     },
     "status": {
       "on_sale": "판매중",

@@ -88,7 +88,8 @@
     "search": "Search",
     "reset": "Reset",
     "save_preset": "Save Preset",
-    "view_user_page": "View on site"
+    "view_user_page": "View on site",
+    "more": "More"
   },
   "bulk_apply": "Apply",
   "bulk_success": "Selected products have been changed.",
@@ -159,7 +160,8 @@
       "category": "Category",
       "brand": "Brand",
       "min_purchase_qty": "Min Qty",
-      "max_purchase_qty": "Max Qty"
+      "max_purchase_qty": "Max Qty",
+      "management": "Manage"
     },
     "status": {
       "on_sale": "On Sale",

@@ -482,6 +482,7 @@
     "dbank_payment_desc": "지정 계좌로 직접 입금",
     "dbank_info": "아래 계좌를 선택하여 입금해주세요.",
     "dbank_select_account": "입금할 계좌 선택",
+    "dbank_unavailable": "입금 가능한 계좌가 등록되어 있지 않습니다. 관리자가 쇼핑몰 설정에서 입금 계좌를 등록하고 사용하도록 설정해야 합니다. 현재 무통장입금으로 결제할 수 없습니다.",
     "dbank_due_notice": "입금 기한: {{days}}일 이내",
     "dbank_no_accounts": "등록된 입금 계좌가 없습니다.",
     "order_failed": "주문 처리 중 오류가 발생했습니다.",

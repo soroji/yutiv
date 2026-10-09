@@ -521,9 +521,21 @@
           "text": "$t:shop.checkout.dbank_info"
         },
         {
+          "type": "basic",
+          "name": "P",
+          "if": "{{(_computed.activeDbankAccounts ?? []).length === 0}}",
+          "props": {
+            "role": "alert",
+            "data-testid": "checkout-dbank-unavailable",
+            "className": "text-sm text-red-600 dark:text-red-400 mb-4"
+          },
+          "text": "$t:shop.checkout.dbank_unavailable"
+        },
+        {
           "comment": "계좌 선택",
           "type": "basic",
           "name": "Div",
+          "if": "{{(_computed.activeDbankAccounts ?? []).length > 0}}",
           "props": {
             "className": "mb-4"
           },
@@ -561,7 +573,7 @@
                   "type": "basic",
                   "name": "Div",
                   "iteration": {
-                    "source": "{{paymentSettings.data?.order_settings?.bank_accounts?.filter(b => b.is_active) ?? []}}",
+                    "source": "{{_computed.activeDbankAccounts ?? []}}",
                     "item_var": "bank",
                     "index_var": "bankIdx"
                   },

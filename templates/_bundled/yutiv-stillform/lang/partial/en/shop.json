@@ -482,6 +482,7 @@
     "dbank_payment_desc": "Direct transfer to designated account",
     "dbank_info": "Please select an account to transfer to.",
     "dbank_select_account": "Select bank account",
+    "dbank_unavailable": "No bank account is available. An administrator must register and enable a deposit account in the shop settings. Bank transfer is currently unavailable.",
     "dbank_due_notice": "Payment due: within {{days}} days",
     "dbank_no_accounts": "No bank accounts available.",
     "order_failed": "An error occurred while processing your order.",

@@ -95,10 +95,11 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
     if (!triggerRef.current) return;
 
     const rect = triggerRef.current.getBoundingClientRect();
-    const menuWidth = 224; // w-56 = 14rem = 224px
+    const menuWidth = Math.min(224, window.innerWidth - 16);
+    const menuHeight = Math.min(menuRef.current?.getBoundingClientRect().height || items.length * 48, window.innerHeight - 16);
 
     let left = position === 'right' ? rect.right - menuWidth : rect.left;
-    const top = rect.bottom + 8; // mt-2 = 8px
+    const top = Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - menuHeight - 8));
 
     // 화면 왼쪽 경계 체크
     if (left < 8) {
@@ -111,7 +112,29 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
     }
 
     setMenuPosition({ top, left });
-  }, [position]);
+  }, [position, items.length]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsOpen(false);
+        triggerRef.current?.focus();
+      } else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        const buttons = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role=menuitem]:not(:disabled)') ?? []);
+        if (!buttons.length) return;
+        event.preventDefault();
+        const current = buttons.indexOf(document.activeElement as HTMLButtonElement);
+        const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : event.key === 'ArrowDown' ? (current + 1) % buttons.length : (current <= 0 ? buttons.length - 1 : current - 1);
+        buttons[next].focus();
+      } else if (event.key === 'Tab') {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isOpen]);
 
   // 메뉴 열릴 때 위치 계산
   useEffect(() => {
@@ -172,6 +195,7 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
     }
 
     setIsOpen(false);
+    triggerRef.current?.focus();
   };
 
   // Portal로 렌더링할 드롭다운 메뉴
@@ -179,10 +203,14 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
     ? ReactDOM.createPortal(
         <div
           ref={menuRef}
+          role="menu"
           className="fixed z-[9999] w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden"
           style={{
             top: menuPosition.top,
             left: menuPosition.left,
+            maxWidth: 'calc(100vw - 16px)',
+            maxHeight: 'calc(100vh - 16px)',
+            overflowY: 'auto',
           }}
         >
           {items.filter((item) => item.if !== false).map((item) => {
@@ -206,16 +234,19 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
               : 'cursor-pointer';
 
             return (
-              <div
+              <Button
                 key={item.id}
+                type="button"
+                role="menuitem"
+                disabled={item.disabled}
                 onClick={() => handleItemClick(item)}
-                className={`flex items-center gap-3 px-4 py-3 transition-colors ${variantClasses} ${disabledClasses}`}
+                className={`w-full text-left flex items-center justify-start gap-3 px-4 py-3 transition-colors ${variantClasses} ${disabledClasses}`}
               >
                 {item.iconName && (
                   <Icon name={item.iconName} className="w-4 h-4" />
                 )}
-                <span className="text-sm font-medium">{item.label}</span>
-              </div>
+                <span className="min-w-0 truncate text-sm font-medium">{item.label}</span>
+              </Button>
             );
           })}
         </div>,
@@ -237,6 +268,10 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
       ) : (
         <Button
           ref={triggerRef as React.RefObject<HTMLButtonElement>}
+          type="button"
+          aria-label={triggerLabel || undefined}
+          aria-haspopup="menu"
+          aria-expanded={isOpen}
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 px-2 py-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >

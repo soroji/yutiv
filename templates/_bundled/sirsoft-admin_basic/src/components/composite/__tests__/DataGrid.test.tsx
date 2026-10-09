@@ -1610,4 +1610,21 @@ describe('DataGrid', () => {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
   });
+  it('pins opt-in actions and exposes the existing edit callback without weakening permissions', async () => {
+    const action = vi.fn();
+    const { container } = render(<DataGrid columns={[{ field: 'name', header: 'Name' }]} data={[{ id: 7, name: 'Product', abilities: { can_update: true } }]} rowActions={[{ id: 'edit', label: 'Edit', disabledField: 'abilities.can_update' }, { id: 'delete', label: 'Delete' }]} stickyActions primaryActionId="edit" moreActionsLabel="More" actionsColumnHeader="Manage" onRowAction={action} />);
+    expect(screen.getByRole('columnheader', { name: 'Manage' })).toHaveStyle({ position: 'sticky', right: '0px' });
+    expect(container.querySelector('tbody td:last-child')).toHaveStyle({ position: 'sticky' });
+    await userEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    expect(action).toHaveBeenCalledWith('edit', expect.objectContaining({ id: 7 }));
+    await userEvent.click(screen.getByRole('button', { name: 'More' }));
+    expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: 'Edit' })).not.toBeInTheDocument();
+  });
+
+  it('keeps direct edit disabled for a row without update ability', () => {
+    render(<DataGrid columns={[{ field: 'name', header: 'Name' }]} data={[{ id: 7, name: 'Product', abilities: { can_update: false } }]} rowActions={[{ id: 'edit', label: 'Edit', disabledField: 'abilities.can_update' }]} stickyActions primaryActionId="edit" />);
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeDisabled();
+  });
+
 });

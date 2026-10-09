@@ -1,5 +1,5 @@
 // e2e:allow편집기 passthrough 결함#1 수정(커스텀 드롭다운 루트 data-editor-* spread). 라이브 검증은 Chrome MCP T1~T7 매트릭스(에디터 추가/선택/저장 200/reload/게스트 사용자화면)로 수행, 단위 회귀는 Select.test.tsx passthrough describe.
-import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Div } from './Div';
 import { Button } from './Button';
@@ -148,6 +148,8 @@ export const Select: React.FC<SelectProps> = ({
   const updateDropdownPos = useCallback(() => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
+    const menuWidth = dropdownRef.current?.getBoundingClientRect().width || rect.width;
+    const left = Math.max(8, Math.min(rect.left, window.innerWidth - menuWidth - 8));
     const spaceBelow = window.innerHeight - rect.bottom;
     const dropdownMaxH = 280; // max-h-60(240px) + search(~40px)
     // 아래 공간 부족 시 위로 열기
@@ -155,13 +157,13 @@ export const Select: React.FC<SelectProps> = ({
     if (openUpward) {
       setDropdownPos({
         bottom: window.innerHeight - rect.top + 4,
-        left: rect.left,
+        left,
         width: rect.width,
       });
     } else {
       setDropdownPos({
         top: rect.bottom + 4,
-        left: rect.left,
+        left,
         width: rect.width,
       });
     }
@@ -206,6 +208,15 @@ export const Select: React.FC<SelectProps> = ({
   // ESC 키로 드롭다운 닫기
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (isOpen && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        const choices = Array.from(dropdownRef.current?.querySelectorAll<HTMLButtonElement>('[role=option]:not(:disabled)') ?? []);
+        if (choices.length) {
+          event.preventDefault();
+          const index = choices.indexOf(document.activeElement as HTMLButtonElement);
+          const next = event.key === 'Home' ? 0 : event.key === 'End' ? choices.length - 1 : event.key === 'ArrowDown' ? (index + 1) % choices.length : (index <= 0 ? choices.length - 1 : index - 1);
+          choices[next].focus();
+        }
+      }
       if (event.key === 'Escape' && isOpen) {
         setIsOpen(false);
         buttonRef.current?.focus();
@@ -215,6 +226,10 @@ export const Select: React.FC<SelectProps> = ({
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
+
+  useLayoutEffect(() => {
+    if (isOpen && dropdownPos) updateDropdownPos();
+  }, [isOpen, dropdownPos?.width, normalizedOptions, searchTerm, updateDropdownPos]);
 
   const handleToggle = () => {
     if (!disabled) {
@@ -290,7 +305,7 @@ export const Select: React.FC<SelectProps> = ({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <Span className="truncate">{selectedLabel || '\u00A0'}</Span>
+        <Span className="min-w-0 truncate">{selectedLabel || '\u00A0'}</Span>
         <Svg
           className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -305,7 +320,7 @@ export const Select: React.FC<SelectProps> = ({
         <Div
           ref={dropdownRef}
           className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600 overflow-hidden"
-          style={{ top: dropdownPos.top, bottom: dropdownPos.bottom, left: dropdownPos.left, width: dropdownPos.width }}
+          style={{ top: dropdownPos.top, bottom: dropdownPos.bottom, left: dropdownPos.left, width: 'max-content', minWidth: Math.min(dropdownPos.width, window.innerWidth - 16), maxWidth: 'calc(100vw - 16px)' }}
           role="listbox"
         >
           {searchable && (
@@ -322,7 +337,7 @@ export const Select: React.FC<SelectProps> = ({
               />
             </Div>
           )}
-          <Div className="py-2 max-h-60 overflow-auto">
+          <Div className="py-2 max-h-60 overflow-y-auto" style={{ scrollbarGutter: 'stable', maxHeight: 'min(240px, calc(100vh - 32px))' }}>
             {visibleOptions && visibleOptions.length === 0 && (
               <Div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                 {searchTerm ? 'No results' : ''}
@@ -336,14 +351,14 @@ export const Select: React.FC<SelectProps> = ({
                   type="button"
                   onClick={() => !option.disabled && handleSelect(option.value)}
                   disabled={option.disabled}
-                  className={`w-full px-4 py-3 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                  className={`w-full px-4 py-3 text-left text-sm flex items-center justify-between gap-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                     isSelected ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-200'
                   } ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                   role="option"
                   aria-selected={isSelected}
                 >
-                  <Span>{option.label}</Span>
-                  {isSelected && (
+                  <Span className="min-w-0 flex-1 truncate" title={option.label}>{option.label}</Span>
+                  <Span className="w-5 shrink-0">{isSelected && (
                     <Svg
                       className="w-5 h-5 text-blue-600 dark:text-blue-400"
                       fill="none"
@@ -352,7 +367,7 @@ export const Select: React.FC<SelectProps> = ({
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </Svg>
-                  )}
+                  )}</Span>
                 </Button>
               );
             })}

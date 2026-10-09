@@ -4,6 +4,14 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [Unreleased]
+
+### Fixed
+
+- 관리자 상품 목록의 관리 열을 오른쪽에 고정하고 수정 버튼을 직접 제공합니다. 더보기의 복사·삭제 및 기존 URL·권한·삭제 확인 절차는 유지합니다.
+- 상품명 열을 넓히고 기존 compact 다국어 입력을 사용해 언어 버튼의 줄바꿈을 줄였습니다. 썸네일을 64px로 정리하고 표 내부 스크롤을 유지합니다.
+- 관리자 템플릿 `sirsoft-admin_basic`의 공통 UI 수정과 함께 적용해야 합니다. 상품 API·Service·Model·권한·가격·재고·주문 계약은 변경하지 않아 소비 확장의 버전 제약과 composer/vendor 번들을 유지합니다.
+
 ## [1.2.1] - 2026-10-09
 
 ### Fixed
