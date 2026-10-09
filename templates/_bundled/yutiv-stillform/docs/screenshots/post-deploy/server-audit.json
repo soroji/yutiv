@@ -1,0 +1,430 @@
+[
+  {
+    "width": 1440,
+    "console": [],
+    "runtime": [],
+    "failed": [],
+    "http": [],
+    "assets": [
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/css/components.css?v=1791503906",
+        "status": 200,
+        "sha256": "5b9d54b8b90298515d21dfdc5b933f2c969072f60dcc786a2fe7fe14d381b48a",
+        "localSha256": "5b9d54b8b90298515d21dfdc5b933f2c969072f60dcc786a2fe7fe14d381b48a",
+        "matchesLocal": true
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/js/components.iife.js?v=1791503906",
+        "status": 200,
+        "sha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f",
+        "localSha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f",
+        "matchesLocal": true
+      }
+    ],
+    "csp": [],
+    "geometry": {
+      "width": 1440,
+      "scroll": 1440,
+      "elements": {
+        ".sf-hero-grid": {
+          "rect": {
+            "x": 92,
+            "y": 200.390625,
+            "width": 1256,
+            "height": 526.21875,
+            "top": 200.390625,
+            "right": 1348,
+            "bottom": 726.609375,
+            "left": 92
+          },
+          "display": "grid",
+          "columns": "526.219px 657.781px",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "일상을 위한 컬렉션천천히 발견하는\n새로운 일상.상품의 세부와 가능성을 살펴보세요. 당신의 일상에 어울리는 선택을 만나보세요.컬렉션 둘러보기브랜드 이야기"
+        },
+        ".sf-hero-copy": {
+          "rect": {
+            "x": 92,
+            "y": 292.25,
+            "width": 526.21875,
+            "height": 342.5,
+            "top": 292.25,
+            "right": 618.21875,
+            "bottom": 634.75,
+            "left": 92
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "일상을 위한 컬렉션천천히 발견하는\n새로운 일상.상품의 세부와 가능성을 살펴보세요. 당신의 일상에 어울리는 선택을 만나보세요.컬렉션 둘러보기브랜드 이야기"
+        },
+        ".sf-hero-media": {
+          "rect": {
+            "x": 690.21875,
+            "y": 200.390625,
+            "width": 657.78125,
+            "height": 526.21875,
+            "top": 200.390625,
+            "right": 1348,
+            "bottom": 726.609375,
+            "left": 690.21875
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": ""
+        },
+        ".sf-display": {
+          "rect": {
+            "x": 92,
+            "y": 333.84375,
+            "width": 526.21875,
+            "height": 135.90625,
+            "top": 333.84375,
+            "right": 618.21875,
+            "bottom": 469.75,
+            "left": 92
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "57.6px",
+          "wordBreak": "keep-all",
+          "overflowWrap": "break-word",
+          "text": "천천히 발견하는\n새로운 일상."
+        },
+        ".sf-story-band": {
+          "rect": {
+            "x": 92,
+            "y": 1079.75,
+            "width": 1256,
+            "height": 749,
+            "top": 1079.75,
+            "right": 1348,
+            "bottom": 1828.75,
+            "left": 92
+          },
+          "display": "grid",
+          "columns": "599.203px 599.203px",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "일상을 바라보는 시선소중한 것들을 위한 여백.컬렉션의 작은 세부를 발견하고, 브랜드의 이야기를 읽어보세요.브랜드 이야기"
+        },
+        ".sf-heading": {
+          "rect": {
+            "x": 776.796875,
+            "y": 1386.59375,
+            "width": 543.203125,
+            "height": 52.40625,
+            "top": 1386.59375,
+            "right": 1320,
+            "bottom": 1439,
+            "left": 776.796875
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "40.32px",
+          "wordBreak": "keep-all",
+          "overflowWrap": "break-word",
+          "text": "소중한 것들을 위한 여백."
+        },
+        ".sf-footer": {
+          "rect": {
+            "x": 0,
+            "y": 2313.25,
+            "width": 1440,
+            "height": 353.5,
+            "top": 2313.25,
+            "right": 1440,
+            "bottom": 2666.75,
+            "left": 0
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "YUTIV일상에 어울리는 물건과 새로운 시선을 만납니다.쇼핑전체 상품브랜드 이야기쇼핑몰 공지정보배송 및 교환·반품이용약관개인정보처리방침취소/반품/교환 정책마이페이지로그인내 쿠폰게시판검색© 2026 YUTIV"
+        },
+        ".sf-footer-grid": {
+          "rect": {
+            "x": 92,
+            "y": 2370.25,
+            "width": 1256,
+            "height": 224,
+            "top": 2370.25,
+            "right": 1348,
+            "bottom": 2594.25,
+            "left": 92
+          },
+          "display": "grid",
+          "columns": "459.188px 229.609px 229.594px 229.609px",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "YUTIV일상에 어울리는 물건과 새로운 시선을 만납니다.쇼핑전체 상품브랜드 이야기쇼핑몰 공지정보배송 및 교환·반품이용약관개인정보처리방침취소/반품/교환 정책마이페이지로그인내 쿠폰게시판검색"
+        },
+        "#mobile_header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "display": "none",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "YUTIV"
+        },
+        "#mobile_nav_drawer": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "display": "none",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "메뉴언어한국어한국어English日本語简体中文KRW로그인회원가입주문조회홈인기게시판쇼핑상품장바구니정보회사소개자주 묻는 질문문의하기정책이용약관개인정보처리방침취소/반품/교환"
+        }
+      },
+      "overflow": []
+    }
+  },
+  {
+    "width": 390,
+    "console": [],
+    "runtime": [],
+    "failed": [],
+    "http": [],
+    "assets": [
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/css/components.css?v=1791503906",
+        "status": 200,
+        "sha256": "5b9d54b8b90298515d21dfdc5b933f2c969072f60dcc786a2fe7fe14d381b48a",
+        "localSha256": "5b9d54b8b90298515d21dfdc5b933f2c969072f60dcc786a2fe7fe14d381b48a",
+        "matchesLocal": true
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/js/components.iife.js?v=1791503906",
+        "status": 200,
+        "sha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f",
+        "localSha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f",
+        "matchesLocal": true
+      }
+    ],
+    "csp": [],
+    "geometry": {
+      "width": 390,
+      "scroll": 390,
+      "elements": {
+        ".sf-hero-grid": {
+          "rect": {
+            "x": 20,
+            "y": 88,
+            "width": 350,
+            "height": 581.15625,
+            "top": 88,
+            "right": 370,
+            "bottom": 669.15625,
+            "left": 20
+          },
+          "display": "grid",
+          "columns": "350px",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "일상을 위한 컬렉션천천히 발견하는\n새로운 일상.상품의 세부와 가능성을 살펴보세요. 당신의 일상에 어울리는 선택을 만나보세요.컬렉션 둘러보기브랜드 이야기"
+        },
+        ".sf-hero-copy": {
+          "rect": {
+            "x": 20,
+            "y": 88,
+            "width": 350,
+            "height": 286.65625,
+            "top": 88,
+            "right": 370,
+            "bottom": 374.65625,
+            "left": 20
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "일상을 위한 컬렉션천천히 발견하는\n새로운 일상.상품의 세부와 가능성을 살펴보세요. 당신의 일상에 어울리는 선택을 만나보세요.컬렉션 둘러보기브랜드 이야기"
+        },
+        ".sf-hero-media": {
+          "rect": {
+            "x": 20,
+            "y": 406.65625,
+            "width": 350,
+            "height": 262.5,
+            "top": 406.65625,
+            "right": 370,
+            "bottom": 669.15625,
+            "left": 20
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": ""
+        },
+        ".sf-display": {
+          "rect": {
+            "x": 20,
+            "y": 129.59375,
+            "width": 350,
+            "height": 80.0625,
+            "top": 129.59375,
+            "right": 370,
+            "bottom": 209.65625,
+            "left": 20
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "33.93px",
+          "wordBreak": "keep-all",
+          "overflowWrap": "break-word",
+          "text": "천천히 발견하는\n새로운 일상."
+        },
+        ".sf-story-band": {
+          "rect": {
+            "x": 20,
+            "y": 946.65625,
+            "width": 350,
+            "height": 517.484375,
+            "top": 946.65625,
+            "right": 370,
+            "bottom": 1464.140625,
+            "left": 20
+          },
+          "display": "grid",
+          "columns": "350px",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "일상을 바라보는 시선소중한 것들을 위한 여백.컬렉션의 작은 세부를 발견하고, 브랜드의 이야기를 읽어보세요.브랜드 이야기"
+        },
+        ".sf-heading": {
+          "rect": {
+            "x": 20,
+            "y": 984.25,
+            "width": 350,
+            "height": 36.390625,
+            "top": 984.25,
+            "right": 370,
+            "bottom": 1020.640625,
+            "left": 20
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "28px",
+          "wordBreak": "keep-all",
+          "overflowWrap": "break-word",
+          "text": "소중한 것들을 위한 여백."
+        },
+        ".sf-footer": {
+          "rect": {
+            "x": 0,
+            "y": 1849.125,
+            "width": 390,
+            "height": 718,
+            "top": 1849.125,
+            "right": 390,
+            "bottom": 2567.125,
+            "left": 0
+          },
+          "display": "block",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "YUTIV일상에 어울리는 물건과 새로운 시선을 만납니다.쇼핑전체 상품브랜드 이야기쇼핑몰 공지정보배송 및 교환·반품이용약관개인정보처리방침취소/반품/교환 정책마이페이지로그인내 쿠폰게시판검색© 2026 YUTIV"
+        },
+        ".sf-footer-grid": {
+          "rect": {
+            "x": 20,
+            "y": 1890.125,
+            "width": 350,
+            "height": 604.5,
+            "top": 1890.125,
+            "right": 370,
+            "bottom": 2494.625,
+            "left": 20
+          },
+          "display": "grid",
+          "columns": "167px 167px",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "YUTIV일상에 어울리는 물건과 새로운 시선을 만납니다.쇼핑전체 상품브랜드 이야기쇼핑몰 공지정보배송 및 교환·반품이용약관개인정보처리방침취소/반품/교환 정책마이페이지로그인내 쿠폰게시판검색"
+        },
+        "#mobile_header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 56,
+            "top": 0,
+            "right": 390,
+            "bottom": 56,
+            "left": 0
+          },
+          "display": "flex",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "YUTIV"
+        },
+        "#mobile_nav_drawer": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "display": "none",
+          "columns": "none",
+          "fontSize": "16px",
+          "wordBreak": "normal",
+          "overflowWrap": "normal",
+          "text": "메뉴언어한국어한국어English日本語简体中文통화KRW로그인회원가입주문조회홈인기게시판쇼핑상품장바구니정보회사소개자주 묻는 질문문의하기정책이용약관개인정보처리방침취소/반품/교환"
+        }
+      },
+      "overflow": []
+    },
+    "menu": {
+      "visible": true,
+      "width": 390,
+      "closed": true,
+      "focus": "mobile_menu_toggle"
+    }
+  }
+]

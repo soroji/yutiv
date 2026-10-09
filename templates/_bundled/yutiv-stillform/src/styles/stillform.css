@@ -82,4 +82,10 @@ body { background:var(--sf-paper);color:var(--sf-charcoal);font-family:system-ui
 #mypageTabNavigation > nav {overflow-x:auto;max-width:100%;}
 @media(max-width:1023px){.sf-hero-media .sf-composition,.sf-story-media .sf-composition{min-height:0;}.sf-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:767px){.sf-hero-grid,.sf-story-band{grid-template-columns:minmax(0,1fr);gap:32px;}.sf-hero{padding-block:32px;}.sf-hero-media .sf-composition{aspect-ratio:4/3;min-height:0;}.sf-story-media .sf-composition{aspect-ratio:4/3;min-height:0;}.sf-story-copy{padding-inline:0;order:-1;}.sf-display{font-size:clamp(30px,8.7vw,38px);}.sf-home-products{padding-block:16px;}.sf-empty{padding-block:20px;}.sf-footer-grid{gap:24px 16px;}.sf-footer-grid > :first-child{grid-column:1/-1;}.sf-root .sf-container{padding-inline:20px;}.sf-editorial{margin-block:40px;}.sf-footer{padding-top:40px;}}
+/* With an odd number of link groups, use both mobile columns for the final
+ * group instead of leaving half of the footer empty. The brand is child one. */
+@media(max-width:767px){
+  .sf-footer-grid > .sf-footer-group:last-child:nth-child(even){grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;}
+  .sf-footer-grid > .sf-footer-group:last-child:nth-child(even) .sf-footer-title{grid-column:1/-1;}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}

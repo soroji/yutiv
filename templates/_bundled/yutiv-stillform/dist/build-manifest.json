@@ -1,9 +1,9 @@
 {
   "identifier": "yutiv-stillform",
   "global": "YutivStillform",
-  "source_sha256": "6e9546c0730f6f11237ed7f3cb8c37456a18edce7dda0037985d27799c22cf92",
+  "source_sha256": "e1078ce35846bc166644b132245aad95abf6140208829e91a2790064089cb596",
   "outputs": {
-    "css/components.css": "5b9d54b8b90298515d21dfdc5b933f2c969072f60dcc786a2fe7fe14d381b48a",
+    "css/components.css": "1b8ce9d62542dec6f089fc697a3ae835b895df469fa6eb147b28bdb37154ece9",
     "js/components.iife.js": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f"
   }
 }
