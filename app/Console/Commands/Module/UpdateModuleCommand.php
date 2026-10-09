@@ -103,7 +103,24 @@ class UpdateModuleCommand extends Command
 
             // 업데이트 확인 (--zip 모드는 GitHub/번들 비교를 우회하므로 스킵)
             if ($zipPath === null) {
-                $checkResult = $this->moduleManager->checkModuleUpdate($identifier);
+                // 명시한 번들은 설치 단계와 동일한 manifest 버전으로 안내한다.
+                // GitHub 우선 조회 결과를 표시하면 실제 staging 소스와 달라진다.
+                if ($sourceOverride === 'bundled') {
+                    $bundled = $this->moduleManager->getBundledModules()[$identifier] ?? null;
+                    if (! isset($bundled['version'])) {
+                        $this->error('❌ '.__('modules.errors.force_update_no_source', ['module' => $identifier]));
+
+                        return Command::FAILURE;
+                    }
+                    $checkResult = [
+                        'current_version' => $module->version,
+                        'latest_version' => $bundled['version'],
+                        'update_source' => 'bundled',
+                        'update_available' => version_compare($bundled['version'], $module->version, '>'),
+                    ];
+                } else {
+                    $checkResult = $this->moduleManager->checkModuleUpdate($identifier);
+                }
 
                 if (! $checkResult['update_available'] && ! $force) {
                     $this->info('✅ '.__('modules.commands.update.no_update', ['module' => $identifier]));
@@ -116,7 +133,8 @@ class UpdateModuleCommand extends Command
 
                 if ($force && ! $checkResult['update_available']) {
                     $this->warn('⚠️  '.__('modules.commands.update.force_mode'));
-                } else {
+                }
+                if ($checkResult['update_available'] || $sourceOverride === 'bundled') {
                     $this->info(__('modules.commands.update.latest_version', ['version' => $checkResult['latest_version']]));
                     $this->info(__('modules.commands.update.update_source', ['source' => $checkResult['update_source']]));
                 }

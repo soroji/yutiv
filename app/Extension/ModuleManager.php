@@ -4321,7 +4321,9 @@ class ModuleManager implements ModuleManagerInterface
 
         $previousStatus = $record->status;
         $fromVersion = $record->version;
-        $updateInfo = $this->checkModuleUpdate($identifier);
+        // 명시한 번들은 아래 getBundledVersion/stageForUpdate 경로만 사용한다.
+        // 사용하지 않을 GitHub 버전 조회로 로컬 번들 업데이트를 지연시키지 않는다.
+        $updateInfo = $sourceOverride === 'bundled' ? null : $this->checkModuleUpdate($identifier);
 
         // ZIP 강제 경로: 외부 ZIP 파일을 직접 추출하여 사용. checkModuleUpdate 결과는 무시.
         // zipTempDir / zipExtractedDir 는 staging 단계에서 사용 후 finally 에서 정리.
