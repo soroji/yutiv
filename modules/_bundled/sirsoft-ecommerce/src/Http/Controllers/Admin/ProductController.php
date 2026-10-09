@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Modules\Sirsoft\Ecommerce\Exceptions\OptionHasOrderHistoryException;
 use Modules\Sirsoft\Ecommerce\Exceptions\ProductHasOrderHistoryException;
 use Modules\Sirsoft\Ecommerce\Exceptions\ProductImageUploadLimitException;
 use Modules\Sirsoft\Ecommerce\Exceptions\ProductPriceRelationException;
@@ -236,6 +237,13 @@ class ProductController extends AdminBaseController
                 'messages.products.update_failed',
                 422,
                 $e->errors()
+            );
+        } catch (OptionHasOrderHistoryException $e) {
+            return ResponseHelper::moduleError(
+                'sirsoft-ecommerce',
+                'messages.products.update_failed',
+                422,
+                ['options' => [$e->getMessage()]]
             );
         } catch (AccessDeniedHttpException $e) {
             return ResponseHelper::forbidden('auth.scope_denied');

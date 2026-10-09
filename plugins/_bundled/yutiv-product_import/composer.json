@@ -1,0 +1,5 @@
+{
+  "name": "plugins/yutiv-product_import", "type": "library", "version": "1.0.0", "license": "MIT",
+  "require": {"php": "^8.2", "ext-zip": "*", "ext-dom": "*", "ext-curl": "*", "ext-fileinfo": "*"},
+  "autoload": {"psr-4": {"Plugins\\Yutiv\\ProductImport\\": ["src/", "./"]}}
+}

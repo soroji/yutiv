@@ -39,6 +39,7 @@ return [
         'client_config_success' => 'Payment configuration retrieved successfully.',
     ],
     'products' => [
+        'default_sales_unit' => 'Simple product',
         'not_found' => 'Product not found.',
         'created' => 'Product has been created.',
         'updated' => 'Product has been updated.',

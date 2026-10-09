@@ -824,15 +824,15 @@
   },
   "options": {
     "use_options": "Use Options",
-    "required_notice": "At least one option is required for product registration. Please add options.",
+    "required_notice": "Generate at least one combination when using selectable options.",
     "option_table_title": "Option List",
     "add_option_group": "Add Option Group",
     "add_row": "Add Row",
     "generate_options": "Generate Options",
     "bulk_create_title": "Bulk Create Options",
-    "bulk_create_hint": "Enter option name and values, then click 'Generate Options'",
-    "option_name_placeholder": "Option name (e.g., Color)",
-    "option_values_placeholder": "Enter option values separated by comma",
+    "bulk_create_hint": "Group name: Color / Values: Black, White. Another group: Size / S, M, L. Enter translations in the same order. Removing a group changes the inputs; generated combinations remain until regeneration is confirmed.",
+    "option_name_placeholder": "Example: Color",
+    "option_values_placeholder": "Example: Black, White",
     "additional_title": "Product Additional Options",
     "additional_hint": "Paid/free options customers can additionally select. Register a group name and choices (with surcharge). Up to 5 groups, 20 choices per group. (e.g., Engraving +5,000 KRW)",
     "add_additional": "Add Option Group",
@@ -891,7 +891,14 @@
       "additional_max_5": "You can add up to 5 option groups.",
       "additional_value_max_20": "You can add up to 20 choices per group.",
       "additional_value_min_1": "At least one choice is required per group."
-    }
+    },
+    "mode_none": "No selectable options",
+    "mode_enabled": "Use selectable options",
+    "mode_hint": "Simple products use product price and stock. Switching modes does not remove existing combinations.",
+    "mode_change_blocked": "Existing combinations cannot be removed by switching modes.",
+    "group_name_label": "Option name",
+    "values_label": "Option values",
+    "remove_group": "Delete this group"
   },
   "notice": {
     "tab_existing_template": "Select Template",

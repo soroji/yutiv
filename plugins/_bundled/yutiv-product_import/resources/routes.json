@@ -1,0 +1,5 @@
+{
+  "version": "1.0.0",
+  "routes": [{"path": "*/admin/plugins/yutiv-product_import/products", "layout": "product_import", "auth_required": true,
+    "meta": {"title": "엑셀 상품 일괄등록", "permission": "yutiv-product_import.headquarters.create"}}]
+}

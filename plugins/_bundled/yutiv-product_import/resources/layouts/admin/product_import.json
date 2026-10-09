@@ -1,0 +1,434 @@
+{
+  "version": "1.0.0",
+  "layout_name": "product_import",
+  "extends": "_admin_base",
+  "permissions": [
+    "yutiv-product_import.headquarters.create",
+    "sirsoft-ecommerce.products.create"
+  ],
+  "meta": {
+    "title": "엑셀 상품 일괄등록"
+  },
+  "slots": {
+    "content": [
+      {
+        "type": "basic",
+        "name": "Div",
+        "props": {
+          "className": "admin-page-content space-y-6"
+        },
+        "id": "yutiv_import_page",
+        "children": [
+          {
+            "type": "basic",
+            "name": "H1",
+            "text": "엑셀 상품 일괄등록",
+            "props": {
+              "className": "text-2xl font-bold"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "양식 다운로드 → 파일 업로드·검증 → 등록 확정 → 결과 확인. 신규 상품은 비공개·판매중지로 등록됩니다.",
+            "props": {}
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "상품 500개·옵션 2000행, .xlsx 10MB 이하. 예시는 입력 안내에만 있습니다. 이미지 반입은 등록 확정 후 시작합니다.",
+            "props": {}
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "flex flex-wrap gap-3"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Button",
+                "text": "양식 다운로드",
+                "props": {
+                  "type": "button",
+                  "className": "px-4 py-2 border rounded text-sm",
+                  "disabled": "{{_local.importBusy ?? false}}"
+                },
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "yutiv-product_import.template"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "id": "yutiv_import_file",
+                  "type": "file",
+                  "accept": ".xlsx",
+                  "autoBinding": false,
+                  "disabled": "{{_local.importBusy ?? false}}"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "text": "업로드 및 검증",
+                "props": {
+                  "type": "button",
+                  "className": "px-4 py-2 border rounded text-sm",
+                  "disabled": "{{_local.importBusy ?? false}}"
+                },
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "yutiv-product_import.upload"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "{{_local.importError ?? \"\"}}",
+            "props": {
+              "className": "text-red-600",
+              "role": "alert"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-4"
+            },
+            "if": "{{!!_local.importRun}}",
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{\"작업 ID: \" + (_local.importRun?.id ?? \"\")}}",
+                "props": {}
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{\"전체 \" + (_local.importRun?.counts?.total ?? 0) + \" · 성공 \" + (_local.importRun?.counts?.succeeded ?? 0) + \" · 실패 \" + (_local.importRun?.counts?.failed ?? 0) + \" · 등록 중 \" + (_local.importRun?.counts?.processing ?? 0) + \" · 대기 \" + (_local.importRun?.counts?.queued ?? 0)}}",
+                "props": {}
+              },
+              {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                  "className": "flex flex-wrap gap-3"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "Button",
+                    "text": "등록 확정",
+                    "props": {
+                      "type": "button",
+                      "className": "px-4 py-2 border rounded text-sm",
+                      "disabled": "{{(_local.importBusy ?? false) || _local.importRun?.status !== \"preview\" || (_local.importRun?.errors?.length ?? 0) > 0}}"
+                    },
+                    "actions": [
+                      {
+                        "event": "click",
+                        "handler": "yutiv-product_import.confirm"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Button",
+                    "text": "진행 상태 새로고침",
+                    "props": {
+                      "type": "button",
+                      "className": "px-4 py-2 border rounded text-sm",
+                      "disabled": "{{_local.importBusy ?? false}}"
+                    },
+                    "actions": [
+                      {
+                        "event": "click",
+                        "handler": "yutiv-product_import.refresh"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Button",
+                    "text": "실패 상품만 재시도",
+                    "props": {
+                      "type": "button",
+                      "className": "px-4 py-2 border rounded text-sm",
+                      "disabled": "{{(_local.importBusy ?? false) || (_local.importRun?.counts?.failed ?? 0) === 0}}"
+                    },
+                    "actions": [
+                      {
+                        "event": "click",
+                        "handler": "yutiv-product_import.retry"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Button",
+                    "text": "결과 엑셀 다운로드",
+                    "props": {
+                      "type": "button",
+                      "className": "px-4 py-2 border rounded text-sm",
+                      "disabled": "{{_local.importBusy ?? false}}"
+                    },
+                    "actions": [
+                      {
+                        "event": "click",
+                        "handler": "yutiv-product_import.result"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "오류가 있으면 확정할 수 없습니다. 수정 후 새 파일을 업로드하세요. 확정 후에는 입력값을 변경할 수 없습니다.",
+                "props": {}
+              },
+              {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                  "className": "space-y-2"
+                },
+                "iteration": {
+                  "source": "{{_local.importRun?.errors ?? []}}",
+                  "item_var": "errorItem"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "P",
+                    "text": "{{errorItem.sheet + \" \" + errorItem.row + \"행 · \" + errorItem.column + \" — \" + errorItem.message + \" 수정: \" + errorItem.fix}}",
+                    "props": {
+                      "className": "text-red-600"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "H2",
+                "text": "상품 미리보기 및 처리 결과",
+                "props": {
+                  "className": "text-lg font-semibold"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                  "className": "grid grid-cols-4 gap-3 p-3 border-b text-sm"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "Span",
+                    "text": "원본 행 / 관리코드",
+                    "props": {}
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Span",
+                    "text": "상품명",
+                    "props": {}
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Span",
+                    "text": "판매가 / 재고",
+                    "props": {}
+                  },
+                  {
+                    "type": "basic",
+                    "name": "Span",
+                    "text": "상태 / 오류",
+                    "props": {}
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                  "className": "max-h-96 overflow-auto border"
+                },
+                "children": [
+                  {
+                    "type": "basic",
+                    "name": "Div",
+                    "props": {
+                      "className": "grid grid-cols-4 gap-3 p-3 border-b text-sm"
+                    },
+                    "children": [
+                      {
+                        "type": "basic",
+                        "name": "Span",
+                        "text": "{{item.row + \" / \" + item.management_code}}",
+                        "props": {}
+                      },
+                      {
+                        "type": "basic",
+                        "name": "Span",
+                        "text": "{{item.name}}",
+                        "props": {}
+                      },
+                      {
+                        "type": "basic",
+                        "name": "Span",
+                        "text": "{{item.price + \" / \" + item.stock + \" · 카테고리 \" + item.category_codes + \" · 이미지 \" + item.image_count + \"개 · 옵션 \" + item.options.length + \"개\"}}",
+                        "props": {}
+                      },
+                      {
+                        "type": "basic",
+                        "name": "Span",
+                        "text": "{{({'preview':'검증 완료','invalid':'검증 오류','queued':'대기','processing':'등록 중','succeeded':'성공','failed':'실패'})[item.status] + (item.error ? \" · \" + item.error : \"\")}}",
+                        "props": {}
+                      },
+                      {
+                        "type": "basic",
+                        "name": "Div",
+                        "props": {
+                          "className": "col-span-4 text-sm"
+                        },
+                        "children": [
+                          {
+                            "type": "basic",
+                            "name": "P",
+                            "iteration": {
+                              "source": "{{item.options ?? []}}",
+                              "item_var": "optionItem"
+                            },
+                            "text": "{{\"옵션 \" + optionItem.row + \"행 · \" + optionItem.identifier + \" · \" + optionItem.values + \" · 추가금액 \" + optionItem.adjustment + \" · 재고 \" + optionItem.stock}}",
+                            "props": {}
+                          }
+                        ]
+                      }
+                    ],
+                    "iteration": {
+                      "source": "{{_local.importRun?.rows ?? []}}",
+                      "item_var": "item"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "H2",
+            "text": "이전 작업 확인",
+            "props": {
+              "className": "text-lg font-semibold"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "flex flex-wrap gap-3"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Button",
+                "text": "내 작업 목록 불러오기",
+                "props": {
+                  "type": "button",
+                  "className": "px-4 py-2 border rounded text-sm",
+                  "disabled": "{{_local.importBusy ?? false}}"
+                },
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "yutiv-product_import.history"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "name": "importJobId",
+                  "placeholder": "작업 ID",
+                  "value": "{{_local.importJobId ?? \"\"}}"
+                },
+                "actions": [
+                  {
+                    "event": "change",
+                    "handler": "setState",
+                    "params": {
+                      "target": "local",
+                      "importJobId": "{{$event.target.value}}"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "text": "작업 조회",
+                "props": {
+                  "type": "button",
+                  "className": "px-4 py-2 border rounded text-sm",
+                  "disabled": "{{_local.importBusy ?? false}}"
+                },
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "yutiv-product_import.refresh"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-2"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Button",
+                "text": "{{job.filename + \" · \" + job.created_at}}",
+                "props": {
+                  "type": "button",
+                  "className": "block text-left p-2 border rounded"
+                },
+                "iteration": {
+                  "source": "{{_local.importHistory ?? []}}",
+                  "item_var": "job"
+                },
+                "actions": [
+                  {
+                    "event": "click",
+                    "handler": "yutiv-product_import.select",
+                    "params": {
+                      "id": "{{job.id}}"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

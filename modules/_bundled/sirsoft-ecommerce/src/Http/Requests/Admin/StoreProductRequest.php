@@ -116,7 +116,11 @@ class StoreProductRequest extends FormRequest
             'option_groups.*.name' => ['required', 'array', new LocaleRequiredTranslatable(maxLength: 100)],
             'option_groups.*.values' => ['required', 'array', 'min:1'],
             'option_groups.*.values.*' => ['required', 'array'],
-            'options' => ['required', 'array', 'min:1'],
+            'options' => [
+                $this->boolean('has_options', ! empty($this->input('options'))) ? 'required' : 'sometimes',
+                'array',
+                'min:'.(int) $this->boolean('has_options', ! empty($this->input('options'))),
+            ],
             'options.*.id' => ['nullable', 'integer'],
             'options.*.option_code' => ['required_with:options', 'string'],
             'options.*.option_name' => ['required_with:options', 'array', new LocaleRequiredTranslatable(maxLength: 200)],
@@ -330,6 +334,9 @@ class StoreProductRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        if ($this->has('has_options') && ! $this->boolean('has_options')) {
+            $this->merge(['options' => [], 'option_groups' => []]);
+        }
         // 옵션명이 비어있는 옵션 제거
         if ($this->has('options')) {
             $options = collect($this->options)

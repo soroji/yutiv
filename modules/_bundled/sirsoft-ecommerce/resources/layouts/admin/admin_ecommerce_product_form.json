@@ -285,7 +285,8 @@
                     "seo_sync_description": true,
                     "tax_status": "taxable",
                     "sales_status": "on_sale",
-                    "display_status": "visible"
+                    "display_status": "visible",
+                    "has_options": false
                 },
                 "ui": {
                     "optionInputs": [],

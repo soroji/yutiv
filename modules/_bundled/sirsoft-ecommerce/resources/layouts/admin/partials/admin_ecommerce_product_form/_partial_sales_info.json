@@ -258,7 +258,8 @@
                                     "props": {
                                         "className": "text-tertiary"
                                     },
-                                    "text": "$t:sirsoft-ecommerce.admin.product.price.option_price_hint"
+                                    "text": "$t:sirsoft-ecommerce.admin.product.price.option_price_hint",
+                                    "if": "{{_local.form.has_options === true}}"
                                 }
                             ],
                             "props": {}
@@ -382,7 +383,8 @@
                             "props": {
                                 "className": "text-tertiary"
                             },
-                            "text": "$t:sirsoft-ecommerce.admin.product.price.option_price_hint"
+                            "text": "$t:sirsoft-ecommerce.admin.product.price.option_price_hint",
+                            "if": "{{_local.form.has_options === true}}"
                         }
                     ],
                     "props": {}
@@ -415,8 +417,22 @@
                                 "type": "number",
                                 "className": "input w-24",
                                 "value": "{{_local.form.stock_quantity ?? 0}}",
-                                "disabled": true
-                            }
+                                "disabled": "{{_local.form.has_options === true || (route.itemCode && product?.data?.abilities?.can_update !== true)}}",
+                                "name": "stock_quantity",
+                                "min": 0,
+                                "step": 1,
+                                "autoBinding": false
+                            },
+                            "actions": [
+                                {
+                                    "type": "change",
+                                    "handler": "setState",
+                                    "params": {
+                                        "target": "local",
+                                        "form.stock_quantity": "{{Number($event.target.value) || 0}}"
+                                    }
+                                }
+                            ]
                         },
                         {
                             "type": "basic",
@@ -424,7 +440,8 @@
                             "props": {
                                 "className": "text-label-subtle"
                             },
-                            "text": "$t:sirsoft-ecommerce.admin.product.stock.option_total_hint"
+                            "text": "$t:sirsoft-ecommerce.admin.product.stock.option_total_hint",
+                            "if": "{{_local.form.has_options === true}}"
                         }
                     ]
                 },
@@ -463,8 +480,22 @@
                                         "type": "number",
                                         "className": "input w-24",
                                         "value": "{{_local.form.stock_quantity ?? 0}}",
-                                        "disabled": true
-                                    }
+                                        "disabled": "{{_local.form.has_options === true || (route.itemCode && product?.data?.abilities?.can_update !== true)}}",
+                                        "name": "stock_quantity",
+                                        "min": 0,
+                                        "step": 1,
+                                        "autoBinding": false
+                                    },
+                                    "actions": [
+                                        {
+                                            "type": "change",
+                                            "handler": "setState",
+                                            "params": {
+                                                "target": "local",
+                                                "form.stock_quantity": "{{Number($event.target.value) || 0}}"
+                                            }
+                                        }
+                                    ]
                                 },
                                 {
                                     "type": "basic",
@@ -472,7 +503,8 @@
                                     "props": {
                                         "className": "text-label-subtle"
                                     },
-                                    "text": "$t:sirsoft-ecommerce.admin.product.stock.option_total_hint"
+                                    "text": "$t:sirsoft-ecommerce.admin.product.stock.option_total_hint",
+                                    "if": "{{_local.form.has_options === true}}"
                                 }
                             ]
                         }

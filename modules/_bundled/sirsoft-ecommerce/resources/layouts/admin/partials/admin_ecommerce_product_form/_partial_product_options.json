@@ -63,10 +63,67 @@
             },
             "children": [
                 {
+                    "type": "basic",
+                    "name": "Div",
+                    "props": {
+                        "className": "flex gap-3 flex-wrap"
+                    },
+                    "children": [
+                        {
+                            "type": "basic",
+                            "name": "Button",
+                            "text": "$t:sirsoft-ecommerce.admin.product.options.mode_none",
+                            "props": {
+                                "type": "button",
+                                "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
+                                "className": "{{_local.form.has_options !== true ? 'btn btn-primary' : 'btn btn-outline'}}",
+                                "aria-pressed": "{{_local.form.has_options !== true}}"
+                            },
+                            "actions": [
+                                {
+                                    "event": "click",
+                                    "handler": "sirsoft-ecommerce.setOptionMode",
+                                    "params": {
+                                        "enabled": false
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "basic",
+                            "name": "Button",
+                            "text": "$t:sirsoft-ecommerce.admin.product.options.mode_enabled",
+                            "props": {
+                                "type": "button",
+                                "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
+                                "className": "{{_local.form.has_options === true ? 'btn btn-primary' : 'btn btn-outline'}}",
+                                "aria-pressed": "{{_local.form.has_options === true}}"
+                            },
+                            "actions": [
+                                {
+                                    "event": "click",
+                                    "handler": "sirsoft-ecommerce.setOptionMode",
+                                    "params": {
+                                        "enabled": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "name": "P",
+                    "text": "$t:sirsoft-ecommerce.admin.product.options.mode_hint",
+                    "props": {
+                        "className": "form-hint"
+                    }
+                },
+                {
                     "id": "option_required_notice",
                     "type": "basic",
                     "name": "Div",
-                    "if": "{{!_local.form.options || _local.form.options.length === 0}}",
+                    "if": "{{_local.form.has_options === true && (_local.form.options ?? []).length === 0}}",
                     "props": {
                         "className": "alert-info"
                     },
@@ -166,7 +223,7 @@
                                         "index_var": "optIdx"
                                     },
                                     "props": {
-                                        "className": "flex-center gap-3"
+                                        "className": "flex flex-wrap items-end gap-3 border rounded p-3"
                                     },
                                     "children": [
                                         {
@@ -176,6 +233,14 @@
                                                 "className": "w-48 shrink-0"
                                             },
                                             "children": [
+                                                {
+                                                    "type": "basic",
+                                                    "name": "P",
+                                                    "text": "$t:sirsoft-ecommerce.admin.product.options.group_name_label",
+                                                    "props": {
+                                                        "className": "form-label"
+                                                    }
+                                                },
                                                 {
                                                     "type": "composite",
                                                     "name": "MultilingualInput",
@@ -211,20 +276,22 @@
                                             },
                                             "children": [
                                                 {
-                                                    "id": "tag_input_option_{{optIdx}}",
+                                                    "type": "basic",
+                                                    "name": "P",
+                                                    "text": "$t:sirsoft-ecommerce.admin.product.options.values_label",
+                                                    "props": {
+                                                        "className": "form-label"
+                                                    }
+                                                },
+                                                {
                                                     "type": "composite",
-                                                    "name": "MultilingualTagInput",
+                                                    "name": "MultilingualInput",
                                                     "props": {
                                                         "name": "option_values_{{optIdx}}",
-                                                        "value": "{{optInput.values ?? []}}",
+                                                        "value": "{{optInput.valueText ?? ''}}",
                                                         "placeholder": "$t:sirsoft-ecommerce.admin.product.options.option_values_placeholder",
-                                                        "className": "w-full",
-                                                        "creatable": true,
-                                                        "delimiters": [
-                                                            ","
-                                                        ],
-                                                        "modalId": "multilingual_tag_edit_modal",
-                                                        "statePath": "ui.optionInputs.{{optIdx}}.values",
+                                                        "layout": "compact",
+                                                        "inputType": "text",
                                                         "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
                                                         "autoBinding": false
                                                     },
@@ -234,7 +301,7 @@
                                                             "handler": "sirsoft-ecommerce.updateOptionInput",
                                                             "params": {
                                                                 "index": "{{optIdx}}",
-                                                                "field": "values",
+                                                                "field": "valueText",
                                                                 "value": "{{$event.target.value}}"
                                                             }
                                                         }
@@ -248,7 +315,7 @@
                                             "if": "{{((_local.ui.optionInputs ?? []).length) > 1 && (!route.itemCode || product?.data?.abilities?.can_update === true)}}",
                                             "props": {
                                                 "type": "button",
-                                                "className": "flex-center justify-center w-10 h-10 border border-red-300 dark:border-red-700 rounded text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                "className": "btn btn-outline btn-sm"
                                             },
                                             "actions": [
                                                 {
@@ -259,16 +326,7 @@
                                                     }
                                                 }
                                             ],
-                                            "children": [
-                                                {
-                                                    "type": "basic",
-                                                    "name": "Icon",
-                                                    "props": {
-                                                        "name": "trash",
-                                                        "className": "text-base"
-                                                    }
-                                                }
-                                            ]
+                                            "text": "$t:sirsoft-ecommerce.admin.product.options.remove_group"
                                         }
                                     ]
                                 }
@@ -293,13 +351,21 @@
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "if": "{{_local.form.has_options === true}}",
+                    "lifecycle": {
+                        "onMount": [
+                            {
+                                "handler": "sirsoft-ecommerce.initializeOptionInputs"
+                            }
+                        ]
+                    }
                 },
                 {
                     "id": "option_table_section",
                     "type": "basic",
                     "name": "Div",
-                    "if": "{{((_local.form.options ?? []).length) > 0}}",
+                    "if": "{{_local.form.has_options === true && (_local.form.options ?? []).length > 0}}",
                     "children": [
                         {
                             "type": "basic",
@@ -1727,151 +1793,151 @@
                                                     "className": "flex flex-col gap-2 sm:flex-row sm:items-end"
                                                 },
                                                 "children": [
-                                            {
-                                                "type": "basic",
-                                                "name": "Div",
-                                                "props": {
-                                                    "className": "text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 select-none",
-                                                    "data-drag-handle": true
-                                                },
-                                                "children": [
-                                                    {
-                                                        "type": "basic",
-                                                        "name": "Icon",
-                                                        "props": {
-                                                            "name": "grip-vertical",
-                                                            "className": "text-xl"
-                                                        }
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "basic",
-                                                "name": "Div",
-                                                "props": {
-                                                    "className": "flex-1"
-                                                },
-                                                "children": [
                                                     {
                                                         "type": "basic",
                                                         "name": "Div",
                                                         "props": {
-                                                            "className": "flex-center gap-1 mb-1"
+                                                            "className": "text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 select-none",
+                                                            "data-drag-handle": true
                                                         },
                                                         "children": [
                                                             {
                                                                 "type": "basic",
-                                                                "name": "Label",
+                                                                "name": "Icon",
                                                                 "props": {
-                                                                    "className": "form-label"
+                                                                    "name": "grip-vertical",
+                                                                    "className": "text-xl"
+                                                                }
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Div",
+                                                        "props": {
+                                                            "className": "flex-1"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "type": "basic",
+                                                                "name": "Div",
+                                                                "props": {
+                                                                    "className": "flex-center gap-1 mb-1"
                                                                 },
-                                                                "text": "$t:sirsoft-ecommerce.admin.product.options.additional_name_label"
+                                                                "children": [
+                                                                    {
+                                                                        "type": "basic",
+                                                                        "name": "Label",
+                                                                        "props": {
+                                                                            "className": "form-label"
+                                                                        },
+                                                                        "text": "$t:sirsoft-ecommerce.admin.product.options.additional_name_label"
+                                                                    },
+                                                                    {
+                                                                        "type": "basic",
+                                                                        "name": "Span",
+                                                                        "props": {
+                                                                            "className": "text-red-500 dark:text-red-400"
+                                                                        },
+                                                                        "text": "*"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "type": "composite",
+                                                                "name": "MultilingualInput",
+                                                                "props": {
+                                                                    "name": "additional_options_{{addIdx}}_name",
+                                                                    "value": "{{addOpt.name}}",
+                                                                    "layout": "compact",
+                                                                    "placeholder": "$t:sirsoft-ecommerce.admin.product.options.additional_name_placeholder",
+                                                                    "maxLength": 100,
+                                                                    "required": true,
+                                                                    "error": "{{_local.errors?.['additional_options.' + addIdx + '.name']?.[0] ?? _local.errors?.['additional_options.' + addIdx + '.name.ko']?.[0] ?? ''}}",
+                                                                    "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
+                                                                    "autoBinding": false
+                                                                },
+                                                                "actions": [
+                                                                    {
+                                                                        "type": "change",
+                                                                        "handler": "sirsoft-ecommerce.updateAdditionalOption",
+                                                                        "debounce": 300,
+                                                                        "params": {
+                                                                            "index": "{{addIdx}}",
+                                                                            "field": "name",
+                                                                            "value": "{{$event.target.value}}"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "basic",
+                                                        "name": "Div",
+                                                        "props": {
+                                                            "className": "flex-center gap-2"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "type": "composite",
+                                                                "name": "Toggle",
+                                                                "props": {
+                                                                    "name": "additional_options_{{addIdx}}_required",
+                                                                    "checked": "{{addOpt.is_required === true}}",
+                                                                    "size": "sm",
+                                                                    "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}"
+                                                                },
+                                                                "actions": [
+                                                                    {
+                                                                        "type": "change",
+                                                                        "handler": "sirsoft-ecommerce.updateAdditionalOption",
+                                                                        "params": {
+                                                                            "index": "{{addIdx}}",
+                                                                            "field": "is_required",
+                                                                            "value": "{{$event.target.checked}}"
+                                                                        }
+                                                                    }
+                                                                ]
                                                             },
                                                             {
                                                                 "type": "basic",
-                                                                "name": "Span",
+                                                                "name": "Label",
                                                                 "props": {
-                                                                    "className": "text-red-500 dark:text-red-400"
+                                                                    "className": "text-label"
                                                                 },
-                                                                "text": "*"
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        "type": "composite",
-                                                        "name": "MultilingualInput",
-                                                        "props": {
-                                                            "name": "additional_options_{{addIdx}}_name",
-                                                            "value": "{{addOpt.name}}",
-                                                            "layout": "compact",
-                                                            "placeholder": "$t:sirsoft-ecommerce.admin.product.options.additional_name_placeholder",
-                                                            "maxLength": 100,
-                                                            "required": true,
-                                                            "error": "{{_local.errors?.['additional_options.' + addIdx + '.name']?.[0] ?? _local.errors?.['additional_options.' + addIdx + '.name.ko']?.[0] ?? ''}}",
-                                                            "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
-                                                            "autoBinding": false
-                                                        },
-                                                        "actions": [
-                                                            {
-                                                                "type": "change",
-                                                                "handler": "sirsoft-ecommerce.updateAdditionalOption",
-                                                                "debounce": 300,
-                                                                "params": {
-                                                                    "index": "{{addIdx}}",
-                                                                    "field": "name",
-                                                                    "value": "{{$event.target.value}}"
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "type": "basic",
-                                                "name": "Div",
-                                                "props": {
-                                                    "className": "flex-center gap-2"
-                                                },
-                                                "children": [
-                                                    {
-                                                        "type": "composite",
-                                                        "name": "Toggle",
-                                                        "props": {
-                                                            "name": "additional_options_{{addIdx}}_required",
-                                                            "checked": "{{addOpt.is_required === true}}",
-                                                            "size": "sm",
-                                                            "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}"
-                                                        },
-                                                        "actions": [
-                                                            {
-                                                                "type": "change",
-                                                                "handler": "sirsoft-ecommerce.updateAdditionalOption",
-                                                                "params": {
-                                                                    "index": "{{addIdx}}",
-                                                                    "field": "is_required",
-                                                                    "value": "{{$event.target.checked}}"
-                                                                }
+                                                                "text": "$t:sirsoft-ecommerce.admin.product.options.required"
                                                             }
                                                         ]
                                                     },
                                                     {
                                                         "type": "basic",
-                                                        "name": "Label",
+                                                        "name": "Button",
+                                                        "if": "{{!route.itemCode || product?.data?.abilities?.can_update === true}}",
                                                         "props": {
-                                                            "className": "text-label"
+                                                            "type": "button",
+                                                            "className": "btn btn-ghost btn-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                                                         },
-                                                        "text": "$t:sirsoft-ecommerce.admin.product.options.required"
+                                                        "children": [
+                                                            {
+                                                                "type": "basic",
+                                                                "name": "Icon",
+                                                                "props": {
+                                                                    "name": "trash",
+                                                                    "className": "text-base"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "actions": [
+                                                            {
+                                                                "type": "click",
+                                                                "handler": "sirsoft-ecommerce.removeAdditionalOption",
+                                                                "params": {
+                                                                    "index": "{{addIdx}}"
+                                                                }
+                                                            }
+                                                        ]
                                                     }
-                                                ]
-                                            },
-                                            {
-                                                "type": "basic",
-                                                "name": "Button",
-                                                "if": "{{!route.itemCode || product?.data?.abilities?.can_update === true}}",
-                                                "props": {
-                                                    "type": "button",
-                                                    "className": "btn btn-ghost btn-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                                                },
-                                                "children": [
-                                                    {
-                                                        "type": "basic",
-                                                        "name": "Icon",
-                                                        "props": {
-                                                            "name": "trash",
-                                                            "className": "text-base"
-                                                        }
-                                                    }
-                                                ],
-                                                "actions": [
-                                                    {
-                                                        "type": "click",
-                                                        "handler": "sirsoft-ecommerce.removeAdditionalOption",
-                                                        "params": {
-                                                            "index": "{{addIdx}}"
-                                                        }
-                                                    }
-                                                ]
-                                            }
                                                 ]
                                             },
                                             {
@@ -2227,7 +2293,9 @@
                                                         "type": "basic",
                                                         "name": "P",
                                                         "if": "{{_local.errors?.['additional_options.' + addIdx + '.values']}}",
-                                                        "props": { "className": "form-error-xs mt-1" },
+                                                        "props": {
+                                                            "className": "form-error-xs mt-1"
+                                                        },
                                                         "text": "{{_local.errors?.['additional_options.' + addIdx + '.values']?.[0]}}"
                                                     }
                                                 ]

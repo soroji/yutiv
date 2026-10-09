@@ -308,6 +308,8 @@ return [
             'max' => 'You can select up to 5 categories.',
         ],
         'options' => [
+            'mode_change_blocked' => 'Existing selectable options cannot be removed by switching modes. Edit the existing combinations.',
+            'ambiguous_sales_units' => 'This simple product has multiple sales units. Review them without replacing their identifiers.',
             'required' => 'Product options are required.',
             'min' => 'Please add at least one product option.',
             'option_code' => [

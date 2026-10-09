@@ -39,6 +39,7 @@ return [
         'client_config_success' => '결제 설정을 조회했습니다.',
     ],
     'products' => [
+        'default_sales_unit' => '일반 상품',
         'not_found' => '상품을 찾을 수 없습니다.',
         'created' => '상품이 등록되었습니다.',
         'updated' => '상품이 수정되었습니다.',

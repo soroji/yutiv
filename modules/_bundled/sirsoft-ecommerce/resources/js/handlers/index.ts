@@ -54,6 +54,8 @@ import {
 
 // 옵션 관련 핸들러
 import {
+    initializeOptionInputsHandler,
+    setOptionModeHandler,
     addOptionInputHandler,
     removeOptionInputHandler,
     updateOptionInputHandler,
@@ -300,6 +302,8 @@ export const handlerMap = {
     validatePriceRelation: validatePriceRelationHandler,
 
     // ===== 옵션 관련 =====
+    initializeOptionInputs: initializeOptionInputsHandler,
+    setOptionMode: setOptionModeHandler,
     addOptionInput: addOptionInputHandler,
     removeOptionInput: removeOptionInputHandler,
     updateOptionInput: updateOptionInputHandler,

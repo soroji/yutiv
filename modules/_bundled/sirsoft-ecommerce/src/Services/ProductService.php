@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Modules\Sirsoft\Ecommerce\Enums\SequenceType;
 use Modules\Sirsoft\Ecommerce\Exceptions\OptionHasOrderHistoryException;
 use Modules\Sirsoft\Ecommerce\Exceptions\ProductHasOrderHistoryException;
@@ -227,6 +228,12 @@ class ProductService
 
         // 데이터 가공 훅
         $data = HookManager::applyFilters('sirsoft-ecommerce.product.filter_create_data', $data);
+        $data['has_options'] = (bool) ($data['has_options'] ?? ! empty($data['options']));
+        if ($data['has_options'] && empty($data['options'])) {
+            throw ValidationException::withMessages([
+                'options' => __('sirsoft-ecommerce::validation.product.options.required'),
+            ]);
+        }
 
         // XSS 방어: HTML 설명 정화
         $data = $this->sanitizeDescription($data);
@@ -248,13 +255,17 @@ class ProductService
             ])->toArray();
             $product = $this->repository->create($productData);
 
+            if (! $product->has_options) {
+                $this->syncDefaultSalesUnit($product);
+            }
+
             // 카테고리 동기화
             if (! empty($data['category_ids']) && is_array($data['category_ids'])) {
                 $this->syncCategories($product, $data['category_ids'], $data['primary_category_id'] ?? null);
             }
 
             // 옵션 생성
-            if (! empty($data['options']) && is_array($data['options'])) {
+            if ($product->has_options && ! empty($data['options']) && is_array($data['options'])) {
                 $this->createOptions($product, $data['options']);
             }
 
@@ -326,6 +337,19 @@ class ProductService
         $data['updated_by'] = Auth::id();
 
         $product = DB::transaction(function () use ($product, $data) {
+            $product = $product->newQuery()->lockForUpdate()->findOrFail($product->id);
+            if ($product->has_options && array_key_exists('has_options', $data) && ! $data['has_options']) {
+                throw ValidationException::withMessages([
+                    'has_options' => __('sirsoft-ecommerce::validation.product.options.mode_change_blocked'),
+                ]);
+            }
+            if (($data['has_options'] ?? $product->has_options)
+                && ((array_key_exists('options', $data) && empty($data['options']))
+                    || (! $product->has_options && empty($data['options'])))) {
+                throw ValidationException::withMessages([
+                    'options' => __('sirsoft-ecommerce::validation.product.options.required'),
+                ]);
+            }
             $productData = collect($data)->except([
                 'options', 'category_ids', 'images', 'label_assignments',
                 'notice_items', 'additional_options',
@@ -338,8 +362,11 @@ class ProductService
             }
 
             // 옵션 동기화
-            if (isset($data['options']) && is_array($data['options'])) {
+            if ($product->has_options && isset($data['options']) && is_array($data['options'])) {
                 $this->syncOptions($product, $data['options']);
+            }
+            if (! $product->has_options) {
+                $this->syncDefaultSalesUnit($product);
             }
 
             // 이미지 동기화
@@ -545,7 +572,12 @@ class ProductService
             'unit' => $unit,
         ]);
 
-        $updatedCount = $this->repository->bulkUpdatePrice($ids, $method, $value, $unit);
+        $updatedCount = DB::transaction(function () use ($ids, $method, $value, $unit) {
+            $count = $this->repository->bulkUpdatePrice($ids, $method, $value, $unit);
+            $this->syncSimpleSalesUnits($ids);
+
+            return $count;
+        });
 
         // 스냅샷 전달
         HookManager::doAction('sirsoft-ecommerce.product.after_bulk_price_update', $ids, $updatedCount, $snapshots);
@@ -578,7 +610,12 @@ class ProductService
             'value' => $value,
         ]);
 
-        $updatedCount = $this->repository->bulkUpdateStock($ids, $method, $value);
+        $updatedCount = DB::transaction(function () use ($ids, $method, $value) {
+            $count = $this->repository->bulkUpdateStock($ids, $method, $value);
+            $this->syncSimpleSalesUnits($ids);
+
+            return $count;
+        });
 
         // 스냅샷 전달
         HookManager::doAction('sirsoft-ecommerce.product.after_bulk_stock_update', $ids, $updatedCount, $snapshots);
@@ -651,6 +688,8 @@ class ProductService
                     }
                 }
             }
+
+            $this->syncSimpleSalesUnits($ids);
 
             // 5. 옵션 처리 (ProductOptionService에 위임)
             if (! empty($optionBulkChanges) || ! empty($optionItems)) {
@@ -763,8 +802,51 @@ class ProductService
         }
     }
 
+    /** 일반 상품의 목록 일괄 편집도 판매 단위 가격·재고와 일치시킵니다. */
+    protected function syncSimpleSalesUnits(array $ids): void
+    {
+        foreach ($this->repository->findByIdsKeyed($ids) as $product) {
+            if (! $product->has_options) {
+                $product = $product->newQuery()->lockForUpdate()->findOrFail($product->id);
+                $this->syncDefaultSalesUnit($product);
+            }
+        }
+    }
+
     /**
-     * 옵션 생성
+     * 일반 상품의 단일 판매 단위를 생성하거나 식별자를 유지하며 갱신합니다.
+     *
+     * @param  Product  $product  상품 모델
+     */
+    protected function syncDefaultSalesUnit(Product $product): void
+    {
+        $units = $product->options()->lockForUpdate()->orderByDesc('is_default')->orderBy('id')->get();
+        if ($units->count() > 1) {
+            throw ValidationException::withMessages([
+                'has_options' => __('sirsoft-ecommerce::validation.product.options.ambiguous_sales_units'),
+            ]);
+        }
+        $data = [
+            'option_name' => [app()->getLocale() => __('sirsoft-ecommerce::messages.products.default_sales_unit')],
+            'option_values' => [],
+            'list_price' => $product->list_price,
+            'selling_price' => $product->selling_price,
+            'price_adjustment' => 0,
+            'stock_quantity' => $product->stock_quantity,
+            'is_default' => true,
+            'is_active' => true,
+            'currency_code' => $product->currency_code,
+        ];
+        if ($units->isEmpty()) {
+            $product->options()->create($data + ['option_code' => 'default', 'sort_order' => 0]);
+        } else {
+            $units->first()->update($data);
+        }
+        $product->update(['option_groups' => []]);
+    }
+
+    /**
+     * 선택 옵션 생성
      *
      * @param  Product  $product  상품 모델
      * @param  array  $options  옵션 데이터 배열
@@ -1595,6 +1677,9 @@ class ProductService
             'sales_status' => $product->sales_status->value ?? $product->sales_status,
             'display_status' => $product->display_status->value ?? $product->display_status,
 
+            'has_options' => $product->has_options,
+            'option_groups' => $product->getOptionGroupsForApi(),
+
             'options' => $product->options->map(fn ($opt) => [
                 'id' => $opt->id,
                 'option_code' => $opt->option_code,
@@ -1602,6 +1687,7 @@ class ProductService
                 'option_values' => $opt->option_values,
                 'list_price' => $opt->list_price ?? $product->list_price,
                 'selling_price' => $opt->selling_price ?? $product->selling_price,
+                'price_adjustment' => (float) $opt->price_adjustment,
                 'stock_quantity' => $opt->stock_quantity,
                 'safe_stock_quantity' => $opt->safe_stock_quantity,
                 'sku' => $opt->sku,
@@ -1732,6 +1818,8 @@ class ProductService
         } else {
             $data['options'] = [];
             $data['additional_options'] = [];
+            $data['has_options'] = false;
+            $data['option_groups'] = [];
         }
 
         // 카테고리

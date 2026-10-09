@@ -1,0 +1,1135 @@
+[
+  {
+    "width": 393,
+    "issues": [
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      }
+    ],
+    "console": [],
+    "errors": [],
+    "failed": [],
+    "assets": [
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/css/components.css?v=1791505188",
+        "status": 200,
+        "sha256": "1b8ce9d62542dec6f089fc697a3ae835b895df469fa6eb147b28bdb37154ece9"
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/js/components.iife.js?v=1791505188",
+        "status": 200,
+        "sha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f"
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/css/components.css?v=1791505188",
+        "status": 200,
+        "sha256": "1b8ce9d62542dec6f089fc697a3ae835b895df469fa6eb147b28bdb37154ece9"
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/js/components.iife.js?v=1791505188",
+        "status": 200,
+        "sha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f"
+      }
+    ],
+    "csp": [],
+    "snapshots": [
+      {
+        "phase": "fresh",
+        "clientWidth": 393,
+        "scrollWidth": 393,
+        "scrollX": 0,
+        "innerWidth": 393,
+        "visualViewport": {
+          "width": 393,
+          "scale": 1
+        },
+        "meta": [],
+        "regions": [
+          {
+            "tag": "HEADER",
+            "id": "desktop_header",
+            "class": "sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 hidden sf-header",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "client": 0,
+            "scroll": 0,
+            "css": {
+              "width": "auto",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "none",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "sticky",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-grid",
+            "rect": {
+              "x": 20,
+              "y": 88,
+              "width": 353,
+              "height": 584,
+              "top": 88,
+              "right": 373,
+              "bottom": 672,
+              "left": 20
+            },
+            "client": 353,
+            "scroll": 353,
+            "css": {
+              "width": "353px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "353px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "class": "sf-cta",
+            "rect": {
+              "x": 20,
+              "y": 327.25,
+              "width": 158.921875,
+              "height": 48,
+              "top": 327.25,
+              "right": 178.921875,
+              "bottom": 375.25,
+              "left": 20
+            },
+            "client": 159,
+            "scroll": 159,
+            "css": {
+              "width": "158.922px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "flex",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-media",
+            "rect": {
+              "x": 20,
+              "y": 407.25,
+              "width": 353,
+              "height": 264.75,
+              "top": 407.25,
+              "right": 373,
+              "bottom": 672,
+              "left": 20
+            },
+            "client": 353,
+            "scroll": 353,
+            "css": {
+              "width": "353px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "FOOTER",
+            "id": "footer",
+            "class": "sf-footer ",
+            "rect": {
+              "x": 0,
+              "y": 1854.21875,
+              "width": 393,
+              "height": 622,
+              "top": 1854.21875,
+              "right": 393,
+              "bottom": 2476.21875,
+              "left": 0
+            },
+            "client": 393,
+            "scroll": 393,
+            "css": {
+              "width": "393px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-footer-grid",
+            "rect": {
+              "x": 20,
+              "y": 1895.21875,
+              "width": 353,
+              "height": 508.5,
+              "top": 1895.21875,
+              "right": 373,
+              "bottom": 2403.71875,
+              "left": 20
+            },
+            "client": 353,
+            "scroll": 353,
+            "css": {
+              "width": "353px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "168.5px 168.5px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          }
+        ],
+        "outside": []
+      },
+      {
+        "phase": "reload",
+        "clientWidth": 393,
+        "scrollWidth": 393,
+        "scrollX": 0,
+        "innerWidth": 393,
+        "visualViewport": {
+          "width": 393,
+          "scale": 1
+        },
+        "meta": [],
+        "regions": [
+          {
+            "tag": "HEADER",
+            "id": "desktop_header",
+            "class": "sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 hidden sf-header",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "client": 0,
+            "scroll": 0,
+            "css": {
+              "width": "auto",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "none",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "sticky",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-grid",
+            "rect": {
+              "x": 20,
+              "y": 88,
+              "width": 353,
+              "height": 584,
+              "top": 88,
+              "right": 373,
+              "bottom": 672,
+              "left": 20
+            },
+            "client": 353,
+            "scroll": 353,
+            "css": {
+              "width": "353px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "353px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "class": "sf-cta",
+            "rect": {
+              "x": 20,
+              "y": 327.25,
+              "width": 158.921875,
+              "height": 48,
+              "top": 327.25,
+              "right": 178.921875,
+              "bottom": 375.25,
+              "left": 20
+            },
+            "client": 159,
+            "scroll": 159,
+            "css": {
+              "width": "158.922px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "flex",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-media",
+            "rect": {
+              "x": 20,
+              "y": 407.25,
+              "width": 353,
+              "height": 264.75,
+              "top": 407.25,
+              "right": 373,
+              "bottom": 672,
+              "left": 20
+            },
+            "client": 353,
+            "scroll": 353,
+            "css": {
+              "width": "353px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "FOOTER",
+            "id": "footer",
+            "class": "sf-footer ",
+            "rect": {
+              "x": 0,
+              "y": 1854.21875,
+              "width": 393,
+              "height": 622,
+              "top": 1854.21875,
+              "right": 393,
+              "bottom": 2476.21875,
+              "left": 0
+            },
+            "client": 393,
+            "scroll": 393,
+            "css": {
+              "width": "393px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-footer-grid",
+            "rect": {
+              "x": 20,
+              "y": 1895.21875,
+              "width": 353,
+              "height": 508.5,
+              "top": 1895.21875,
+              "right": 373,
+              "bottom": 2403.71875,
+              "left": 20
+            },
+            "client": 353,
+            "scroll": 353,
+            "css": {
+              "width": "353px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "168.5px 168.5px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          }
+        ],
+        "outside": []
+      }
+    ],
+    "headers": {
+      "cache-control": "no-cache, private",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-length": "18094",
+      "content-type": "text/html; charset=utf-8",
+      "date": "Fri, 09 Oct 2026 00:23:02 GMT",
+      "server": "nginx",
+      "strict-transport-security": "max-age=31536000",
+      "vary": "Accept-Encoding"
+    },
+    "menu": "메뉴언어한국어한국어English日本語简体中文통화KRW로그인회원가입주문조회홈인기게시판쇼핑상품장바구니브랜드 이야기쇼핑몰 공지배송 및 교환·반품정보회사소개자주 묻는 질문문의하기정책이용약관개인정보처리방침취소/반품/교환"
+  },
+  {
+    "width": 1440,
+    "issues": [
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "GenericIssue",
+          "details": {
+            "genericIssueDetails": {
+              "errorType": "FormEmptyIdAndNameAttributesForInputError",
+              "violatingNodeId": 23,
+              "violatingNodeAttribute": ""
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "GenericIssue",
+          "details": {
+            "genericIssueDetails": {
+              "errorType": "FormEmptyIdAndNameAttributesForInputError",
+              "violatingNodeId": 49,
+              "violatingNodeAttribute": ""
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      },
+      {
+        "issue": {
+          "code": "PerformanceIssue",
+          "details": {
+            "performanceIssueDetails": {
+              "performanceIssueType": "DocumentCookie",
+              "sourceCodeLocation": {
+                "scriptId": "13",
+                "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+                "lineNumber": 0,
+                "columnNumber": 3797
+              }
+            }
+          }
+        }
+      }
+    ],
+    "console": [],
+    "errors": [],
+    "failed": [],
+    "assets": [
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/css/components.css?v=1791505188",
+        "status": 200,
+        "sha256": "1b8ce9d62542dec6f089fc697a3ae835b895df469fa6eb147b28bdb37154ece9"
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/js/components.iife.js?v=1791505188",
+        "status": 200,
+        "sha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f"
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/css/components.css?v=1791505188",
+        "status": 200,
+        "sha256": "1b8ce9d62542dec6f089fc697a3ae835b895df469fa6eb147b28bdb37154ece9"
+      },
+      {
+        "url": "https://yutiv.com/api/templates/assets/yutiv-stillform/js/components.iife.js?v=1791505188",
+        "status": 200,
+        "sha256": "88c10c6599fac4df519279228b438bf1b2f492893b485d1b7d8ebdbeb878384f"
+      }
+    ],
+    "csp": [],
+    "snapshots": [
+      {
+        "phase": "fresh",
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "scrollX": 0,
+        "innerWidth": 1440,
+        "visualViewport": {
+          "width": 1440,
+          "scale": 1
+        },
+        "meta": [],
+        "regions": [
+          {
+            "tag": "HEADER",
+            "id": "desktop_header",
+            "class": "sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 block sf-header",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 114,
+              "top": 0,
+              "right": 1440,
+              "bottom": 114,
+              "left": 0
+            },
+            "client": 1440,
+            "scroll": 1440,
+            "css": {
+              "width": "1440px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "sticky",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-grid",
+            "rect": {
+              "x": 92,
+              "y": 200.390625,
+              "width": 1256,
+              "height": 526.21875,
+              "top": 200.390625,
+              "right": 1348,
+              "bottom": 726.609375,
+              "left": 92
+            },
+            "client": 1256,
+            "scroll": 1256,
+            "css": {
+              "width": "1256px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "526.219px 657.781px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "class": "sf-cta",
+            "rect": {
+              "x": 92,
+              "y": 586.75,
+              "width": 158.921875,
+              "height": 48,
+              "top": 586.75,
+              "right": 250.921875,
+              "bottom": 634.75,
+              "left": 92
+            },
+            "client": 159,
+            "scroll": 159,
+            "css": {
+              "width": "158.922px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "flex",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-media",
+            "rect": {
+              "x": 690.21875,
+              "y": 200.390625,
+              "width": 657.78125,
+              "height": 526.21875,
+              "top": 200.390625,
+              "right": 1348,
+              "bottom": 726.609375,
+              "left": 690.21875
+            },
+            "client": 658,
+            "scroll": 658,
+            "css": {
+              "width": "657.781px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "FOOTER",
+            "id": "footer",
+            "class": "sf-footer ",
+            "rect": {
+              "x": 0,
+              "y": 2313.25,
+              "width": 1440,
+              "height": 353.5,
+              "top": 2313.25,
+              "right": 1440,
+              "bottom": 2666.75,
+              "left": 0
+            },
+            "client": 1440,
+            "scroll": 1440,
+            "css": {
+              "width": "1440px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-footer-grid",
+            "rect": {
+              "x": 92,
+              "y": 2370.25,
+              "width": 1256,
+              "height": 224,
+              "top": 2370.25,
+              "right": 1348,
+              "bottom": 2594.25,
+              "left": 92
+            },
+            "client": 1256,
+            "scroll": 1256,
+            "css": {
+              "width": "1256px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "459.188px 229.609px 229.594px 229.609px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          }
+        ],
+        "outside": []
+      },
+      {
+        "phase": "reload",
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "scrollX": 0,
+        "innerWidth": 1440,
+        "visualViewport": {
+          "width": 1440,
+          "scale": 1
+        },
+        "meta": [],
+        "regions": [
+          {
+            "tag": "HEADER",
+            "id": "desktop_header",
+            "class": "sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 block sf-header",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 114,
+              "top": 0,
+              "right": 1440,
+              "bottom": 114,
+              "left": 0
+            },
+            "client": 1440,
+            "scroll": 1440,
+            "css": {
+              "width": "1440px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "sticky",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-grid",
+            "rect": {
+              "x": 92,
+              "y": 200.390625,
+              "width": 1256,
+              "height": 526.21875,
+              "top": 200.390625,
+              "right": 1348,
+              "bottom": 726.609375,
+              "left": 92
+            },
+            "client": 1256,
+            "scroll": 1256,
+            "css": {
+              "width": "1256px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "526.219px 657.781px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "A",
+            "id": "",
+            "class": "sf-cta",
+            "rect": {
+              "x": 92,
+              "y": 586.75,
+              "width": 158.921875,
+              "height": 48,
+              "top": 586.75,
+              "right": 250.921875,
+              "bottom": 634.75,
+              "left": 92
+            },
+            "client": 159,
+            "scroll": 159,
+            "css": {
+              "width": "158.922px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "flex",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-hero-media",
+            "rect": {
+              "x": 690.21875,
+              "y": 200.390625,
+              "width": 657.78125,
+              "height": 526.21875,
+              "top": 200.390625,
+              "right": 1348,
+              "bottom": 726.609375,
+              "left": 690.21875
+            },
+            "client": 658,
+            "scroll": 658,
+            "css": {
+              "width": "657.781px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "FOOTER",
+            "id": "footer",
+            "class": "sf-footer ",
+            "rect": {
+              "x": 0,
+              "y": 2313.25,
+              "width": 1440,
+              "height": 353.5,
+              "top": 2313.25,
+              "right": 1440,
+              "bottom": 2666.75,
+              "left": 0
+            },
+            "client": 1440,
+            "scroll": 1440,
+            "css": {
+              "width": "1440px",
+              "minWidth": "auto",
+              "maxWidth": "none",
+              "display": "block",
+              "columns": "none",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "",
+            "class": "sf-footer-grid",
+            "rect": {
+              "x": 92,
+              "y": 2370.25,
+              "width": 1256,
+              "height": 224,
+              "top": 2370.25,
+              "right": 1348,
+              "bottom": 2594.25,
+              "left": 92
+            },
+            "client": 1256,
+            "scroll": 1256,
+            "css": {
+              "width": "1256px",
+              "minWidth": "0px",
+              "maxWidth": "none",
+              "display": "grid",
+              "columns": "459.188px 229.609px 229.594px 229.609px",
+              "overflowX": "visible",
+              "position": "static",
+              "transform": "none",
+              "zoom": "1"
+            }
+          }
+        ],
+        "outside": []
+      }
+    ],
+    "headers": {
+      "cache-control": "no-cache, private",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-length": "18093",
+      "content-type": "text/html; charset=utf-8",
+      "date": "Fri, 09 Oct 2026 00:23:13 GMT",
+      "server": "nginx",
+      "strict-transport-security": "max-age=31536000",
+      "vary": "Accept-Encoding"
+    }
+  }
+]

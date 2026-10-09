@@ -70,6 +70,7 @@ type OptionValueMultilingual = Record<string, string>;
 interface OptionInput {
     name: Record<string, string>;
     values: string[] | OptionValueMultilingual[];
+    valueText?: Record<string, string>;
 }
 
 /**
@@ -275,7 +276,7 @@ export function addOptionInputHandler(
     G7Core.state.setLocal({
         ui: {
             ...state.ui,
-            optionInputs: [...inputs, { name: createEmptyLocalizedField(), values: [] }],
+            optionInputs: [...inputs, { name: createEmptyLocalizedField(), values: [], valueText: createEmptyLocalizedField() }],
         },
     });
 
@@ -318,11 +319,43 @@ export function removeOptionInputHandler(
 }
 
 /**
- * 옵션 입력 값을 업데이트합니다.
- *
- * @param action 액션 객체 (params.index, params.field, params.value 필요)
- * @param _context 액션 컨텍스트
+ * 저장된 옵션 그룹을 편집 입력으로 복원합니다. 재마운트 시 사용자 입력을 유지합니다.
  */
+export function initializeOptionInputsHandler(): void {
+    const core = (window as any).G7Core;
+    const state = core.state.getLocal() ?? {};
+    if (state.ui?.optionInputs?.length) return;
+    const groups = state.form?.option_groups ?? [];
+    const optionInputs = groups.length ? groups.map((group: any) => {
+        const values = ensureValuesArray(group.values);
+        const locales = Array.from(new Set([...getSupportedLocales(), ...values.flatMap((v: any) => Object.keys(v))]));
+        return {
+            name: group.name,
+            values,
+            valueText: Object.fromEntries(locales.map(locale => [locale, values.map((v: any) => v[locale] ?? '').join(', ')])),
+        };
+    }) : [{ name: createEmptyLocalizedField(), values: [], valueText: createEmptyLocalizedField() }];
+    core.state.setLocal({ ui: { ...state.ui, optionInputs } });
+}
+
+export function setOptionModeHandler(action: ActionWithParams): void {
+    const core = (window as any).G7Core;
+    const state = core.state.getLocal() ?? {};
+    const enabled = action.params?.enabled === true;
+    if (!enabled && state.form?.has_options && state.form?.options?.length) {
+        core.toast?.error?.(core.t?.('sirsoft-ecommerce.admin.product.options.mode_change_blocked'));
+        return;
+    }
+    core.state.setLocal({
+        form: {
+            ...state.form,
+            has_options: enabled,
+            ...(enabled && !state.form?.has_options ? { options: [] } : {}),
+        },
+    });
+    if (enabled) initializeOptionInputsHandler();
+}
+
 export function updateOptionInputHandler(
     action: ActionWithParams,
     _context: ActionContext
@@ -387,6 +420,19 @@ export function updateOptionInputHandler(
         inputs[index] = {
             ...inputs[index],
             name: newName,
+        };
+    } else if (field === 'valueText') {
+        const text = { ...inputs[index].valueText, ...(value as Record<string, string>) };
+        const split = Object.fromEntries(Object.entries(text).map(([locale, raw]) => [
+            locale, String(raw).split(',').map(v => v.trim()).filter(Boolean),
+        ]));
+        const length = Math.max(0, ...Object.values(split).map(v => v.length));
+        inputs[index] = {
+            ...inputs[index],
+            valueText: text,
+            values: Array.from({ length }, (_, i) => Object.fromEntries(
+                Object.entries(split).map(([locale, parts]) => [locale, parts[i] ?? '']),
+            )),
         };
     } else {
         logger.log(`[updateOptionInput] Processing non-name field '${field}'`);

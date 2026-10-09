@@ -1159,9 +1159,19 @@ class ProductRepository implements ProductRepositoryInterface
             return false;
         }
 
-        // 옵션이 없는 상품은 동기화 불필요
+        // 일반 상품도 단일 판매 단위로 주문/재고를 처리한다.
+        // 판매 단위가 아직 없는 레거시 상품의 직접 입력 재고는 유지한다.
         if (! $product->has_options) {
-            return true;
+            $units = $product->options()->get();
+            if ($units->isEmpty()) {
+                return true;
+            }
+            if ($units->count() !== 1) {
+                return false;
+            }
+            $product->stock_quantity = $units->first()->stock_quantity;
+
+            return $product->save();
         }
 
         // 활성 옵션의 재고 합계 계산

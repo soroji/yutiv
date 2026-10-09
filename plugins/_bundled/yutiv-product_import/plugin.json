@@ -1,0 +1,9 @@
+{
+  "identifier": "yutiv-product_import", "vendor": "yutiv",
+  "name": {"ko": "엑셀 상품 일괄등록", "en": "Product spreadsheet import"},
+  "version": "1.0.0", "license": "MIT", "g7_version": ">=7.0.9",
+  "description": {"ko": "본사 전용 신규 상품 엑셀 검증 및 비공개 등록", "en": "Headquarters-only validated new product import"},
+  "dependencies": {"modules": {"sirsoft-ecommerce": ">=1.2.1"}, "plugins": {}},
+  "assets": {"js": {"entry": "resources/js/index.ts", "output": "dist/js/plugin.iife.js"}, "handlers": true},
+  "loading": {"strategy": "global", "priority": 110}
+}

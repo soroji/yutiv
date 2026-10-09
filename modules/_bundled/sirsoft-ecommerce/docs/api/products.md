@@ -18,6 +18,8 @@
 
 ## 옵션의 무게·부피 (`options[].weight` / `options[].volume`)
 
+일반 상품은 `has_options=false`로 등록하며 `options`를 생략하거나 빈 배열로 전달합니다. 수정 폼·복사용 응답도 `has_options`, `option_groups`와 옵션별 `price_adjustment`를 포함하며 옵션 복사를 제외하면 일반 상품 모드로 반환합니다. 서버가 내부 판매 단위 1개를 생성하고 재저장 시 같은 ID를 유지합니다. 가격·재고는 상품 입력값을 사용합니다. 선택 옵션 상품은 `has_options=true`와 실제 조합을 전달합니다. 기존 선택 옵션의 무손실 자동 일반 상품 변환은 지원하지 않으며 주문 참조 옵션 교체·삭제는 차단합니다. [선택 옵션 사용법](../product-option-modes.md)을 참고하세요.
+
 옵션 리소스(`ProductOptionResource`)는 배송비 계산에 쓰이는 물성 두 개를 함께 내려보냅니다.
 
 | 필드 | 타입 | 단위 | 설명 |
@@ -279,7 +281,7 @@ HTTP/1.1 200
 | use_main_image_for_og | body | boolean | 아니오 | — | 대표 이미지를 OG(소셜 공유) 이미지로 사용할지 여부 |
 | has_options | body | boolean | 아니오 | — | options 여부 |
 | option_groups | body | array | 아니오 | — | 옵션 그룹 정의 (예: 색상/사이즈 등 옵션 축과 각 축의 선택값 목록) |
-| options | body | array | 예 | min 1 | 옵션(SKU) 목록 (각 항목: 옵션코드·옵션명·옵션값·정가·판매가·재고 등, 최소 1건 필수) |
+| options | body | array | 조건부 | 선택 옵션 사용 시 min 1 | `has_options=true`이면 조합별 판매 단위가 최소 1건 필요합니다. `false`이면 생략하거나 빈 배열을 전달합니다. 서버가 일반 상품 가격·재고로 단일 판매 단위를 생성·갱신합니다 |
 | additional_options | body | array | 아니오 | max 5 | 추가옵션 그룹 배열 (각 그룹당 선택지 1~20개, 필수 여부·추가금·직접입력 허용 등 설정) |
 | notice_items | body | array | 아니오 | max 50 | 상품정보제공고시 항목 배열 (각 항목: 항목명·내용 다국어) |
 | label_assignments | body | array | 아니오 | — | 라벨 할당 배열 (label_id + 노출 시작/종료일로 상품에 라벨 부착) |
@@ -950,7 +952,7 @@ HTTP/1.1 200
 | use_main_image_for_og | body | boolean | 아니오 | — | 대표 이미지를 OG(소셜 공유) 이미지로 사용할지 여부 |
 | has_options | body | boolean | 아니오 | — | options 여부 |
 | option_groups | body | array | 아니오 | — | 옵션 그룹 정의 (예: 색상/사이즈 등 옵션 축과 각 축의 선택값 목록) |
-| options | body | array | 아니오 | min 1 | 옵션(SKU) 목록 (각 항목: 옵션코드·옵션명·옵션값·정가·판매가·재고 등) |
+| options | body | array | 아니오 | 선택 옵션 사용 시 min 1 | 조합별 판매 단위 목록. 일반 상품은 생략/빈 배열이며 서버가 동일 ID의 단일 판매 단위를 갱신합니다 |
 | additional_options | body | array | 아니오 | max 5 | 추가옵션 그룹 배열 (각 그룹당 선택지 1~20개, 필수 여부·추가금·직접입력 허용 등 설정) |
 | notice_items | body | array | 아니오 | max 50 | 상품정보제공고시 항목 배열 (각 항목: 항목명·내용 다국어) |
 | label_assignments | body | array | 아니오 | — | 라벨 할당 배열 (label_id + 노출 시작/종료일로 상품에 라벨 부착) |
@@ -1877,7 +1879,7 @@ HTTP/1.1 200
 | use_main_image_for_og | body | boolean | 아니오 | — | 대표 이미지를 OG(소셜 공유) 이미지로 사용할지 여부 |
 | has_options | body | boolean | 아니오 | — | options 여부 |
 | option_groups | body | array | 아니오 | — | 옵션 그룹 정의 (예: 색상/사이즈 등 옵션 축과 각 축의 선택값 목록) |
-| options | body | array | 아니오 | min 1 | 옵션(SKU) 목록 (각 항목: 옵션코드·옵션명·옵션값·정가·판매가·재고 등) |
+| options | body | array | 아니오 | 선택 옵션 사용 시 min 1 | 조합별 판매 단위 목록. 일반 상품은 생략/빈 배열이며 서버가 동일 ID의 단일 판매 단위를 갱신합니다 |
 | additional_options | body | array | 아니오 | max 5 | 추가옵션 그룹 배열 (각 그룹당 선택지 1~20개, 필수 여부·추가금·직접입력 허용 등 설정) |
 | notice_items | body | array | 아니오 | max 50 | 상품정보제공고시 항목 배열 (각 항목: 항목명·내용 다국어) |
 | label_assignments | body | array | 아니오 | — | 라벨 할당 배열 (label_id + 노출 시작/종료일로 상품에 라벨 부착) |
@@ -2228,6 +2230,8 @@ _단건 응답: `data` 객체의 필드._
 | sales_status | string | `on_sale` | 판매상태: on_sale(판매중), suspended(판매중지), sold_out(품절), coming_soon(출시예정) |
 | display_status | string | `visible` | 전시상태: visible(전시), hidden(숨김) |
 | options | array | `[{"option_code":"CJTFHBL8SLRQ8ILM-001","option_name":{"ko…` | 복사 대상 옵션(SKU) 목록 (신규 등록 폼에 채울 옵션 정의, 다중통화 가격 포함) |
+| has_options | boolean | `true` | 선택 옵션 사용 여부. 옵션 복사를 제외하면 false |
+| option_groups | array | `[{"name":{"ko":"색상"},"values":[{"ko":"검정"}]}]` | 편집/복원용 다국어 그룹. 일반 상품은 빈 배열. options에는 price_adjustment도 포함 |
 | additional_options | array | `[]` | 복사 대상 추가옵션 그룹 목록 (그룹명·선택지·추가금 등) |
 | images | array | `[{"hash":"7df7761cdf16","url":null,"original_filename":"p…` | 복사 대상 이미지 목록 (각 항목: hash·원본파일명 등, copy_images 선택 시 포함) |
 | thumbnail_hash | string | `7df7761cdf16` | 대표 이미지 해시 (썸네일로 지정된 이미지의 hash) |
@@ -2335,6 +2339,8 @@ _단건 응답: `data` 객체의 필드._
 | sales_status | string | `on_sale` | 판매상태: on_sale(판매중), suspended(판매중지), sold_out(품절), coming_soon(출시예정) |
 | display_status | string | `visible` | 전시상태: visible(전시), hidden(숨김) |
 | options | array | `[{"id":948,"option_code":"CJTFHBL8SLRQ8ILM-001","option_n…` | 옵션(SKU) 목록 (수정 폼 바인딩용, 각 옵션의 id·코드·옵션값·가격·재고 등) |
+| has_options | boolean | `true` | 선택 옵션 사용 여부. 옵션 복사를 제외하면 false |
+| option_groups | array | `[{"name":{"ko":"색상"},"values":[{"ko":"검정"}]}]` | 편집/복원용 다국어 그룹. 일반 상품은 빈 배열. options에는 price_adjustment도 포함 |
 | additional_options | array | `[]` | 추가옵션 그룹 목록 (수정 폼 바인딩용, 그룹명·선택지·추가금 등) |
 | images | array | `[{"id":7,"hash":"7df7761cdf16","url":null,"original_filen…` | 이미지 목록 (각 항목: id·hash·원본파일명 등) |
 | thumbnail_hash | string | `7df7761cdf16` | 대표 이미지 해시 (썸네일로 지정된 이미지의 hash) |
@@ -3745,5 +3751,3 @@ HTTP/1.1 200
 <!-- @generated:end -->
 
 **설명** 상품의 공개 리뷰 목록과 별점 통계를 조회합니다. `optional.sanctum`(회원/비회원 모두 접근) + `sirsoft-ecommerce.user-products.read` 권한이 적용되며, `ProductReviewService::getProductReviews()`가 정렬(`sort`)·포토리뷰만(`photo_only`)·별점(`rating`)·옵션(`option_filters`) 필터를 적용해 리뷰를 페이지네이션하고 별점 분포(`rating_stats`)와 선택 가능한 옵션 필터, 총 개수를 함께 반환합니다. `option_filters`는 JSON 문자열로 전달되면 서버에서 배열로 파싱되며, 상품 상세의 리뷰 탭에 사용됩니다. 확장은 `sirsoft-ecommerce.review.public_list_validation_rules` 훅으로 필터를 추가할 수 있습니다.
-
-

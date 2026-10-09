@@ -1,0 +1,81 @@
+{
+  "browser": "154.0.8037.98",
+  "context": "mobile emulation, touch, DPR 3, fresh logged-out context",
+  "runs": [
+    {
+      "width": 393,
+      "scroll": 393,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "outside": []
+    },
+    {
+      "width": 393,
+      "scroll": 393,
+      "x": 0,
+      "y": 1500,
+      "scale": 1,
+      "outside": []
+    },
+    {
+      "width": 393,
+      "scroll": 393,
+      "x": 0,
+      "y": 1624,
+      "scale": 1,
+      "outside": []
+    }
+  ],
+  "issues": [
+    {
+      "issue": {
+        "code": "PerformanceIssue",
+        "details": {
+          "performanceIssueDetails": {
+            "performanceIssueType": "DocumentCookie",
+            "sourceCodeLocation": {
+              "scriptId": "12",
+              "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+              "lineNumber": 0,
+              "columnNumber": 3797
+            }
+          }
+        }
+      }
+    },
+    {
+      "issue": {
+        "code": "PerformanceIssue",
+        "details": {
+          "performanceIssueDetails": {
+            "performanceIssueType": "DocumentCookie",
+            "sourceCodeLocation": {
+              "scriptId": "12",
+              "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+              "lineNumber": 0,
+              "columnNumber": 3797
+            }
+          }
+        }
+      }
+    },
+    {
+      "issue": {
+        "code": "PerformanceIssue",
+        "details": {
+          "performanceIssueDetails": {
+            "performanceIssueType": "DocumentCookie",
+            "sourceCodeLocation": {
+              "scriptId": "12",
+              "url": "https://yutiv.com/api/plugins/bundle.js?v=1791505188",
+              "lineNumber": 0,
+              "columnNumber": 3797
+            }
+          }
+        }
+      }
+    }
+  ],
+  "errors": []
+}
