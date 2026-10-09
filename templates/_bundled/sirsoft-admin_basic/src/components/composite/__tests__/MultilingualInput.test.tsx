@@ -27,6 +27,31 @@ const DEFAULT_LOCALES: LocaleOption[] = [
 ];
 
 describe('MultilingualInput 컴포넌트', () => {
+  it('list layout keeps selector and identifier above the full-width input and preserves all translations', () => {
+    const onChange = vi.fn();
+    const locales = [...DEFAULT_LOCALES, { code: 'ja', name: '日本語' }, { code: 'zh-CN', name: '中文' }];
+    const code = 'PRODUCT-CODE-0000000000000000000000000001';
+    render(<MultilingualInput layout="list" identifierText={code} value={{ ko: '상품', en: 'Product', ja: '商品', 'zh-CN': '商品名称' }} onChange={onChange} availableLocales={locales} defaultLocale="ko" required />);
+    const identifier = screen.getByText(code);
+    expect(identifier).toHaveAttribute('title', code);
+    expect(identifier).toHaveClass('truncate');
+    expect(identifier.parentElement).toContainElement(screen.getByRole('button', { name: /KO/ }));
+    expect(identifier.parentElement).not.toContainElement(screen.getByDisplayValue('상품'));
+    expect(identifier.parentElement?.nextElementSibling).toContainElement(screen.getByDisplayValue('상품'));
+    expect(screen.getByDisplayValue('상품')).toBeRequired();
+    fireEvent.change(screen.getByDisplayValue('상품'), { target: { value: '한글 수정 상품' } });
+    fireEvent.click(screen.getByRole('button', { name: /KO/ }));
+    expect(screen.getAllByRole('option')).toHaveLength(4);
+    expect(screen.getByRole('option', { name: 'KO *' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('option', { name: 'ZH-CN' }));
+    expect(screen.getByDisplayValue('商品名称')).not.toBeRequired();
+    fireEvent.change(screen.getByDisplayValue('商品名称'), { target: { value: '新商品名称' } });
+    expect(onChange.mock.calls[onChange.mock.calls.length - 1][0].target.value).toEqual({ ko: '한글 수정 상품', en: 'Product', ja: '商品', 'zh-CN': '新商品名称' });
+    fireEvent.click(screen.getByRole('button', { name: 'ZH-CN' }));
+    fireEvent.click(screen.getByRole('option', { name: 'KO *' }));
+    expect(screen.getByDisplayValue('한글 수정 상품')).toBeInTheDocument();
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
   it('compact language controls preserve Korean edits when switching languages', () => {
     const onChange = vi.fn();
     render(<MultilingualInput layout="compact" name="product_name" value={{ ko: '상품', en: 'Product' }} onChange={onChange} availableLocales={DEFAULT_LOCALES} defaultLocale="ko" />);

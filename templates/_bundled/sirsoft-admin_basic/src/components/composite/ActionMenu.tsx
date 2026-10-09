@@ -25,6 +25,7 @@ export interface ActionMenuItem {
 export interface ActionMenuProps {
   items: ActionMenuItem[];
   triggerLabel?: string;
+  iconOnly?: boolean;
   triggerIconName?: IconName;
   position?: 'left' | 'right';
   className?: string;
@@ -76,6 +77,7 @@ export interface ActionMenuProps {
 export const ActionMenu: React.FC<ActionMenuProps> = ({
   items,
   triggerLabel = '작업',
+  iconOnly = false,
   triggerIconName = IconName.EllipsisVertical,
   position = 'right',
   className = '',
@@ -270,12 +272,13 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
           ref={triggerRef as React.RefObject<HTMLButtonElement>}
           type="button"
           aria-label={triggerLabel || undefined}
+          title={triggerLabel || undefined}
           aria-haspopup="menu"
           aria-expanded={isOpen}
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 px-2 py-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >
-          {triggerLabel && (
+          {triggerLabel && !iconOnly && (
             <Span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {triggerLabel}
             </Span>

@@ -15,6 +15,7 @@ export interface DataGridColumn {
     field: string;
     header: string;
     width?: string;
+    compactPadding?: boolean;
     sortable?: boolean;
     hidden?: boolean;
     required?: boolean;
@@ -149,6 +150,8 @@ export interface DataGridProps {
     stickyActions?: boolean;
     primaryActionId?: string;
     moreActionsLabel?: string;
+    actionsWidth?: string;
+    actionsIconOnly?: boolean;
     requiredText?: string;
     selectedCountText?: string;
     loadErrorMessage?: string;

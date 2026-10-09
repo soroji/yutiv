@@ -8,6 +8,8 @@
 
 ### Fixed
 
+- 상품 목록에서 사용할 수 있는 `MultilingualInput`의 선택적 `list` 표시를 추가했습니다. 언어 선택기·식별자는 첫 줄, 입력은 둘째 줄에 표시하고 기존 레이아웃과 변경 이벤트는 유지합니다.
+- DataGrid의 선택적 관리 열 폭·아이콘 메뉴·열별 compact padding을 추가하고 ActionMenu 아이콘 버튼에 기존 레이블을 aria-label·title로 유지합니다. 기존 Select의 메뉴 폭·portal·위치 동작은 변경하지 않았습니다.
 - Select 메뉴 폭을 트리거와 분리하고 내용에 맞춰 확장하며, 긴 항목은 화면 폭 안에서 한 줄로 생략합니다. 체크 표시와 스크롤바 공간을 확보하고 화면 가장자리 위치를 보정합니다.
 - Select/ActionMenu의 방향키·Home/End 이동, 비활성 항목 건너뛰기, ESC 및 선택 후 포커스 복원을 보강했습니다. 메뉴는 기존 body portal을 유지합니다.
 - DataGrid에 선택적 `stickyActions`, `primaryActionId`, `moreActionsLabel`을 추가했습니다. 기존 수정 권한과 행 이벤트를 재사용하고 기본 사용 화면의 작업 메뉴를 유지합니다.

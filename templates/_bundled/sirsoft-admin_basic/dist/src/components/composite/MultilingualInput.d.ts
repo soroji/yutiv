@@ -9,7 +9,7 @@ export interface LocaleOption {
     nativeName?: string;
 }
 export type MultilingualInputType = 'text' | 'textarea';
-export type MultilingualInputLayout = 'inline' | 'tabs' | 'compact';
+export type MultilingualInputLayout = 'inline' | 'tabs' | 'compact' | 'list';
 export interface MultilingualInputProps {
     /** 다국어 값 객체 */
     value?: MultilingualValue;
@@ -19,6 +19,8 @@ export interface MultilingualInputProps {
     inputType?: MultilingualInputType;
     /** 레이아웃 타입 (inline: 모든 언어 수직 표시 | tabs: 탭 전환 방식 | compact: 탭과 입력이 한 줄) */
     layout?: MultilingualInputLayout;
+    /** 목록 전용 첫 줄 식별자. list 레이아웃에서만 표시합니다. */
+    identifierText?: string;
     /** 사용 가능한 언어 목록 */
     availableLocales?: LocaleOption[];
     /** 기본 언어 코드 */

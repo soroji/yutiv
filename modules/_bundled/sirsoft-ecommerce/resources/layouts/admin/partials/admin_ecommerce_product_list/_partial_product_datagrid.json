@@ -54,7 +54,7 @@
             "header": "$t:sirsoft-ecommerce.admin.product.table.column.product_name",
             "sortable": true,
             "required": true,
-            "width": "340px",
+            "width": "292px",
             "cellChildren": [
               {
                 "type": "basic",
@@ -66,6 +66,12 @@
                   {
                     "type": "basic",
                     "name": "Div",
+                    "props": {
+                      "style": {
+                        "width": "276px",
+                        "maxWidth": "100%"
+                      }
+                    },
                     "children": [
                       {
                         "type": "composite",
@@ -73,12 +79,13 @@
                         "props": {
                           "value": "{{row.name}}",
                           "availableLocales": "{{(_global.appConfig?.supportedLocales ?? ['ko', 'en']).map(l => ({ code: l, name: _global.appConfig?.localeNames?.[l] ?? l, nativeName: _global.appConfig?.localeNames?.[l] ?? l }))}}",
-                          "layout": "compact",
+                          "layout": "list",
                           "inputType": "text",
                           "compact": true,
                           "className": "w-full",
                           "showCodeOnMobile": true,
-                          "disabled": "{{row.abilities?.can_update !== true}}"
+                          "disabled": "{{row.abilities?.can_update !== true}}",
+                          "identifierText": "{{row.product_code ?? \"\"}}"
                         },
                         "actions": [
                           {
@@ -92,20 +99,13 @@
                             "debounce": 300
                           }
                         ]
-                      },
-                      {
-                        "type": "basic",
-                        "name": "Div",
-                        "props": {
-                          "className": "text-tertiary"
-                        },
-                        "text": "{{row.product_code}}"
                       }
                     ]
                   }
                 ]
               }
-            ]
+            ],
+            "compactPadding": true
           },
           {
             "field": "categories",
@@ -149,7 +149,7 @@
           {
             "field": "list_price_formatted",
             "header": "$t:sirsoft-ecommerce.admin.product.table.column.original_price",
-            "width": "120px",
+            "width": "112px",
             "sortable": true,
             "cellChildren": [
               {
@@ -160,8 +160,12 @@
                   "min": "0",
                   "step": "100",
                   "value": "{{row.list_price}}",
-                  "className": "w-24 px-2 rounded text-right disabled:opacity-50 disabled:cursor-not-allowed",
-                  "disabled": "{{row.abilities?.can_update !== true}}"
+                  "className": "w-24 px-1 rounded text-right disabled:opacity-50 disabled:cursor-not-allowed font-mono text-sm",
+                  "disabled": "{{row.abilities?.can_update !== true}}",
+                  "style": {
+                    "minWidth": "96px",
+                    "width": "{{Math.max(96, String(row.list_price ?? '').length * 8.5 + 24) + 'px'}}"
+                  }
                 },
                 "actions": [
                   {
@@ -176,12 +180,13 @@
                   }
                 ]
               }
-            ]
+            ],
+            "compactPadding": true
           },
           {
             "field": "selling_price_formatted",
             "header": "$t:sirsoft-ecommerce.admin.product.table.column.selling_price",
-            "width": "140px",
+            "width": "112px",
             "sortable": true,
             "required": true,
             "cellChildren": [
@@ -202,7 +207,11 @@
                       "max": "{{row.list_price || ''}}",
                       "value": "{{row.selling_price}}",
                       "disabled": "{{row.abilities?.can_update !== true}}",
-                      "className": "{{(_local.productFieldErrors || []).some(e => e.productId === String(row.id) && e.field === 'selling_price') ? 'input-error w-24 px-2 border-2 dark:border-red-400 rounded text-right font-medium bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed' : 'w-24 px-2 rounded text-right font-medium disabled:opacity-50 disabled:cursor-not-allowed'}}"
+                      "className": "{{(_local.productFieldErrors || []).some(e => e.productId === String(row.id) && e.field === 'selling_price') ? 'input-error w-24 px-1 border-2 dark:border-red-400 rounded text-right font-medium bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed' : 'w-24 px-1 rounded text-right font-medium disabled:opacity-50 disabled:cursor-not-allowed'}} font-mono text-sm",
+                      "style": {
+                        "minWidth": "96px",
+                        "width": "{{Math.max(96, String(row.selling_price ?? '').length * 8.5 + 24) + 'px'}}"
+                      }
                     },
                     "actions": [
                       {
@@ -222,7 +231,7 @@
                     "name": "Span",
                     "if": "{{(_local.productFieldErrors || []).some(e => e.productId === String(row.id) && e.field === 'selling_price')}}",
                     "props": {
-                      "className": "text-xs text-red-500 dark:text-red-400 mt-1"
+                      "className": "text-xs text-red-500 dark:text-red-400 mt-1 whitespace-normal max-w-24"
                     },
                     "text": "$t:sirsoft-ecommerce.admin.product.validation.selling_price_exceeds_list_price"
                   },
@@ -232,7 +241,7 @@
                     "name": "Div",
                     "if": "{{(_computed.currencyDisplayColumns ?? []).length > 0}}",
                     "props": {
-                      "className": "flex flex-col gap-0.5 mt-1"
+                      "className": "flex flex-col gap-0.5 mt-1 text-right"
                     },
                     "children": [
                       {
@@ -251,12 +260,13 @@
                   }
                 ]
               }
-            ]
+            ],
+            "compactPadding": true
           },
           {
             "field": "stock_quantity",
             "header": "$t:sirsoft-ecommerce.admin.product.table.column.stock",
-            "width": "120px",
+            "width": "84px",
             "sortable": true,
             "required": true,
             "cellChildren": [
@@ -275,8 +285,12 @@
                       "min": "0",
                       "value": "{{row.stock_quantity}}",
                       "disabled": "{{row.has_options || row.abilities?.can_update !== true}}",
-                      "className": "{{row.has_options ? (row.stock_quantity !== row.option_stock_sum ? 'w-16 px-2 py-1 border border-orange-400 dark:border-orange-500 rounded text-sm text-right text-orange-600 dark:text-orange-400 font-medium bg-orange-50 dark:bg-orange-900/20 cursor-not-allowed opacity-60' : 'w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-right bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed') : (row.is_below_safe_stock ? 'w-16 px-2 py-1 border border-red-300 dark:border-red-600 rounded text-sm text-right text-red-500 dark:text-red-400 font-medium bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed' : 'w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-right bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed')}}",
-                      "title": "{{row.has_options ? '$t:sirsoft-ecommerce.admin.product.stock_options_hint' : ''}}"
+                      "className": "{{row.has_options ? (row.stock_quantity !== row.option_stock_sum ? 'w-16 px-1 py-1 border border-orange-400 dark:border-orange-500 rounded text-sm text-right text-orange-600 dark:text-orange-400 font-medium bg-orange-50 dark:bg-orange-900/20 cursor-not-allowed opacity-60' : 'w-16 px-1 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-right bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed') : (row.is_below_safe_stock ? 'w-16 px-1 py-1 border border-red-300 dark:border-red-600 rounded text-sm text-right text-red-500 dark:text-red-400 font-medium bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed' : 'w-16 px-1 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-right bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed')}} font-mono text-sm",
+                      "title": "{{row.has_options ? '$t:sirsoft-ecommerce.admin.product.stock_options_hint' : ''}}",
+                      "style": {
+                        "minWidth": "68px",
+                        "width": "{{Math.max(68, String(row.stock_quantity ?? '').length * 8.5 + 24) + 'px'}}"
+                      }
                     },
                     "actions": [
                       {
@@ -320,7 +334,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "compactPadding": true
           },
           {
             "field": "sales_status",
@@ -1582,7 +1597,9 @@
         ],
         "stickyActions": true,
         "primaryActionId": "edit",
-        "moreActionsLabel": "$t:sirsoft-ecommerce.admin.product.action.more"
+        "moreActionsLabel": "$t:sirsoft-ecommerce.admin.product.action.more",
+        "actionsWidth": "108px",
+        "actionsIconOnly": true
       },
       "actions": [
         {

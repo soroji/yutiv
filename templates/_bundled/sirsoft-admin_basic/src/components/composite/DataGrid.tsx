@@ -119,6 +119,7 @@ export interface DataGridColumn {
   field: string;
   header: string;
   width?: string;
+  compactPadding?: boolean;
   sortable?: boolean;
   hidden?: boolean;
   required?: boolean;
@@ -273,6 +274,8 @@ export interface DataGridProps {
   stickyActions?: boolean;
   primaryActionId?: string;
   moreActionsLabel?: string;
+  actionsWidth?: string;
+  actionsIconOnly?: boolean;
   requiredText?: string;
   selectedCountText?: string;
   loadErrorMessage?: string;
@@ -691,6 +694,8 @@ export const DataGrid: React.FC<DataGridProps> = ({
   stickyActions = false,
   primaryActionId,
   moreActionsLabel,
+  actionsWidth = '148px',
+  actionsIconOnly = false,
   requiredText,
   selectedCountText,
   // 페이지네이션 옵션
@@ -1163,12 +1168,12 @@ export const DataGrid: React.FC<DataGridProps> = ({
     const items = resolveRowActions(row);
     const primary = items.find(item => item.id === primaryActionId && !item.divider && item.if !== false);
     if (!primary) {
-      return <ActionMenu items={items} triggerLabel={moreActionsLabel ?? ''} triggerIconName={IconName.EllipsisHorizontal} position="right" />;
+      return <ActionMenu items={items} triggerLabel={moreActionsLabel ?? ''} iconOnly={actionsIconOnly} triggerIconName={IconName.EllipsisHorizontal} position="right" />;
     }
     return (
-      <Div className="flex items-center justify-end gap-2 whitespace-nowrap">
-        {primary && <Button type="button" disabled={primary.disabled} onClick={primary.onClick} className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">{primary.label}</Button>}
-        <ActionMenu items={items.filter(item => item !== primary)} triggerLabel={moreActionsLabel ?? ''} triggerIconName={IconName.EllipsisHorizontal} position="right" />
+      <Div className="flex items-center justify-end gap-1 whitespace-nowrap">
+        {primary && <Button type="button" disabled={primary.disabled} onClick={primary.onClick} className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed">{primary.label}</Button>}
+        <ActionMenu items={items.filter(item => item !== primary)} triggerLabel={moreActionsLabel ?? ''} iconOnly={actionsIconOnly} triggerIconName={IconName.EllipsisHorizontal} position="right" />
       </Div>
     );
   };
@@ -1498,7 +1503,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
               {displayColumns.map((column) => (
                 <Th
                   key={column.field}
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+                  className={`${column.compactPadding ? 'px-2' : 'px-6'} py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
                     headerSortEnabled && column.sortable !== false
                       ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600'
                       : ''
@@ -1517,7 +1522,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
               {/* 액션 컬럼 */}
               {rowActions && rowActions.length > 0 && (
-                <Th className={`py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${stickyActions ? 'px-3 whitespace-nowrap bg-gray-50 dark:bg-gray-700' : 'px-6 w-24'}`} style={stickyActions ? { position: 'sticky', right: 0, zIndex: 20, minWidth: '148px', boxShadow: '-1px 0 0 #9ca3af' } : undefined}>
+                <Th className={`py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${stickyActions ? `${actionsIconOnly ? 'px-2' : 'px-3'} whitespace-nowrap bg-gray-50 dark:bg-gray-700` : 'px-6 w-24'}`} style={stickyActions ? { position: 'sticky', right: 0, zIndex: 20, width: actionsWidth, minWidth: actionsWidth, boxShadow: '-1px 0 0 #9ca3af' } : undefined}>
                   {resolvedActionsColumnHeader}
                 </Th>
               )}
@@ -1576,7 +1581,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
                       {displayColumns.map((column) => (
                         <Td
                           key={column.field}
-                          className="px-6 py-4 align-top whitespace-nowrap text-sm text-gray-900 dark:text-gray-200"
+                          className={`${column.compactPadding ? 'px-2' : 'px-6'} py-4 align-top whitespace-nowrap text-sm text-gray-900 dark:text-gray-200`}
                           style={{ width: column.width, minWidth: column.width }}
                         >
                           {column.cellChildren && column.cellChildren.length > 0
@@ -1590,8 +1595,8 @@ export const DataGrid: React.FC<DataGridProps> = ({
                       {/* 액션 메뉴 */}
                       {rowActions && rowActions.length > 0 && (
                         <Td
-                          className={`text-right ${stickyActions ? 'px-3 py-3 bg-white dark:bg-gray-800' : 'px-6 py-4'}`}
-                          style={stickyActions ? { position: 'sticky', right: 0, zIndex: 10, minWidth: '148px', boxShadow: '-1px 0 0 #9ca3af' } : undefined}
+                          className={`text-right ${stickyActions ? `${actionsIconOnly ? 'px-2' : 'px-3'} py-3 bg-white dark:bg-gray-800` : 'px-6 py-4'}`}
+                          style={stickyActions ? { position: 'sticky', right: 0, zIndex: 10, width: actionsWidth, minWidth: actionsWidth, boxShadow: '-1px 0 0 #9ca3af' } : undefined}
                           onClick={(e: React.MouseEvent) => e.stopPropagation()}
                         >
                           {renderRowActions(row)}

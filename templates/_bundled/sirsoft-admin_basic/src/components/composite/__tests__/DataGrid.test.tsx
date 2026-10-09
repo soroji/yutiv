@@ -1622,7 +1622,21 @@ describe('DataGrid', () => {
     expect(screen.queryByRole('menuitem', { name: 'Edit' })).not.toBeInTheDocument();
   });
 
-  it('keeps direct edit disabled for a row without update ability', () => {
+    it('uses compact padding and an accessible icon-only menu in a narrow sticky action column', async () => {
+      const { container } = render(<DataGrid columns={[{ field: 'name', header: 'Name', width: '292px', compactPadding: true }]} data={[{ id: 7, name: 'Product' }]} rowActions={[{ id: 'edit', label: 'Edit' }, { id: 'delete', label: 'Delete' }]} stickyActions actionsWidth="108px" actionsIconOnly primaryActionId="edit" moreActionsLabel="더보기" actionsColumnHeader="Manage" />);
+      expect(screen.getByRole('columnheader', { name: 'Name' })).toHaveClass('px-2');
+      expect(container.querySelector('tbody td:first-child')).toHaveClass('px-2');
+      expect(screen.getByRole('columnheader', { name: 'Manage' })).toHaveStyle({ width: '108px', position: 'sticky' });
+      const more = screen.getByRole('button', { name: '더보기' });
+      expect(more).toHaveAttribute('title', '더보기');
+      expect(more).not.toHaveTextContent('더보기');
+      await userEvent.click(more);
+      expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument();
+      expect(screen.getByRole('menu')).toHaveClass('fixed');
+      expect(screen.getByRole('menu').closest('table')).toBeNull();
+    });
+
+    it('keeps direct edit disabled for a row without update ability', () => {
     render(<DataGrid columns={[{ field: 'name', header: 'Name' }]} data={[{ id: 7, name: 'Product', abilities: { can_update: false } }]} rowActions={[{ id: 'edit', label: 'Edit', disabledField: 'abilities.can_update' }]} stickyActions primaryActionId="edit" />);
     expect(screen.getByRole('button', { name: 'Edit' })).toBeDisabled();
   });

@@ -1,6 +1,7 @@
 // e2e:allow 외형 시맨틱 통일 시범 작업 — 동작 변화 없음. 패턴 확정 후 다음 사이클에 E2E spec 일괄 작성 예정.
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Input } from '../basic/Input';
+import { Select } from '../basic/Select';
 import { Textarea } from '../basic/Textarea';
 import { Button } from '../basic/Button';
 import { Div } from '../basic/Div';
@@ -62,7 +63,7 @@ export interface LocaleOption {
 }
 
 export type MultilingualInputType = 'text' | 'textarea';
-export type MultilingualInputLayout = 'inline' | 'tabs' | 'compact';
+export type MultilingualInputLayout = 'inline' | 'tabs' | 'compact' | 'list';
 
 export interface MultilingualInputProps {
   /** 다국어 값 객체 */
@@ -73,6 +74,8 @@ export interface MultilingualInputProps {
   inputType?: MultilingualInputType;
   /** 레이아웃 타입 (inline: 모든 언어 수직 표시 | tabs: 탭 전환 방식 | compact: 탭과 입력이 한 줄) */
   layout?: MultilingualInputLayout;
+  /** 목록 전용 첫 줄 식별자. list 레이아웃에서만 표시합니다. */
+  identifierText?: string;
   /** 사용 가능한 언어 목록 */
   availableLocales?: LocaleOption[];
   /** 기본 언어 코드 */
@@ -115,6 +118,7 @@ export const MultilingualInput: React.FC<MultilingualInputProps> = ({
   onChange,
   inputType = 'text',
   layout = 'inline',
+  identifierText = '',
   availableLocales,
   defaultLocale,
   placeholder = '',
@@ -180,7 +184,7 @@ export const MultilingualInput: React.FC<MultilingualInputProps> = ({
   // 활성화된 언어 탭 목록 (기본 언어는 항상 포함)
   const [activeLocales, setActiveLocales] = useState<string[]>(() => {
     // tabs/compact 레이아웃일 때는 모든 지원 로케일을 표시
-    if (layout === 'tabs' || layout === 'compact') {
+    if (layout === 'tabs' || layout === 'compact' || layout === 'list') {
       const supportedCodes = actualAvailableLocales.map(l => l.code);
       // 기본 언어를 맨 앞에 배치
       const sorted = [actualDefaultLocale, ...supportedCodes.filter(c => c !== actualDefaultLocale)];
@@ -225,7 +229,7 @@ export const MultilingualInput: React.FC<MultilingualInputProps> = ({
   // value prop이 변경될 때 activeLocales 동기화
   useEffect(() => {
     // tabs/compact 레이아웃일 때는 항상 모든 지원 로케일 유지
-    if (layout === 'tabs' || layout === 'compact') {
+    if (layout === 'tabs' || layout === 'compact' || layout === 'list') {
       const supportedCodes = actualAvailableLocales.map(l => l.code);
       const sorted = [actualDefaultLocale, ...supportedCodes.filter(c => c !== actualDefaultLocale)];
       const currentStr = activeLocales.join(',');
@@ -624,9 +628,26 @@ export const MultilingualInput: React.FC<MultilingualInputProps> = ({
   };
 
   // 레이아웃에 따라 렌더링
+  const renderListLayout = () => (
+    <Div className={`w-full min-w-0 ${className}`}>
+      <Div className="flex items-center gap-2 min-w-0 mb-1">
+        <Div className="w-20 shrink-0">
+          <Select
+            value={currentLocale}
+            options={activeLocales.map(code => ({ value: code, label: `${code.toUpperCase()}${code === actualDefaultLocale ? ' *' : ''}` }))}
+            onChange={event => setCurrentLocale(String(event.target.value))}
+            className="w-full px-2 py-1 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded"
+          />
+        </Div>
+        <Span className="min-w-0 flex-1 truncate text-xs text-gray-500 dark:text-gray-400" title={identifierText}>{identifierText}</Span>
+      </Div>
+      <Div className="w-full min-w-0">{renderInputField(currentLocale)}</Div>
+    </Div>
+  );
+
   return (
     <Div className={disabled ? 'opacity-50 cursor-not-allowed' : undefined} id={id} {...editorAttrs}>
-      {layout === 'compact' ? renderCompactLayout() : layout === 'tabs' ? renderTabsLayout() : renderInlineLayout()}
+      {layout === 'list' ? renderListLayout() : layout === 'compact' ? renderCompactLayout() : layout === 'tabs' ? renderTabsLayout() : renderInlineLayout()}
       {/* 에러 메시지 표시 */}
       {hasError && error && (
         <Span className="text-xs text-red-500 dark:text-red-400 mt-1 block">

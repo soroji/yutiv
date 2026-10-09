@@ -1,5 +1,28 @@
 # 관리자 상품 목록 UI 수정
 
+## 추가 간격 조정 (2026-10-10)
+
+이번 작업 시작 HEAD는 `c7fe4bba9c2a9add3354c7dff93d45e6576549cf`이고 작업 트리는 깨끗했다. 사용자가 서버에서 확인한 Select 메뉴 및 sticky 동작은 유지했다.
+
+| 영역 | 이번 설정 |
+|---|---|
+| 관리 | 108px, 좌우 padding 8px, 수정 + 아이콘 더보기. 더보기 문자열은 aria-label·title에만 표시 |
+| 상품명 | 292px, 좌우 padding 8px. 첫 줄은 선택 언어와 코드, 둘째 줄은 이름 입력 전체 폭 |
+| 정가·판매가 | 열 112px, 입력 기본 96px, 입력 좌우 padding 4px |
+| 재고 | 열 84px, 입력 기본 68px, 입력 좌우 padding 4px |
+
+`MultilingualInput.layout=list`와 `identifierText`는 이번 상품 목록에만 적용한다. 다른 inline/tabs/compact 화면의 배치는 유지하며 지원 언어 전체, 필수 언어 표시, 로컬 번역 버퍼와 기존 change/debounce 이벤트를 재사용한다. 긴 코드는 생략하고 title로 전체값을 제공한다. 코드가 열의 intrinsic 폭을 늘리지 않도록 이름 셀 내부를 276px/최대 100%로 제한한다.
+
+가격 저장 컬럼은 `decimal(15,2)`로 정수 13자리와 소수 2자리, 재고는 signed integer로 비음수 최대 2,147,483,647까지 저장할 수 있다. 이는 DB 저장 범위이며 새 API 제한을 도입한 것이 아니다. 기존 통화별 소수점 규칙과 API 검증을 변경하지 않았다. 작은 고정 입력 폭으로 최대 자릿수를 가릴 수 있어 monospace 14px 글꼴과 `max(기본폭, 문자수 × 8.5 + 24)px` 표시 폭을 사용한다. 긴 숫자나 다통화 표시·재고 경고가 있으면 표의 해당 열이 더 넓어질 수 있다. 숫자는 생략하지 않고 표 내부 가로 스크롤과 관리 열 접근성을 유지한다.
+
+브라우저 연결 목록이 비어 있어 1920/1440/1280px의 실제 화면, 사이드바 펼침/접힘, 스크롤 전후 sticky 위치, 작은 화면 메뉴 펼침과 전후 캡처는 미실행이다. JSDOM 테스트에서 첫 줄/둘째 줄 DOM 구분, 4개 언어 전환과 번역 보존, 기본 언어 필수 표시, 코드 tooltip, 관리 열 폭과 compact padding, 아이콘 메뉴의 접근 가능한 이름과 body portal을 확인한다. 기존 테스트가 실제 화면 검증을 대신하지 않는다. 서버 값·상품 상태는 변경하지 않았다.
+
+아래 이전 검증 기록 및 서버 반영 명령은 유지한다. 이번에도 관리자 템플릿과 이커머스 모듈 둘 다 갱신해야 한다. 추가 migration·composer 변경은 없다.
+
+이번 실행 결과: Select 67, Input 46 통과/3 기존 skip, DataGrid 65, ActionMenu 9, MultilingualInput 14, ProductListDensity 4로 총 205 통과/3 skip. 마지막 언어 선택 값의 문자열 타입 보정 후 MultilingualInput 14개를 다시 실행하고 최종 빌드 및 테스트 파일을 제외한 프로덕션 소스 TypeScript 검사를 통과했다. JSON 가격 편집 계약 테스트에서 type/value/disabled/change/debounce와 숫자 폭 확장 정책을 확인했다. `module:vendor-verify sirsoft-ecommerce`는 OK(0.4 MB, 1 package)이며 composer·lock 파일은 변경하지 않았다. 기존 tabs 테스트의 중첩 button 경고는 남아 있고 이번 list 경로에서는 해당 tabs 마크업을 사용하지 않는다.
+
+변경 파일: 관리자 `src/components/composite/{ActionMenu,DataGrid,MultilingualInput}.tsx`, `__tests__/{DataGrid,MultilingualInput}.test.tsx`, 신규 `__tests__/ProductListDensity.test.ts`, `components.json`, `CHANGELOG.md`, `dist/js/components.iife.js`, 위 3개 컴포넌트의 `dist/src/components/composite/*.d.ts`; 모듈 상품 목록 `_partial_product_datagrid.json`, `CHANGELOG.md`, 이 문서. CSS는 정식 빌드로 재생성했으며 기존 산출물과 동일하다. 기존 checkout 및 고객용 템플릿은 수정하지 않았다.
+
 대상: `/admin/ecommerce/products`. 작업 시작 HEAD: `602e84973eeb694fa6d12dc9dca95779345a9a5d`.
 기존 checkout·계좌 설정 관련 변경 및 사용자 파일을 보존했다. 상품 값이나 상태, 주문·결제를 서버에서 변경하지 않았다.
 

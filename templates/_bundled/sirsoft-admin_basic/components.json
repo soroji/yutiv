@@ -1187,7 +1187,7 @@
           "columns": {
             "type": "array",
             "required": true,
-            "description": "컬럼 정의 배열 (DataGridColumn[])"
+            "description": "컬럼 정의 배열 (DataGridColumn[]). compactPadding=true는 해당 열의 헤더/셀 좌우 padding을 8px로 줄입니다."
           },
           "data": {
             "type": "array",
@@ -1240,6 +1240,16 @@
           "moreActionsLabel": {
             "type": "string",
             "description": "Label for remaining row actions"
+          },
+          "actionsWidth": {
+            "type": "string",
+            "required": false,
+            "default": "148px"
+          },
+          "actionsIconOnly": {
+            "type": "boolean",
+            "required": false,
+            "default": false
           }
         }
       },
@@ -1623,6 +1633,11 @@
             "type": "CSSProperties",
             "required": false,
             "description": "인라인 스타일"
+          },
+          "iconOnly": {
+            "type": "boolean",
+            "required": false,
+            "default": false
           }
         }
       },
@@ -3476,6 +3491,22 @@
             "required": false,
             "default": "multilingual_input",
             "description": "input name"
+          },
+          "layout": {
+            "type": "string",
+            "required": false,
+            "enum": [
+              "inline",
+              "tabs",
+              "compact",
+              "list"
+            ],
+            "default": "inline"
+          },
+          "identifierText": {
+            "type": "string",
+            "required": false,
+            "description": "Identifier in the first line of list layout only"
           }
         }
       },

@@ -18,6 +18,7 @@ export interface ActionMenuItem {
 export interface ActionMenuProps {
     items: ActionMenuItem[];
     triggerLabel?: string;
+    iconOnly?: boolean;
     triggerIconName?: IconName;
     position?: 'left' | 'right';
     className?: string;
