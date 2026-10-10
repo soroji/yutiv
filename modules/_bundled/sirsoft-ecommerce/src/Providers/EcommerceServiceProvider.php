@@ -14,6 +14,7 @@ use Modules\Sirsoft\Ecommerce\Console\Commands\PruneExpiredCartsCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\PruneExpiredTempOrdersCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\PruneTempProductImagesCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\ReconcileMileageBalanceCommand;
+use Modules\Sirsoft\Ecommerce\Console\Commands\TranslationStatusCommand;
 use Modules\Sirsoft\Ecommerce\Http\Middleware\DetectDevice;
 use Modules\Sirsoft\Ecommerce\Repositories\BrandRepository;
 use Modules\Sirsoft\Ecommerce\Repositories\CartRepository;
@@ -207,6 +208,7 @@ class EcommerceServiceProvider extends BaseModuleServiceProvider
         PruneExpiredCartsCommand::class,
         PruneExpiredTempOrdersCommand::class,
         PruneTempProductImagesCommand::class,
+        TranslationStatusCommand::class,
         ReconcileMileageBalanceCommand::class,
     ];
 
@@ -216,7 +218,9 @@ class EcommerceServiceProvider extends BaseModuleServiceProvider
     public function register(): void
     {
         parent::register();
-        $this->mergeConfigFrom(dirname(__DIR__, 2).'/config/translation.php', 'sirsoft-ecommerce.translation');
+        // ModuleManager replaces the entire sirsoft-ecommerce config later in Core boot.
+        // Keep connection secrets separate; mergeConfigFrom respects the compiled cache.
+        $this->mergeConfigFrom(dirname(__DIR__, 2).'/config/translation.php', 'sirsoft-ecommerce-translation');
         $this->app->bind(TranslationProviderInterface::class, CompatibleTranslationProvider::class);
         $this->app->bind(TranslationJobRepositoryInterface::class, TranslationJobRepository::class);
         config(['queue.connections.ecommerce-translation' => [...config('queue.connections.database', []), 'retry_after' => 240]]);

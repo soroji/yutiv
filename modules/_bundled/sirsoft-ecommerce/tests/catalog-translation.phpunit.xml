@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../vendor/phpunit/phpunit/phpunit.xsd" bootstrap="../../../../tests/bootstrap.php" colors="true">
-  <testsuites><testsuite name="CatalogTranslation"><file>Unit/Services/StructuredTextTranslatorTest.php</file><file>Feature/CatalogTranslationFeatureTest.php</file></testsuite></testsuites>
+  <testsuites><testsuite name="CatalogTranslation"><file>Unit/Services/StructuredTextTranslatorTest.php</file><file>Feature/CatalogTranslationFeatureTest.php</file><file>Feature/TranslationConfigBootTest.php</file></testsuite></testsuites>
   <php>
     <ini name="memory_limit" value="1G"/>
     <env name="APP_ENV" value="testing" force="true"/>

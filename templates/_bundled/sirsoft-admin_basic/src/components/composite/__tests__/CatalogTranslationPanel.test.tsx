@@ -57,6 +57,13 @@ describe('review-first AI catalog translation', () => {
     expect(screen.getByRole('button', { name: 'translate' })).toBeDisabled();
     expect(screen.getByRole('link', { name: 'settings' })).toHaveAttribute('href', '/admin/ecommerce/settings?tab=language_currency');
   });
+  it.each(['disabled', 'config_missing', 'not_configured'])('shows safe connection status %s and keeps translation disabled', async (status) => {
+    fetcher.mockImplementation(() => response({ configured: false, status }));
+    render(<CatalogTranslationPanel configurationOnly />);
+    await screen.findByText(status);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).not.toContain('fake-only-key');
+  });
   it('shows request failure without clearing the original form', async () => {
     fetcher.mockImplementation((url: string) => url.endsWith('/configuration') ? response({ configured: true }) : response(null, false));
     const onChange = vi.fn(); render(<CatalogTranslationPanel value={{ name: { ko: '원문', en: 'Manual' } }} onChange={onChange} />); await open();

@@ -10,7 +10,7 @@ class CompatibleTranslationProvider implements TranslationProviderInterface
 {
     public function configured(): bool
     {
-        $config = config('sirsoft-ecommerce.translation', []);
+        $config = config('sirsoft-ecommerce-translation', []);
 
         return ($config['driver'] ?? '') === 'compatible'
             && ! empty($config['model']) && ! empty($config['key'])
@@ -25,7 +25,7 @@ class CompatibleTranslationProvider implements TranslationProviderInterface
         if (! $this->configured()) {
             throw new RuntimeException('not_configured');
         }
-        $config = config('sirsoft-ecommerce.translation');
+        $config = config('sirsoft-ecommerce-translation');
         // Never automatically retry a paid request. Never include provider errors/keys in logs.
         $response = Http::withToken($config['key'])->acceptJson()->timeout(25)->connectTimeout(5)
             ->withOptions(['allow_redirects' => false])->post($config['endpoint'], [

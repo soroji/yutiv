@@ -6,6 +6,7 @@ use App\Helpers\PermissionHelper;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Api\Base\AdminBaseController;
 use Illuminate\Http\Request;
+use Modules\Sirsoft\Ecommerce\Enums\TranslationConnectionStatus;
 use Modules\Sirsoft\Ecommerce\Http\Requests\Admin\CatalogTranslationRequest;
 use Modules\Sirsoft\Ecommerce\Services\Translation\CatalogTranslationService;
 use Modules\Sirsoft\Ecommerce\Services\Translation\TranslationProviderInterface;
@@ -18,7 +19,11 @@ class CatalogTranslationController extends AdminBaseController
     {
         abort_unless(collect(['products.create', 'products.update', 'categories.create', 'categories.update', 'settings.read'])->contains(fn ($permission) => PermissionHelper::check('sirsoft-ecommerce.'.$permission, $request->user())), 403);
 
-        return ResponseHelper::moduleSuccess('sirsoft-ecommerce', 'translation.ready', ['configured' => $this->provider->configured(), 'settings_url' => '/admin/ecommerce/settings', 'queue' => 'ecommerce-translation']);
+        $config = config('sirsoft-ecommerce-translation');
+        $configured = $this->provider->configured();
+        $status = TranslationConnectionStatus::detect($config, $configured)->value;
+
+        return ResponseHelper::moduleSuccess('sirsoft-ecommerce', 'translation.ready', ['configured' => $configured, 'status' => $status, 'settings_url' => '/admin/ecommerce/settings?tab=language_currency', 'queue' => 'ecommerce-translation']);
     }
 
     public function store(CatalogTranslationRequest $request)

@@ -6,7 +6,7 @@
 
 | Method / URI | 권한·입력 | 응답 data |
 | --- | --- | --- |
-| GET `/configuration` | products.create/update, categories.create/update, settings.read 중 하나 | configured boolean, settings_url string, queue string. 키/endpoint/모델 비공개 |
+| GET `/configuration` | products.create/update, categories.create/update, settings.read 중 하나 | configured boolean, status(config_missing/disabled/not_configured/ready), settings_url string, queue string. 키/endpoint/모델 비공개 |
 | POST 기본 URI | kind별 create 권한, entity_id 지정 시 update 권한 + 실제 존재 | 작업 객체. 상품/카테고리는 저장하지 않음 |
 | GET `/{id}` | UUID, 본인 작업 + 현재 동일 권한 + 대상 존재 | 최신 작업 상태. killed worker는 timeout 처리 |
 | POST `/{id}/retry` | 본인 작업 + 현재 권한, body 없음 | 실패 항목만 pending으로 변경. 성공/건너뜀 보존, 최대3회, 취소/만료 작업 재시도 안 함 |
@@ -50,7 +50,7 @@ Content-Type: application/json
 위 봉투는 주요 필드만 보여주는 fake 결과 예시입니다. GET configuration 예시:
 
 ```json
-{"success":true,"message":"번역 작업 조회 완료","data":{"configured":false,"settings_url":"/admin/ecommerce/settings","queue":"ecommerce-translation"}}
+{"success":true,"message":"번역 작업 조회 완료","data":{"configured":false,"status":"disabled","settings_url":"/admin/ecommerce/settings?tab=language_currency","queue":"ecommerce-translation"}}
 ```
 
 오류: 401 미인증, 403 일반회원/권한부족/타인작업/대상삭제, 404 작업없음, 413 body 초과, 422 입력·키 미설정·활성작업·UUID 충돌, 429 시작/재시도 분당5회 초과. 권한 오류는 기존 exception envelope를 사용합니다. 공급자 오류는 원문 입력을 지우지 않고 items[].error로 반환하며 raw 오류/비밀키를 노출하지 않습니다.

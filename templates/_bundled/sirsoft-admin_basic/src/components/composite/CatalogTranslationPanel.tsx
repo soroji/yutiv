@@ -44,7 +44,7 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
     return latest.current;
   };
   const [opened, setOpened] = useState(!!configurationOnly);
-  const [configuration, setConfiguration] = useState<{ configured: boolean } | null>(null);
+  const [configuration, setConfiguration] = useState<{ configured: boolean; status?: string } | null>(null);
   const [locales, setLocales] = useState(['en', 'ja', 'zh-CN']);
   const allFields = ['name', 'description', 'meta_title', 'meta_description', ...(kind === 'product' ? ['meta_keywords', 'option_group_name', 'option_value', 'option_name', 'additional_option_name', 'additional_option_value'] : [])];
   const [fields, setFields] = useState(allFields);
@@ -127,7 +127,7 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
     {stale.length > 0 && <Span className="block text-sm text-amber-700 dark:text-amber-300">{t('stale')}: {stale.map(field => t(`fields.${field}`)).join(', ')}</Span>}
     {opened && <Div className="admin-card space-y-3 mt-3">
       <Span className="block font-medium">{t('title')}</Span>
-      <Span className="block text-sm">{configuration?.configured ? t('configured') : t('not_configured')}</Span>
+      <Span className="block text-sm">{configuration?.configured ? t('configured') : t(configuration?.status === 'disabled' ? 'disabled' : configuration?.status === 'config_missing' ? 'config_missing' : 'not_configured')}</Span>
       <A href="/admin/ecommerce/settings?tab=language_currency" className="underline text-sm">{t('settings')}</A>
       {!configurationOnly && <>
         <Span className="block text-sm">{t('instructions')}</Span>
