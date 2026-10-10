@@ -486,6 +486,19 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "composite",
+            "name": "MultilingualInput",
+            "props": {
+                "name": "meta_keywords_translations",
+                "label": "$t:sirsoft-ecommerce.admin.translation.fields.meta_keywords",
+                "value": "{{({ko: (_local.form?.meta_keywords ?? []).join(', '), ...(_local.form?.meta_keywords_translations ?? {})})}}",
+                "layout": "list",
+                "inputType": "textarea",
+                "rows": 2,
+                "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}"
+            }
         }
     ]
 }

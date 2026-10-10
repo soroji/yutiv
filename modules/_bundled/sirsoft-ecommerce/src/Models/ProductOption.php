@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Sirsoft\Ecommerce\Database\Factories\ProductOptionFactory;
+use Modules\Sirsoft\Ecommerce\Support\CatalogLocalizedText;
 
 /**
  * 상품 옵션 모델
@@ -146,7 +147,7 @@ class ProductOption extends Model
             return '';
         }
 
-        return $name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? $name[array_key_first($name)] ?? '';
+        return CatalogLocalizedText::resolve($name, $locale);
     }
 
     /**
@@ -171,8 +172,8 @@ class ProductOption extends Model
                 $key = $item['key'] ?? [];
                 $value = $item['value'] ?? [];
 
-                $localizedKey = is_array($key) ? ($key[$locale] ?? $key[config('app.fallback_locale', 'ko')] ?? array_values($key)[0] ?? '') : $key;
-                $localizedValue = is_array($value) ? ($value[$locale] ?? $value[config('app.fallback_locale', 'ko')] ?? array_values($value)[0] ?? '') : $value;
+                $localizedKey = CatalogLocalizedText::resolve($key, $locale);
+                $localizedValue = CatalogLocalizedText::resolve($value, $locale);
 
                 if ($localizedKey !== '') {
                     $result[$localizedKey] = $localizedValue;
@@ -208,7 +209,7 @@ class ProductOption extends Model
                 $parts = [];
                 foreach ($values as $item) {
                     $value = $item['value'] ?? [];
-                    $localizedValue = is_array($value) ? ($value[$locale] ?? $value[config('app.fallback_locale', 'ko')] ?? '') : $value;
+                    $localizedValue = CatalogLocalizedText::resolve($value, $locale);
                     if ($localizedValue !== '') {
                         $parts[] = $localizedValue;
                     }
@@ -234,7 +235,7 @@ class ProductOption extends Model
         $locale = $locale ?? app()->getLocale();
         $name = $this->generateOptionName();
 
-        return $name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? $name[array_key_first($name)] ?? '';
+        return CatalogLocalizedText::resolve($name, $locale);
     }
 
     /**

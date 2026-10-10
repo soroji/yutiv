@@ -4530,6 +4530,39 @@
             "required": false
           }
         }
+      },
+      {
+        "name": "CatalogTranslationPanel",
+        "type": "composite",
+        "path": "src/components/composite/CatalogTranslationPanel.tsx",
+        "description": "Review-first single catalog record translation. Does not save products.",
+        "props": {
+          "kind": {
+            "type": "string",
+            "default": "product"
+          },
+          "value": {
+            "type": "object"
+          },
+          "optionInputs": {
+            "type": "array"
+          },
+          "entityId": {
+            "type": "number"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "configurationOnly": {
+            "type": "boolean"
+          },
+          "onChange": {
+            "type": "function"
+          },
+          "onSnapshot": {
+            "type": "function"
+          }
+        }
       }
     ],
     "layout": [

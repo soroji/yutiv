@@ -12,6 +12,7 @@ use Modules\Sirsoft\Ecommerce\Http\Resources\Traits\HasMultiCurrencyPrices;
 use Modules\Sirsoft\Ecommerce\Models\Product;
 use Modules\Sirsoft\Ecommerce\Models\ProductWishlist;
 use Modules\Sirsoft\Ecommerce\Services\ShippingPolicyResolver;
+use Modules\Sirsoft\Ecommerce\Support\CatalogLocalizedText;
 
 /**
  * 공개 상품 상세 리소스
@@ -126,7 +127,7 @@ class PublicProductResource extends BaseApiResource
             // SEO
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
-            'meta_keywords' => $this->meta_keywords,
+            'meta_keywords' => $this->getLocalizedMetaKeywords(),
 
             // 옵션
             'has_options' => $this->has_options,
@@ -190,7 +191,7 @@ class PublicProductResource extends BaseApiResource
 
         $locale = app()->getLocale();
 
-        return $field[$locale] ?? $field[config('app.fallback_locale', 'ko')] ?? $field[array_key_first($field)] ?? null;
+        return CatalogLocalizedText::resolve($field, $locale) ?: null;
     }
 
     /**

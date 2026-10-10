@@ -27,6 +27,22 @@ const DEFAULT_LOCALES: LocaleOption[] = [
 ];
 
 describe('MultilingualInput 컴포넌트', () => {
+  it('option-name list layout keeps the input on a full-width row and commits Korean IME before switching', () => {
+    const onChange = vi.fn();
+    render(<MultilingualInput layout="list" value={{ ko: '', en: 'Color' }} onChange={onChange} availableLocales={DEFAULT_LOCALES} defaultLocale="ko" />);
+    const input = screen.getByRole('textbox');
+    const selector = screen.getByRole('button', { name: /KO/ });
+    expect(selector.closest('.mb-1')?.nextElementSibling).toContainElement(input);
+    fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: '색' } });
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.compositionEnd(input, { target: { value: '색상' } });
+    expect(onChange.mock.calls.at(-1)[0].target.value.ko).toBe('색상');
+    fireEvent.click(selector); fireEvent.click(screen.getByRole('option', { name: 'EN' }));
+    expect(screen.getByDisplayValue('Color')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'EN' })); fireEvent.click(screen.getByRole('option', { name: /KO/ }));
+    expect(screen.getByDisplayValue('색상')).toBeInTheDocument();
+  });
   it('list layout keeps selector and identifier above the full-width input and preserves all translations', () => {
     const onChange = vi.fn();
     const locales = [...DEFAULT_LOCALES, { code: 'ja', name: '日本語' }, { code: 'zh-CN', name: '中文' }];

@@ -9,6 +9,7 @@ use Modules\Sirsoft\Ecommerce\Console\Commands\CancelPendingPaymentOrdersCommand
 use Modules\Sirsoft\Ecommerce\Console\Commands\EarnMileageCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\ExpireMileageCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\NotifyExpiringMileageCommand;
+use Modules\Sirsoft\Ecommerce\Console\Commands\PruneCatalogTranslationsCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\PruneExpiredCartsCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\PruneExpiredTempOrdersCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\PruneTempProductImagesCommand;
@@ -58,6 +59,7 @@ use Modules\Sirsoft\Ecommerce\Repositories\Contracts\ShippingCarrierRepositoryIn
 use Modules\Sirsoft\Ecommerce\Repositories\Contracts\ShippingPolicyRepositoryInterface;
 use Modules\Sirsoft\Ecommerce\Repositories\Contracts\ShippingTypeRepositoryInterface;
 use Modules\Sirsoft\Ecommerce\Repositories\Contracts\TempOrderRepositoryInterface;
+use Modules\Sirsoft\Ecommerce\Repositories\Contracts\TranslationJobRepositoryInterface;
 use Modules\Sirsoft\Ecommerce\Repositories\Contracts\UserAddressRepositoryInterface;
 use Modules\Sirsoft\Ecommerce\Repositories\CouponIssueRepository;
 use Modules\Sirsoft\Ecommerce\Repositories\CouponRepository;
@@ -93,6 +95,7 @@ use Modules\Sirsoft\Ecommerce\Repositories\ShippingCarrierRepository;
 use Modules\Sirsoft\Ecommerce\Repositories\ShippingPolicyRepository;
 use Modules\Sirsoft\Ecommerce\Repositories\ShippingTypeRepository;
 use Modules\Sirsoft\Ecommerce\Repositories\TempOrderRepository;
+use Modules\Sirsoft\Ecommerce\Repositories\TranslationJobRepository;
 use Modules\Sirsoft\Ecommerce\Repositories\UserAddressRepository;
 use Modules\Sirsoft\Ecommerce\Seo\EcommerceSitemapContributor;
 use Modules\Sirsoft\Ecommerce\Services\CategoryImageService;
@@ -103,6 +106,8 @@ use Modules\Sirsoft\Ecommerce\Services\ProductImageService;
 use Modules\Sirsoft\Ecommerce\Services\ProductReviewImageService;
 use Modules\Sirsoft\Ecommerce\Services\ProductReviewService;
 use Modules\Sirsoft\Ecommerce\Services\ShippingPolicyResolver;
+use Modules\Sirsoft\Ecommerce\Services\Translation\CompatibleTranslationProvider;
+use Modules\Sirsoft\Ecommerce\Services\Translation\TranslationProviderInterface;
 
 /**
  * Ecommerce 모듈 서비스 프로바이더
@@ -193,6 +198,7 @@ class EcommerceServiceProvider extends BaseModuleServiceProvider
      * @var array<int, class-string>
      */
     protected array $commands = [
+        PruneCatalogTranslationsCommand::class,
         AggregateEcommerceStatsCommand::class,
         CancelPendingPaymentOrdersCommand::class,
         EarnMileageCommand::class,
@@ -210,6 +216,10 @@ class EcommerceServiceProvider extends BaseModuleServiceProvider
     public function register(): void
     {
         parent::register();
+        $this->mergeConfigFrom(dirname(__DIR__, 2).'/config/translation.php', 'sirsoft-ecommerce.translation');
+        $this->app->bind(TranslationProviderInterface::class, CompatibleTranslationProvider::class);
+        $this->app->bind(TranslationJobRepositoryInterface::class, TranslationJobRepository::class);
+        config(['queue.connections.ecommerce-translation' => [...config('queue.connections.database', []), 'retry_after' => 240]]);
 
         // CurrencyConversionService를 싱글톤으로 등록 (요청 내 통화 설정 캐시 유지)
         $this->app->singleton(CurrencyConversionService::class);

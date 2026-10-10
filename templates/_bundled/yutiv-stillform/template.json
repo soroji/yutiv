@@ -7,7 +7,7 @@
     "ja": "YUTIV Still Form",
     "zh-CN": "YUTIV Still Form"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": {
     "ko": "YUTIV 상품 중심 쇼핑몰 사용자 템플릿",
@@ -32,7 +32,7 @@
   "dependencies": {
     "modules": {
       "sirsoft-board": ">=1.0.0",
-      "sirsoft-ecommerce": ">=1.2.0",
+      "sirsoft-ecommerce": ">=1.2.2",
       "sirsoft-page": ">=1.1.0"
     },
     "plugins": {

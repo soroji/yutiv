@@ -2167,6 +2167,7 @@ class Module extends AbstractModule
     public function getSchedules(): array
     {
         return [
+            ['command' => 'ecommerce:prune-catalog-translations', 'schedule' => 'daily', 'description' => 'Temporary catalog translation retention'],
             [
                 'command' => 'sirsoft-ecommerce:cancel-pending-orders',
                 'schedule' => 'daily',

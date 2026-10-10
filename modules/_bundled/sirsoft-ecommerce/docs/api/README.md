@@ -3,6 +3,8 @@
 > **소유**: 모듈 `sirsoft-ecommerce` · **생성**: `php artisan api:docgen` (실측 기반).
 > 아래 표는 자동 생성됩니다. 각 문서를 열면 엔드포인트별 파라미터·응답·예시를 볼 수 있습니다.
 
+수동 추가 레퍼런스: [Catalog Translations](catalog-translations.md) — 신규 5개 엔드포인트, 격리 테스트 기반.
+
 <!-- @generated:start:api-readme-index -->
 - **문서 수**: 33 · **엔드포인트 수**: 239
 

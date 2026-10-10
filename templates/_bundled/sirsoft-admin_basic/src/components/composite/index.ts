@@ -240,3 +240,6 @@ export type { BarChartProps, BarChartDataset } from './BarChart';
 
 export { DonutChart } from './DonutChart';
 export type { DonutChartProps, DonutChartDataItem } from './DonutChart';
+
+export { CatalogTranslationPanel } from './CatalogTranslationPanel';
+export type { CatalogTranslationPanelProps } from './CatalogTranslationPanel';

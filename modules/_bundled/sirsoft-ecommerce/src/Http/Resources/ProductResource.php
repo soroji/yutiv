@@ -121,6 +121,8 @@ class ProductResource extends BaseApiResource
             'thumbnail_url' => $this->getThumbnailUrl(),
 
             // SEO
+            'translation_sources' => $this->translation_sources,
+            'meta_keywords_translations' => $this->meta_keywords_translations,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'meta_keywords' => $this->meta_keywords,

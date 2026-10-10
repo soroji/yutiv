@@ -10,6 +10,13 @@
   "props": {},
   "children": [
     {
+      "type": "composite",
+      "name": "CatalogTranslationPanel",
+      "props": {
+        "configurationOnly": true
+      }
+    },
+    {
       "id": "language_settings_card",
       "type": "basic",
       "name": "Div",

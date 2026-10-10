@@ -833,8 +833,8 @@
     "generate_options": "Generate Options",
     "bulk_create_title": "Bulk Create Options",
     "bulk_create_hint": "Group name: Color / Values: Black, White. Another group: Size / S, M, L. Enter translations in the same order. Removing a group changes the inputs; generated combinations remain until regeneration is confirmed.",
-    "option_name_placeholder": "Example: Color",
-    "option_values_placeholder": "Example: Black, White",
+    "option_name_placeholder": "Color",
+    "option_values_placeholder": "Rose pink, Coral, Red",
     "additional_title": "Product Additional Options",
     "additional_hint": "Paid/free options customers can additionally select. Register a group name and choices (with surcharge). Up to 5 groups, 20 choices per group. (e.g., Engraving +5,000 KRW)",
     "add_additional": "Add Option Group",
@@ -898,8 +898,8 @@
     "mode_enabled": "Use selectable options",
     "mode_hint": "Simple products use product price and stock. Switching modes does not remove existing combinations.",
     "mode_change_blocked": "Existing combinations cannot be removed by switching modes.",
-    "group_name_label": "Option name",
-    "values_label": "Option values",
+    "group_name_label": "Option name: e.g. Color",
+    "values_label": "Option values: e.g. Rose pink, Coral, Red",
     "remove_group": "Delete this group"
   },
   "notice": {

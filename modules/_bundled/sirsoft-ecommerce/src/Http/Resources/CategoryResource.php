@@ -3,6 +3,7 @@
 namespace Modules\Sirsoft\Ecommerce\Http\Resources;
 
 use App\Http\Resources\BaseApiResource;
+use Illuminate\Http\Request;
 
 /**
  * 카테고리 API 리소스
@@ -12,7 +13,7 @@ class CategoryResource extends BaseApiResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -30,6 +31,9 @@ class CategoryResource extends BaseApiResource
             'slug' => $this->slug,
             'url' => $this->slug, // SortableMenuItem에서 slug를 url로 표시
             'icon' => 'folder', // SortableMenuList 컴포넌트용 아이콘
+            'translation_sources' => $this->translation_sources,
+            'meta_title_translations' => $this->meta_title_translations,
+            'meta_description_translations' => $this->meta_description_translations,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
@@ -84,7 +88,7 @@ class CategoryResource extends BaseApiResource
     /**
      * 파일 크기를 읽기 쉬운 형식으로 변환합니다.
      *
-     * @param int|null $bytes 바이트 크기
+     * @param  int|null  $bytes  바이트 크기
      * @return string 포맷된 크기 문자열
      */
     protected function formatFileSize(?int $bytes): string

@@ -121,6 +121,35 @@
       ]
     },
     {
+      "type": "composite",
+      "name": "CatalogTranslationPanel",
+      "props": {
+        "kind": "category",
+        "value": "{{_local.form}}",
+        "optionInputs": [],
+        "entityId": "{{_global.panelMode === \"edit\" ? _global.selectedCategoryId : null}}",
+        "disabled": "{{_global.panelMode === 'edit' && categories?.data?.abilities?.can_update !== true}}"
+      },
+      "actions": [
+        {
+          "type": "change",
+          "handler": "setState",
+          "params": {
+            "target": "local",
+            "form": "{{$event.target.value.form}}"
+          }
+        },
+        {
+          "event": "onSnapshot",
+          "handler": "setState",
+          "debounce": 0,
+          "params": {
+            "target": "local"
+          }
+        }
+      ]
+    },
+    {
       "id": "validation_error",
       "type": "basic",
       "name": "Div",
@@ -298,8 +327,7 @@
           "id": "form_basic_section",
           "type": "basic",
           "name": "Div",
-          "props": {
-          },
+          "props": {},
           "children": [
             {
               "id": "form_basic_title",
@@ -702,14 +730,17 @@
                     },
                     {
                       "id": "form_meta_title_input",
-                      "type": "basic",
-                      "name": "Input",
+                      "type": "composite",
+                      "name": "MultilingualInput",
                       "props": {
                         "type": "text",
-                        "name": "meta_title",
+                        "name": "meta_title_translations",
                         "maxLength": 200,
                         "disabled": "{{_global.panelMode === 'edit' && categories?.data?.abilities?.can_update !== true}}",
-                        "className": ""
+                        "className": "",
+                        "value": "{{({ko: _local.form?.meta_title ?? '', ...(_local.form?.meta_title_translations ?? {})})}}",
+                        "inputType": "text",
+                        "layout": "list"
                       }
                     }
                   ]
@@ -736,13 +767,16 @@
                     },
                     {
                       "id": "form_meta_description_input",
-                      "type": "basic",
-                      "name": "Textarea",
+                      "type": "composite",
+                      "name": "MultilingualInput",
                       "props": {
-                        "name": "meta_description",
+                        "name": "meta_description_translations",
                         "rows": 3,
                         "disabled": "{{_global.panelMode === 'edit' && categories?.data?.abilities?.can_update !== true}}",
-                        "className": ""
+                        "className": "",
+                        "value": "{{({ko: _local.form?.meta_description ?? '', ...(_local.form?.meta_description_translations ?? {})})}}",
+                        "inputType": "textarea",
+                        "layout": "list"
                       }
                     }
                   ]

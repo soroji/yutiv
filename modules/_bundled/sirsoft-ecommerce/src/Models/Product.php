@@ -20,6 +20,7 @@ use Modules\Sirsoft\Ecommerce\Enums\ProductDisplayStatus;
 use Modules\Sirsoft\Ecommerce\Enums\ProductSalesStatus;
 use Modules\Sirsoft\Ecommerce\Enums\ProductTaxStatus;
 use Modules\Sirsoft\Ecommerce\Enums\ReviewStatus;
+use Modules\Sirsoft\Ecommerce\Support\CatalogLocalizedText;
 
 /**
  * 상품 모델
@@ -76,6 +77,8 @@ class Product extends Model implements FulltextSearchable
     protected $table = 'ecommerce_products';
 
     protected $fillable = [
+        'translation_sources',
+        'meta_keywords_translations',
         'name',
         'product_code',
         'sales_product_code',
@@ -113,6 +116,8 @@ class Product extends Model implements FulltextSearchable
     ];
 
     protected $casts = [
+        'translation_sources' => 'array',
+        'meta_keywords_translations' => AsUnicodeJson::class,
         'name' => AsUnicodeJson::class,
         'description' => AsUnicodeJson::class,
         'meta_title' => AsUnicodeJson::class,
@@ -427,17 +432,35 @@ class Product extends Model implements FulltextSearchable
     }
 
     /**
-     * 현재 로케일의 상품명을 반환합니다 (다국어 fallback chain 적용).
+     * 현재 로케일의 SEO 키워드를 반환하며 기존 키워드 목록을 fallback으로 유지합니다.
      *
      * @param  string|null  $locale  반환할 로케일. null 이면 현재 앱 로케일 사용
-     * @return string 로케일별 상품명, 누락 시 fallback 로케일/첫 번째 키 순으로 시도
+     * @return array<int, string>
      */
+    public function getLocalizedMetaKeywords(?string $locale = null): array
+    {
+        $map = $this->meta_keywords_translations ?? [];
+        foreach ([$locale ?? app()->getLocale(), config('app.fallback_locale', 'ko'), 'ko'] as $language) {
+            if (is_string($map[$language] ?? null) && trim($map[$language]) !== '') {
+                return array_values(array_filter(array_map('trim', explode(',', $map[$language])), fn ($keyword) => $keyword !== ''));
+            }
+        }
+
+        return $this->meta_keywords ?? [];
+    }
+
     public function getLocalizedName(?string $locale = null): string
     {
         $locale = $locale ?? app()->getLocale();
         $name = $this->name;
 
-        return $name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? $name[array_key_first($name)] ?? '';
+        foreach ([$locale, config('app.fallback_locale', 'ko'), 'ko', ...array_keys($name ?? [])] as $language) {
+            if (is_string($name[$language] ?? null) && trim($name[$language]) !== '') {
+                return $name[$language];
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -455,7 +478,7 @@ class Product extends Model implements FulltextSearchable
         $locale = $locale ?? app()->getLocale();
         $desc = $this->description;
 
-        return $desc[$locale] ?? $desc[config('app.fallback_locale', 'ko')] ?? $desc[array_key_first($desc)] ?? null;
+        return CatalogLocalizedText::resolve($desc, $locale) ?: null;
     }
 
     /**
@@ -479,12 +502,12 @@ class Product extends Model implements FulltextSearchable
             $values = $group['values'] ?? [];
 
             // name이 다국어 객체인 경우
-            $localizedName = is_array($name) ? ($name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? array_values($name)[0] ?? '') : $name;
+            $localizedName = CatalogLocalizedText::resolve($name, $locale);
 
             // values가 다국어 객체 배열인 경우
             $localizedValues = [];
             foreach ($values as $value) {
-                $localizedValues[] = is_array($value) ? ($value[$locale] ?? $value[config('app.fallback_locale', 'ko')] ?? array_values($value)[0] ?? '') : $value;
+                $localizedValues[] = CatalogLocalizedText::resolve($value, $locale);
             }
 
             $result[] = [
@@ -517,12 +540,12 @@ class Product extends Model implements FulltextSearchable
             $values = $group['values'] ?? [];
 
             // name_localized
-            $nameLocalized = is_array($name) ? ($name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? array_values($name)[0] ?? '') : $name;
+            $nameLocalized = CatalogLocalizedText::resolve($name, $locale);
 
             // values_localized
             $valuesLocalized = [];
             foreach ($values as $value) {
-                $valuesLocalized[] = is_array($value) ? ($value[$locale] ?? $value[config('app.fallback_locale', 'ko')] ?? array_values($value)[0] ?? '') : $value;
+                $valuesLocalized[] = CatalogLocalizedText::resolve($value, $locale);
             }
 
             $result[] = [

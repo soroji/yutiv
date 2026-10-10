@@ -4,6 +4,7 @@ namespace Modules\Sirsoft\Ecommerce\Http\Resources;
 
 use App\Http\Resources\BaseApiResource;
 use Illuminate\Http\Request;
+use Modules\Sirsoft\Ecommerce\Support\CatalogLocalizedText;
 
 /**
  * 공개 카테고리 상세 API 리소스
@@ -25,7 +26,9 @@ class PublicCategoryDetailResource extends BaseApiResource
             'name' => $this->name,
             'name_localized' => $this->getLocalizedName(),
             'description' => $this->description,
-            'description_localized' => $this->getLocalizedField('description'),
+            'description_localized' => CatalogLocalizedText::resolve($this->description),
+            'meta_title' => $this->getLocalizedSeo('meta_title'),
+            'meta_description' => $this->getLocalizedSeo('meta_description'),
             'slug' => $this->slug,
             'depth' => $this->depth,
             'parent_id' => $this->parent_id,

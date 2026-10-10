@@ -5,6 +5,7 @@ use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\AdminUserCurrencyController
 use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\AdminUserShippingCountryController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\BrandController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\CashReceiptController;
+use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\CatalogTranslationController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\CategoryController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\ClaimReasonController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\Admin\CouponController;
@@ -47,6 +48,7 @@ use Modules\Sirsoft\Ecommerce\Http\Controllers\User\UserCouponController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\User\UserCurrencyController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\User\UserMileageController;
 use Modules\Sirsoft\Ecommerce\Http\Controllers\User\UserShippingCountryController;
+use Modules\Sirsoft\Ecommerce\Http\Middleware\LimitCatalogTranslationBody;
 
 /*
 |--------------------------------------------------------------------------
@@ -1487,4 +1489,14 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function ()
             ->name('admin.inquiries.destroy');
     });
 
+});
+
+// Independent draft translation; every endpoint requires authenticated administrator access.
+Route::prefix('admin/catalog-translations')->middleware(['auth:sanctum', 'admin', LimitCatalogTranslationBody::class])->group(function () {
+    $controller = CatalogTranslationController::class;
+    Route::get('configuration', [$controller, 'configuration'])->name('admin.catalog-translations.configuration');
+    Route::post('/', [$controller, 'store'])->middleware('throttle:5,1')->name('admin.catalog-translations.store');
+    Route::get('{id}', [$controller, 'show'])->whereUuid('id')->name('admin.catalog-translations.show');
+    Route::post('{id}/retry', [$controller, 'retry'])->whereUuid('id')->middleware('throttle:5,1')->name('admin.catalog-translations.retry');
+    Route::post('{id}/cancel', [$controller, 'cancel'])->whereUuid('id')->name('admin.catalog-translations.cancel');
 });

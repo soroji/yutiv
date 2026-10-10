@@ -1,0 +1,48 @@
+{
+  "title": "AI multilingual translation",
+  "configured": "Connection is configured. Review translations before applying.",
+  "not_configured": "Provider, model or API key is not configured. Check connection status in settings and ask your server administrator to configure it.",
+  "settings": "Shop settings → Language/Currency → AI connection status",
+  "instructions": "Translate Korean source into selected languages. Fill empty translations by default. Review, apply to this form, then use the existing Save button. Empty sources are skipped.",
+  "seo_sync": "SEO fields with automatic sync are not translated separately; they follow translated names/descriptions when saved. Turn off sync in the existing SEO settings for custom copy.",
+  "overwrite": "Explicitly overwrite existing translations",
+  "terms": "Preserve brands, proper names and specifications (one per line)",
+  "translate": "Translate selected items",
+  "working": "Requesting…",
+  "cancel": "Cancel job",
+  "cancelled": "Cancelled. Original input is preserved.",
+  "resume": "Resume status checking",
+  "retry": "Retry failed items only (up to 3 attempts)",
+  "apply": "Apply reviewed translations to form",
+  "applied": "Applied items",
+  "conflicts": "Protected changed inputs",
+  "review": "Review translation",
+  "stale": "Translation needs updating",
+  "limits": "Select languages and fields. A request supports up to 200 language-specific items; split larger selections.",
+  "request_failed": "Translation request failed.",
+  "fields": {
+    "name": "Name",
+    "description": "Description",
+    "meta_title": "SEO title",
+    "meta_description": "SEO description",
+    "meta_keywords": "SEO keywords (comma separated)",
+    "option_group_name": "Option group name",
+    "option_value": "Option value",
+    "option_name": "Selling unit display name",
+    "additional_option_name": "Additional option name",
+    "additional_option_value": "Additional option value"
+  },
+  "status": {
+    "completed": "Completed",
+    "failed": "Failed",
+    "skipped": "Skipped",
+    "pending": "Pending",
+    "processing": "Translating"
+  },
+  "errors": {
+    "timeout": "Time limit exceeded. Check the status before retrying the required items.",
+    "provider_failed": "Connection or translation failed. Input is preserved.",
+    "invalid_response": "Response format, identifier or preserved-text validation failed.",
+    "not_configured": "AI connection setup is required."
+  }
+}

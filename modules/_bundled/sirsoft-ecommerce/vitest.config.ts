@@ -23,6 +23,8 @@ export default defineConfig({
         setupFiles: ['./resources/js/tests/setup.ts'],
     },
     resolve: {
+        // Cross-template UI tests must share the renderer's React instance.
+        dedupe: ['react', 'react-dom'],
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
             '@core': path.resolve(projectRoot, 'resources/js/core'),

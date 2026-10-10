@@ -424,7 +424,7 @@
           "id": "section_seo",
           "type": "basic",
           "name": "Div",
-          "if": "{{_global.selectedCategory?.meta_title || _global.selectedCategory?.meta_description}}",
+          "if": "{{($localized(_global.selectedCategory?.meta_title_translations) || _global.selectedCategory?.meta_title) || ($localized(_global.selectedCategory?.meta_description_translations) || _global.selectedCategory?.meta_description)}}",
           "props": {
             "className": "py-4"
           },
@@ -446,7 +446,7 @@
                 {
                   "type": "basic",
                   "name": "Div",
-                  "if": "{{_global.selectedCategory?.meta_title}}",
+                  "if": "{{$localized(_global.selectedCategory?.meta_title_translations) || _global.selectedCategory?.meta_title || ''}}",
                   "props": {
                     "className": "flex-start"
                   },
@@ -465,14 +465,14 @@
                       "props": {
                         "className": "text-primary text-sm"
                       },
-                      "text": "{{_global.selectedCategory?.meta_title}}"
+                      "text": "{{$localized(_global.selectedCategory?.meta_title_translations) || _global.selectedCategory?.meta_title || ''}}"
                     }
                   ]
                 },
                 {
                   "type": "basic",
                   "name": "Div",
-                  "if": "{{_global.selectedCategory?.meta_description}}",
+                  "if": "{{$localized(_global.selectedCategory?.meta_description_translations) || _global.selectedCategory?.meta_description || ''}}",
                   "props": {
                     "className": "flex-start"
                   },
@@ -491,7 +491,7 @@
                       "props": {
                         "className": "text-body"
                       },
-                      "text": "{{_global.selectedCategory?.meta_description}}"
+                      "text": "{{$localized(_global.selectedCategory?.meta_description_translations) || _global.selectedCategory?.meta_description || ''}}"
                     }
                   ]
                 }

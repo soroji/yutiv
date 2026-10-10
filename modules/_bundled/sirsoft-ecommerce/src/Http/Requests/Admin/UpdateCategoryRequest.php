@@ -53,6 +53,13 @@ class UpdateCategoryRequest extends FormRequest
         $categoryId = $this->route('category'); // 라우트 파라미터에서 ID 추출
 
         $rules = [
+            'translation_sources' => ['nullable', 'array', 'max:100'],
+            'translation_sources.*' => ['string', 'regex:/^[a-f0-9]{8}$/'],
+            'meta_title_translations' => ['nullable', 'array', new TranslatableField(maxLength: 200)],
+            'meta_title_translations.*' => ['nullable', 'string', 'max:200'],
+            'meta_description_translations' => ['nullable', 'array', new TranslatableField(maxLength: 500)],
+            'meta_description_translations.*' => ['nullable', 'string', 'max:500'],
+
             'name' => ['required', 'array', new LocaleRequiredTranslatable(maxLength: 100)],
             'description' => ['nullable', 'array', new TranslatableField],
             'parent_id' => [

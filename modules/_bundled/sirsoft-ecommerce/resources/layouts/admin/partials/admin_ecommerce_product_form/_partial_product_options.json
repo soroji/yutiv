@@ -223,14 +223,14 @@
                                         "index_var": "optIdx"
                                     },
                                     "props": {
-                                        "className": "flex flex-wrap items-end gap-3 border rounded p-3"
+                                        "className": "grid grid-cols-1 md:grid-cols-2 gap-3 border rounded p-3"
                                     },
                                     "children": [
                                         {
                                             "type": "basic",
                                             "name": "Div",
                                             "props": {
-                                                "className": "w-48 shrink-0"
+                                                "className": "w-full min-w-0"
                                             },
                                             "children": [
                                                 {
@@ -248,10 +248,11 @@
                                                         "name": "option_input_name_{{optIdx}}",
                                                         "value": "{{optInput.name ?? {}}}",
                                                         "placeholder": "$t:sirsoft-ecommerce.admin.product.options.option_name_placeholder",
-                                                        "layout": "compact",
+                                                        "layout": "list",
                                                         "inputType": "text",
                                                         "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
-                                                        "autoBinding": false
+                                                        "autoBinding": false,
+                                                        "className": "w-full min-w-0"
                                                     },
                                                     "actions": [
                                                         {
@@ -272,7 +273,7 @@
                                             "type": "basic",
                                             "name": "Div",
                                             "props": {
-                                                "className": "flex-1"
+                                                "className": "w-full min-w-0"
                                             },
                                             "children": [
                                                 {
@@ -290,10 +291,11 @@
                                                         "name": "option_values_{{optIdx}}",
                                                         "value": "{{optInput.valueText ?? ''}}",
                                                         "placeholder": "$t:sirsoft-ecommerce.admin.product.options.option_values_placeholder",
-                                                        "layout": "compact",
+                                                        "layout": "list",
                                                         "inputType": "text",
                                                         "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
-                                                        "autoBinding": false
+                                                        "autoBinding": false,
+                                                        "className": "w-full min-w-0"
                                                     },
                                                     "actions": [
                                                         {

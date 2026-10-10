@@ -1,0 +1,48 @@
+{
+  "title": "AI 다국어 번역",
+  "configured": "AI 연결 설정이 있습니다. 번역 결과를 검토한 뒤 적용하세요.",
+  "not_configured": "AI 제공자·모델·API 키가 설정되지 않았습니다. 아래 설정 화면에서 상태를 확인하고 서버 관리자에게 연결 설정을 요청하세요.",
+  "settings": "쇼핑몰 설정 → 언어/통화 → AI 번역 연결 상태",
+  "instructions": "한국어 원문을 선택한 언어로 번역합니다. 기본적으로 비어 있는 번역만 채우며, 적용 후 기존 저장 버튼으로 저장하세요. 원문이 빈 항목은 건너뜁니다.",
+  "seo_sync": "SEO 자동 동기화가 켜진 항목은 별도로 번역하지 않습니다. 저장할 때 번역된 상품명·설명을 사용합니다. 별도 SEO 문구를 작성하려면 기존 SEO 설정에서 자동 동기화를 끄세요.",
+  "overwrite": "기존 번역 덮어쓰기 (명시적으로 선택)",
+  "terms": "그대로 보존할 브랜드·고유명·규격 (한 줄에 하나)",
+  "translate": "선택 항목 번역",
+  "working": "요청 중…",
+  "cancel": "작업 취소",
+  "cancelled": "작업을 취소했습니다. 원래 입력은 유지됩니다.",
+  "resume": "진행 상태 다시 확인",
+  "retry": "실패 항목만 재시도 (최대 3회)",
+  "apply": "검토한 번역을 폼에 적용",
+  "applied": "적용 항목",
+  "conflicts": "입력이 바뀌어 보호한 항목",
+  "review": "번역 결과 검토",
+  "stale": "번역 갱신 필요",
+  "limits": "대상 언어·항목을 선택하세요. 언어별 항목은 요청당 최대 200개입니다. 항목을 나누어 번역하세요.",
+  "request_failed": "번역 요청을 처리하지 못했습니다.",
+  "fields": {
+    "name": "이름",
+    "description": "설명",
+    "meta_title": "SEO 제목",
+    "meta_description": "SEO 설명",
+    "meta_keywords": "SEO 키워드 (쉼표로 구분)",
+    "option_group_name": "선택 옵션명",
+    "option_value": "선택 옵션값",
+    "option_name": "옵션 조합 표시명",
+    "additional_option_name": "상품추가옵션명",
+    "additional_option_value": "상품추가옵션 선택값"
+  },
+  "status": {
+    "completed": "완료",
+    "failed": "실패",
+    "skipped": "건너뜀",
+    "pending": "대기",
+    "processing": "번역 중"
+  },
+  "errors": {
+    "timeout": "시간 제한을 초과했습니다. 처리 상태를 확인한 뒤 필요한 항목만 재시도하세요.",
+    "provider_failed": "AI 연결 또는 번역 요청에 실패했습니다. 입력은 유지됩니다.",
+    "invalid_response": "번역 응답의 형식·식별자·보존 문구 검증에 실패했습니다.",
+    "not_configured": "AI 연결 설정이 필요합니다."
+  }
+}

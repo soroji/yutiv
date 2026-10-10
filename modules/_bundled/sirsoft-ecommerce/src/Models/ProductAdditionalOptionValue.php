@@ -4,6 +4,7 @@ namespace Modules\Sirsoft\Ecommerce\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Sirsoft\Ecommerce\Support\CatalogLocalizedText;
 
 /**
  * 상품 추가옵션 선택지 모델
@@ -62,7 +63,7 @@ class ProductAdditionalOptionValue extends Model
             return is_string($name) ? $name : '';
         }
 
-        return $name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? $name[array_key_first($name)] ?? '';
+        return CatalogLocalizedText::resolve($name, $locale);
     }
 
     /**

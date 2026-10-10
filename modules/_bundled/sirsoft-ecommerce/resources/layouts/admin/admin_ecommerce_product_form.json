@@ -452,6 +452,36 @@
                         ]
                     },
                     {
+                        "type": "composite",
+                        "name": "CatalogTranslationPanel",
+                        "props": {
+                            "kind": "product",
+                            "value": "{{_local.form}}",
+                            "optionInputs": "{{_local.ui?.optionInputs ?? []}}",
+                            "entityId": "{{_local.form?.id ?? null}}",
+                            "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}"
+                        },
+                        "actions": [
+                            {
+                                "type": "change",
+                                "handler": "setState",
+                                "params": {
+                                    "target": "local",
+                                    "form": "{{$event.target.value.form}}",
+                                    "ui": "{{({...(_local.ui ?? {}), optionInputs: $event.target.value.optionInputs})}}"
+                                }
+                            },
+                            {
+                                "event": "onSnapshot",
+                                "handler": "setState",
+                                "debounce": 0,
+                                "params": {
+                                    "target": "local"
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "id": "tab_navigation",
                         "type": "composite",
                         "name": "TabNavigationScroll",

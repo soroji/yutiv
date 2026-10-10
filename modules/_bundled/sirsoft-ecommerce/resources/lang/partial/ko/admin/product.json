@@ -833,8 +833,8 @@
     "generate_options": "옵션 생성",
     "bulk_create_title": "옵션 일괄 생성",
     "bulk_create_hint": "옵션명: 색상 / 옵션값: 검정, 흰색. 다른 그룹 예시: 사이즈 / S, M, L. 다른 언어의 값도 같은 순서로 입력합니다. 그룹 삭제는 입력 그룹에 적용되며 생성된 조합은 재생성 확인 전까지 유지됩니다.",
-    "option_name_placeholder": "예) 색상",
-    "option_values_placeholder": "예) 검정, 흰색",
+    "option_name_placeholder": "색상",
+    "option_values_placeholder": "로즈핑크, 코랄, 레드",
     "additional_title": "상품추가옵션",
     "additional_hint": "고객이 추가로 선택하는 유료/무료 옵션입니다. 그룹명과 선택지(추가금)를 등록하세요. 최대 5개 그룹, 그룹당 선택지 20개까지 가능합니다. (예: 각인 추가 +5,000원)",
     "add_additional": "추가옵션 그룹 추가",
@@ -898,8 +898,8 @@
     "mode_enabled": "선택 옵션 사용",
     "mode_hint": "옵션 없음은 상품 가격·재고를 사용합니다. 기존 조합이 있으면 모드 변경으로 삭제하지 않습니다.",
     "mode_change_blocked": "기존 옵션 조합이 있습니다. 모드 변경으로 삭제할 수 없습니다.",
-    "group_name_label": "옵션명",
-    "values_label": "옵션값",
+    "group_name_label": "옵션명: 예) 색상",
+    "values_label": "옵션값: 예) 로즈핑크, 코랄, 레드",
     "remove_group": "이 그룹 삭제"
   },
   "notice": {

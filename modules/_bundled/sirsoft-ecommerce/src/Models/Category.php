@@ -31,6 +31,9 @@ class Category extends Model implements FulltextSearchable
     protected $table = 'ecommerce_categories';
 
     protected $fillable = [
+        'translation_sources',
+        'meta_title_translations',
+        'meta_description_translations',
         'name',
         'description',
         'parent_id',
@@ -44,6 +47,9 @@ class Category extends Model implements FulltextSearchable
     ];
 
     protected $casts = [
+        'translation_sources' => 'array',
+        'meta_title_translations' => AsUnicodeJson::class,
+        'meta_description_translations' => AsUnicodeJson::class,
         'name' => AsUnicodeJson::class,
         'description' => AsUnicodeJson::class,
         'parent_id' => 'integer',
@@ -150,12 +156,30 @@ class Category extends Model implements FulltextSearchable
      * @param  string|null  $locale  로케일 (기본값: 현재 앱 로케일)
      * @return string
      */
+    public function getLocalizedSeo(string $field, ?string $locale = null): string
+    {
+        $map = $this->getAttribute($field.'_translations') ?? [];
+        foreach ([$locale ?? app()->getLocale(), config('app.fallback_locale', 'ko'), 'ko'] as $language) {
+            if (is_string($map[$language] ?? null) && trim($map[$language]) !== '') {
+                return $map[$language];
+            }
+        }
+
+        return (string) ($this->getAttribute($field) ?? '');
+    }
+
     public function getLocalizedName(?string $locale = null): string
     {
         $locale = $locale ?? app()->getLocale();
         $name = $this->name;
 
-        return $name[$locale] ?? $name[config('app.fallback_locale', 'ko')] ?? $name[array_key_first($name)] ?? '';
+        foreach ([$locale, config('app.fallback_locale', 'ko'), 'ko', ...array_keys($name ?? [])] as $language) {
+            if (is_string($name[$language] ?? null) && trim($name[$language]) !== '') {
+                return $name[$language];
+            }
+        }
+
+        return '';
     }
 
     /**

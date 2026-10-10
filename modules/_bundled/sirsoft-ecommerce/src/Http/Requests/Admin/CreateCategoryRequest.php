@@ -51,6 +51,13 @@ class CreateCategoryRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'translation_sources' => ['nullable', 'array', 'max:100'],
+            'translation_sources.*' => ['string', 'regex:/^[a-f0-9]{8}$/'],
+            'meta_title_translations' => ['nullable', 'array', new TranslatableField(maxLength: 200)],
+            'meta_title_translations.*' => ['nullable', 'string', 'max:200'],
+            'meta_description_translations' => ['nullable', 'array', new TranslatableField(maxLength: 500)],
+            'meta_description_translations.*' => ['nullable', 'string', 'max:500'],
+
             'name' => ['required', 'array', new LocaleRequiredTranslatable(maxLength: 100)],
             'description' => ['nullable', 'array', new TranslatableField],
             // 생성 시에는 자기 자신이 아직 없어 순환이 불가하나, 수정 요청과 규칙 구성을

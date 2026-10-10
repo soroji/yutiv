@@ -52,6 +52,11 @@ class StoreProductRequest extends FormRequest
         $priceRule = $this->basePriceRule();
 
         $rules = [
+            'translation_sources' => ['nullable', 'array', 'max:100'],
+            'translation_sources.*' => ['string', 'regex:/^[a-f0-9]{8}$/'],
+            'meta_keywords_translations' => ['nullable', 'array', new TranslatableField(maxLength: 500)],
+            'meta_keywords_translations.*' => ['nullable', 'string', 'max:500'],
+
             // 기본 정보
             'name' => ['required', 'array', new LocaleRequiredTranslatable(maxLength: 200)],
             'product_code' => ['required', 'string', 'max:50', Rule::unique(Product::class, 'product_code')],
