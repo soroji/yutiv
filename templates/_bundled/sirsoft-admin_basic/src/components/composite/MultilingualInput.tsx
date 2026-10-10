@@ -631,12 +631,13 @@ export const MultilingualInput: React.FC<MultilingualInputProps> = ({
   const renderListLayout = () => (
     <Div className={`w-full min-w-0 ${className}`}>
       <Div className="flex items-center gap-2 min-w-0 mb-1">
-        <Div className="w-20 shrink-0">
+        <Div className="shrink-0" style={{ width: '64px' }}>
           <Select
             value={currentLocale}
-            options={activeLocales.map(code => ({ value: code, label: `${code.toUpperCase()}${code === actualDefaultLocale ? ' *' : ''}` }))}
+            options={activeLocales.map(code => ({ value: code, label: `${code.toUpperCase()}${code === actualDefaultLocale ? '*' : ''}` }))}
+            compactTrigger
             onChange={event => setCurrentLocale(String(event.target.value))}
-            className="w-full px-2 py-1 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded"
+            className="w-full px-0.5 py-1 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded"
           />
         </Div>
         <Span className="min-w-0 flex-1 truncate text-xs text-gray-500 dark:text-gray-400" title={identifierText}>{identifierText}</Span>

@@ -1,4 +1,31 @@
+> 최신 숫자 표시 규칙과 최소 폭 제약은 [숫자 표시 보완](admin-product-list-numbers.md)을 참조하세요. 아래 이전 작업 기록의 숫자 줄바꿈 방식은 한 줄 표시로 대체됐습니다.
+
 # 관리자 상품 목록 UI 수정
+
+## 표 전체 폭 조정 (2026-10-10)
+
+작업 시작 작업 트리는 깨끗했고 HEAD는 `f720d841bce73b959bb7a8cf2067215f852c60a9`다. 이전 단계의 단순 입력 축소와 달리 이번에는 열별 width/min-width, 셀 padding, 고정 상품명 내부 276px, 숫자 길이에 따른 입력 확장을 함께 제거한다. 브랜드·최소/최대 구매수량·수정일을 포함한 14개 데이터 열을 유지한다.
+
+- 상품 목록에서만 `DataGrid.fitColumns=true`, `flexibleColumn=name`을 적용한다. body wrapper의 clientWidth와 ResizeObserver로 실제 가용 폭을 관찰하고 사이드바·컨테이너 변화에 맞춰 배분한다. 고정 table layout을 사용하며 열을 숨기거나 잘라내지 않는다. 기본 옵션 false인 다른 목록의 기존 width/min-width/padding은 유지한다.
+- 1280px 이상 viewport에서는 컨테이너 폭에 맞춘다. 행 펼침 26px, 체크박스 32px, 관리 92px을 배분하고 상품명 100px, 상태 각 84px, 날짜 각 72px, 이미지 56px 등 읽기 폭을 먼저 배분한다. 여유 폭의 75%를 다른 열의 시작 폭까지 확장하는 데 사용하고 나머지 및 남는 폭은 상품명에 제공한다. 브랜드·수량·수정일도 함께 표시하므로 1366px에서 일부 열은 요청의 시작 기준보다 좁아질 수 있다. 최소 폭의 합보다 가용 폭이 작으면 열 폭을 비례 조정하며 글자 크기·배율은 유지한다. 긴 내용은 전체값 확인 수단과 줄바꿈으로 읽는다.
+- 셀 좌우 padding은 4px이다. 행 펼침 버튼은 24×32px, 체크박스 label 클릭 영역은 24×32px이다. 썸네일은 셀 안에서 최대 52px, 좁을 때 약 48px로 표시한다.
+- 상품명 첫 줄의 언어 선택기(64px)·코드와 둘째 줄 전체 폭 입력을 유지한다. 좁은 언어 선택기만 선택적 compactTrigger를 적용하고 필수 언어 별표와 전체 지원 언어를 유지한다. 펼친 Select 메뉴는 기존 내용 기반 폭·body portal·위치 보정·키보드 기능을 유지한다.
+- 긴 카테고리·배송 정책·브랜드는 말줄임과 title로 전체값을 제공한다. 등록일과 수정일은 API의 기존 `Y-m-d H:i:s` 값을 날짜/시간 두 줄로 표시하며 원본값 title을 유지한다. API 날짜 변환·시간대 정책은 변경하지 않는다. 재고 불일치 경고는 숫자 아래에 배치하고 동일한 경고 문구를 native tooltip으로 유지해 절대 배치 tooltip이 표 폭을 늘리지 않게 한다.
+- 금액·재고는 `CompactNumberInput`이 오른쪽 정렬과 숫자 전체를 줄바꿈 표시한다. 버튼을 선택하면 body portal의 240px 편집란에서 전체 자릿수를 확인·편집한다. 기존 type=number, min/max/step, disabled 조건, change handler와 debounce를 재사용한다. Escape/Enter로 닫고 포커스를 복원한다. 기존 자동 저장이므로 Escape가 이미 전달된 변경을 취소하지 않는다. 숫자는 말줄임·가림·새 형식 변환을 하지 않는다.
+- 1280px 미만의 테이블 모드에서는 960px 최소 읽기 폭으로 내부 스크롤을 허용한다. 기존 모바일 카드 전환과 수정·아이콘 더보기 접근성을 유지한다. zoom/transform/표 전체 overflow:hidden은 사용하지 않는다.
+
+브라우저 연결이 없어 실제 1920/1440/1366px 및 사이드바 펼침/접힘 화면, scrollWidth/clientWidth와 모든 열 가시성의 실측, 전후 캡처는 미검증이다. 모킹 테스트는 열 폭 합계·ResizeObserver 재배분·모든 셀 유지·태블릿 전환·최대 금액/재고 전체 표시와 편집 이벤트·권한 차단을 확인하며 실제 화면 검증으로 보고하지 않는다. 서버 값 변경·주문 생성·결제는 수행하지 않았다.
+
+새 파일: `src/components/composite/{CompactNumberInput,fitColumns}.tsx/ts` 및 관련 테스트. 수정: DataGrid, 목록용 MultilingualInput, Select의 선택적 trigger 옵션, composite export, components manifest, 상품 목록 partial, 회귀 테스트·CHANGELOG·이 문서. 표준 빌드의 JS와 선언 파일을 함께 배포한다. 아래 서버 반영 절차대로 관리자 템플릿과 이커머스 모듈을 모두 갱신해야 한다. composer/lock/migration/워커 변경은 필요하지 않다.
+
+실행 결과: 8개 파일 회귀 검사 213 통과/3 기존 skip. 마지막 폭 배분·compact trigger 변경 후 관련 6개 파일 159개 재검증 통과(Select 68, DataGrid 66, MultilingualInput 14, ProductListDensity 4, CompactNumberInput 3, fitColumns 4). 최종 정식 빌드, 테스트 파일을 제외한 프로덕션 소스 TypeScript 검사, JSON 검사와 `git diff --check` 통과. vendor 무결성 검사 OK(0.4 MB, 1 package). 기존 tabs 컴포넌트 테스트의 중첩 button 경고는 별개로 남아 있으며 이번 list 경로는 해당 마크업을 사용하지 않는다. CSS도 재생성했고 기존 파일과 동일하다. 전체 테스트 파일의 기존 타입 오류와 실제 브라우저 화면은 이 검사로 통과했다고 간주하지 않는다.
+
+관련 재검증 명령은 관리자 템플릿 디렉터리에서 실행한다.
+
+```sh
+npm run test:run -- src/components/basic/__tests__/Select.test.tsx src/components/composite/__tests__/DataGrid.test.tsx src/components/composite/__tests__/MultilingualInput.test.tsx src/components/composite/__tests__/ProductListDensity.test.ts src/components/composite/__tests__/CompactNumberInput.test.tsx src/components/composite/__tests__/fitColumns.test.ts --maxWorkers=1 --pool=forks
+npm run build
+```
 
 ## 추가 간격 조정 (2026-10-10)
 

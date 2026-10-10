@@ -152,6 +152,8 @@ export interface DataGridProps {
     moreActionsLabel?: string;
     actionsWidth?: string;
     actionsIconOnly?: boolean;
+    fitColumns?: boolean;
+    flexibleColumn?: string;
     requiredText?: string;
     selectedCountText?: string;
     loadErrorMessage?: string;

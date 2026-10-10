@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DataGrid, DataGridColumn } from '../DataGrid';
+import { CompactNumberInput } from '../CompactNumberInput';
+import { Span } from '../../basic/Span';
 
 /**
  * 런타임의 `G7Core.useControllableState` 와 같은 계약을 갖는 테스트용 구현.
@@ -1634,6 +1636,66 @@ describe('DataGrid', () => {
       expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument();
       expect(screen.getByRole('menu')).toHaveClass('fixed');
       expect(screen.getByRole('menu').closest('table')).toBeNull();
+    });
+
+    it('reserves numeric space and recalculates it when a draft grows (mocked geometry)', () => {
+      const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(180);
+      (window as any).G7Core.useResponsive = () => ({ width: 1366 });
+      try {
+        const { container } = render(<DataGrid fitColumns columns={[
+          { field: 'name', header: 'Name', width: '240px' },
+          { field: 'list_price_formatted', header: 'Price', width: '96px', render: () => <CompactNumberInput value="10000" label="Price" /> },
+        ]} data={[{ id: 1, name: 'Product' }]} />);
+        expect(container.querySelector('table')).toHaveStyle({ minWidth: '180px' });
+        fireEvent.click(screen.getByRole('button', { name: 'Price: 10000' }));
+        // Change through the actual component event rather than substituting column widths.
+        fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '9999999999999.99' } });
+        expect((container.querySelector('table') as HTMLElement).style.minWidth).toBe('248px');
+        expect(container.querySelector('td[data-column-field="list_price_formatted"]')).toHaveStyle({ width: '148px' });
+      } finally { width.mockRestore(); }
+    });
+
+    it('reserves a single line for formatted read-only currency values (mocked geometry)', () => {
+      const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(180);
+      (window as any).G7Core.useResponsive = () => ({ width: 1366 });
+      try {
+        const value = 'USD 9,999,999,999,999.99';
+        const { container } = render(<DataGrid fitColumns columns={[
+          { field: 'name', header: 'Name' },
+          { field: 'selling_price_formatted', header: 'Price', render: () => <Span data-numeric-text="" style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>{value}</Span> },
+        ]} data={[{ id: 1, name: 'Product' }]} />);
+        expect((container.querySelector('table') as HTMLElement).style.minWidth).toBe(`${100 + Math.ceil(value.length * 8.5 + 8)}px`);
+        expect(screen.getByText(value)).toHaveStyle({ whiteSpace: 'nowrap' });
+      } finally { width.mockRestore(); }
+    });
+
+    it('reallocates fit columns on container resize without hiding cells (mocked geometry)', () => {
+      let available = 998;
+      let viewport = 1366;
+      let resized = () => {};
+      const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => available);
+      vi.stubGlobal('ResizeObserver', class { constructor(callback: () => void) { resized = callback; } observe() {} disconnect() {} });
+      (window as any).G7Core.useResponsive = () => ({ width: viewport });
+      try {
+        const columns = [{ field: 'name', header: 'Name', width: '240px' }, { field: 'amount', header: 'Amount', width: '96px' }, { field: 'created_at', header: 'Date', width: '100px' }];
+        const { container } = render(<DataGrid fitColumns id="fit-table" columns={columns} data={[{ id: 7, name: 'Very long product name', amount: '9999999999999.99', created_at: '2026-10-10 12:34:56' }]} expandable selectable stickyActions rowActions={[{ id: 'edit', label: 'Edit' }]} />);
+        for (const size of [1920,1440,1366]) {
+          viewport = size;
+          for (const sidebar of [288,64]) {
+            available = size - sidebar - 80;
+            act(() => resized());
+            const headers = Array.from(container.querySelectorAll('thead th'));
+            expect(headers).toHaveLength(6);
+            expect(headers.reduce((sum, header) => sum + parseFloat((header as HTMLElement).style.width), 0)).toBeCloseTo(available, 5);
+            expect(container.querySelector('table')).toHaveStyle({ tableLayout: 'fixed', minWidth: `${available}px` });
+            expect(container.querySelectorAll('tbody td')).toHaveLength(6);
+            expect(screen.getByText('9999999999999.99')).toBeVisible();
+          }
+        }
+        viewport = 1024; available = 768;
+        act(() => resized());
+        expect(container.querySelector('table')).toHaveStyle({ minWidth: '960px' });
+      } finally { width.mockRestore(); vi.unstubAllGlobals(); }
     });
 
     it('keeps direct edit disabled for a row without update ability', () => {

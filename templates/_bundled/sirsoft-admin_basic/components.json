@@ -129,6 +129,11 @@
             "type": "ReactNode",
             "required": false,
             "description": "옵션 요소들"
+          },
+          "compactTrigger": {
+            "type": "boolean",
+            "required": false,
+            "default": false
           }
         }
       },
@@ -1250,6 +1255,16 @@
             "type": "boolean",
             "required": false,
             "default": false
+          },
+          "fitColumns": {
+            "type": "boolean",
+            "required": false,
+            "default": false
+          },
+          "flexibleColumn": {
+            "type": "string",
+            "required": false,
+            "default": "name"
           }
         }
       },
@@ -4461,6 +4476,58 @@
             "type": "function",
             "required": false,
             "description": "로케일 변경 시 콜백 (locale: string) => void"
+          }
+        }
+      },
+      {
+        "name": "CompactNumberInput",
+        "type": "composite",
+        "path": "src/components/composite/CompactNumberInput.tsx",
+        "description": "Wrapping numeric value with a portal editor for dense tables",
+        "props": {
+          "label": {
+            "type": "string",
+            "required": false,
+            "description": "레이블 텍스트"
+          },
+          "error": {
+            "type": "string",
+            "required": false,
+            "description": "에러 메시지"
+          },
+          "className": {
+            "type": "string",
+            "required": false,
+            "default": "",
+            "description": "사용자 정의 클래스"
+          },
+          "value": {
+            "type": "string|number",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "min": {
+            "type": "string|number",
+            "required": false
+          },
+          "max": {
+            "type": "string|number",
+            "required": false
+          },
+          "step": {
+            "type": "string|number",
+            "required": false
+          },
+          "type": {
+            "type": "string",
+            "default": "number"
+          },
+          "onChange": {
+            "type": "function",
+            "required": false
           }
         }
       }

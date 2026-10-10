@@ -136,6 +136,7 @@ export { TagInput } from './TagInput';
 export type { TagInputProps, TagOption } from './TagInput';
 
 export { MultilingualInput } from './MultilingualInput';
+export { CompactNumberInput } from './CompactNumberInput';
 export type { MultilingualInputProps, MultilingualValue, LocaleOption, MultilingualInputType } from './MultilingualInput';
 
 export { MultilingualTagInput } from './MultilingualTagInput';

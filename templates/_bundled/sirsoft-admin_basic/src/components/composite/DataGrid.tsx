@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import type { EditorAttrs } from '../../types';
 import { Table } from '../basic/Table';
 import { Thead } from '../basic/Thead';
@@ -27,6 +27,8 @@ import { Img } from '../basic/Img';
 import { Select } from '../basic/Select';
 import { Textarea } from '../basic/Textarea';
 import { MultilingualInput } from './MultilingualInput';
+import { CompactNumberInput } from './CompactNumberInput';
+import { fitColumnWidths } from './fitColumns';
 import { Toggle } from './Toggle';
 import { StatusBadge } from './StatusBadge';
 import { Badge } from './Badge';
@@ -55,6 +57,7 @@ const t = (key: string, params?: Record<string, string | number>) =>
  * 같은 `Pre` 가 모달(DynamicRenderer 경로)에서는 정상 렌더돼 경로 비대칭이었다.
  */
 const FALLBACK_COMPONENT_MAP: Record<string, React.ComponentType<any>> = {
+  CompactNumberInput,
   // basic 컴포넌트
   Div,
   Span,
@@ -276,6 +279,8 @@ export interface DataGridProps {
   moreActionsLabel?: string;
   actionsWidth?: string;
   actionsIconOnly?: boolean;
+  fitColumns?: boolean;
+  flexibleColumn?: string;
   requiredText?: string;
   selectedCountText?: string;
   loadErrorMessage?: string;
@@ -696,6 +701,8 @@ export const DataGrid: React.FC<DataGridProps> = ({
   moreActionsLabel,
   actionsWidth = '148px',
   actionsIconOnly = false,
+  fitColumns = false,
+  flexibleColumn = 'name',
   requiredText,
   selectedCountText,
   // 페이지네이션 옵션
@@ -805,6 +812,39 @@ export const DataGrid: React.FC<DataGridProps> = ({
     : [externalExpandedRowIds ?? [], () => {}];
   const [isColumnSelectorOpen, setIsColumnSelectorOpen] = useState(false);
   const columnSelectorRef = useRef<HTMLDivElement>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(960);
+  const [numericMinimums, setNumericMinimums] = useState<Record<string, number>>({});
+
+  useLayoutEffect(() => {
+    const node = tableContainerRef.current;
+    if (!fitColumns || !node) return;
+    const measure = () => {
+      const next: Record<string, number> = {};
+      node.querySelectorAll<HTMLElement>('[data-numeric-minimum]').forEach(button => {
+        const cell = button.closest<HTMLElement>('[data-column-field]');
+        const field = cell?.dataset.columnField;
+        if (!cell || !field) return;
+        const css = getComputedStyle(cell);
+        const padding = Math.max(8, (parseFloat(css.paddingLeft) || 0) + (parseFloat(css.paddingRight) || 0));
+        next[field] = Math.max(next[field] ?? 0, Math.ceil(Number(button.dataset.numericMinimum) + padding));
+      });
+      node.querySelectorAll<HTMLElement>('[data-numeric-text]').forEach(text => {
+        const cell = text.closest<HTMLElement>('[data-column-field]');
+        const field = cell?.dataset.columnField;
+        if (!cell || !field) return;
+        const css = getComputedStyle(cell);
+        const padding = Math.max(8, (parseFloat(css.paddingLeft) || 0) + (parseFloat(css.paddingRight) || 0));
+        next[field] = Math.max(next[field] ?? 0, Math.ceil(Math.max(text.getBoundingClientRect().width, (text.textContent ?? '').length * 8.5) + padding));
+      });
+      setNumericMinimums(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
+    };
+    measure();
+    node.addEventListener('g7:numeric-width', measure);
+    const observer = new MutationObserver(measure);
+    observer.observe(node, { childList: true, subtree: true, characterData: true });
+    return () => { node.removeEventListener('g7:numeric-width', measure); observer.disconnect(); };
+  });
 
   // G7Core.useResponsive를 통해 반응형 상태 구독
   // G7Core는 위에서 이미 선언됨 (Phase 2-2)
@@ -813,6 +853,16 @@ export const DataGrid: React.FC<DataGridProps> = ({
   const isMobileView = responsiveValue
     ? responsiveValue.width < responsiveBreakpoint
     : typeof window !== 'undefined' && window.innerWidth < responsiveBreakpoint;
+  useEffect(() => {
+    if (!fitColumns || !tableContainerRef.current) return;
+    const node = tableContainerRef.current;
+    const measure = () => setContainerWidth(node.clientWidth || 960);
+    measure();
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : undefined;
+    observer?.observe(node);
+    window.addEventListener('resize', measure);
+    return () => { observer?.disconnect(); window.removeEventListener('resize', measure); };
+  }, [fitColumns, isMobileView]);
 
   // 동적 컬럼 병합
   // dynamicColumns가 있으면 columns에 병합하고, dynamicColumnsInsertAfter 위치에 삽입
@@ -1293,6 +1343,10 @@ export const DataGrid: React.FC<DataGridProps> = ({
   };
 
   // 모바일 카드 뷰
+  const desktopFit = fitColumns && (responsiveValue?.width ?? window.innerWidth) >= 1280;
+  const fitted = fitColumnWidths(displayColumns, containerWidth, (expandable ? 26 : 0) + (selectable ? 32 : 0) + (rowActions?.length ? 92 : 0), flexibleColumn, desktopFit ? 0 : 960, numericMinimums);
+  const columnStyle = (column: DataGridColumn) => fitColumns ? { width: fitted.widths[displayColumns.indexOf(column)], whiteSpace: 'normal' as const, overflowWrap: 'anywhere' as const } : { width: column.width, minWidth: column.width };
+  const selectionControl = (control: React.ReactNode) => fitColumns ? <Label className="flex items-center justify-center cursor-pointer" style={{ width: 24, height: 32 }}>{control}</Label> : control;
   if (isMobileView) {
     return (
       <Div id={id} className={`w-full min-w-0 max-w-full ${className}`} style={style} {...editorAttrs}>
@@ -1472,21 +1526,21 @@ export const DataGrid: React.FC<DataGridProps> = ({
       )}
 
       {/* 테이블 — body wrapper 에 `${id}__body` 부여 (pagination 제외 영역) */}
-      <Div id={id ? `${id}__body` : undefined} className="min-w-0 max-w-full overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
-        <Table className="w-full">
+      <Div ref={tableContainerRef} id={id ? `${id}__body` : undefined} className="min-w-0 max-w-full overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+        <Table className="w-full" style={fitColumns ? { tableLayout: 'fixed', width: '100%', minWidth: fitted.tableWidth } : undefined}>
           <Thead className="bg-gray-50 dark:bg-gray-700">
             <Tr>
               {/* 확장 버튼 컬럼 */}
               {expandable && (
-                <Th className="px-2 py-3" style={{ width: expandColumnWidth }}>
+                <Th className={fitColumns ? 'px-1 py-3' : 'px-2 py-3'} style={{ width: fitColumns ? 26 : expandColumnWidth }}>
                   {/* 빈 헤더 - 확장 버튼용 */}
                 </Th>
               )}
 
               {/* 체크박스 컬럼 */}
               {selectable && (
-                <Th className="px-4 py-3 w-10">
-                  <Checkbox
+                <Th className={fitColumns ? 'px-1 py-3' : 'px-4 py-3 w-10'} style={fitColumns ? { width: 32 } : undefined}>
+                  {selectionControl(<Checkbox
                     checked={isAllSelected}
                     ref={(el: HTMLInputElement | null) => {
                       if (el) {
@@ -1495,7 +1549,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
                     }}
                     onChange={handleSelectAll}
                     className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded"
-                  />
+                  />)}
                 </Th>
               )}
 
@@ -1503,15 +1557,15 @@ export const DataGrid: React.FC<DataGridProps> = ({
               {displayColumns.map((column) => (
                 <Th
                   key={column.field}
-                  className={`${column.compactPadding ? 'px-2' : 'px-6'} py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+                  className={`${fitColumns ? 'px-1' : column.compactPadding ? 'px-2' : 'px-6'} py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
                     headerSortEnabled && column.sortable !== false
                       ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600'
                       : ''
                   }`}
-                  style={{ width: column.width, minWidth: column.width }}
+                  style={columnStyle(column)}
                   onClick={headerSortEnabled ? () => handleSort(column.field) : undefined}
                 >
-                  {column.header}
+                  {fitColumns ? <Span title={column.header} style={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>{column.header}</Span> : column.header}
                   {sortField === column.field && (
                     <Span className="ml-1">
                       {sortDirection === 'asc' ? '↑' : '↓'}
@@ -1522,7 +1576,7 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
               {/* 액션 컬럼 */}
               {rowActions && rowActions.length > 0 && (
-                <Th className={`py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${stickyActions ? `${actionsIconOnly ? 'px-2' : 'px-3'} whitespace-nowrap bg-gray-50 dark:bg-gray-700` : 'px-6 w-24'}`} style={stickyActions ? { position: 'sticky', right: 0, zIndex: 20, width: actionsWidth, minWidth: actionsWidth, boxShadow: '-1px 0 0 #9ca3af' } : undefined}>
+                <Th className={`py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${stickyActions ? `${fitColumns ? 'px-1' : actionsIconOnly ? 'px-2' : 'px-3'} whitespace-nowrap bg-gray-50 dark:bg-gray-700` : 'px-6 w-24'}`} style={stickyActions ? { position: 'sticky', right: 0, zIndex: 20, width: fitColumns ? '92px' : actionsWidth, minWidth: fitColumns ? undefined : actionsWidth, boxShadow: '-1px 0 0 #9ca3af' } : undefined}>
                   {resolvedActionsColumnHeader}
                 </Th>
               )}
@@ -1548,13 +1602,14 @@ export const DataGrid: React.FC<DataGridProps> = ({
                       {/* 확장 버튼 */}
                       {expandable && (
                         <Td
-                          className="px-2 py-4 text-center"
+                          className={fitColumns ? "px-1 py-4 text-center" : "px-2 py-4 text-center"}
                           onClick={(e: React.MouseEvent) => e.stopPropagation()}
                         >
                           {isRowExpandable(row) ? (
                             <Button
                               onClick={() => handleExpandToggle(rowId)}
-                              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                              type="button"
+                              className={`${fitColumns ? 'w-6 h-8 p-1' : 'p-1.5'} rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors`}
                               aria-label={expanded ? 'Collapse row' : 'Expand row'}
                             >
                               <Icon
@@ -1568,12 +1623,12 @@ export const DataGrid: React.FC<DataGridProps> = ({
 
                       {/* 체크박스 */}
                       {selectable && (
-                        <Td className="px-4 py-4" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-                          <Checkbox
+                        <Td className={fitColumns ? "px-1 py-4" : "px-4 py-4"} onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                          {selectionControl(<Checkbox
                             checked={selectedIds.includes(row[idField])}
                             onChange={() => handleSelectRow(row[idField])}
                             className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded"
-                          />
+                          />)}
                         </Td>
                       )}
 
@@ -1581,8 +1636,9 @@ export const DataGrid: React.FC<DataGridProps> = ({
                       {displayColumns.map((column) => (
                         <Td
                           key={column.field}
-                          className={`${column.compactPadding ? 'px-2' : 'px-6'} py-4 align-top whitespace-nowrap text-sm text-gray-900 dark:text-gray-200`}
-                          style={{ width: column.width, minWidth: column.width }}
+                          data-column-field={fitColumns ? column.field : undefined}
+                          className={`${fitColumns ? 'px-1' : column.compactPadding ? 'px-2' : 'px-6'} py-4 align-top whitespace-nowrap text-sm text-gray-900 dark:text-gray-200`}
+                          style={columnStyle(column)}
                         >
                           {column.cellChildren && column.cellChildren.length > 0
                             ? renderCellChildren(column.cellChildren, row, row[column.field], `${row[idField]}-${column.field}`, __componentContext)
@@ -1595,8 +1651,8 @@ export const DataGrid: React.FC<DataGridProps> = ({
                       {/* 액션 메뉴 */}
                       {rowActions && rowActions.length > 0 && (
                         <Td
-                          className={`text-right ${stickyActions ? `${actionsIconOnly ? 'px-2' : 'px-3'} py-3 bg-white dark:bg-gray-800` : 'px-6 py-4'}`}
-                          style={stickyActions ? { position: 'sticky', right: 0, zIndex: 10, width: actionsWidth, minWidth: actionsWidth, boxShadow: '-1px 0 0 #9ca3af' } : undefined}
+                          className={`text-right ${stickyActions ? `${fitColumns ? 'px-1' : actionsIconOnly ? 'px-2' : 'px-3'} py-3 bg-white dark:bg-gray-800` : 'px-6 py-4'}`}
+                          style={stickyActions ? { position: 'sticky', right: 0, zIndex: 10, width: fitColumns ? '92px' : actionsWidth, minWidth: fitColumns ? undefined : actionsWidth, boxShadow: '-1px 0 0 #9ca3af' } : undefined}
                           onClick={(e: React.MouseEvent) => e.stopPropagation()}
                         >
                           {renderRowActions(row)}
@@ -1686,14 +1742,14 @@ export const DataGrid: React.FC<DataGridProps> = ({
                   return displayColumns.map((column) => {
                     const cell = footerFieldMap.get(column.field);
                     if (!cell) {
-                      return <Td key={`footer-${column.field}`} className="px-6 py-4" style={{ width: column.width, minWidth: column.width }} />;
+                      return <Td key={`footer-${column.field}`} className="px-6 py-4" style={columnStyle(column)} />;
                     }
                     return (
                       <Td
                         key={`footer-${column.field}`}
                         className={`px-6 py-4 text-sm text-gray-900 dark:text-gray-200 ${cell.className || ''}`}
                         colSpan={cell.colSpan}
-                        style={{ width: column.width, minWidth: column.width }}
+                        style={columnStyle(column)}
                       >
                         {cell.children && cell.children.length > 0
                           ? renderCellChildren(cell.children, {}, null, `footer-${column.field}`, __componentContext)

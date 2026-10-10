@@ -42,13 +42,13 @@ describe('MultilingualInput 컴포넌트', () => {
     fireEvent.change(screen.getByDisplayValue('상품'), { target: { value: '한글 수정 상품' } });
     fireEvent.click(screen.getByRole('button', { name: /KO/ }));
     expect(screen.getAllByRole('option')).toHaveLength(4);
-    expect(screen.getByRole('option', { name: 'KO *' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'KO*' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('option', { name: 'ZH-CN' }));
     expect(screen.getByDisplayValue('商品名称')).not.toBeRequired();
     fireEvent.change(screen.getByDisplayValue('商品名称'), { target: { value: '新商品名称' } });
     expect(onChange.mock.calls[onChange.mock.calls.length - 1][0].target.value).toEqual({ ko: '한글 수정 상품', en: 'Product', ja: '商品', 'zh-CN': '新商品名称' });
     fireEvent.click(screen.getByRole('button', { name: 'ZH-CN' }));
-    fireEvent.click(screen.getByRole('option', { name: 'KO *' }));
+    fireEvent.click(screen.getByRole('option', { name: 'KO*' }));
     expect(screen.getByDisplayValue('한글 수정 상품')).toBeInTheDocument();
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });

@@ -5,6 +5,15 @@ import React from 'react';
 import { Select } from '../Select';
 
 describe('Select menu sizing and focus', () => {
+  it('uses a compact trigger without constraining the full option menu', () => {
+    render(<Select compactTrigger value="zh-CN" options={[{ value: 'zh-CN', label: 'ZH-CN*' }, { value: 'ko', label: '한국어' }]} />);
+    const trigger = screen.getByRole('button', { name: 'ZH-CN*' });
+    expect(trigger).toHaveClass('gap-0.5');
+    expect(trigger.querySelector('svg')).toHaveClass('w-3');
+    fireEvent.click(trigger);
+    expect(screen.getByRole('listbox')).toHaveStyle({ width: 'max-content' });
+    expect(screen.getByRole('option', { name: '한국어' })).toBeInTheDocument();
+  });
   it.each([1920, 1440, 1280, 768, 390])('separates trigger/menu width and clamps at %ipx (mock geometry)', (viewport) => {
     const originalWidth = window.innerWidth;
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: viewport });

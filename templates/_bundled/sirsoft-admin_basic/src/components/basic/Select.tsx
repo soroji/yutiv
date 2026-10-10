@@ -29,6 +29,7 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
   searchable?: boolean;
   /** 검색 input placeholder */
   searchPlaceholder?: string;
+  compactTrigger?: boolean;
   /**
    * 레이아웃 편집기 주입 속성 (편집 모드 전용). Select 는 커스텀 드롭다운 루트에
    * 개별 data-editor-* 키를 spread 해야 선택/편집이 닿는다(커스텀 루트
@@ -73,6 +74,7 @@ export const Select: React.FC<SelectProps> = ({
   onChange,
   disabled,
   searchable = false,
+  compactTrigger = false,
   searchPlaceholder,
   editorAttrs,
   ...props
@@ -301,13 +303,13 @@ export const Select: React.FC<SelectProps> = ({
         type="button"
         onClick={handleToggle}
         disabled={disabled}
-        className={`${baseButtonClass} flex items-center justify-between gap-2 text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+        className={`${baseButtonClass} flex items-center justify-between ${compactTrigger ? 'gap-0.5' : 'gap-2'} text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
         <Span className="min-w-0 truncate">{selectedLabel || '\u00A0'}</Span>
         <Svg
-          className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`${compactTrigger ? 'w-3 h-3' : 'w-4 h-4'} flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
