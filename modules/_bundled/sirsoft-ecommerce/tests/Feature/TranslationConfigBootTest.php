@@ -75,6 +75,7 @@ class TranslationConfigBootTest extends TestCase
 
     private function assertBoot(array $result, bool $configured, bool $cached): void
     {
+        $this->assertTrue($result['limiter_registered']);
         $this->assertTrue($result['before']);
         $this->assertTrue($result['after']);
         $this->assertTrue($result['module_loaded']);

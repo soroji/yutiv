@@ -11,10 +11,17 @@ import { applyTranslationResults, collectTranslationBindings, staleTranslationFi
 const base = '/api/modules/sirsoft-ecommerce/admin/catalog-translations';
 const core = () => (window as any).G7Core;
 const t = (key: string) => core()?.t?.(`sirsoft-ecommerce.admin.translation.${key}`) ?? key;
+class TranslationRateLimitError extends Error {
+  constructor(public readonly retryAfter: number) { super('catalog_translation_rate_limited'); }
+}
 async function request(path: string, method = 'GET', body?: unknown, signal?: AbortSignal) {
   const token = core()?.api?.getToken?.();
   const response = await fetch(base + path, { method, credentials: 'same-origin', signal, headers: { Accept: 'application/json', 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
   const json = await response.json();
+  if (response.status === 429 && json.errors?.code === 'catalog_translation_rate_limited') {
+    const seconds = Number(response.headers?.get('Retry-After') ?? json.errors.retry_after);
+    throw new TranslationRateLimitError(Number.isFinite(seconds) && seconds > 0 ? Math.ceil(seconds) : 60);
+  }
   if (!response.ok) throw new Error(Object.values(json.errors ?? {}).flat().join(' ') || json.message || t('request_failed'));
   return json.data;
 }
@@ -61,6 +68,13 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
   const running = useRef(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const blockedUntil = useRef(0);
+  const [waitSeconds, setWaitSeconds] = useState(0);
+  useEffect(() => {
+    if (!waitSeconds) return;
+    const timer = setInterval(() => setWaitSeconds(Math.max(0, Math.ceil((blockedUntil.current - Date.now()) / 1000))), 1000);
+    return () => clearInterval(timer);
+  }, [waitSeconds]);
   const generation = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const stale = staleTranslationFields(value, optionInputs, kind);
@@ -94,12 +108,18 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
     if (running.current) return;
     running.current = true; setBusy(true); setError('');
     const epoch = generation.current;
-    try { await action(); } catch (e) { if (epoch === generation.current && (e as Error).name !== 'AbortError') setError((e as Error).message); }
+    try { await action(); } catch (e) {
+      if (epoch === generation.current && (e as Error).name !== 'AbortError') {
+        if (e instanceof TranslationRateLimitError) {
+          blockedUntil.current = Date.now() + e.retryAfter * 1000; setWaitSeconds(e.retryAfter);
+        } else setError((e as Error).message);
+      }
+    }
     finally { running.current = false; setBusy(false); }
   };
   const translating = !!job && !job.cancelled && job.items?.some((item: TranslationItem) => ['pending', 'processing'].includes(item.status ?? ''));
   const start = () => run(async () => {
-    if (translating || disabled) return;
+    if (translating || disabled || Date.now() < blockedUntil.current) return;
     const current = readCurrent();
     const selected = fields.filter(field => !(kind === 'product' && ((field === 'meta_title' && current.value.seo_sync_title) || (field === 'meta_description' && current.value.seo_sync_description))));
     const entries = collectTranslationBindings(current.value, current.optionInputs, kind, locales, selected, overwrite);
@@ -139,10 +159,10 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
         <Label className="flex items-center gap-2"><Checkbox checked={overwrite} disabled={translating || busy} onChange={event => setOverwrite(event.target.checked)} />{t('overwrite')}</Label>
         <Label className="block text-sm">{t('terms')}<Textarea rows={2} value={terms} disabled={translating || busy} onChange={event => setTerms(event.target.value)} className="w-full" /></Label>
         <Div className="flex flex-wrap gap-2">
-          <Button type="button" className="btn btn-primary" disabled={disabled || busy || translating || configuration?.configured !== true} onClick={start}>{busy ? t('working') : t('translate')}</Button>
+          <Button type="button" className="btn btn-primary" disabled={disabled || busy || translating || waitSeconds > 0 || configuration?.configured !== true} onClick={start}>{busy ? t('working') : t('translate')}</Button>
           {job && <Button type="button" className="btn btn-outline" disabled={busy} onClick={() => run(async () => { const epoch = generation.current; const next = await request('/' + job.id + '/cancel', 'POST'); if (epoch !== generation.current) return; generation.current++; setJob(next); setNotice(t('cancelled')); })}>{t('cancel')}</Button>}
           {job?.paused && <Button type="button" className="btn btn-outline" onClick={() => setJob((current: any) => ({ ...current, paused: false }))}>{t('resume')}</Button>}
-          {review.some(item => item.status === 'failed') && <Button type="button" className="btn btn-outline" disabled={busy || translating || disabled} onClick={() => run(async () => { const epoch = generation.current; const next = await request('/' + job.id + '/retry', 'POST'); if (epoch !== generation.current) return; setJob(next); setReview(next.items.map((item: TranslationItem) => ({ ...item, result: edited.current.get(item.id) ?? item.result }))); })}>{t('retry')}</Button>}
+          {review.some(item => item.status === 'failed') && <Button type="button" className="btn btn-outline" disabled={busy || translating || disabled || waitSeconds > 0} onClick={() => run(async () => { if (Date.now() < blockedUntil.current) return; const epoch = generation.current; const next = await request('/' + job.id + '/retry', 'POST'); if (epoch !== generation.current) return; setJob(next); setReview(next.items.map((item: TranslationItem) => ({ ...item, result: edited.current.get(item.id) ?? item.result }))); })}>{t('retry')}</Button>}
           {review.some(item => item.status === 'completed') && <Button type="button" className="btn btn-primary" disabled={disabled || busy || translating || job?.cancelled} onClick={apply}>{t('apply')}</Button>}
         </Div>
         {job && <Span role="status" className="block text-sm">{['completed', 'failed', 'skipped', 'pending', 'processing'].map(status => `${t(`status.${status}`)}: ${job.items.filter((item: TranslationItem) => item.status === status).length}`).join(' / ')}</Span>}
@@ -154,6 +174,7 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
         </Div>)}
       </>}
       {error && <Span role="alert" className="block text-red-600">{error}</Span>}
+      {waitSeconds > 0 && <Span role="alert" className="block text-red-600">{t('rate_limited').replace('{seconds}', String(waitSeconds))}</Span>}
       {notice && <Span role="status" className="block text-sm">{notice}</Span>}
     </Div>}
   </Div>;

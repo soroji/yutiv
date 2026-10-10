@@ -63,7 +63,7 @@ describe('real form JSON → manifest → built IIFE → DynamicRenderer transla
     const state: any = { form, ui: { optionInputs: [{ name: { ko: '색상' }, values: [{ ko: '로즈핑크' }] }] } };
     const setState = vi.fn((updates: any) => Object.assign(state, typeof updates === 'function' ? updates(state) : updates));
     (window as any).G7Core = { t: (key: string) => translation.translate(key, context), state: { getLocal: () => state }, api: { getToken: () => null }, createLogger: () => ({ log() {}, warn() {}, error() {} }) };
-    const sandbox: any = { React, ReactDOM, ReactJSXRuntime, window, document, navigator, console, setTimeout, clearTimeout, AbortController, crypto, fetch: (...args: any[]) => fetcher(...args) };
+    const sandbox: any = { React, ReactDOM, ReactJSXRuntime, window, document, navigator, console, setTimeout, clearTimeout, setInterval, clearInterval, AbortController, crypto, fetch: (...args: any[]) => fetcher(...args) };
     vm.runInNewContext(fs.readFileSync(path.join(admin, 'dist/js/components.iife.js'), 'utf8'), sandbox);
     (window as any).SirsoftAdminBasic = sandbox.SirsoftAdminBasic;
     const registry = ComponentRegistry.createIsolatedInstance();
@@ -113,5 +113,18 @@ describe('real form JSON → manifest → built IIFE → DynamicRenderer transla
     expect(within(region).getByRole('button', { name: dictionary.en.admin.translation.translate })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: label }));
     expect(screen.queryByRole('region', { name: label })).toBeNull();
+  });
+  it('renders the translated Retry-After guidance from the built IIFE without resending or changing the form', async () => {
+    const { region, state, setState } = await mount('product', true);
+    const original = fetcher.getMockImplementation()!;
+    fetcher.mockImplementation(async (url: string, init: RequestInit = {}) => init.method === 'POST' && url.endsWith('/catalog-translations') ? { ok: false, status: 429, headers: new Headers({ 'Retry-After': '28' }), json: async () => ({ errors: { code: 'catalog_translation_rate_limited', retry_after: 28 } }) } : original(url, init));
+    const before = JSON.stringify(state.form);
+    fireEvent.click(within(region).getByRole('button', { name: dictionary.ko.admin.translation.translate }));
+    expect(await within(region).findByRole('alert')).toHaveTextContent('요청이 많습니다. 28초 후 다시 시도해 주세요.');
+    expect(within(region).getByRole('button', { name: dictionary.ko.admin.translation.translate })).toBeDisabled();
+    expect(fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1);
+    expect(JSON.stringify(state.form)).toBe(before);
+    // Snapshot flush may emit an empty engine update; a rejected request must not apply a form.
+    expect(setState.mock.calls.every(([update]) => !Object.hasOwn(update, 'form'))).toBe(true);
   });
 });

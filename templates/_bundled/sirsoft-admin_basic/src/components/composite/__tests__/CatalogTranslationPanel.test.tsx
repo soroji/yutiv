@@ -15,7 +15,7 @@ describe('review-first AI catalog translation', () => {
     });
     vi.stubGlobal('fetch', fetcher);
   });
-  afterEach(() => { vi.unstubAllGlobals(); });
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
   const open = async () => { fireEvent.click(screen.getByRole('button', { name: 'title' })); await screen.findByText('configured'); };
   it.each(['product', 'category'] as const)('supports an unsaved %s, requires review/apply, and never saves a catalog record', async kind => {
     const onChange = vi.fn(); render(<CatalogTranslationPanel kind={kind} value={{ name: { ko: '한국어' } }} onChange={onChange} />);
@@ -49,6 +49,65 @@ describe('review-first AI catalog translation', () => {
     const button = screen.getByRole('button', { name: 'translate' }); fireEvent.click(button); fireEvent.click(button);
     expect(fetcher.mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(1);
     await act(async () => { resolve({ ok: true, json: async () => ({ data: { id: 'test-job', items: [] } }) } as Response); });
+  });
+  it('waits for Retry-After without automatic POSTs, preserves inputs and reuses request_id on manual retry', async () => {
+    (window as any).G7Core.t = (key: string) => key.endsWith('.rate_limited') ? '요청이 많습니다. {seconds}초 후 다시 시도해 주세요.' : key.split('.').pop();
+    fetcher.mockImplementation((url: string) => url.endsWith('/configuration') ? response({ configured: true }) : Promise.resolve({ ok: false, status: 429, headers: new Headers({ 'Retry-After': '3' }), json: async () => ({ errors: { code: 'catalog_translation_rate_limited', retry_after: 99 } }) }));
+    const onChange = vi.fn(); render(<CatalogTranslationPanel value={{ name: { ko: '원문', en: 'Manual' } }} onChange={onChange} />); await open();
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'YUTIV' } });
+    vi.useFakeTimers();
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'translate' })); });
+    expect(screen.getByRole('alert')).toHaveTextContent('3초');
+    expect(screen.getByRole('button', { name: 'translate' })).toBeDisabled();
+    const first = JSON.parse(fetcher.mock.calls.find(([, options]) => options?.method === 'POST')![1].body as string);
+    await act(async () => { vi.advanceTimersByTime(3000); });
+    expect(screen.getByRole('button', { name: 'translate' })).not.toBeDisabled();
+    expect(fetcher.mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(1);
+    expect(screen.getByRole('textbox')).toHaveValue('YUTIV'); expect(onChange).not.toHaveBeenCalled();
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'translate' })); });
+    const posts = fetcher.mock.calls.filter(([, options]) => options?.method === 'POST');
+    expect(posts).toHaveLength(2); expect(JSON.parse(posts[1][1].body as string).request_id).toBe(first.request_id);
+  });
+  it('preserves completed review during a failed-item retry cooldown and sends no automatic retry', async () => {
+    fetcher.mockImplementation((url: string, options: RequestInit = {}) => {
+      if (url.endsWith('/configuration')) return response({ configured: true });
+      if (url.endsWith('/retry')) return Promise.resolve({ ok: false, status: 429, headers: new Headers({ 'Retry-After': '2' }), json: async () => ({ errors: { code: 'catalog_translation_rate_limited' } }) });
+      const items = JSON.parse(options.body as string).items;
+      return response({ id: 'test-job', items: items.map((item: any, i: number) => ({ ...item, status: i ? 'failed' : 'completed', result: i ? null : 'Reviewed' })) });
+    });
+    render(<CatalogTranslationPanel value={{ name: { ko: '원문' } }} />); await open();
+    fireEvent.click(screen.getByRole('button', { name: 'translate' })); await screen.findByRole('button', { name: 'retry' });
+    const review = screen.getByLabelText(/review/); fireEvent.change(review, { target: { value: 'Manual review' } });
+    vi.useFakeTimers(); await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'retry' })); });
+    expect(screen.getByRole('button', { name: 'retry' })).toBeDisabled(); expect(review).toHaveValue('Manual review');
+    await act(async () => { vi.advanceTimersByTime(2000); });
+    expect(screen.getByRole('button', { name: 'retry' })).not.toBeDisabled();
+    expect(fetcher.mock.calls.filter(([url]) => url.endsWith('/retry'))).toHaveLength(1);
+  });
+  it('does not misclassify a provider or generic HTTP 429 as the YUTIV limiter', async () => {
+    fetcher.mockImplementation((url: string) => url.endsWith('/configuration') ? response({ configured: true }) : Promise.resolve({ ok: false, status: 429, json: async () => ({ message: 'Provider unavailable' }) }));
+    render(<CatalogTranslationPanel value={{ name: { ko: '원문' } }} />); await open();
+    fireEvent.click(screen.getByRole('button', { name: 'translate' })); await screen.findByRole('alert');
+    expect(screen.getByRole('alert')).toHaveTextContent('Provider unavailable');
+    expect(screen.getByRole('button', { name: 'translate' })).not.toBeDisabled();
+    expect(fetcher.mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(1);
+  });
+  it('uses GET for configuration and polling, with one POST across click, submit and rerender', async () => {
+    let items: any[] = [];
+    fetcher.mockImplementation((url: string, options: RequestInit = {}) => {
+      if (url.endsWith('/configuration')) return response({ configured: true });
+      if (options.method === 'POST') { items = JSON.parse(options.body as string).items; return response({ id: 'poll-job', items: items.map(item => ({ ...item, status: 'pending' })) }); }
+      return response({ id: 'poll-job', items: items.map(item => ({ ...item, status: 'completed', result: 'Done' })) });
+    });
+    const value = { name: { ko: '원문' } };
+    const { rerender } = render(<CatalogTranslationPanel value={value} />); await open();
+    vi.useFakeTimers(); const button = screen.getByRole('button', { name: 'translate' });
+    expect(button).toHaveAttribute('type', 'button');
+    await act(async () => { fireEvent.click(button); fireEvent.click(button); fireEvent.submit(button); });
+    rerender(<CatalogTranslationPanel value={value} />);
+    await act(async () => { vi.advanceTimersByTime(1500); });
+    expect(fetcher.mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(1);
+    expect(fetcher.mock.calls.some(([url, options]) => url.endsWith('/poll-job') && options?.method === 'GET')).toBe(true);
   });
   it('shows missing connection guidance and disables translation without exposing secrets', async () => {
     fetcher.mockImplementation(() => response({ configured: false }));

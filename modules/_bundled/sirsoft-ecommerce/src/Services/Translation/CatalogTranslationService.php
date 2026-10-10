@@ -196,7 +196,7 @@ class CatalogTranslationService
             $error = null;
         } catch (\Throwable $exception) {
             $result = null;
-            $error = in_array($exception->getMessage(), ['not_configured', 'invalid_response', 'timeout'], true) ? $exception->getMessage() : 'provider_failed';
+            $error = in_array($exception->getMessage(), ['not_configured', 'invalid_response', 'timeout', 'provider_rate_limited'], true) ? $exception->getMessage() : 'provider_failed';
         }
         $this->jobs->mutate($id, function ($job) use ($claimed, $itemId, $result, $error) {
             if ($job->cancelled) {

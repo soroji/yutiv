@@ -41,7 +41,15 @@ Content-Type: application/json
 {"request_id":"01d1717e-8b38-4c6f-8536-71eebc60ec03","kind":"product","entity_id":null,"terms":["YUTIV"],"items":[{"id":"name:field-name:en","field":"name","source":"한국어 상품","current":"","locale":"en","html":false,"overwrite":false}]}
 ```
 
-작업 응답 필드: id/request_id UUID, owner_id integer, fingerprint SHA256, kind, entity_id nullable integer, terms array, cancelled boolean, created_at/updated_at, items array. items는 요청 필드와 status(pending/processing/completed/failed/skipped), attempts integer, result nullable string, error nullable enum(not_configured/timeout/invalid_response/provider_failed), processing 후 started_at Unix timestamp를 포함합니다. HTML 결과는 원본 태그/속성을 유지합니다. 결과는 관리자 검토 후 **기존 상품/카테고리 저장 API**에 명시적으로 저장합니다.
+작업 응답 필드: id/request_id UUID, owner_id integer, fingerprint SHA256, kind, entity_id nullable integer, terms array, cancelled boolean, created_at/updated_at, items array. items는 요청 필드와 status(pending/processing/completed/failed/skipped), attempts integer, result nullable string, error nullable enum(not_configured/timeout/invalid_response/provider_failed/provider_rate_limited), processing 후 started_at Unix timestamp를 포함합니다. HTML 결과는 원본 태그/속성을 유지합니다. 결과는 관리자 검토 후 **기존 상품/카테고리 저장 API**에 명시적으로 저장합니다.
+
+생성/재시도는 인증된 관리자별 합계 분당 5회입니다. 상품·카테고리·작업 ID와 무관한 전용 `ecommerce-catalog-translation` limiter를 사용하며 조회/설정/취소는 이 예산을 소모하지 않습니다. 6번째 응답은 HTTP 429, `Retry-After`, `X-RateLimit-Limit: 5`, `X-RateLimit-Remaining: 0`과 다음 안전한 봉투를 제공합니다.
+
+```json
+{"success":false,"message":"요청이 많습니다. 28초 후 다시 시도해 주세요.","errors":{"code":"catalog_translation_rate_limited","retry_after":28}}
+```
+
+시간은 실제 남은 대기 시간에 따라 달라집니다. 프런트는 헤더의 Retry-After 동안 생성/재시도를 잠그고 자동 재전송하지 않습니다. 제공자 HTTP 429는 작업 항목의 `provider_rate_limited` 실패로 기록하며 위 YUTIV API 응답과 구분합니다.
 
 ```json
 {"success":true,"message":"번역 작업 조회 완료","data":{"id":"01d1717e-8b38-4c6f-8536-71eebc60ec03","kind":"product","entity_id":null,"cancelled":false,"items":[{"id":"name:field-name:en","field":"name","source":"한국어 상품","current":"","locale":"en","html":false,"overwrite":false,"status":"completed","attempts":1,"result":"Translated 상품","error":null}]}}

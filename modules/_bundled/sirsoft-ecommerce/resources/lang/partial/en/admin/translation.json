@@ -1,4 +1,5 @@
 {
+  "rate_limited": "Too many requests. Please try again in {seconds} seconds.",
   "title": "AI multilingual translation",
   "configured": "Connection is configured. Review translations before applying.",
   "not_configured": "Provider, model or API key is not configured. Check connection status in settings and ask your server administrator to configure it.",
@@ -42,6 +43,7 @@
   "errors": {
     "timeout": "Time limit exceeded. Check the status before retrying the required items.",
     "provider_failed": "Connection or translation failed. Input is preserved.",
+    "provider_rate_limited": "The AI provider limited this request, separately from the YUTIV request budget. Retry failed items manually later.",
     "invalid_response": "Response format, identifier or preserved-text validation failed.",
     "not_configured": "AI connection setup is required."
   },

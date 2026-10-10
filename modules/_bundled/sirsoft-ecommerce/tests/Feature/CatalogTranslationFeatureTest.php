@@ -3,8 +3,13 @@
 namespace Modules\Sirsoft\Ecommerce\Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Modules\Sirsoft\Ecommerce\Http\Resources\PublicCategoryResource;
 use Modules\Sirsoft\Ecommerce\Http\Resources\PublicProductResource;
@@ -65,6 +70,71 @@ class CatalogTranslationFeatureTest extends ImportTest
         }
 
         return $job->fresh();
+    }
+
+    public function test_numeric_throttle_shares_the_real_admin_api_counter_but_named_translation_does_not(): void
+    {
+        // Keep the actual G7 route and middleware; replace only unrelated profile rendering
+        // (its tables are intentionally absent from this catalog-only SQLite fixture).
+        $otherRoute = Route::getRoutes()->getByName('api.admin.auth.user');
+        $action = $otherRoute->getAction();
+        $otherRoute->setAction([...$action, 'uses' => fn () => response()->json(['ok' => true])]);
+        for ($i = 0; $i < 5; $i++) {
+            $this->getJson('/api/admin/auth/user')->assertOk();
+        }
+        // Reproduce the old route middleware through the locked Laravel implementation.
+        $route = Route::getRoutes()->getByName('api.modules.sirsoft-ecommerce.admin.catalog-translations.store');
+        $request = Request::create($this->endpoint(), 'POST');
+        $request->setUserResolver(fn () => auth()->user());
+        $request->setRouteResolver(fn () => $route);
+        try {
+            app(ThrottleRequests::class)->handle($request, fn () => response()->json([]), 5, 1);
+            $this->fail('The old unprefixed numeric middleware must share the counter');
+        } catch (ThrottleRequestsException $e) {
+            $this->assertSame('5', (string) $e->getHeaders()['X-RateLimit-Limit']);
+            $this->assertGreaterThan(0, $e->getHeaders()['Retry-After']);
+        }
+        $this->postJson($this->endpoint(), $this->payload())->assertOk();
+        $this->assertSame(5, RateLimiter::attempts(sha1((string) auth()->id())));
+    }
+
+    public function test_provider_429_is_an_item_failure_and_never_a_yutiv_limiter_response(): void
+    {
+        config(['sirsoft-ecommerce-translation.driver' => 'compatible', 'sirsoft-ecommerce-translation.endpoint' => 'https://translation.example.test/chat/completions', 'sirsoft-ecommerce-translation.model' => 'fake-model', 'sirsoft-ecommerce-translation.key' => 'test-only-key']);
+        Http::fake(['translation.example.test/*' => Http::response([], 429)]);
+        $this->app->bind(TranslationProviderInterface::class, CompatibleTranslationProvider::class);
+        $id = $this->postJson($this->endpoint(), $this->payload())->assertOk()->json('data.id');
+        $job = $this->process(CatalogTranslationJob::findOrFail($id));
+        $this->assertSame('failed', $job->items[0]['status']);
+        $this->assertSame('provider_rate_limited', $job->items[0]['error']);
+        Http::assertSentCount(1);
+    }
+
+    public function test_translation_create_and_retry_share_five_attempts_with_reads_cancel_and_other_admin_isolated(): void
+    {
+        $owner = auth()->user();
+        $id = $this->postJson($this->endpoint(), $this->payload())->assertOk()->json('data.id');
+        for ($i = 0; $i < 6; $i++) {
+            $this->getJson($this->endpoint('/configuration'))->assertOk();
+            $this->getJson($this->endpoint('/'.$id))->assertOk();
+        }
+        $this->postJson($this->endpoint('/'.$id.'/cancel'))->assertOk();
+        for ($i = 0; $i < 4; $i++) {
+            $this->postJson($this->endpoint('/'.$id.'/retry'))->assertOk();
+        }
+        $blocked = $this->postJson($this->endpoint(), $this->payload('category'))
+            ->assertStatus(429)->assertJsonPath('errors.code', 'catalog_translation_rate_limited');
+        $this->assertSame(5, (int) $blocked->headers->get('X-RateLimit-Limit'));
+        $this->assertSame(0, (int) $blocked->headers->get('X-RateLimit-Remaining'));
+        $this->assertGreaterThan(0, (int) $blocked->headers->get('Retry-After'));
+        $this->assertSame((int) $blocked->headers->get('Retry-After'), $blocked->json('errors.retry_after'));
+        $this->postJson($this->endpoint('/'.$id.'/retry'))->assertStatus(429);
+        $this->actingAs($this->createAdminUser(['sirsoft-ecommerce.products.create']));
+        $this->postJson($this->endpoint(), $this->payload())->assertOk();
+        $this->actingAs($owner);
+        $this->travel(61)->seconds();
+        $this->postJson($this->endpoint(), $this->payload())->assertOk();
+        $this->travelBack();
     }
 
     public function test_new_product_and_category_translation_creates_no_catalog_records_and_is_idempotent(): void

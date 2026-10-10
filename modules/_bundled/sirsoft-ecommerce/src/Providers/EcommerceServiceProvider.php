@@ -3,7 +3,11 @@
 namespace Modules\Sirsoft\Ecommerce\Providers;
 
 use App\Extension\BaseModuleServiceProvider;
+use App\Helpers\ResponseHelper;
 use App\Seo\SitemapGenerator;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Modules\Sirsoft\Ecommerce\Console\Commands\AggregateEcommerceStatsCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\CancelPendingPaymentOrdersCommand;
 use Modules\Sirsoft\Ecommerce\Console\Commands\EarnMileageCommand;
@@ -247,6 +251,17 @@ class EcommerceServiceProvider extends BaseModuleServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        RateLimiter::for('ecommerce-catalog-translation', function (Request $request) {
+            return Limit::perMinute(5)
+                ->by('sirsoft-ecommerce:catalog-translation:admin:'.$request->user()->getAuthIdentifier())
+                ->response(function (Request $request, array $headers) {
+                    return ResponseHelper::error('translation.rate_limited', 429, [
+                        'code' => 'catalog_translation_rate_limited',
+                        'retry_after' => (int) $headers['Retry-After'],
+                    ], ['seconds' => (int) $headers['Retry-After']], 'sirsoft-ecommerce')->withHeaders($headers);
+                });
+        });
 
         // Artisan 커맨드 등록
         if ($this->app->runningInConsole()) {

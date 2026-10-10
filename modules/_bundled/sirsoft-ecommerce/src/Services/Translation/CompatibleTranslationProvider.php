@@ -37,6 +37,9 @@ class CompatibleTranslationProvider implements TranslationProviderInterface
                 'response_format' => ['type' => 'json_object'],
             ]);
         if (! $response->successful()) {
+            if ($response->status() === 429) {
+                throw new RuntimeException('provider_rate_limited');
+            }
             throw new RuntimeException('provider_failed');
         }
         if (strlen($response->body()) > 131072) {

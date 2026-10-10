@@ -6,6 +6,7 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
 use Modules\Sirsoft\Ecommerce\Services\Translation\CatalogTranslationService;
 use Modules\Sirsoft\Ecommerce\Services\Translation\TranslationProviderInterface;
 
@@ -67,6 +68,7 @@ if ($mode !== 'http' && ! $legacyBefore) {
 }
 // Output booleans/safe enums only. Never serialize configuration or a credential.
 echo json_encode([
+    'limiter_registered' => is_callable(RateLimiter::limiter('ecommerce-catalog-translation')),
     'before' => $before,
     'legacy_before' => $legacyBefore,
     'after' => is_array($translation),
