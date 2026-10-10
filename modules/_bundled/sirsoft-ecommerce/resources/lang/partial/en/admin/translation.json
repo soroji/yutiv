@@ -46,5 +46,7 @@
     "not_configured": "AI connection setup is required."
   },
   "disabled": "AI translation is disabled. Ask your server administrator to configure the connection.",
-  "config_missing": "AI translation configuration is missing. Ask your server administrator to check the module installation and configuration cache."
+  "config_missing": "AI translation configuration is missing. Ask your server administrator to check the module installation and configuration cache.",
+  "expand": "Expand",
+  "collapse": "Collapse"
 }

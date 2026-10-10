@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Div } from '../basic/Div';
 import { Button } from '../basic/Button';
 import { Span } from '../basic/Span';
@@ -26,13 +26,14 @@ export interface CatalogTranslationPanelProps {
   entityId?: number | null;
   disabled?: boolean;
   configurationOnly?: boolean;
+  defaultExpanded?: boolean;
   /** Engine custom event: flush pending input debounce before reading a snapshot. */
   onSnapshot?: () => void;
   __componentContext?: { state?: Record<string, any>; stateRef?: { current: Record<string, any> } };
   onChange?: (event: { target: { value: { form: Record<string, any>; optionInputs: any[] } } }) => void;
 }
 
-export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = ({ kind = 'product', value: providedValue, optionInputs = [], entityId, disabled, configurationOnly, onChange, onSnapshot, __componentContext }) => {
+export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = ({ kind = 'product', value: providedValue, optionInputs = [], entityId, disabled, configurationOnly, defaultExpanded = false, onChange, onSnapshot, __componentContext }) => {
   const value = providedValue ?? {};
   const latest = useRef({ value, optionInputs }); latest.current = { value, optionInputs };
   const context = useRef(__componentContext); context.current = __componentContext;
@@ -43,7 +44,8 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
     if (state?.form && (!latest.current.value.id || state.form.id === latest.current.value.id)) return { value: state.form, optionInputs: state.ui?.optionInputs ?? latest.current.optionInputs };
     return latest.current;
   };
-  const [opened, setOpened] = useState(!!configurationOnly);
+  const [opened, setOpened] = useState(!!configurationOnly || defaultExpanded);
+  const panelId = useId();
   const [configuration, setConfiguration] = useState<{ configured: boolean; status?: string } | null>(null);
   const [locales, setLocales] = useState(['en', 'ja', 'zh-CN']);
   const allFields = ['name', 'description', 'meta_title', 'meta_description', ...(kind === 'product' ? ['meta_keywords', 'option_group_name', 'option_value', 'option_name', 'additional_option_name', 'additional_option_value'] : [])];
@@ -123,9 +125,9 @@ export const CatalogTranslationPanel: React.FC<CatalogTranslationPanelProps> = (
     setReview(items => items.filter(item => item.status !== 'completed' || result.conflicts.includes(item.id)));
   };
   return <Div className="min-w-0">
-    {!configurationOnly && <Button type="button" disabled={disabled} className="btn btn-outline" onClick={() => setOpened(!opened)} aria-expanded={opened}>{t('title')}</Button>}
+    {!configurationOnly && <Button type="button" className="btn-primary inline-flex items-center gap-2" onClick={() => setOpened(current => !current)} aria-label={t('title')} aria-expanded={opened} aria-controls={panelId}>{t('title')}<Span className="text-sm">{t(opened ? 'collapse' : 'expand')}</Span></Button>}
     {stale.length > 0 && <Span className="block text-sm text-amber-700 dark:text-amber-300">{t('stale')}: {stale.map(field => t(`fields.${field}`)).join(', ')}</Span>}
-    {opened && <Div className="admin-card space-y-3 mt-3">
+    {opened && <Div id={panelId} role="region" aria-label={t('title')} className="admin-card space-y-3 mt-3 mb-4">
       <Span className="block font-medium">{t('title')}</Span>
       <Span className="block text-sm">{configuration?.configured ? t('configured') : t(configuration?.status === 'disabled' ? 'disabled' : configuration?.status === 'config_missing' ? 'config_missing' : 'not_configured')}</Span>
       <A href="/admin/ecommerce/settings?tab=language_currency" className="underline text-sm">{t('settings')}</A>

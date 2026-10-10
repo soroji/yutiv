@@ -4561,6 +4561,9 @@
           },
           "onSnapshot": {
             "type": "function"
+          },
+          "defaultExpanded": {
+            "type": "boolean"
           }
         }
       }

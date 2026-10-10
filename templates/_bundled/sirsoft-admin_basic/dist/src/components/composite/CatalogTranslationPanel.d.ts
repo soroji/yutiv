@@ -6,6 +6,7 @@ export interface CatalogTranslationPanelProps {
     entityId?: number | null;
     disabled?: boolean;
     configurationOnly?: boolean;
+    defaultExpanded?: boolean;
     /** Engine custom event: flush pending input debounce before reading a snapshot. */
     onSnapshot?: () => void;
     __componentContext?: {

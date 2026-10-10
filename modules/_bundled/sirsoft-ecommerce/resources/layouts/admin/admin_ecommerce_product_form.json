@@ -459,7 +459,8 @@
                             "value": "{{_local.form}}",
                             "optionInputs": "{{_local.ui?.optionInputs ?? []}}",
                             "entityId": "{{_local.form?.id ?? null}}",
-                            "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}"
+                            "disabled": "{{route.itemCode && product?.data?.abilities?.can_update !== true}}",
+                            "defaultExpanded": true
                         },
                         "actions": [
                             {

@@ -148,6 +148,9 @@
     },
     "shipping_policy": {
       "$partial": "partial/en/admin/shipping_policy.json"
+    },
+    "translation": {
+      "$partial": "partial/en/admin/translation.json"
     }
   },
   "user": {

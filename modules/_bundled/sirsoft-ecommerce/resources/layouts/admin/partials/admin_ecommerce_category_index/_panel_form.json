@@ -128,7 +128,8 @@
         "value": "{{_local.form}}",
         "optionInputs": [],
         "entityId": "{{_global.panelMode === \"edit\" ? _global.selectedCategoryId : null}}",
-        "disabled": "{{_global.panelMode === 'edit' && categories?.data?.abilities?.can_update !== true}}"
+        "disabled": "{{_global.panelMode === 'edit' && categories?.data?.abilities?.can_update !== true}}",
+        "defaultExpanded": true
       },
       "actions": [
         {
