@@ -26,6 +26,9 @@ class CalculationItem
         public ?array $optionSnapshot = null,
         public ?array $additionalOptionSelections = null,
         public ?array $additionalOptionsSnapshot = null,
+        public ?string $lineUuid = null,
+        public ?string $attributionKey = null,
+        public ?int $orderOptionId = null,
     ) {}
 
     /**
@@ -45,6 +48,9 @@ class CalculationItem
             optionSnapshot: $data['option_snapshot'] ?? null,
             additionalOptionSelections: $data['additional_option_selections'] ?? null,
             additionalOptionsSnapshot: $data['additional_options_snapshot'] ?? null,
+            lineUuid: $data['line_uuid'] ?? null,
+            attributionKey: $data['attribution_key'] ?? null,
+            orderOptionId: $data['order_option_id'] ?? null,
         );
     }
 
@@ -60,6 +66,9 @@ class CalculationItem
             'product_option_id' => $this->productOptionId,
             'quantity' => $this->quantity,
             'cart_id' => $this->cartId,
+            'line_uuid' => $this->lineUuid,
+            'attribution_key' => $this->attributionKey,
+            'order_option_id' => $this->orderOptionId,
             'product_snapshot' => $this->productSnapshot,
             'option_snapshot' => $this->optionSnapshot,
             'additional_option_selections' => $this->additionalOptionSelections,

@@ -58,6 +58,9 @@ class ItemCalculation
         public ?array $additionalOptionsSnapshot = null,
         public ?MultiCurrencyPrices $multiCurrency = null,
         public array $metadata = [],
+        public ?string $lineUuid = null,
+        public ?string $attributionKey = null,
+        public ?int $orderOptionId = null,
     ) {}
 
     /**
@@ -89,6 +92,9 @@ class ItemCalculation
     {
         $result = [
             'product_id' => $this->productId,
+            'line_uuid' => $this->lineUuid,
+            'attribution_key' => $this->attributionKey,
+            'order_option_id' => $this->orderOptionId,
             'product_option_id' => $this->productOptionId,
             'product_name' => $this->productName,
             'option_name' => $this->optionName,
@@ -134,6 +140,9 @@ class ItemCalculation
     {
         return new self(
             productId: $data['product_id'] ?? 0,
+            lineUuid: $data['line_uuid'] ?? null,
+            attributionKey: $data['attribution_key'] ?? null,
+            orderOptionId: $data['order_option_id'] ?? null,
             productOptionId: $data['product_option_id'] ?? 0,
             quantity: $data['quantity'] ?? 0,
             unitPrice: $data['unit_price'] ?? 0,

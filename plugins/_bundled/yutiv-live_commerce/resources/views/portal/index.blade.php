@@ -1,11 +1,11 @@
 @extends('teewide::layouts.teewide', [
-    'title' => 'TeeWide — 라이브로 연결되는 새로운 쇼핑',
+    'title' => 'TeeWide — 라이브로 만나다',
     'area' => 'portal',
-    'footerNote' => '로그인·판매자 등록은 준비 중입니다.',
+    'footerNote' => '판매자 등록은 준비 중입니다.',
 ])
 
 @push('styles')
-    .tw-hero { padding: 84px 0 72px; border-bottom: 1px solid var(--tw-border); }
+    .tw-hero { padding: 72px 0; min-height: 55vh; display: flex; align-items: center; }
     .tw-hero__eyebrow { margin: 0 0 18px; }
     .tw-hero__title {
         margin: 0 0 18px;
@@ -41,11 +41,10 @@
                 <span class="tw-badge"><span class="tw-badge__dot" aria-hidden="true"></span>서비스 준비 중</span>
             </p>
 
-            <h1 class="tw-hero__title">라이브로 연결되는 새로운 쇼핑</h1>
+            <h1 class="tw-hero__title">라이브로 만나다</h1>
 
             <p class="tw-hero__lead">
-                TeeWide 는 판매자와 고객이 실시간으로 만나는 라이브커머스 플랫폼입니다.
-                방송을 보면서 묻고, 바로 주문합니다.
+                방송을 보고, 판매자와 이야기하세요.
             </p>
 
             <div class="tw-hero__cta">
@@ -58,26 +57,9 @@
             </div>
 
             <p class="tw-hint" id="tw-cta-note">
-                판매자 등록은 아직 열지 않았습니다. 준비되는 대로 이 화면에서 안내합니다.
+                첫 방송과 판매자 등록을 준비하고 있습니다.
             </p>
         </div>
     </section>
 
-    <section class="tw-section" aria-labelledby="tw-features-title">
-        <div class="tw-wrap">
-            <div class="tw-section__head">
-                <h2 class="tw-section__title" id="tw-features-title">TeeWide 가 준비하는 것</h2>
-                <p class="tw-section__desc">라이브 방송과 주문을 하나의 흐름으로 잇습니다.</p>
-            </div>
-
-            <div class="tw-grid tw-grid--4">
-                @foreach ($features as $feature)
-                    <article class="tw-card">
-                        <h3 class="tw-card__title">{{ $feature['title'] }}</h3>
-                        <p class="tw-card__desc">{{ $feature['description'] }}</p>
-                    </article>
-                @endforeach
-            </div>
-        </div>
-    </section>
 @endsection

@@ -1,0 +1,5 @@
+{
+  "store": {
+    "$partial": "partial/zh-CN/store.json"
+  }
+}

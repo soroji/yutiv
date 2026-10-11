@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "routes": [
+    {
+      "path": "*/admin/personal-stores",
+      "layout": "admin_headquarters",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:yutiv-personal_store.store.headquarters"
+      },
+      "permission": "yutiv-personal_store.headquarters.manage"
+    }
+  ]
+}

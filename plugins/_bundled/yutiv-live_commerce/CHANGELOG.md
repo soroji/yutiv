@@ -4,6 +4,13 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [0.1.1] - 2026-10-11
+
+### Changed
+
+- 포털과 라이브 홈의 메인 전용 Blade/CSS로 설명·중복 영역을 줄이고 모바일 간격을 조정합니다.
+- 인증·도메인·tenant·channel·공통 레이아웃의 공개 계약을 바꾸지 않았으며 개인 스토어/리워드를 연결하지 않습니다. 다른 확장의 버전 제약 상향 대상은 없습니다.
+
 ## [0.1.0] - 2026-09-10
 
 Phase 0 기술 스파이크. 라이브커머스 기능은 없습니다.

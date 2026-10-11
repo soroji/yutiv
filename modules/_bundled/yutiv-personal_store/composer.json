@@ -1,0 +1,16 @@
+{
+  "name": "modules/yutiv-personal_store",
+  "description": "YUTIV personal stores",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "ext-bcmath": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Modules\\Yutiv\\PersonalStore\\": "src/"
+    }
+  },
+  "version": "0.1.1"
+}

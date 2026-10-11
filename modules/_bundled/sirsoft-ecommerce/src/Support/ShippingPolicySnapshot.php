@@ -138,7 +138,7 @@ class ShippingPolicySnapshot
 
         foreach (self::items($snapshot) as $entry) {
             if (isset($entry['product_option_id'], $entry['policy'])) {
-                $map[$entry['product_option_id']] = $entry['policy'];
+                $map[$entry['line_uuid'] ?? $entry['product_option_id']] = $entry['policy'];
             }
         }
 

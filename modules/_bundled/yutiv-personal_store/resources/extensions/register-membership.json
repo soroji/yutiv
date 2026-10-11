@@ -1,0 +1,35 @@
+{
+  "target_layout": "auth/register",
+  "priority": 110,
+  "injections": [
+    {
+      "target_id": "register_extension_fields",
+      "position": "append_child",
+      "components": [
+        {
+          "type": "basic",
+          "name": "P",
+          "text": "$t:yutiv-personal_store.store.membership_notice"
+        }
+      ]
+    }
+  ],
+  "init_actions": [
+    {
+      "handler": "apiCall",
+      "target": "/api/modules/yutiv-personal_store/membership-proof",
+      "params": {
+        "method": "GET"
+      },
+      "onSuccess": [
+        {
+          "handler": "setState",
+          "params": {
+            "target": "local",
+            "registerForm.store_membership_proof": "{{response.data?.proof ?? response.data?.data?.proof ?? null}}"
+          }
+        }
+      ]
+    }
+  ]
+}

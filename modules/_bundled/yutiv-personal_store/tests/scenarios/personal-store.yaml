@@ -1,0 +1,36 @@
+feature: yutiv_personal_store
+description: 독립 계층 스토어·불변 주문 원본·정수 리워드
+test_files:
+  - tests/Feature/RewardContractTest.php
+  - tests/Feature/StoreBoundaryTest.php
+  - tests/Feature/HttpBoundaryTest.php
+  - tests/Feature/CartAndLineIdentityTest.php
+  - tests/Feature/RewardStateTest.php
+  - tests/Feature/MySqlConcurrencyTest.php
+  - tests/Feature/OrderSnapshotTest.php
+  - tests/Feature/LayoutAndEligibilityTest.php
+  - tests/Feature/MaintenanceCommandTest.php
+  - tests/Feature/CancellationEntryPointTest.php
+axes:
+  depth: [1, 4, 1000]
+  rate_bps: [0, 1, 5000, 10000]
+  base: [0, 1, 10001, PHP_INT_MAX]
+effects:
+  - pool_equals_all_retained_allocations
+  - immutable_snapshot_and_outbox_share_order_transaction
+  - duplicate_and_reverse_delivery_converge
+  - cancellation_cumulative_target_never_exceeds_original
+  - full_recovery_equals_original
+  - shortfall_is_offset_by_future_earn
+  - owner_scope_and_closed_pii_free_order_response
+  - closure_cycles_are_rejected
+  - cart_and_split_line_attribution_is_preserved
+  - non_krw_reward_is_ineligible
+  - review_clear_is_a_distinct_state_transition
+  - stillform_inheritance_has_unique_sources
+  - stale_store_selection_is_rejected_before_temp_order_write
+integration_requirements:
+  mysql: required
+  db_prefix: required
+  concurrency_opt_in: YUTIV_PERSONAL_STORE_CONCURRENCY=1
+  operational_database: forbidden

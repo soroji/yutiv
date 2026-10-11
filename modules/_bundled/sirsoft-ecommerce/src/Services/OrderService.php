@@ -783,6 +783,7 @@ class OrderService
         $purchaseConfirmed = false;
 
         $result = DB::transaction(function () use ($order, $option, $previousStatus, &$purchaseConfirmed) {
+            $this->repository->findByIdForUpdate($order->id);
             HookManager::doAction('sirsoft-ecommerce.order-option.before_confirm', $order, $option);
 
             $option->update([

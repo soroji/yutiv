@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "layout_name": "user_detail",
+  "extends": "shop/show",
+  "meta": {"personal_store_detail": true},
+  "init_actions": [
+    {
+      "handler": "apiCall",
+      "target": "/api/modules/yutiv-personal_store/stores/{{route.slug}}/origin",
+      "params": {
+        "method": "POST"
+      },
+      "onSuccess": [
+        {
+          "handler": "setState",
+          "params": {
+            "target": "local",
+            "saleProof": "{{response.data?.proof ?? response.data?.data?.proof ?? null}}"
+          }
+        }
+      ]
+    }
+  ],
+  "globalHeaders": [
+    {
+      "pattern": "/api/modules/sirsoft-ecommerce/*",
+      "headers": {
+        "X-Yutiv-Store-Origin": "{{_local.saleProof ?? 'pending'}}"
+      }
+    }
+  ]
+}

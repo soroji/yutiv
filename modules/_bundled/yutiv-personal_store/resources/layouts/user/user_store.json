@@ -1,0 +1,260 @@
+{
+  "version": "1.0.0",
+  "layout_name": "user_store",
+  "extends": "_user_base",
+  "meta": {
+    "title": "$t:yutiv-personal_store.store.store",
+    "seo": {
+      "enabled": true,
+      "page_type": "shop_index",
+      "data_sources": [
+        "store",
+        "products"
+      ],
+      "structured_data": {
+        "@type": "CollectionPage",
+        "name": "{{store.data?.slug ?? \"\"}}"
+      }
+    }
+  },
+  "init_actions": [
+    {
+      "handler": "apiCall",
+      "target": "/api/modules/yutiv-personal_store/stores/{{route.slug}}/origin",
+      "params": {
+        "method": "POST"
+      },
+      "onSuccess": [
+        {
+          "handler": "setState",
+          "params": {
+            "target": "local",
+            "saleProof": "{{response.data?.proof ?? response.data?.data?.proof ?? null}}"
+          }
+        }
+      ]
+    }
+  ],
+  "globalHeaders": [
+    {
+      "pattern": "/api/modules/sirsoft-ecommerce/*",
+      "headers": {
+        "X-Yutiv-Store-Origin": "{{_local.saleProof ?? 'pending'}}"
+      }
+    }
+  ],
+  "data_sources": [
+    {
+      "id": "store",
+      "type": "api",
+      "endpoint": "/api/modules/yutiv-personal_store/stores/{{route.slug}}",
+      "method": "GET",
+      "auto_fetch": true
+    },
+    {
+      "id": "products",
+      "type": "api",
+      "endpoint": "/api/modules/yutiv-personal_store/stores/{{route.slug}}/products",
+      "method": "GET",
+      "auto_fetch": true,
+      "params": {
+        "page": "{{query.page ?? 1}}",
+        "search": "{{query.search ?? \"\"}}"
+      }
+    }
+  ],
+  "slots": {
+    "content": [
+      {
+        "type": "basic",
+        "name": "Div",
+        "props": {
+          "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+        },
+        "children": [
+          {
+            "type": "basic",
+            "name": "H1",
+            "text": "{{store.data?.slug ?? \"\"}}"
+          },
+          {
+            "type": "basic",
+            "name": "Img",
+            "if": "{{store.data?.logo_url}}",
+            "props": {
+              "src": "{{store.data?.logo_url ?? \"\"}}",
+              "alt": "{{store.data?.slug ?? \"\"}}",
+              "className": "max-h-24"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "Img",
+            "if": "{{store.data?.banner_url}}",
+            "props": {
+              "src": "{{store.data?.banner_url ?? \"\"}}",
+              "alt": "",
+              "className": "w-full max-h-72 object-cover"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "{{store.data?.introduction ?? \"\"}}"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.cart",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "path": "{{_global.shopBase}}/cart",
+                      "mergeQuery": true,
+                      "query": {}
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.operator",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "path": "/store-office",
+                      "mergeQuery": true,
+                      "query": {}
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "H2",
+                "text": "{{item.name ?? \"\"}}"
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{item.multi_currency_selling_price?.[_global.preferredCurrency ?? _global.defaultCurrency]?.formatted ?? item.selling_price_formatted ?? \"\"}}"
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.view",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "path": "/store/{{route.slug}}/products/{{item.product_code}}",
+                      "mergeQuery": true,
+                      "query": {}
+                    }
+                  }
+                ]
+              }
+            ],
+            "iteration": {
+              "source": "{{products.data?.data ?? []}}",
+              "item_var": "item",
+              "index_var": "index"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{products.data?.total ?? 0}}"
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.previous",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "mergeQuery": true,
+                      "query": {
+                        "page": "{{Math.max(1, Number(query.page ?? 1)-1)}}"
+                      },
+                      "path": "/store/{{route.slug}}"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.next",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "mergeQuery": true,
+                      "query": {
+                        "page": "{{products.data?.has_more ? Number(query.page ?? 1)+1 : Number(query.page ?? 1)}}"
+                      },
+                      "path": "/store/{{route.slug}}"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

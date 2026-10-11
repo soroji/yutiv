@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "routes": [
+    {
+      "path": "/store-office",
+      "layout": "user_operator",
+      "auth_required": true,
+      "meta": {
+        "title": "$t:yutiv-personal_store.store.operator"
+      }
+    },
+    {
+      "path": "/store/:slug/products/:product_code",
+      "layout": "user_detail",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:yutiv-personal_store.store.store"
+      }
+    },
+    {
+      "path": "/store/:slug",
+      "layout": "user_store",
+      "auth_required": false,
+      "meta": {
+        "title": "$t:yutiv-personal_store.store.store"
+      }
+    }
+  ]
+}

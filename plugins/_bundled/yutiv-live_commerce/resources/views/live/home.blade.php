@@ -8,6 +8,10 @@
     .tw-live-head { padding: 48px 0 8px; }
     .tw-live-head__title { margin: 14px 0 8px; font-size: 32px; letter-spacing: -0.02em; }
     .tw-live-head__lead { margin: 0; color: var(--tw-muted); max-width: 56ch; }
+    @media (max-width: 640px) {
+        .tw-live-head { padding-top: 28px; }
+        .tw-live-head__title { font-size: 26px; }
+    }
 
     .tw-channel {
         display: flex;
@@ -68,7 +72,7 @@
             <span class="tw-badge"><span class="tw-badge__dot" aria-hidden="true"></span>첫 라이브 준비 중</span>
             <h1 class="tw-live-head__title">TeeWide Live</h1>
             <p class="tw-live-head__lead">
-                판매자가 직접 진행하는 라이브 방송을 모았습니다. 방송이 시작되면 이 화면에서 바로 입장할 수 있습니다.
+                라이브 방송과 판매 채널을 만나보세요.
             </p>
         </div>
     </section>
@@ -77,18 +81,17 @@
         <div class="tw-wrap">
             <div class="tw-section__head">
                 <h2 class="tw-section__title" id="tw-onair-title">현재 방송</h2>
-                <p class="tw-section__desc">지금 진행 중인 라이브입니다.</p>
             </div>
 
             @if ($onAir === [])
                 <div class="tw-empty">
                     <p class="tw-empty__title">진행 중인 라이브가 없습니다</p>
-                    <p class="tw-empty__desc">첫 방송을 준비하고 있습니다. 시작되면 이 자리에 표시됩니다.</p>
                 </div>
             @endif
         </div>
     </section>
 
+    @if ($upcoming !== [])
     <section class="tw-section" aria-labelledby="tw-upcoming-title">
         <div class="tw-wrap">
             <div class="tw-section__head">
@@ -104,18 +107,17 @@
             @endif
         </div>
     </section>
+    @endif
 
     <section class="tw-section" aria-labelledby="tw-channels-title">
         <div class="tw-wrap">
             <div class="tw-section__head">
                 <h2 class="tw-section__title" id="tw-channels-title">판매 채널</h2>
-                <p class="tw-section__desc">TeeWide 에 입점한 판매자 채널입니다.</p>
             </div>
 
             @if ($channels === [])
                 <div class="tw-empty">
                     <p class="tw-empty__title">공개된 채널이 없습니다</p>
-                    <p class="tw-empty__desc">입점 판매자가 준비되면 이 자리에 표시됩니다.</p>
                 </div>
             @else
                 <div class="tw-grid tw-grid--2">

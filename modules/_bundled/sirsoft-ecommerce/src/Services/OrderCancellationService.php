@@ -377,6 +377,7 @@ class OrderCancellationService
 
             // ③-j. 상태 확정 (completed)
             $this->finalizeStatus($orderCancel, $orderRefund, $cancelledBy);
+            HookManager::doAction('sirsoft-ecommerce.order.cancellation_completed_in_transaction', $order, $orderCancel, $orderRefund);
         });
 
         // ④ 현금영수증 동기화 — 취소가 DB 에 확정된 뒤에 수행한다.

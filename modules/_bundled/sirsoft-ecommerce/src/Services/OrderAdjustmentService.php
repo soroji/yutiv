@@ -354,6 +354,9 @@ class OrderAdjustmentService
             }
 
             $items[] = CalculationItem::fromArray([
+                'line_uuid' => $option->line_uuid,
+                'attribution_key' => $option->attribution_key,
+                'order_option_id' => $option->id,
                 'product_id' => $option->product_id,
                 'product_option_id' => $option->product_option_id,
                 'quantity' => $remainingQty,
@@ -394,6 +397,12 @@ class OrderAdjustmentService
 
         // 배송정책 스냅샷을 product_option_id 키 맵으로 변환
         $shippingPolicySnapshots = $this->buildShippingPolicySnapshotMap($shippingSnapshot);
+        foreach ($order->options as $option) {
+            $policy = $shippingPolicySnapshots[$option->line_uuid ?? $option->product_option_id] ?? null;
+            if ($policy !== null) {
+                $shippingPolicySnapshots['option:'.$option->id] = $policy;
+            }
+        }
 
         // 쿠폰 스냅샷 구성 (스냅샷 모드에서 쿠폰 규칙 복원용)
         $couponSnapshots = $this->buildCouponSnapshotsFromOrder($order);
@@ -675,7 +684,7 @@ class OrderAdjustmentService
         // 재계산 결과에서 옵션별 금액 반영
         foreach ($recalcResult->items as $item) {
             foreach ($order->options as $option) {
-                if ($option->product_option_id == $item->productOptionId) {
+                if (($item->orderOptionId !== null ? $option->id === $item->orderOptionId : $option->product_option_id == $item->productOptionId)) {
                     $cancelQty = $excludedMap[$option->id] ?? 0;
                     $remainingQty = $option->quantity - $cancelQty;
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Modules\Sirsoft\Ecommerce\DTO\CalculationInput;
 use Modules\Sirsoft\Ecommerce\DTO\CalculationItem;
 use Modules\Sirsoft\Ecommerce\DTO\OrderCalculationResult;
@@ -224,6 +225,9 @@ class OrderProcessingService
             if ($isZeroPayable) {
                 $this->finalizeZeroAmountPayment($order);
             }
+
+            // 불변 확장 스냅샷/outbox는 주문과 같은 트랜잭션에서 기록합니다.
+            HookManager::doAction('sirsoft-ecommerce.order.created_in_transaction', $order, $tempOrder, $calculationResult, $createdOptions);
 
             return $order;
         });
@@ -713,7 +717,7 @@ class OrderProcessingService
      * @param  TempOrder  $tempOrder  임시 주문
      * @param  OrderCalculationResult  $calculationResult  계산 결과
      * @param  array  $currencySnapshot  통화 스냅샷
-     * @return array<int, OrderOption> productOptionId => OrderOption 매핑
+     * @return array<int, OrderOption> 계산 결과 인덱스 => OrderOption 매핑
      */
     protected function createOrderOptions(
         Order $order,
@@ -723,8 +727,14 @@ class OrderProcessingService
         ?string $paymentMethod = null
     ): array {
         $createdOptions = [];
+        $seenLineUuids = [];
 
-        foreach ($calculationResult->items as $item) {
+        foreach ($calculationResult->items as $index => $item) {
+            $item->lineUuid ??= (string) Str::uuid();
+            if (isset($seenLineUuids[$item->lineUuid])) {
+                throw new \LogicException(__('sirsoft-ecommerce::exceptions.operation_failed'));
+            }
+            $seenLineUuids[$item->lineUuid] = true;
             // 상품/옵션 스냅샷 생성
             $product = $this->productRepository->find($item->productId);
             $productOption = $this->productOptionRepository->findById($item->productOptionId);
@@ -743,6 +753,8 @@ class OrderProcessingService
             $appliedPromotions = $item->appliedPromotions?->toArray() ?? [];
 
             $orderOption = $order->options()->create([
+                'line_uuid' => $item->lineUuid,
+                'attribution_key' => $item->attributionKey,
                 'product_id' => $item->productId,
                 'product_option_id' => $item->productOptionId,
                 'option_status' => OrderStatusEnum::PENDING_ORDER,
@@ -799,8 +811,8 @@ class OrderProcessingService
                 ),
             ]);
 
-            // productOptionId → OrderOption 매핑 저장
-            $createdOptions[$item->productOptionId] = $orderOption;
+            // 계산 결과 인덱스 → OrderOption 매핑 저장
+            $createdOptions[$index] = $orderOption;
         }
 
         // 주문 합계 무게/부피는 옵션 소계의 합이다.
@@ -1212,7 +1224,7 @@ class OrderProcessingService
      * @param  TempOrder  $tempOrder  임시 주문
      * @param  OrderCalculationResult  $calculationResult  계산 결과
      * @param  array  $currencySnapshot  통화 스냅샷
-     * @param  array  $createdOptions  productOptionId => OrderOption 매핑
+     * @param  array  $createdOptions  생성 옵션 목록 (연결은 line_uuid 사용)
      */
     protected function createOrderShippings(
         Order $order,
@@ -1221,9 +1233,15 @@ class OrderProcessingService
         array $currencySnapshot,
         array $createdOptions = []
     ): void {
-        foreach ($calculationResult->items as $item) {
+        $optionsByLine = [];
+        foreach ($createdOptions as $option) {
+            if ($option->line_uuid !== null) {
+                $optionsByLine[$option->line_uuid] = $option;
+            }
+        }
+        foreach ($calculationResult->items as $index => $item) {
             // 해당 아이템의 OrderOption 찾기
-            $orderOption = $createdOptions[$item->productOptionId] ?? null;
+            $orderOption = $item->lineUuid !== null ? ($optionsByLine[$item->lineUuid] ?? null) : ($createdOptions[$index] ?? null);
 
             if ($orderOption === null) {
                 continue; // 주문 옵션이 없으면 배송 정보 생성 불가
@@ -1545,6 +1563,7 @@ class OrderProcessingService
         foreach ($result->items as $item) {
             if ($item->appliedShippingPolicy) {
                 $items[] = [
+                    'line_uuid' => $item->lineUuid,
                     'product_option_id' => $item->productOptionId,
                     'policy' => $item->appliedShippingPolicy->toArray(),
                 ];

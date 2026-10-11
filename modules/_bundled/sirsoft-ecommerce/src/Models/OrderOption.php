@@ -38,6 +38,8 @@ class OrderOption extends Model
     protected $table = 'ecommerce_order_options';
 
     protected $fillable = [
+        'line_uuid',
+        'attribution_key',
         'order_id',
         'parent_option_id',
         'product_id',

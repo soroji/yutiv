@@ -1,0 +1,584 @@
+{
+  "version": "1.0.0",
+  "layout_name": "admin_headquarters",
+  "extends": "_admin_base",
+  "permissions": [
+    "yutiv-personal_store.headquarters.manage"
+  ],
+  "data_sources": [
+    {
+      "id": "dashboard",
+      "type": "api",
+      "endpoint": "/api/modules/yutiv-personal_store/admin",
+      "method": "GET",
+      "auto_fetch": true,
+      "auth_required": true,
+      "params": {
+        "page": "{{query.page ?? 1}}",
+        "history_page": "{{query.history_page ?? 1}}",
+        "rates_page": "{{query.rates_page ?? 1}}",
+        "stores_page": "{{query.stores_page ?? 1}}"
+      }
+    }
+  ],
+  "slots": {
+    "content": [
+      {
+        "type": "basic",
+        "name": "Div",
+        "props": {
+          "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+        },
+        "children": [
+          {
+            "type": "basic",
+            "name": "H1",
+            "text": "$t:yutiv-personal_store.store.headquarters"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{application.id ?? \"\"}}"
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{application.store_id ?? \"\"}}"
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{application.parent_id ?? \"\"}}"
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{application.kind ?? \"\"}}"
+              }
+            ],
+            "iteration": {
+              "source": "{{dashboard.data?.applications ?? []}}",
+              "item_var": "application",
+              "index_var": "index"
+            }
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "props": {
+              "className": "space-y-4 p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{dashboard.data?.total ?? 0}}"
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.previous",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "mergeQuery": true,
+                      "query": {
+                        "page": "{{Math.max(1, Number(query.page ?? 1)-1)}}"
+                      },
+                      "path": "/admin/personal-stores"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "button",
+                  "className": "border px-4 py-2 rounded-sm"
+                },
+                "text": "$t:yutiv-personal_store.store.next",
+                "actions": [
+                  {
+                    "type": "click",
+                    "handler": "navigate",
+                    "params": {
+                      "mergeQuery": true,
+                      "query": {
+                        "page": "{{Math.min(dashboard.data?.last_page ?? 1, Number(query.page ?? 1)+1)}}"
+                      },
+                      "path": "/admin/personal-stores"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Form",
+            "dataKey": "approveForm",
+            "props": {
+              "id": "approveForm",
+              "className": "space-y-3 border p-4"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "H2",
+                "text": "$t:yutiv-personal_store.store.approve"
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "name": "application_id",
+                  "type": "number",
+                  "className": "w-full border p-2 bg-white dark:bg-gray-800",
+                  "placeholder": "$t:yutiv-personal_store.store.application_id"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "submit",
+                  "className": "border px-4 py-2"
+                },
+                "text": "$t:yutiv-personal_store.store.save"
+              }
+            ],
+            "actions": [
+              {
+                "type": "submit",
+                "handler": "apiCall",
+                "target": "/api/modules/yutiv-personal_store/admin",
+                "params": {
+                  "method": "POST",
+                  "body": "{{Object.assign({}, _local.approveForm ?? {}, {\"action\":\"approve\"})}}"
+                },
+                "onSuccess": [
+                  {
+                    "handler": "refetchDataSource",
+                    "params": {
+                      "dataSourceId": "dashboard"
+                    }
+                  }
+                ],
+                "onError": [
+                  {
+                    "handler": "toast",
+                    "params": {
+                      "type": "error",
+                      "message": "{{error.message ?? \"\"}}"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Form",
+            "dataKey": "rateForm",
+            "props": {
+              "id": "rateForm",
+              "className": "space-y-3 border p-4"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "H2",
+                "text": "$t:yutiv-personal_store.store.product_rate"
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "name": "product_id",
+                  "type": "number",
+                  "className": "w-full border p-2 bg-white dark:bg-gray-800",
+                  "placeholder": "$t:yutiv-personal_store.store.product_id"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "name": "rate_bps",
+                  "type": "number",
+                  "className": "w-full border p-2 bg-white dark:bg-gray-800",
+                  "placeholder": "$t:yutiv-personal_store.store.rate_bps"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "submit",
+                  "className": "border px-4 py-2"
+                },
+                "text": "$t:yutiv-personal_store.store.save"
+              }
+            ],
+            "actions": [
+              {
+                "type": "submit",
+                "handler": "apiCall",
+                "target": "/api/modules/yutiv-personal_store/admin",
+                "params": {
+                  "method": "POST",
+                  "body": "{{Object.assign({}, _local.rateForm ?? {}, {\"action\":\"product_rate\"})}}"
+                },
+                "onSuccess": [
+                  {
+                    "handler": "refetchDataSource",
+                    "params": {
+                      "dataSourceId": "dashboard"
+                    }
+                  }
+                ],
+                "onError": [
+                  {
+                    "handler": "toast",
+                    "params": {
+                      "type": "error",
+                      "message": "{{error.message ?? \"\"}}"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Form",
+            "dataKey": "statusForm",
+            "props": {
+              "id": "statusForm",
+              "className": "space-y-3 border p-4"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "H2",
+                "text": "$t:yutiv-personal_store.store.status"
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "name": "store_id",
+                  "type": "number",
+                  "className": "w-full border p-2 bg-white dark:bg-gray-800",
+                  "placeholder": "$t:yutiv-personal_store.store.store_id"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Input",
+                "props": {
+                  "name": "status",
+                  "type": "text",
+                  "className": "w-full border p-2 bg-white dark:bg-gray-800",
+                  "placeholder": "$t:yutiv-personal_store.store.status"
+                }
+              },
+              {
+                "type": "basic",
+                "name": "Button",
+                "props": {
+                  "type": "submit",
+                  "className": "border px-4 py-2"
+                },
+                "text": "$t:yutiv-personal_store.store.save"
+              }
+            ],
+            "actions": [
+              {
+                "type": "submit",
+                "handler": "apiCall",
+                "target": "/api/modules/yutiv-personal_store/admin",
+                "params": {
+                  "method": "POST",
+                  "body": "{{Object.assign({}, _local.statusForm ?? {}, {\"action\":\"status\"})}}"
+                },
+                "onSuccess": [
+                  {
+                    "handler": "refetchDataSource",
+                    "params": {
+                      "dataSourceId": "dashboard"
+                    }
+                  }
+                ],
+                "onError": [
+                  {
+                    "handler": "toast",
+                    "params": {
+                      "type": "error",
+                      "message": "{{error.message ?? \"\"}}"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "{{dashboard.data?.review_count ?? 0}}"
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "{{dashboard.data?.pending_outbox_count ?? 0}}"
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "$t:yutiv-personal_store.store.history"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "iteration": {
+              "source": "{{dashboard.data?.history ?? []}}",
+              "item_var": "item",
+              "index_var": "index"
+            },
+            "props": {
+              "className": "border-b py-4"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{item.created_at ?? \"\"}} · {{item.kind ?? \"\"}} · {{item.revision ?? \"\"}}"
+              },
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{item.payload ?? \"\"}}"
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "$t:yutiv-personal_store.store.rates"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "iteration": {
+              "source": "{{dashboard.data?.rates ?? []}}",
+              "item_var": "item",
+              "index_var": "index"
+            },
+            "props": {
+              "className": "border-b py-4"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{item.product_id ?? \"\"}} · {{item.rate_bps ?? 0}} / 10000"
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "$t:yutiv-personal_store.store.integrity"
+          },
+          {
+            "type": "basic",
+            "name": "P",
+            "text": "{{dashboard.data?.review_count ?? 0}} / {{dashboard.data?.pending_outbox_count ?? 0}}"
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.previous",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "history_page": "{{Math.max(1,Number(query.history_page ?? 1)-1)}}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.next",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "history_page": "{{dashboard.data?.history_has_more ? Number(query.history_page ?? 1)+1 : Number(query.history_page ?? 1)}}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.previous",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "rates_page": "{{Math.max(1,Number(query.rates_page ?? 1)-1)}}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.next",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "rates_page": "{{dashboard.data?.rates_has_more ? Number(query.rates_page ?? 1)+1 : Number(query.rates_page ?? 1)}}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "H2",
+            "text": "$t:yutiv-personal_store.store.stores"
+          },
+          {
+            "type": "basic",
+            "name": "Div",
+            "iteration": {
+              "source": "{{dashboard.data?.stores ?? []}}",
+              "item_var": "store",
+              "index_var": "store_index"
+            },
+            "children": [
+              {
+                "type": "basic",
+                "name": "P",
+                "text": "{{store.id}} · {{store.slug}} · {{store.parent_id ?? \"-\"}} · {{store.status}}"
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.next",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "history_page": "{{dashboard.data?.history_has_more ? Number(query.history_page ?? 1)+1 : Number(query.history_page ?? 1)}}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.next",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "rates_page": "{{dashboard.data?.rates_has_more ? Number(query.rates_page ?? 1)+1 : Number(query.rates_page ?? 1)}}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "basic",
+            "name": "Button",
+            "props": {
+              "type": "button"
+            },
+            "text": "$t:yutiv-personal_store.store.next",
+            "actions": [
+              {
+                "type": "click",
+                "handler": "navigate",
+                "params": {
+                  "path": "/admin/personal-stores",
+                  "mergeQuery": true,
+                  "query": {
+                    "stores_page": "{{dashboard.data?.stores_has_more ? Number(query.stores_page ?? 1)+1 : Number(query.stores_page ?? 1)}}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

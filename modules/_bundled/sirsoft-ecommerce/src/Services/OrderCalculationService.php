@@ -77,6 +77,12 @@ use Modules\Sirsoft\Ecommerce\Support\VatCalculator;
  */
 class OrderCalculationService
 {
+    /** 신규 계산은 라인별, 기존 입력은 상품옵션별 키를 유지합니다. */
+    protected function lineKey(array $item): int|string
+    {
+        return $item['calculation_key'] ?? (isset($item['order_option_id']) ? 'option:'.$item['order_option_id'] : ($item['line_uuid'] ?? (isset($item['cart_id']) ? 'cart:'.$item['cart_id'] : $item['product_option_id'])));
+    }
+
     /**
      * @param  CurrencyConversionService  $currencyService  통화 변환 서비스
      * @param  ProductOptionRepositoryInterface  $productOptionRepository  상품 옵션 Repository
@@ -395,8 +401,9 @@ class OrderCalculationService
             // 스냅샷 모드: 주문 시점 데이터로 구성 (DB 조회 없음)
             if ($item->productSnapshot !== null && $item->optionSnapshot !== null) {
                 $shippingPolicyId = null;
-                if (isset($shippingPolicySnapshots[$item->productOptionId]['policy_id'])) {
-                    $shippingPolicyId = (int) $shippingPolicySnapshots[$item->productOptionId]['policy_id'];
+                $snapshotKey = $item->orderOptionId !== null ? 'option:'.$item->orderOptionId : ($item->lineUuid ?? $item->productOptionId);
+                if (isset($shippingPolicySnapshots[$snapshotKey]['policy_id'])) {
+                    $shippingPolicyId = (int) $shippingPolicySnapshots[$snapshotKey]['policy_id'];
                 }
 
                 $snapshotProduct = new SnapshotProduct($item->productSnapshot, $shippingPolicyId);
@@ -408,6 +415,9 @@ class OrderCalculationService
 
                 $preparedItems[] = [
                     'cart_id' => $item->cartId,
+                    'line_uuid' => $item->lineUuid,
+                    'attribution_key' => $item->attributionKey,
+                    'order_option_id' => $item->orderOptionId,
                     'product_id' => $item->productId,
                     'product_option_id' => $item->productOptionId,
                     'quantity' => $item->quantity,
@@ -440,6 +450,9 @@ class OrderCalculationService
 
             $preparedItems[] = [
                 'cart_id' => $item->cartId,
+                'line_uuid' => $item->lineUuid,
+                'attribution_key' => $item->attributionKey,
+                'order_option_id' => $item->orderOptionId,
                 'product_id' => $item->productId,
                 'product_option_id' => $item->productOptionId,
                 'quantity' => $item->quantity,
@@ -576,7 +589,10 @@ class OrderCalculationService
             // subtotal = (원옵션가 + 추가옵션 단위 합계) × 수량 (D6)
             $additionalTotal = (int) ($item['additional_options_total'] ?? 0);
             $subtotal = ($item['unit_price'] + $additionalTotal) * $item['quantity'];
-            $subtotals[$item['product_option_id']] = [
+            $subtotals[$this->lineKey($item)] = [
+                'product_option_id' => $item['product_option_id'],
+                'line_uuid' => $item['line_uuid'] ?? null,
+                'calculation_key' => $this->lineKey($item),
                 'unit_price' => $item['unit_price'],
                 'additional_options_total' => $additionalTotal,
                 'quantity' => $item['quantity'],
@@ -645,7 +661,10 @@ class OrderCalculationService
             }
 
             // 각 상품옵션에 지정된 쿠폰 적용
-            foreach ($itemCoupons as $optionId => $couponIds) {
+            foreach ($preparedItems as $couponItem) {
+                $optionId = $this->lineKey($couponItem);
+                $item = $couponItem;
+                $couponIds = $itemCoupons[$optionId] ?? $itemCoupons[$couponItem['product_option_id']] ?? [];
                 foreach ($couponIds as $couponIssueId) {
                     if (! isset($couponIssueMap[$couponIssueId])) {
                         continue;
@@ -717,7 +736,9 @@ class OrderCalculationService
                         maxDiscountAmount: (int) ($coupon->discount_max_amount ?? 0),
                         appliedItems: [
                             [
-                                'product_option_id' => $optionId,
+                                'product_option_id' => $item['product_option_id'] ?? $optionId,
+                                'calculation_key' => $optionId,
+                                'line_uuid' => $item['line_uuid'] ?? null,
                                 'discount_amount' => $discount,
                                 'discount_amount_formatted' => $this->currencyService->formatPrice($discount, $defaultCurrency),
                             ],
@@ -780,7 +801,7 @@ class OrderCalculationService
                 $appliedItems = [];
 
                 foreach ($targetItems as $item) {
-                    $optionId = $item['product_option_id'];
+                    $optionId = $this->lineKey($item);
                     // 원래 소계 기준으로 할인 계산 (병렬 적용)
                     $originalSubtotal = $discountedItems[$optionId]['subtotal'] ?? 0;
 
@@ -791,7 +812,9 @@ class OrderCalculationService
 
                     $totalDiscount += $discount;
                     $appliedItems[] = [
-                        'product_option_id' => $optionId,
+                        'product_option_id' => $item['product_option_id'] ?? $optionId,
+                        'calculation_key' => $optionId,
+                        'line_uuid' => $item['line_uuid'] ?? null,
                         'discount_amount' => $discount,
                     ];
                 }
@@ -818,7 +841,7 @@ class OrderCalculationService
 
                 // 3단계: discountedItems 업데이트 (글로벌 cap 반영 후)
                 foreach ($appliedItems as $appliedItem) {
-                    $optionId = $appliedItem['product_option_id'];
+                    $optionId = $this->lineKey($appliedItem);
                     $discountedItems[$optionId]['coupon_discount'] = ($discountedItems[$optionId]['coupon_discount'] ?? 0) + $appliedItem['discount_amount'];
                     $originalSubtotal = $discountedItems[$optionId]['subtotal'] ?? 0;
                     $discountedItems[$optionId]['discounted_subtotal'] = $originalSubtotal - ($discountedItems[$optionId]['coupon_discount'] ?? 0);
@@ -873,7 +896,7 @@ class OrderCalculationService
             : MileageRounding::normalize($this->resolveMileageCurrencyRule($input));
 
         foreach ($preparedItems as $item) {
-            $optionId = $item['product_option_id'];
+            $optionId = $this->lineKey($item);
             $option = $item['product_option'];
 
             $baseAmount = $discountedItems[$optionId]['discounted_subtotal']
@@ -959,7 +982,7 @@ class OrderCalculationService
         $classification = [];
 
         foreach ($preparedItems as $item) {
-            $optionId = $item['product_option_id'];
+            $optionId = $this->lineKey($item);
             $product = $item['product'];
             $amount = $discountedItems[$optionId]['discounted_subtotal']
                 ?? $discountedItems[$optionId]['subtotal']
@@ -1111,7 +1134,7 @@ class OrderCalculationService
                 ]);
 
                 foreach ($groupItems as $item) {
-                    $shippingResults[$item['product_option_id']] = new AppliedShippingPolicy(
+                    $shippingResults[$this->lineKey($item)] = new AppliedShippingPolicy(
                         policyId: $policyId,
                         policyName: '',
                         countryCode: $countryCode,
@@ -1135,7 +1158,7 @@ class OrderCalculationService
                 ]);
 
                 foreach ($groupItems as $item) {
-                    $shippingResults[$item['product_option_id']] = new AppliedShippingPolicy(
+                    $shippingResults[$this->lineKey($item)] = new AppliedShippingPolicy(
                         policyId: $policyId,
                         policyName: $policy->getLocalizedName(),
                         countryCode: $countryCode,
@@ -1263,12 +1286,12 @@ class OrderCalculationService
      * @param  string|null  $zipcode  우편번호 (추가배송비 계산용)
      * @return int 단독 구매 시 예상 배송비
      */
-    protected function calculateStandaloneShippingFee(ShippingPolicyCountrySetting $countrySetting, string $countryCode, array $groupItems, int $targetOptionId, ?string $zipcode): int
+    protected function calculateStandaloneShippingFee(ShippingPolicyCountrySetting $countrySetting, string $countryCode, array $groupItems, int|string $targetOptionId, ?string $zipcode): int
     {
         // 대상 아이템 찾기
         $targetItem = null;
         foreach ($groupItems as $item) {
-            if ($item['product_option_id'] === $targetOptionId) {
+            if ($this->lineKey($item) === $targetOptionId) {
                 $targetItem = $item;
                 break;
             }
@@ -1420,7 +1443,9 @@ class OrderCalculationService
             foreach ($apportioned as $optionId => $share) {
                 $discountedItems[$optionId]['order_discount_share'] = ($discountedItems[$optionId]['order_discount_share'] ?? 0) + $share;
                 $appliedItems[] = [
-                    'product_option_id' => $optionId,
+                    'product_option_id' => $discountedItems[$optionId]['product_option_id'] ?? $optionId,
+                    'calculation_key' => $optionId,
+                    'line_uuid' => $discountedItems[$optionId]['line_uuid'] ?? null,
                     'discount_amount' => $share,
                 ];
             }
@@ -1552,11 +1577,14 @@ class OrderCalculationService
         $promotionsByOption = $this->buildPromotionsByOption($productPromotions);
 
         foreach ($preparedItems as $item) {
-            $optionId = $item['product_option_id'];
+            $optionId = $this->lineKey($item);
 
             $itemCalc = new ItemCalculation(
                 productId: $item['product_id'],
-                productOptionId: $optionId,
+                productOptionId: $item['product_option_id'],
+                lineUuid: $item['line_uuid'] ?? null,
+                attributionKey: $item['attribution_key'] ?? null,
+                orderOptionId: $item['order_option_id'] ?? null,
                 quantity: $item['quantity'],
                 unitPrice: $item['unit_price'],
                 additionalOptionsTotal: (int) ($item['additional_options_total'] ?? 0),
@@ -1654,7 +1682,7 @@ class OrderCalculationService
     /**
      * 아이템의 최종 금액을 계산합니다.
      */
-    protected function calculateItemFinalAmount(int $optionId, array $discountedItems, array $pointsUsageResult): int
+    protected function calculateItemFinalAmount(int|string $optionId, array $discountedItems, array $pointsUsageResult): int
     {
         $item = $discountedItems[$optionId] ?? [];
         $subtotal = $item['subtotal'] ?? 0;
@@ -2014,7 +2042,7 @@ class OrderCalculationService
                 continue;
             }
 
-            $optionId = $item['product_option_id'];
+            $optionId = $this->lineKey($item);
 
             if (! isset($groups[$policyId])) {
                 $policy = null;
@@ -2063,7 +2091,9 @@ class OrderCalculationService
             $itemVolume = (float) ($productOption->volume ?? 0) * $item['quantity'];
 
             $groups[$policyId]['items'][] = [
-                'product_option_id' => $optionId,
+                'product_option_id' => $item['product_option_id'] ?? $optionId,
+                'calculation_key' => $optionId,
+                'line_uuid' => $item['line_uuid'] ?? null,
                 'subtotal' => $amount,
                 'quantity' => $item['quantity'],
                 'weight' => $itemWeight,
@@ -2631,7 +2661,7 @@ class OrderCalculationService
         if (empty($items) || $totalFee <= 0) {
             $result = [];
             foreach ($items as $item) {
-                $result[$item['product_option_id']] = ['amount' => 0];
+                $result[$this->lineKey($item)] = ['amount' => 0];
             }
 
             return $result;
@@ -2646,7 +2676,7 @@ class OrderCalculationService
 
             foreach ($items as $index => $item) {
                 $isLast = ($index === count($items) - 1);
-                $result[$item['product_option_id']] = [
+                $result[$this->lineKey($item)] = [
                     'amount' => $isLast ? ($totalFee - $allocated) : $share,
                 ];
                 $allocated += $share;
@@ -2670,7 +2700,7 @@ class OrderCalculationService
                 $allocated += $share;
             }
 
-            $result[$item['product_option_id']] = ['amount' => $share];
+            $result[$this->lineKey($item)] = ['amount' => $share];
         }
 
         return $result;
@@ -2692,7 +2722,7 @@ class OrderCalculationService
             }
 
             foreach ($couponApplication->appliedItems as $appliedItem) {
-                $optionId = $appliedItem['product_option_id'] ?? null;
+                $optionId = $this->lineKey($appliedItem);
                 if ($optionId === null) {
                     continue;
                 }

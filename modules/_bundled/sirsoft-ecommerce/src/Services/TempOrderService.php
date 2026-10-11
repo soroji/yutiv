@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Modules\Sirsoft\Ecommerce\DTO\CalculationInput;
 use Modules\Sirsoft\Ecommerce\DTO\CalculationItem;
 use Modules\Sirsoft\Ecommerce\DTO\OrderCalculationResult;
@@ -74,6 +75,10 @@ class TempOrderService
             throw new CartEmptyException(__('sirsoft-ecommerce::exceptions.cart_empty'));
         }
 
+        foreach ($cartItems as $cart) {
+            // 같은 카트로 여러 임시 주문을 만들어도 주문 원본 UUID가 충돌하지 않습니다.
+            $cart->line_uuid = (string) Str::uuid();
+        }
         HookManager::doAction('sirsoft-ecommerce.temp_order.before_create', $cartItems, $userId, $cartKey);
 
         // 마일리지 사용 검증
@@ -275,6 +280,8 @@ class TempOrderService
 
             // 미저장 Cart 모델 구성 (id 없음 — 장바구니 행 미생성)
             $cart = new Cart([
+                'line_uuid' => (string) Str::uuid(),
+                'attribution_key' => HookManager::applyFilters('sirsoft-ecommerce.cart.filter_direct_attribution', null, $item, $option),
                 'cart_key' => $cartKey,
                 'user_id' => $userId,
                 'product_id' => $option->product_id,
@@ -615,6 +622,8 @@ class TempOrderService
                 productOptionId: $cart->product_option_id,
                 quantity: $cart->quantity,
                 cartId: $cart->id,
+                lineUuid: $cart->line_uuid,
+                attributionKey: $cart->attribution_key,
                 additionalOptionSelections: $cart->additional_option_selections,
             );
         })->all();
@@ -630,6 +639,8 @@ class TempOrderService
         return $cartItems->map(function ($cart) {
             return [
                 'cart_id' => $cart->id,
+                'line_uuid' => $cart->line_uuid,
+                'attribution_key' => $cart->attribution_key,
                 'product_id' => $cart->product_id,
                 'product_option_id' => $cart->product_option_id,
                 'additional_option_selections' => $cart->additional_option_selections,

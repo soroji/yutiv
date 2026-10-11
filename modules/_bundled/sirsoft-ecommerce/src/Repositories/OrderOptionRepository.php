@@ -76,6 +76,8 @@ class OrderOptionRepository implements OrderOptionRepositoryInterface
             ->where('order_id', $option->order_id)
             ->where('product_id', $option->product_id)
             ->where('product_option_id', $option->product_option_id)
+            ->where('line_uuid', $option->line_uuid)
+            ->where('attribution_key', $option->attribution_key)
             ->where('option_status', $status)
             ->where(function ($query) use ($option) {
                 // 형제 관계 (같은 parent_option_id)

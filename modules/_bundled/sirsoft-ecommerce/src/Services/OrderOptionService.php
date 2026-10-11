@@ -143,6 +143,7 @@ class OrderOptionService
         );
 
         DB::transaction(function () use ($option, $newStatus, $quantity, $metadata, $isReactivation, $shouldRestoreOnCancel, &$result) {
+            $this->orderRepository->findByIdForUpdate($option->order_id);
             if ($quantity === $option->quantity) {
                 // 전체 수량 변경 → UPDATE만
                 $updateData = ['option_status' => $newStatus];
@@ -245,6 +246,7 @@ class OrderOptionService
                     $result['split'] = $splitOption;
                 }
             }
+            HookManager::doAction('sirsoft-ecommerce.order_option.changed_in_transaction', $result['original'], $newStatus, $result);
         });
 
         // 변경 후 훅

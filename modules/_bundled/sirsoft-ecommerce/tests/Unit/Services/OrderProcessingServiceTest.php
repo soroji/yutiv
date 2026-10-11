@@ -5,6 +5,7 @@ namespace Modules\Sirsoft\Ecommerce\Tests\Unit\Services;
 use App\Extension\HookManager;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\ModuleSettingsService;
 use Illuminate\Support\Facades\App;
 use Modules\Sirsoft\Ecommerce\Database\Factories\TempOrderFactory;
 use Modules\Sirsoft\Ecommerce\DTO\AppliedPromotions;
@@ -27,6 +28,7 @@ use Modules\Sirsoft\Ecommerce\Exceptions\OrderAmountChangedException;
 use Modules\Sirsoft\Ecommerce\Exceptions\PaymentAmountMismatchException;
 use Modules\Sirsoft\Ecommerce\Exceptions\UnsupportedPaymentCurrencyException;
 use Modules\Sirsoft\Ecommerce\Listeners\CouponUseListener;
+use Modules\Sirsoft\Ecommerce\Listeners\MileageTransactionListener;
 use Modules\Sirsoft\Ecommerce\Models\Cart;
 use Modules\Sirsoft\Ecommerce\Models\Coupon;
 use Modules\Sirsoft\Ecommerce\Models\CouponIssue;
@@ -38,10 +40,12 @@ use Modules\Sirsoft\Ecommerce\Models\Product;
 use Modules\Sirsoft\Ecommerce\Models\ProductOption;
 use Modules\Sirsoft\Ecommerce\Models\TempOrder;
 use Modules\Sirsoft\Ecommerce\Models\UserAddress;
+use Modules\Sirsoft\Ecommerce\Services\CurrencyConversionService;
 use Modules\Sirsoft\Ecommerce\Services\EcommerceSettingsService;
 use Modules\Sirsoft\Ecommerce\Services\OrderCalculationService;
 use Modules\Sirsoft\Ecommerce\Services\OrderProcessingService;
 use Modules\Sirsoft\Ecommerce\Services\StockService;
+use Modules\Sirsoft\Ecommerce\Support\CurrencySettingsCache;
 use Modules\Sirsoft\Ecommerce\Tests\ModuleTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -57,6 +61,18 @@ class OrderProcessingServiceTest extends ModuleTestCase
     {
         parent::setUp();
         $this->cleanupMileageSettingsFile();
+        // 설치 디렉터리·서버 설정 없이도 배포 기본 통화 계약을 명시적으로 재현합니다.
+        $path = storage_path('framework/testing/modules/sirsoft-ecommerce/settings');
+        if (! is_dir($path)) {
+            mkdir($path, 0755, true);
+        }
+        $defaults = json_decode(file_get_contents(base_path('modules/_bundled/sirsoft-ecommerce/config/settings/defaults.json')), true, 512, JSON_THROW_ON_ERROR);
+        file_put_contents($path.'/language_currency.json', json_encode($defaults['defaults']['language_currency'], JSON_THROW_ON_ERROR));
+        config(['g7_settings.modules.sirsoft-ecommerce.language_currency' => $defaults['defaults']['language_currency'], 'g7_settings.modules.sirsoft-ecommerce.mileage.enabled' => true]);
+        CurrencySettingsCache::clear();
+        foreach ([ModuleSettingsService::class, EcommerceSettingsService::class, CurrencyConversionService::class, OrderProcessingService::class] as $cachedService) {
+            $this->app->forgetInstance($cachedService);
+        }
         $this->service = app(OrderProcessingService::class);
     }
 
@@ -3048,6 +3064,7 @@ class OrderProcessingServiceTest extends ModuleTestCase
 
     public function test_complete_payment_deducts_mileage_for_payment_complete_timing(): void
     {
+        HookManager::addAction('sirsoft-ecommerce.mileage.use', [app(MileageTransactionListener::class), 'handleUse']);
         $user = User::factory()->create();
         $tempOrder = $this->makePartialMileageTempOrder($user, 2000, 53000);
 
@@ -3075,6 +3092,7 @@ class OrderProcessingServiceTest extends ModuleTestCase
 
     public function test_order_placed_timing_deducts_mileage_at_order_creation(): void
     {
+        HookManager::addAction('sirsoft-ecommerce.mileage.use', [app(MileageTransactionListener::class), 'handleUse']);
         $user = User::factory()->create();
         $tempOrder = $this->makePartialMileageTempOrder($user, 2000, 53000);
 

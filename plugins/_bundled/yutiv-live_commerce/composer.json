@@ -2,7 +2,7 @@
     "name": "plugins/yutiv-live_commerce",
     "description": "TeeWide multi-tenant live commerce platform for G7 by YUTIV",
     "type": "library",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "MIT",
     "authors": [
         {
@@ -16,7 +16,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Plugins\\Yutiv\\LiveCommerce\\": ["src/", "./"]
+            "Plugins\\Yutiv\\LiveCommerce\\": [
+                "src/",
+                "./"
+            ]
         }
     }
 }

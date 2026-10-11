@@ -153,6 +153,8 @@ class CartService
                 productOptionId: $cart->product_option_id,
                 quantity: $cart->quantity,
                 cartId: $cart->id,
+                lineUuid: $cart->line_uuid,
+                attributionKey: $cart->attribution_key,
                 additionalOptionSelections: $cart->additional_option_selections,
             );
         })->all();
@@ -211,7 +213,7 @@ class CartService
             );
         }
         $existingItem = $candidates->first(
-            fn ($cart) => $cart->getAdditionalOptionSelectionHash() === $selectionHash
+            fn ($cart) => $cart->getAdditionalOptionSelectionHash() === $selectionHash && $cart->attribution_key === ($data['attribution_key'] ?? null)
         );
 
         // 판매상태 검증 (판매중지/품절/출시예정/전시중지 차단 — 재고보다 우선)
@@ -245,6 +247,8 @@ class CartService
 
             // 새 아이템 생성
             return $this->cartRepository->create([
+                'line_uuid' => (string) Str::uuid(),
+                'attribution_key' => $data['attribution_key'] ?? null,
                 'cart_key' => $data['cart_key'] ?? null,
                 'user_id' => $data['user_id'] ?? null,
                 'product_id' => $data['product_id'],
@@ -581,7 +585,7 @@ class CartService
                 // 회원 장바구니에 동일 옵션 + 동일 추가옵션 조합이 있는지 확인 (D3)
                 $guestHash = $guestItem->getAdditionalOptionSelectionHash();
                 $existingItem = ($memberLinesByOption->get($guestItem->product_option_id) ?? collect())
-                    ->first(fn ($candidate) => $candidate->getAdditionalOptionSelectionHash() === $guestHash);
+                    ->first(fn ($candidate) => $candidate->getAdditionalOptionSelectionHash() === $guestHash && $candidate->attribution_key === $guestItem->attribution_key);
 
                 if ($existingItem) {
                     // 동일 옵션 존재: 수량 합산 (재고 초과 시 재고 최대치로 조정)

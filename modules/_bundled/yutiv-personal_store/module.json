@@ -1,0 +1,12 @@
+{
+  "identifier": "yutiv-personal_store",
+  "vendor": "yutiv",
+  "name": {"ko": "YUTIV 개인 스토어", "en": "YUTIV Personal Store"},
+  "description": {"ko": "독립 계층형 스토어와 KRW 리워드 원장", "en": "Independent hierarchical stores and KRW rewards"},
+  "version": "0.1.1",
+  "license": "MIT",
+  "g7_version": ">=7.0.9",
+  "dependencies": {"modules": {"sirsoft-ecommerce": ">=1.3.1"}, "plugins": {}},
+  "assets": {},
+  "loading": {"strategy": "global", "priority": 110}
+}
