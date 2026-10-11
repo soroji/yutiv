@@ -7,6 +7,7 @@
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as MobileNav } from './MobileNav';
+export { default as StoreOffice } from './StoreOffice';
 export { NotificationCenter } from './NotificationCenter';
 export type { NotificationCenterProps, NotificationItem } from './NotificationCenter';
 export { default as ProductCard } from './ProductCard';
@@ -52,6 +53,7 @@ export { SlotContainer } from './SlotContainer';
  * }
  */
 export declare const compositeComponents: {
+    StoreOffice: () => Promise<typeof import("./StoreOffice")>;
     Header: () => Promise<typeof import("./Header")>;
     Footer: () => Promise<typeof import("./Footer")>;
     MobileNav: () => Promise<typeof import("./MobileNav")>;

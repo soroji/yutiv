@@ -1,0 +1,15 @@
+feature: operator-selection-ui
+scope: authenticated operator choices and image upload boundary
+axes:
+  actor: [guest, member_without_store, pending_operator, active_operator]
+  parent: [self, descendant, active_other, pending_other]
+  product: [visible_on_sale, explicit_excluded, code_search]
+  media: [valid_png, non_image, invalid_collection]
+assertions:
+  - choices are bounded and never expose user identifiers or contact details
+  - parent candidates exclude self descendants and inactive stores
+  - code search retains the existing sale eligibility filter
+  - category labels show localized ancestry
+  - uploads require an active owned store before storage
+  - image validation rejects non-images and unknown collections
+tests: [Feature/OperatorSelectionTest.php, Feature/HttpBoundaryTest.php]

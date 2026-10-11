@@ -270,6 +270,9 @@ export const Select: React.FC<SelectProps> = ({
     <Div ref={containerRef} className="relative" {...rootDomProps}>
       <Button
         ref={buttonRef}
+        id={props.id ? `${props.id}-control` : undefined}
+        aria-label={props['aria-label']}
+        aria-labelledby={props['aria-labelledby']}
         type="button"
         onClick={handleToggle}
         disabled={disabled}

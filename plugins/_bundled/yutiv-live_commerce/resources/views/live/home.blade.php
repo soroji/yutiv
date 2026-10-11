@@ -4,6 +4,8 @@
     'footerNote' => '첫 라이브를 준비하고 있습니다.',
 ])
 
+@include('teewide::partials.main-styles')
+
 @push('styles')
     .tw-live-head { padding: 48px 0 8px; }
     .tw-live-head__title { margin: 14px 0 8px; font-size: 32px; letter-spacing: -0.02em; }
@@ -84,8 +86,9 @@
             </div>
 
             @if ($onAir === [])
-                <div class="tw-empty">
-                    <p class="tw-empty__title">진행 중인 라이브가 없습니다</p>
+                <div class="tw-empty tw-empty--broadcast">
+                    <div><p class="tw-empty__title">다음 라이브를 준비하고 있습니다</p><p class="tw-empty__desc">방송이 시작되면 이곳에서 만나보실 수 있습니다. 아직 확정된 편성은 없습니다.</p><a class="tw-btn tw-btn--ghost" href="{{ $portalUrl }}">TeeWide 홈으로</a></div>
+                    @include('teewide::partials.broadcast-preview')
                 </div>
             @endif
         </div>

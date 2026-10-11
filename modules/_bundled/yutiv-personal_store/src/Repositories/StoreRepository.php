@@ -28,6 +28,42 @@ use Modules\Yutiv\PersonalStore\Services\RewardCalculator;
 
 class StoreRepository implements StoreRepositoryInterface
 {
+    public function mediaStoreId(int $actorId): int
+    {
+        $store = Store::where('user_id', $actorId)->where('status', 'active')->first();
+        abort_unless($store, 403);
+
+        return $store->id;
+    }
+
+    public function parentOptions(int $actorId, array $filters): array
+    {
+        $id = $this->mediaStoreId($actorId);
+        $query = Store::where('status', 'active')->whereNotIn('id', DB::table('personal_store_closure')->select('descendant_id')->where('ancestor_id', $id));
+        if (! empty($filters['search'])) {
+            KeywordSearch::apply($query, 'slug', $filters['search']);
+        }
+        $page = $this->paginate($query->orderBy('slug')->orderBy('id'), ['id', 'slug'], 'page', $filters['page'] ?? 1);
+
+        return ['data' => $page->map(fn ($store) => ['id' => $store->id, 'name' => $store->slug])->all(), 'page' => $page->currentPage(), 'has_more' => $page->hasMorePages()];
+    }
+
+    private function categoryLabel(Category $category): string
+    {
+        $names = [$category->getLocalizedName()];
+        $seen = [$category->id];
+        while ($category->parent_id && ! in_array($category->parent_id, $seen, true)) {
+            $category = Category::find($category->parent_id, ['id', 'name', 'parent_id']);
+            if (! $category) {
+                break;
+            }
+            $seen[] = $category->id;
+            array_unshift($names, $category->getLocalizedName());
+        }
+
+        return implode(' / ', $names);
+    }
+
     private function paginate($query, array $columns, string $pageName, int $page): BoundedPage
     {
         return BoundedPaginator::paginate($query, perPage: 20, page: $page, resultCap: PaginationLimits::resultCap('yutiv-personal_store'), columns: $columns, pageName: $pageName);
@@ -44,7 +80,7 @@ class StoreRepository implements StoreRepositoryInterface
         }
         $page = $this->paginate($query->orderBy('id'), ['id', 'name', 'parent_id'], 'page', $filters['page'] ?? 1);
 
-        return ['data' => $page->map(fn ($category) => ['id' => $category->id, 'name' => $category->getLocalizedName(), 'parent_id' => $category->parent_id])->all(), 'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'total_relation' => $page->totalRelation()->value, 'has_more' => $page->hasMorePages()];
+        return ['data' => $page->map(fn ($category) => ['id' => $category->id, 'name' => $category->getLocalizedName(), 'path' => $this->categoryLabel($category), 'parent_id' => $category->parent_id])->all(), 'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'total_relation' => $page->totalRelation()->value, 'has_more' => $page->hasMorePages()];
     }
 
     public function headquarters(int $actorId, array $filters): array
@@ -71,7 +107,7 @@ class StoreRepository implements StoreRepositoryInterface
             $path = $this->path($store->id);
             $query = Product::query()->where('display_status', 'visible')->where('sales_status', 'on_sale');
             if (! empty($filters['search'])) {
-                KeywordSearch::apply($query, 'name', $filters['search']);
+                KeywordSearch::applyAny($query, ['name', 'product_code'], $filters['search']);
             }
             $page = $this->paginate($query->orderByDesc('id'), ['id', 'product_code', 'name', 'selling_price', 'list_price', 'tax_status', 'sales_status', 'display_status'], 'page', $filters['page'] ?? 1);
             $items = [];
@@ -83,7 +119,7 @@ class StoreRepository implements StoreRepositoryInterface
                 $calculation = (new RewardCalculator)->allocate($baseCurrency === 'KRW' ? (int) $product->selling_price : 0, $rate, $path);
                 $own = end($calculation['allocations']);
                 $effective = (new RewardCalculator)->allocate(1000000, $rate, $path);
-                $items[] = ['id' => $product->id, 'product_code' => $product->product_code, 'name' => $product->getLocalizedName(), 'selling_price' => $product->selling_price, 'selling_price_formatted' => $price['selling_price_formatted'], 'multi_currency_selling_price' => $price['multi_currency_selling_price'], 'reward_currency_eligible' => $baseCurrency === 'KRW', 'base_rate_bps' => $rate, 'effective_rate_per_million' => end($effective['allocations'])['amount'], 'estimated_points' => $own['amount'], 'selected' => $this->allowed($store->id, $product->id)];
+                $items[] = ['id' => $product->id, 'product_code' => $product->product_code, 'name' => $product->getLocalizedName(), 'selling_price' => $product->selling_price, 'selling_price_formatted' => $price['selling_price_formatted'], 'multi_currency_selling_price' => $price['multi_currency_selling_price'], 'reward_currency_eligible' => $baseCurrency === 'KRW', 'base_rate_bps' => $rate, 'effective_rate_per_million' => end($effective['allocations'])['amount'], 'estimated_points' => $own['amount'], 'thumbnail_url' => $price['thumbnail_url'] ?? null, 'selection' => ($selection = DB::table('personal_store_products')->where('store_id', $store->id)->where('product_id', $product->id)->first(['excluded'])) ? ($selection->excluded ? 'exclude' : 'include') : 'none', 'selected' => $this->allowed($store->id, $product->id)];
             }
 
             return ['data' => $items, 'page' => $page->currentPage(), 'total' => $page->total(), 'total_relation' => $page->totalRelation()->value, 'has_more' => $page->hasMorePages(), 'last_page' => $page->lastPage()];
@@ -227,7 +263,7 @@ class StoreRepository implements StoreRepositoryInterface
         $statistics = $this->paginate((clone $query)->reorder()->limit(null)->offset(null)->select('product_id')->selectRaw('SUM(eligible_base) as eligible_base, SUM(quantity) as quantity')->groupBy('product_id')->orderBy('product_id'), ['*'], 'statistics_page', $filters['statistics_page'] ?? 1);
         $ledger = $this->paginate(DB::table('personal_store_ledger')->where('store_id', $store->id)->orderByDesc('id'), ['id', 'kind', 'amount', 'available_delta', 'debt_delta', 'created_at'], 'ledger_page', $filters['ledger_page'] ?? 1);
 
-        return ['store' => $this->storeView($store), 'orders' => $orders, 'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'total_relation' => $page->totalRelation()->value, 'has_more' => $page->hasMorePages(), 'children' => $children->map(fn ($child) => $this->storeView($child) + ['rate_bps' => (int) DB::table('personal_store_allocations')->where('parent_id', $store->id)->where('child_id', $child->id)->value('rate_bps')])->all(), 'children_total' => $children->total(), 'children_has_more' => $children->hasMorePages(), 'children_total_relation' => $children->totalRelation()->value, 'children_page' => $children->currentPage(), 'children_last_page' => $children->lastPage(), 'selected_category_ids' => DB::table('personal_store_categories')->where('store_id', $store->id)->pluck('category_id')->all(), 'descendant_sales' => (int) LineSnapshot::whereIn('store_id', DB::table('personal_store_closure')->select('descendant_id')->where('ancestor_id', $store->id)->where('depth', '>', 0))->when(! empty($filters['from']), fn ($q) => $q->where('created_at', '>=', $filters['from'].' 00:00:00'))->when(! empty($filters['to']), fn ($q) => $q->where('created_at', '<', CarbonImmutable::parse($filters['to'])->addDay()->toDateString().' 00:00:00'))->sum('eligible_base'), 'descendant_count' => DB::table('personal_store_closure')->where('ancestor_id', $store->id)->where('depth', '>', 0)->count(), 'wallet' => (array) $wallet, 'statistics' => $statistics->items(), 'statistics_page' => $statistics->currentPage(), 'statistics_has_more' => $statistics->hasMorePages(), 'ledger' => $ledger->items(), 'ledger_page' => $ledger->currentPage(), 'ledger_total' => $ledger->total(), 'ledger_has_more' => $ledger->hasMorePages(), 'ledger_total_relation' => $ledger->totalRelation()->value, 'ledger_last_page' => $ledger->lastPage()];
+        return ['application_status' => DB::table('personal_store_applications')->where('store_id', $store->id)->orderByDesc('id')->value('status'), 'pending_estimate' => (int) DB::table('personal_store_beneficiaries as b')->join('personal_store_line_states as s', 's.snapshot_id', '=', 'b.snapshot_id')->where('b.store_id', $store->id)->where('s.confirmed_base', 0)->where('s.cancelled_base', 0)->where('s.review_required', false)->sum('b.amount'), 'store' => $this->storeView($store), 'orders' => $orders, 'page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total(), 'total_relation' => $page->totalRelation()->value, 'has_more' => $page->hasMorePages(), 'children' => $children->map(fn ($child) => $this->storeView($child) + ['rate_bps' => (int) DB::table('personal_store_allocations')->where('parent_id', $store->id)->where('child_id', $child->id)->value('rate_bps')])->all(), 'children_total' => $children->total(), 'children_has_more' => $children->hasMorePages(), 'children_total_relation' => $children->totalRelation()->value, 'children_page' => $children->currentPage(), 'children_last_page' => $children->lastPage(), 'selected_category_ids' => DB::table('personal_store_categories')->where('store_id', $store->id)->pluck('category_id')->all(), 'descendant_sales' => (int) LineSnapshot::whereIn('store_id', DB::table('personal_store_closure')->select('descendant_id')->where('ancestor_id', $store->id)->where('depth', '>', 0))->when(! empty($filters['from']), fn ($q) => $q->where('created_at', '>=', $filters['from'].' 00:00:00'))->when(! empty($filters['to']), fn ($q) => $q->where('created_at', '<', CarbonImmutable::parse($filters['to'])->addDay()->toDateString().' 00:00:00'))->sum('eligible_base'), 'descendant_count' => DB::table('personal_store_closure')->where('ancestor_id', $store->id)->where('depth', '>', 0)->count(), 'wallet' => (array) $wallet, 'statistics' => $statistics->items(), 'statistics_page' => $statistics->currentPage(), 'statistics_has_more' => $statistics->hasMorePages(), 'ledger' => $ledger->items(), 'ledger_page' => $ledger->currentPage(), 'ledger_total' => $ledger->total(), 'ledger_has_more' => $ledger->hasMorePages(), 'ledger_total_relation' => $ledger->totalRelation()->value, 'ledger_last_page' => $ledger->lastPage()];
     }
 
     public function publicStore(string $slug): array

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "templateId": "yutiv-stillform",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "components": {
     "basic": [
       {
@@ -1553,6 +1553,13 @@
             "description": "사용자 정의 클래스"
           }
         }
+      },
+      {
+        "name": "StoreOffice",
+        "type": "composite",
+        "description": "개인 스토어 운영 영역",
+        "path": "src/components/composite/StoreOffice.tsx",
+        "props": {}
       }
     ],
     "layout": [

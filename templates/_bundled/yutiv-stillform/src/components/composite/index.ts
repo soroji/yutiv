@@ -10,6 +10,7 @@
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as MobileNav } from './MobileNav';
+export { default as StoreOffice } from './StoreOffice';
 export { NotificationCenter } from './NotificationCenter';
 export type { NotificationCenterProps, NotificationItem } from './NotificationCenter';
 
@@ -65,6 +66,7 @@ export { SlotContainer } from './SlotContainer';
  * }
  */
 export const compositeComponents = {
+  StoreOffice: () => import('./StoreOffice'),
   // 레이아웃
   Header: () => import('./Header'),
   Footer: () => import('./Footer'),

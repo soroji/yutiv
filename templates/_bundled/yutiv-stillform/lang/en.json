@@ -101,5 +101,8 @@
   },
   "yutiv-stillform": {
     "$partial": "partial/en/yutiv-stillform.json"
+  },
+  "office": {
+    "$partial": "partial/en/office.json"
   }
 }

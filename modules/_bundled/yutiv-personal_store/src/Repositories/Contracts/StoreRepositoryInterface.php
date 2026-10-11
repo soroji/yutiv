@@ -47,4 +47,8 @@ interface StoreRepositoryInterface
     public function catalog(int $actorId, array $filters): array;
 
     public function categories(int $actorId, array $filters): array;
+
+    public function parentOptions(int $actorId, array $filters): array;
+
+    public function mediaStoreId(int $actorId): int;
 }

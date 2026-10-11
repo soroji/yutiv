@@ -1,4 +1,4 @@
-# Personal Store API 0.1.1
+# Personal Store API 0.1.2
 
 Base: `/api/modules/yutiv-personal_store`. JSON requests and ResponseHelper envelopes
 (`success`, `message`, `data`) follow the core API conventions. Operator and headquarters
@@ -15,7 +15,9 @@ Supplying another `store_id` never changes operator scope. Headquarters requires
 | GET | `/stores/{slug}/products/{code}` | Product code | Existing ecommerce ProductDetailResource, restricted to selected product |
 | GET | `/operator` | `page`, `ledger_page`, `children_page`, `statistics_page`, `from`, `to`, `search` | Own profile, wallet, ledger, children, closed order rows, own product statistics, descendant aggregate |
 | GET | `/operator/catalog` | `page`, `search` | Purchasable catalog, selected status, integer reward estimates |
-| GET | `/operator/categories` | `page`, `search` | Active category choices |
+| GET | `/operator/categories` | `page`, `search` | Active category choices with localized ancestor `path` |
+| GET | `/operator/parents` | `page`, `search` (public store name, <=100 characters) | Active candidates excluding self/descendants; only `id`, `name`; `page`, `has_more` |
+| POST | `/operator/media` | Multipart `file`, `collection` (`logo` or `banner`) | AttachmentResource, HTTP 201; active owner only |
 | POST | `/operator` | Action below | Updated own dashboard |
 | GET | `/admin` | `page`, `rates_page`, `history_page`, `stores_page` | Applications, stores, product rates, policy history and review/outbox counts |
 | POST | `/admin` | Headquarters action below | Updated dashboard |
@@ -24,6 +26,28 @@ Lists use bounded pagination: `total`, `total_relation`, `has_more`, `current_pa
 `per_page`; totals above the configured cap are lower bounds. A search term is limited
 to 100 characters. Dates are ISO calendar dates; `to` must not precede `from`.
 No operator download/export endpoint exists.
+
+### Operator selection UI (0.1.2)
+
+Catalog search matches localized product name or product code. Items add `thumbnail_url`
+and `selection` (`include`, `exclude`, `none`); `selected` remains the effective category/individual
+selection. No buyer information is returned. `/operator` adds `application_status` and
+`pending_estimate`: unconfirmed, uncancelled, non-review beneficiary amounts (an estimate,
+not an available balance or a guarantee of future payment).
+
+Parent search requires an active owned store. Example request:
+`GET /api/modules/yutiv-personal_store/operator/parents?search=sample&page=1`.
+Example data: `{"data":[{"id":12,"name":"sample-store"}],"page":1,"has_more":false}`.
+Store IDs are transport fields for the selector, never user-entered identifiers.
+
+Media example: multipart POST to `/operator/media` with `collection=logo` and an image
+`file`. Only JPEG/PNG/WebP, <=2 MiB and <=4096x4096 are accepted. The response follows
+the core AttachmentResource envelope with `data.download_url`, `data.hash`, `data.is_image`.
+The server fixes the attachment target to the authenticated user's active store;
+`store_id`/attachment target input cannot select another store. 401: unauthenticated;
+403: no active owned store; 422: invalid image/collection. This adapter reuses the core
+AttachmentService and Still Form FileUploader without granting admin attachment permissions.
+The subsequent profile save persists the selected URL; uploaded previews are not profile saves.
 
 Operator actions:
 
@@ -35,7 +59,7 @@ Operator actions:
   true excludes even when a selected category includes it.
 - `categories`: `category_ids` array of distinct existing IDs; empty clears selections.
 - `allocation`: direct `child_id`, integer `rate_bps` in 0..10000.
-- `move`: optional existing `parent_id`; creates an approval application, not a move.
+- `request_move`: optional existing `parent_id`; creates an approval application, not a move.
 
 Headquarters actions:
 

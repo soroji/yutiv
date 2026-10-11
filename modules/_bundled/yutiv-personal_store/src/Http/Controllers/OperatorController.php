@@ -12,6 +12,11 @@ use Modules\Yutiv\PersonalStore\Services\StoreManagementService;
 
 class OperatorController extends AuthBaseController
 {
+    public function parents(StoreListRequest $request, StoreRepositoryInterface $stores): JsonResponse
+    {
+        return ResponseHelper::success('messages.success', $stores->parentOptions($request->user()->id, $request->validated()));
+    }
+
     public function categories(StoreListRequest $request, StoreRepositoryInterface $stores): JsonResponse
     {
         return ResponseHelper::success('messages.success', $stores->categories($request->user()->id, $request->validated()));

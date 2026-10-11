@@ -1,0 +1,14 @@
+feature: store-office
+axes:
+  store: [none, pending, active, suspended]
+  response: [loading, empty, populated, forbidden, invalid_save, failure]
+  viewport: [1440, 1920, 390]
+assertions:
+  - operational tabs are available only to active operators
+  - loading and permission errors are distinct from empty sales
+  - products categories child stores and parents use names instead of user-entered IDs
+  - percentages map to basis points at the UI boundary
+  - category selection retains items outside the current page
+  - private order references never appear in rendered text
+  - single and empty pages have no unnecessary paging controls
+tests: [src/components/composite/StoreOffice.test.tsx]

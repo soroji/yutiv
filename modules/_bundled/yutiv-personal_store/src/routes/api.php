@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Yutiv\PersonalStore\Http\Controllers\HeadquartersController;
 use Modules\Yutiv\PersonalStore\Http\Controllers\OperatorController;
+use Modules\Yutiv\PersonalStore\Http\Controllers\OperatorMediaController;
 use Modules\Yutiv\PersonalStore\Http\Controllers\PublicStoreController;
 
 Route::get('stores/{slug}', [PublicStoreController::class, 'show'])->name('stores.show');
@@ -15,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('operator', [OperatorController::class, 'update'])->name('operator.update');
     Route::get('operator/catalog', [OperatorController::class, 'catalog'])->name('operator.catalog');
     Route::get('operator/categories', [OperatorController::class, 'categories'])->name('operator.categories');
+    Route::get('operator/parents', [OperatorController::class, 'parents'])->name('operator.parents');
+    Route::post('operator/media', [OperatorMediaController::class, 'upload'])->name('operator.media');
     Route::get('admin', [HeadquartersController::class, 'index'])->name('admin.index');
     Route::post('admin', [HeadquartersController::class, 'update'])->name('admin.update');
 });

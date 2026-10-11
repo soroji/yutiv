@@ -11,11 +11,24 @@
             <span class="tw-logo__mark" aria-hidden="true"></span>TeeWide
         </a>
 
-        <nav class="tw-nav" aria-label="주요 메뉴">
+        <a class="tw-btn tw-btn--primary tw-mobile-live" href="{{ $liveUrl }}">라이브 보기</a>
+        <details class="tw-mobile-menu">
+            <summary>메뉴</summary>
+            <nav aria-label="모바일 계정 메뉴">
+                @if ($teeWideUser !== null)
+                    <a class="tw-btn tw-btn--quiet" href="{{ route('teewide.account') }}">내 계정</a>
+                    <form class="tw-logout" method="POST" action="{{ route('teewide.logout') }}">@csrf<button type="submit" class="tw-btn tw-btn--ghost">로그아웃</button></form>
+                @else
+                    <a class="tw-btn tw-btn--quiet" href="{{ route('teewide.login') }}">로그인</a>
+                    <a class="tw-btn tw-btn--ghost" href="{{ route('teewide.register') }}">회원가입</a>
+                @endif
+            </nav>
+        </details>
+        <nav class="tw-nav tw-nav--desktop" aria-label="주요 메뉴">
             <a class="tw-btn tw-btn--quiet" href="{{ $liveUrl }}">라이브 둘러보기</a>
 
             @if ($teeWideUser !== null)
-                <a class="tw-btn tw-btn--quiet" href="{{ route('teewide.account') }}">
+                <a class="tw-btn tw-btn--quiet tw-account-label" href="{{ route('teewide.account') }}">
                     {{ $teeWideUser->displayName() }} 님
                 </a>
 
@@ -26,15 +39,9 @@
                 </form>
             @else
                 <a class="tw-btn tw-btn--ghost" href="{{ route('teewide.login') }}">로그인</a>
+                <a class="tw-btn tw-btn--primary" href="{{ route('teewide.register') }}">회원가입</a>
             @endif
 
-            {{--
-                판매 시작하기는 아직 백엔드가 없다. 링크처럼 보이게 두면 404 로 이어지므로
-                누를 수 없는 버튼으로 두고, 상태를 aria-describedby 로 함께 알린다.
-            --}}
-            <button type="button" class="tw-btn tw-btn--primary" disabled aria-describedby="tw-cta-note">
-                판매 시작하기
-            </button>
         </nav>
     </div>
 </header>

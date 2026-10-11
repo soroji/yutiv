@@ -4,6 +4,11 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [0.1.2] - 2026-10-11
+
+### Changed
+- 방송 준비 화면과 모바일 메뉴를 정돈했습니다.
+
 ## [0.1.1] - 2026-10-11
 
 ### Changed

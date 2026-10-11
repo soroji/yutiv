@@ -1,0 +1,11 @@
+feature: teewide-main-design
+axes:
+  auth: [guest, teewide_member, yutiv_member]
+  viewport: [1440, 1920, 390]
+  broadcast: [empty]
+assertions:
+  - decorative preview is explicitly identified as not a live broadcast
+  - login register account post logout and live links are retained
+  - mobile menu fits viewport with long member display names
+  - no storefront rewards buyer data or disabled seller CTA is rendered
+tests: [Feature/TeeWideMainDesignTest.php, Feature/TeeWideSessionIsolationTest.php]

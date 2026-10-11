@@ -4,7 +4,7 @@ const read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,''));
 const walkFiles=d=>fs.readdirSync(d,{withFileTypes:true}).filter(e=>e.name!=='node_modules').flatMap(e=>e.isDirectory()?walkFiles(path.join(d,e.name)):[path.join(d,e.name)]);
 const errors=[],counts={};const check=(ok,msg)=>{if(!ok)errors.push(msg);};
 const manifest=read(path.join(tpl,'template.json')),routes=read(path.join(tpl,'routes.json')).routes;
-check(manifest.identifier==='yutiv-stillform','identifier');check(manifest.version==='1.0.0','version');
+check(manifest.identifier==='yutiv-stillform','identifier');check(/^\d+\.\d+\.\d+$/.test(manifest.version),'version');
 check(JSON.stringify(manifest.locales)===JSON.stringify(['ko','en','ja','zh-CN']),'locales');
 check((manifest.externals??[]).length===0,'external CDN');
 check(read(path.join(tpl,'package.json')).version===manifest.version,'package version');

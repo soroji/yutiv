@@ -7,7 +7,7 @@
     "ja": "YUTIV Still Form",
     "zh-CN": "YUTIV Still Form"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "description": {
     "ko": "YUTIV 상품 중심 쇼핑몰 사용자 템플릿",
@@ -104,7 +104,8 @@
       "loading-spinner",
       "breadcrumb",
       "search-bar",
-      "dropdown"
+      "dropdown",
+      "store-office"
     ],
     "layout": [
       "container",

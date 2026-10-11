@@ -5,9 +5,20 @@
 ## 적용 대상
 
 - sirsoft-ecommerce 1.3.1: module.json/composer.json/CHANGELOG, 라인 nullable migration `2026_10_11_000001`, Upgrade_1_3_0 및 Upgrade_1_3_1, 공식 vendor-bundle.json/zip. 기존 추적 composer.lock의 ezyang/htmlpurifier v4.19.0을 유지하며 외부 의존성 추가 없음.
-- yutiv-personal_store 0.1.1: ecommerce >=1.3.1, G7 >=7.0.9, PHP ^8.2, ext-bcmath 필수. `2026_10_11_000001`은 17개 테이블, `000002`는 nullable unique membership proof_hash 추가. 이전 격리 설치에도 새 migration을 적용한다.
-- yutiv-live_commerce 0.1.1: 앞선 메인 Blade 변경 유지. 외부 Composer 패키지/lock/vendor bundle 없음; require는 PHP/ext-json뿐이다. 빈 번들 검증의 skip을 무결성 통과와 구분한다.
-- Still Form 소스/컴포넌트/dist 변경 없음. 모듈 resources/routes/{user,admin}.json, user_store/user_detail/user_operator/admin_headquarters layout, register extension, StoreLayoutListener가 기존 _user_base 및 shop/show에 연결된다. 새 TS/React asset이 없어 Still Form 재빌드 산출물 갱신은 필요 없다.
+- yutiv-personal_store 0.1.2: ecommerce >=1.3.1, G7 >=7.0.9, PHP ^8.2, ext-bcmath 필수. 기존 `2026_10_11_000001` 및 `000002`를 유지한다. 0.1.1 → 0.1.2 화면 보완에는 신규 migration이 없다. 운영자 상품코드 검색·카테고리 계층 라벨·공개 부모 검색·본인 스토어 이미지 업로드 API와 user_operator 레이아웃을 갱신한다.
+- yutiv-live_commerce 0.1.2: 메인/방송 준비 Blade와 전용 CSS·모바일 메뉴 갱신. 외부 Composer 패키지/lock/vendor bundle 추가 없음. 인증·tenant·라우트 변경 없음.
+- yutiv-stillform 1.0.2: StoreOffice 컴포넌트/등록 정보/언어/전용 CSS 및 빌드된 dist를 함께 갱신한다. 개인 스토어 0.1.2의 user_operator가 이 컴포넌트를 사용하므로 활성 Still Form 1.0.2와 짝으로 적용해야 한다. 이전 템플릿 자산으로는 새 운영 화면이 렌더링되지 않는다. 다른 사용자 템플릿용 운영 컴포넌트는 이번 변경에 포함하지 않는다. 공개 상품·카트·결제 레이아웃은 유지한다.
+
+### 화면 보완 검증
+
+Still Form 디렉터리에서 `npm run type-check`, `npm run build`, `npm run check:static`,
+`npm run test:run -- src/components/composite/StoreOffice.test.tsx`를 실행한다.
+번들 PHP 테스트는 서비스 DB에 연결하지 않는 별도 테스트 환경에서
+`OperatorSelectionTest`, `HttpBoundaryTest`, `TeeWideMainDesignTest`를 실행한다.
+브라우저 검증은 공식 설치·활성화된 로컬 복사본의 실제 G7 렌더러와 빌드 자산을 사용한다.
+미개설/대기/운영/빈 목록/긴 상품명/422/503 상태는 합성 응답으로 재현하며,
+실제 API의 소유 범위·개인정보·업로드 저장은 PHP HTTP 테스트로 별도 검증한다.
+기존 서버 격리 검증 도구는 보존하지만 이 화면 보완의 배포 필수 조건이 아니다.
 
 ## 설치·업데이트
 

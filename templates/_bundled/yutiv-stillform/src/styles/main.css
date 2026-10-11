@@ -4,6 +4,7 @@
  */
 @import 'tailwindcss';
 @import './stillform.css';
+@import './store-office.css';
 @source '../../layouts';
 
 /**
