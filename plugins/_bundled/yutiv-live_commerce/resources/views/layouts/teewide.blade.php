@@ -18,7 +18,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>{{ $title ?? 'TeeWide' }}</title>
+    <title>{{ $title ?? $sellerBrand }}</title>
+    <meta name="description" content="{{ $sellerBrand }} 라이브에서 상품과 이야기를 만나보세요.">
     <style>
         :root {
             --tw-bg: #0b0f14;
@@ -303,8 +304,8 @@
 
         <footer class="tw-footer">
             <div class="tw-wrap tw-footer__inner">
-                <span>TeeWide — 라이브커머스 플랫폼</span>
-                <span>{{ $footerNote ?? '서비스 준비 중입니다.' }}</span>
+                <span>{{ $sellerBrand }}</span>
+                <span>{{ $footerNote ?? '' }}</span>
             </div>
         </footer>
     </div>

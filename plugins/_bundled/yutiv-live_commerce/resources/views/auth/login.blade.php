@@ -1,7 +1,7 @@
 @extends('teewide::layouts.teewide', [
-    'title' => '로그인 — TeeWide',
+    'title' => '로그인 — '.$sellerBrand.'',
     'area' => 'auth',
-    'footerNote' => 'TeeWide 계정은 yutiv.com 계정과 별개입니다.',
+    'footerNote' => '',
 ])
 
 @section('header')
@@ -13,7 +13,7 @@
         <div class="tw-wrap">
             <div class="tw-auth__card">
                 <h1 class="tw-auth__title" id="tw-login-title">로그인</h1>
-                <p class="tw-auth__lead">TeeWide 계정으로 로그인합니다.</p>
+                <p class="tw-auth__lead">로그인</p>
 
                 @if ($errors->any())
                     {{-- 오류는 색만으로 알리지 않는다. role=alert 로 스크린리더에도 알린다. --}}

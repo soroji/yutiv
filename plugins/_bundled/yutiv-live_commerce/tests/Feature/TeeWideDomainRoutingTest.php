@@ -45,8 +45,8 @@ class TeeWideDomainRoutingTest extends PluginTestCase
 
         $response->assertOk();
         $response->assertHeader('content-type', 'text/html; charset=UTF-8');
-        $response->assertSee('라이브로 연결되는 새로운 쇼핑');
-        $response->assertSee('TeeWide', false);
+        $response->assertSee('라이브 보러가기');
+        $response->assertSee('방송으로 만나는 상품,', false);
 
         // 진단 JSON 이 제품 화면으로 새어 나오지 않는다.
         $response->assertDontSee('session_configured', false);
@@ -98,7 +98,7 @@ class TeeWideDomainRoutingTest extends PluginTestCase
 
         $response->assertOk();
         $response->assertHeader('content-type', 'text/html; charset=UTF-8');
-        $response->assertSee('TeeWide Live', false);
+        $response->assertSee('라이브', false);
         $response->assertSee('판매 채널');
 
         // 등록된 채널은 실제로 진입 가능한 링크여야 한다.

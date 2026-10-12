@@ -1,7 +1,7 @@
 @extends('teewide::layouts.teewide', [
-    'title' => '회원가입 — TeeWide',
+    'title' => '회원가입 — '.$sellerBrand.'',
     'area' => 'auth',
-    'footerNote' => 'TeeWide 계정은 yutiv.com 계정과 별개입니다.',
+    'footerNote' => '',
 ])
 
 @section('header')
@@ -13,7 +13,7 @@
         <div class="tw-wrap">
             <div class="tw-auth__card">
                 <h1 class="tw-auth__title" id="tw-register-title">회원가입</h1>
-                <p class="tw-auth__lead">TeeWide 계정을 만듭니다. 기존 yutiv.com 계정과는 별개입니다.</p>
+                <p class="tw-auth__lead">회원가입</p>
 
                 @if ($errors->any())
                     <p class="tw-alert" role="alert">입력한 내용을 다시 확인해 주세요.</p>

@@ -1,5 +1,5 @@
 @extends('teewide::layouts.teewide', [
-    'title' => '마이페이지 — TeeWide',
+    'title' => '마이페이지 — '.$sellerBrand.'',
     'area' => 'account',
     'footerNote' => '판매 채널 신청은 준비 중입니다.',
 ])
@@ -18,10 +18,11 @@
 
     .tw-owned { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
     .tw-owned__item {
-        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
         border: 1px solid var(--tw-border); border-radius: 9px; padding: 13px 15px;
     }
     .tw-owned__name { font-size: 15px; font-weight: 600; }
+    .tw-brand-form { flex-basis: 100%; min-width: 0; }
     .tw-owned__slug { display: block; font-size: 13px; color: var(--tw-muted); }
 
     @media (max-width: 800px) {
@@ -38,6 +39,12 @@
         <div class="tw-wrap">
             <h1 class="tw-account__title" id="tw-account-title">마이페이지</h1>
             <p class="tw-account__lead">{{ $account['display_name'] }} 님, 반갑습니다.</p>
+            @if (request()->session()->get('brand_saved'))
+                <p role="status">{{ request()->session()->get('brand_saved') }}</p>
+            @endif
+            @if (request()->session()->get('brand_error'))
+                <p role="alert">{{ request()->session()->get('brand_error') }}</p>
+            @endif
 
             <div class="tw-account__grid">
                 <section class="tw-card" aria-labelledby="tw-profile-title">
@@ -80,6 +87,12 @@
                         <ul class="tw-owned">
                             @foreach ($ownedChannels as $channel)
                                 <li class="tw-owned__item">
+                                    <form method="POST" action="{{ route('teewide.account.brand', ['tenant' => $channel['slug']]) }}" class="tw-form tw-brand-form">
+                                        @csrf
+                                        <label class="tw-label" for="brand-{{ $channel['slug'] }}">고객에게 표시할 브랜드 이름</label>
+                                        <input class="tw-input" id="brand-{{ $channel['slug'] }}" name="name" value="{{ $channel['name'] }}" maxlength="100" required>
+                                        <button class="tw-btn tw-btn--ghost" type="submit">브랜드 저장</button>
+                                    </form>
                                     <span>
                                         <span class="tw-owned__name">{{ $channel['name'] }}</span>
                                         <span class="tw-owned__slug">/{{ $channel['slug'] }}</span>

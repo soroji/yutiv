@@ -1,5 +1,5 @@
 @extends('teewide::layouts.teewide', [
-    'title' => $channel['name'].' — TeeWide Live',
+    'title' => $channel['name'].' — 라이브',
     'area' => 'live-channel',
     'footerNote' => '라이브 상품을 준비하고 있습니다.',
 ])
@@ -73,13 +73,13 @@
     <header class="tw-header">
         <div class="tw-wrap tw-header__inner">
             <a class="tw-logo" href="{{ $liveUrl }}">
-                <span class="tw-logo__mark" aria-hidden="true"></span>TeeWide
+                <span class="tw-logo__mark" aria-hidden="true"></span>{{ $sellerBrand }}
                 <span class="tw-logo__sub">LIVE</span>
             </a>
 
             <nav class="tw-nav" aria-label="주요 메뉴">
                 <a class="tw-btn tw-btn--quiet" href="{{ $liveUrl }}">채널 목록</a>
-                <a class="tw-btn tw-btn--quiet" href="{{ $portalUrl }}">TeeWide 홈</a>
+                <a class="tw-btn tw-btn--quiet" href="{{ $portalUrl }}">{{ $sellerBrand }} 홈</a>
             </nav>
         </div>
     </header>

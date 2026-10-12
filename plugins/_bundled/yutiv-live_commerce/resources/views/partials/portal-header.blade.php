@@ -5,9 +5,10 @@
       **기본 guard(YUTIV web)** 를 보므로, 여기서 쓰면 YUTIV 로그인 사용자가 TeeWide
       회원으로 표시된다. 그래서 컨트롤러가 넘겨 준 `$teeWideUser` 만 본다.
 --}}
+@php($teeWideUser = $teeWideUser ?? \Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth::user())
 @if ($golfLanding ?? false)
 <header class="tw-golf-header">
-    <a class="tw-golf-logo" href="{{ $portalUrl }}">TeeWide<span aria-hidden="true">.</span></a>
+    <a class="tw-golf-logo" href="{{ $portalUrl }}">{{ $sellerBrand }}<span aria-hidden="true">.</span></a>
     <nav class="tw-golf-member-menu" aria-label="계정 메뉴">
         @if ($teeWideUser === null)
             <a href="{{ route('teewide.login') }}">로그인</a>
@@ -25,7 +26,7 @@
 <header class="tw-header">
     <div class="tw-wrap tw-header__inner">
         <a class="tw-logo" href="{{ $portalUrl }}">
-            <span class="tw-logo__mark" aria-hidden="true"></span>TeeWide
+            <span class="tw-logo__mark" aria-hidden="true"></span>{{ $sellerBrand }}
         </a>
 
         <a class="tw-btn tw-btn--primary tw-mobile-live" href="{{ $liveUrl }}">라이브 보기</a>

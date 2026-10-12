@@ -89,6 +89,9 @@ return [
     // 인식하는 tenant. Phase 1-B 에서 DB(live_tenants)로 대체된다.
     'known_tenants' => ['golfif'],
 
+    // 포털/인증/라이브 홈의 판매자 컨텍스트. 이름은 DB name에서 조회합니다.
+    'brand_tenant' => env('TEEWIDE_BRAND_TENANT', 'golfif'),
+
     /*
     |--------------------------------------------------------------------------
     | tenant 표시 정보

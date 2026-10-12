@@ -21,9 +21,10 @@
         z-index:-1;background:linear-gradient(90deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.80) 24%,rgba(255,255,255,.36) 46%,rgba(255,255,255,0) 66%);
     }
     .tw-golf-header {display:flex;align-items:center;justify-content:space-between;gap:20px;padding:30px 5.5%;}
-    .tw-golf-logo {font-size:46px;line-height:1;font-weight:900;letter-spacing:-2px;color:#111;text-decoration:none;white-space:nowrap;}
+    .tw-golf-logo {font-size:46px;line-height:1;font-weight:900;letter-spacing:-2px;color:#111;text-decoration:none;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;}
     .tw-golf-logo span {color:#13724f;}
-    .tw-golf-member-menu {display:flex;align-items:center;gap:8px;padding:7px;background:rgba(255,255,255,.92);border-radius:30px;}
+    .tw-golf-eyebrow,.tw-golf-description {overflow-wrap:anywhere;}
+    .tw-golf-member-menu {display:flex;flex-shrink:0;align-items:center;gap:8px;padding:7px;background:rgba(255,255,255,.92);border-radius:30px;}
     .tw-golf-member-menu a,.tw-golf-member-menu button {display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 15px;border:0;border-radius:24px;background:#176b51;color:#fff;font-family:inherit;font-size:13px;font-weight:700;line-height:1.3;text-decoration:none;white-space:nowrap;cursor:pointer;}
     .tw-golf-member-menu form {margin:0;display:flex;}
     .tw-golf-member-menu a:hover,.tw-golf-member-menu button:hover {background:#074c36;}

@@ -902,7 +902,7 @@ abstract class PluginTestCase extends TestCase
     /**
      * 진단이 켜진 상태에서 등록돼야 하는 TeeWide 라우트 이름 (정렬됨).
      *
-     * 제품 화면 3종 + 인증·계정 6종 + 진단 2종 = 11종.
+     * 제품 화면 3종 + 인증·계정·브랜드 설정 7종 + 진단 2종 = 12종.
      * 제품 화면과 인증 화면은 `TEEWIDE_DIAGNOSTICS` 와 무관하게 등록된다.
      *
      * @return array<int, string>
@@ -911,6 +911,7 @@ abstract class PluginTestCase extends TestCase
     {
         return [
             'teewide.account',
+            'teewide.account.brand',
             'teewide.live.home',
             'teewide.live.session',
             'teewide.live.tenant',
@@ -936,6 +937,7 @@ abstract class PluginTestCase extends TestCase
     {
         return [
             'teewide.account',
+            'teewide.account.brand',
             'teewide.live.home',
             'teewide.live.tenant',
             'teewide.login',

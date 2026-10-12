@@ -21,7 +21,7 @@ Blade에서 읽어 CSS data URI로 포함한다. 외부 핫링크·스크린샷 
 브라우저가 디코딩한 PNG bytes의 해시도 원본과 일치하는지 검증한다.
 대신 메인 HTML에는 약 2.94MB의 base64 데이터가 포함되며, 독립 이미지 HTTP 캐시는 사용하지 않는다.
 
-배포 대상은 `yutiv-live_commerce` 0.1.3의 메인 Blade/partial, 이 PNG, manifest/Composer 버전이다.
+배포 대상은 `yutiv-live_commerce` 0.1.4의 메인 Blade/partial, 이 PNG, manifest/Composer 버전이다.
 활성 설치본 갱신은 기존 공식 `plugin:update` 절차를 사용한다. 파일 누락을 감추는 대체 이미지는 없다.
 TS/JS/CSS 번들 소스, 외부 의존성, migration 변경이 없으므로 npm 빌드는 필요하지 않다.
 `broadcast-preview`와 기존 `main-styles`는 라이브 홈에서 계속 사용하므로 보존한다.

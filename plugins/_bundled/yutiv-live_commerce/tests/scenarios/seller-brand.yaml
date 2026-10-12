@@ -1,0 +1,21 @@
+feature: seller_brand
+scope: yutiv-live_commerce
+axes:
+  context: [configured_portal, validated_public_channel, foreign_host]
+  seller: [golfif, other_brand, suspended, missing]
+  actor: [guest, owner, other_member, yutiv_member]
+  input: [valid_name, blank, html, over_100_chars, query_override]
+  screen: [portal, login, register, account, live_home, channel, error]
+  viewport: [1440x900, 1920x1080, 390x844]
+effects:
+  - DB 공개 판정과 기존 teewide guard 유지
+  - 브랜드는 live_tenants.name이며 query는 컨텍스트를 변경하지 않음
+  - 소유자의 유효한 입력만 저장하고 실패 시 DB 이름 유지
+  - 요청 범위 표시 이름 캐시는 다른 요청에 남지 않음
+  - 본문·제목·meta·푸터 escaping 및 내부 브랜드 안내 제거
+  - 도메인 설정 기반 기존 named route 링크 생성 유지
+automated:
+  - tests/Feature/SellerBrandTest.php
+  - tests/Feature/TeeWideMainDesignTest.php
+  - tests/Feature/TeeWideAuthTest.php
+visual: 합성 DB에서 PHP로 렌더링한 HTML을 Chromium에서 PC·모바일 확인

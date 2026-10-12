@@ -4,13 +4,19 @@ namespace Plugins\Yutiv\LiveCommerce\Providers;
 
 use App\Extension\BasePluginServiceProvider;
 use App\Extension\Traits\CachesPluginStatus;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Plugins\Yutiv\LiveCommerce\Contracts\SellerBrandRepositoryInterface;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\AccountController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\Auth\LoginController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\Auth\RegisterController;
@@ -19,8 +25,13 @@ use Plugins\Yutiv\LiveCommerce\Http\Controllers\LiveController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\PortalController;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\RequireTeeWideUser;
+use Plugins\Yutiv\LiveCommerce\Repositories\SellerBrandRepository;
+use Plugins\Yutiv\LiveCommerce\Support\SellerBrand;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideHost;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
  * TeeWide 라이브커머스 서비스 프로바이더 (Phase 0 스파이크).
@@ -54,6 +65,7 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
     public function register(): void
     {
         parent::register();
+        $this->app->bind(SellerBrandRepositoryInterface::class, SellerBrandRepository::class);
 
         // 설정 병합 — env 가 비어 있으면 config/live-commerce.php 의 기본값(비활성)이 남는다.
         $this->mergeConfigFrom(
@@ -74,6 +86,22 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
 
         $this->registerTeeWideAuth();
         $this->registerTeeWideViews();
+        $this->app->make(ExceptionHandler::class)->renderable(function (\Throwable $error, Request $request) {
+            if (TeeWideConfig::roleFor($request->getHost()) === TeeWideHost::ROLE_FOREIGN
+                || $request->expectsJson()
+                || $request->is('_teewide/*')
+                || $error instanceof ValidationException
+                || $error instanceof HttpResponseException) {
+                return null;
+            }
+            $status = $error instanceof HttpExceptionInterface ? $error->getStatusCode() : 500;
+
+            return response()->view('teewide::errors.request', [
+                'status' => $status,
+                'portalUrl' => TeeWidePresenter::portalUrl(),
+                'liveUrl' => TeeWidePresenter::liveUrl(),
+            ], $status, $error instanceof HttpExceptionInterface ? $error->getHeaders() : []);
+        });
         $this->registerTeeWideRoutes();
     }
 
@@ -103,6 +131,7 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
 
         if (is_dir($views)) {
             $this->loadViewsFrom($views, 'teewide');
+            View::composer('teewide::*', SellerBrand::class.'@compose');
         }
     }
 
@@ -162,6 +191,11 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
                 Route::get('/account', [AccountController::class, 'index'])
                     ->middleware(RequireTeeWideUser::class)
                     ->name('teewide.account');
+
+                Route::post('/account/brand/{tenant}', [AccountController::class, 'updateBrand'])
+                    ->where('tenant', TeeWideConfig::tenantSlugPattern())
+                    ->middleware(RequireTeeWideUser::class)
+                    ->name('teewide.account.brand');
             });
 
         // ── 라이브 판매: live.teewide.com ───────────────────────────────────

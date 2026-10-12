@@ -1,5 +1,5 @@
 @extends('teewide::layouts.teewide', [
-    'title' => 'TeeWide Live — 라이브 판매 채널',
+    'title' => ''.$sellerBrand.' Live — 라이브 판매 채널',
     'area' => 'live',
     'footerNote' => '첫 라이브를 준비하고 있습니다.',
 ])
@@ -57,12 +57,12 @@
     <header class="tw-header">
         <div class="tw-wrap tw-header__inner">
             <a class="tw-logo" href="{{ $liveUrl }}">
-                <span class="tw-logo__mark" aria-hidden="true"></span>TeeWide
+                <span class="tw-logo__mark" aria-hidden="true"></span>{{ $sellerBrand }}
                 <span class="tw-logo__sub">LIVE</span>
             </a>
 
             <nav class="tw-nav" aria-label="주요 메뉴">
-                <a class="tw-btn tw-btn--quiet" href="{{ $portalUrl }}">TeeWide 홈</a>
+                <a class="tw-btn tw-btn--quiet" href="{{ $portalUrl }}">{{ $sellerBrand }} 홈</a>
             </nav>
         </div>
     </header>
@@ -72,7 +72,7 @@
     <section class="tw-live-head">
         <div class="tw-wrap">
             <span class="tw-badge"><span class="tw-badge__dot" aria-hidden="true"></span>첫 라이브 준비 중</span>
-            <h1 class="tw-live-head__title">TeeWide Live</h1>
+            <h1 class="tw-live-head__title">{{ $sellerBrand }} 라이브</h1>
             <p class="tw-live-head__lead">
                 라이브 방송과 판매 채널을 만나보세요.
             </p>
@@ -87,7 +87,7 @@
 
             @if ($onAir === [])
                 <div class="tw-empty tw-empty--broadcast">
-                    <div><p class="tw-empty__title">다음 라이브를 준비하고 있습니다</p><p class="tw-empty__desc">방송이 시작되면 이곳에서 만나보실 수 있습니다. 아직 확정된 편성은 없습니다.</p><a class="tw-btn tw-btn--ghost" href="{{ $portalUrl }}">TeeWide 홈으로</a></div>
+                    <div><p class="tw-empty__title">다음 라이브를 준비하고 있습니다</p><p class="tw-empty__desc">방송이 시작되면 이곳에서 만나보실 수 있습니다. 아직 확정된 편성은 없습니다.</p><a class="tw-btn tw-btn--ghost" href="{{ $portalUrl }}">{{ $sellerBrand }} 홈으로</a></div>
                     @include('teewide::partials.broadcast-preview')
                 </div>
             @endif

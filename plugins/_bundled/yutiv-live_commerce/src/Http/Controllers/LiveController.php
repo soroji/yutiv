@@ -41,6 +41,8 @@ class LiveController
             throw new NotFoundHttpException;
         }
 
+        request()->attributes->set('teewide.public_channel', $channel);
+
         return view('teewide::live.channel', [
             'channel' => $channel,
             'broadcast' => TeeWidePresenter::broadcastMeta($tenant),
