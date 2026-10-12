@@ -5,6 +5,23 @@
       **기본 guard(YUTIV web)** 를 보므로, 여기서 쓰면 YUTIV 로그인 사용자가 TeeWide
       회원으로 표시된다. 그래서 컨트롤러가 넘겨 준 `$teeWideUser` 만 본다.
 --}}
+@if ($golfLanding ?? false)
+<header class="tw-golf-header">
+    <a class="tw-golf-logo" href="{{ $portalUrl }}">TeeWide<span aria-hidden="true">.</span></a>
+    <nav class="tw-golf-member-menu" aria-label="계정 메뉴">
+        @if ($teeWideUser === null)
+            <a href="{{ route('teewide.login') }}">로그인</a>
+            <a href="{{ route('teewide.register') }}">회원가입</a>
+        @else
+            <a href="{{ route('teewide.account') }}">내 계정</a>
+            <form method="POST" action="{{ route('teewide.logout') }}">
+                @csrf
+                <button type="submit">로그아웃</button>
+            </form>
+        @endif
+    </nav>
+</header>
+@else
 <header class="tw-header">
     <div class="tw-wrap tw-header__inner">
         <a class="tw-logo" href="{{ $portalUrl }}">
@@ -45,3 +62,4 @@
         </nav>
     </div>
 </header>
+@endif

@@ -1,3 +1,6 @@
+@if ($golfLanding ?? false)
+    @include('teewide::partials.portal-golf-styles')
+@else
 @push('styles')
     html[data-teewide-area="portal"],html[data-teewide-area="live"] {
         --tw-bg:#f6f5f1;--tw-surface:#ffffff;--tw-surface-2:#e9ece7;--tw-border:#d9ded7;
@@ -39,3 +42,4 @@
     @media(max-width:640px){.tw-header__inner{gap:8px;flex-wrap:nowrap;min-height:68px;}.tw-logo{font-size:19px;gap:6px;}.tw-nav--desktop{display:none;}.tw-mobile-menu{display:block;}.tw-mobile-live{font-size:12px;padding:9px 12px!important;}.tw-hero__title{font-size:40px;}.tw-hero__cta .tw-btn{flex:1 1 auto;font-size:13px;}.tw-service-strip{grid-template-columns:1fr;gap:24px;padding:28px 0 40px;}.tw-stage__bar,.tw-stage__caption{padding:14px;font-size:9px;}.tw-stage__caption span:last-child{display:none;}.tw-empty--broadcast{padding:22px;}}
     @media(min-width:641px){.tw-mobile-live{display:none;}}
 @endpush
+@endif

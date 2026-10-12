@@ -4,6 +4,12 @@
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르며,
 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
 
+## [0.1.3] - 2026-10-12
+
+### Changed
+- 메인을 골프장 배경과 간결한 라이브·회원 행동 중심의 단일 화면으로 개선했습니다.
+- 모바일에서도 같은 배경을 사용하며, 낮은 화면에서는 내용을 자르지 않고 스크롤할 수 있도록 했습니다.
+
 ## [0.1.2] - 2026-10-11
 
 ### Changed

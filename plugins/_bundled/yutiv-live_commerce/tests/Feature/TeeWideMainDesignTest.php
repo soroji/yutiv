@@ -64,17 +64,26 @@ class TeeWideMainDesignTest extends PluginTestCase
         return $this->withUnencryptedCookie('teewide_session', $cookie->getValue())->get('http://'.self::ROOT_HOST.'/');
     }
 
-    public function test_guest_main_and_empty_live_have_explicit_preparation_graphics_and_auth_actions(): void
+    public function test_guest_main_uses_one_golf_hero_and_preserves_live_and_auth_actions(): void
     {
         $response = $this->get('http://'.self::ROOT_HOST.'/');
-        $response->assertOk()->assertSee('라이브로 만나다.')->assertSee('실제 방송이 아닌 방송 준비 디자인')->assertSee(route('teewide.login'), false)->assertSee(route('teewide.register'), false)->assertDontSee('판매 시작하기')->assertDontSee('개인 스토어');
+        $response->assertOk()->assertSee('방송으로 만나는 상품,')->assertSee('더 가까이 즐기는 라이브.')->assertSee('라이브 보러가기')->assertSee(route('teewide.login'), false)->assertSee(route('teewide.register'), false)->assertDontSee('판매 시작하기')->assertDontSee('개인 스토어')->assertDontSee('tw-stage')->assertDontSee('COMING NEXT')->assertDontSee('서비스 준비 중입니다.');
+        $this->assertSame(1, substr_count($response->getContent(), '<section class="tw-golf-hero"'));
         $this->get('http://'.self::LIVE_HOST.'/')->assertOk()->assertSee('다음 라이브를 준비하고 있습니다')->assertSee('실제 방송이 아닌 방송 준비 디자인');
     }
 
     public function test_member_main_retains_account_post_logout_and_private_guard(): void
     {
         $response = $this->memberResponse();
-        $response->assertOk()->assertSee(route('teewide.account'), false)->assertSee('method="POST"', false)->assertSee(route('teewide.logout'), false)->assertSee('합성 화면 검증 회원');
+        $response->assertOk()->assertSee(route('teewide.account'), false)->assertSee('method="POST"', false)->assertSee(route('teewide.logout'), false)->assertDontSee('회원가입')->assertDontSee(route('teewide.register'), false);
         $response->assertDontSee('APP_KEY')->assertDontSee('store-office')->assertDontSee('리워드');
+    }
+
+    public function test_background_bytes_are_the_original_without_remote_hotlinks(): void
+    {
+        $body = $this->get('http://'.self::ROOT_HOST.'/')->assertOk()->getContent();
+        $this->assertSame(1, preg_match_all('/data:image\/png;base64,([A-Za-z0-9+\/=]+)/', $body, $matches));
+        $this->assertSame('7a8c7751ce6dc97305e387a34afc73b554c7783fbced3dce1ba74959624bc5c7', hash('sha256', base64_decode($matches[1][0], true)));
+        $this->assertStringNotContainsString('https://golfif.store', $body);
     }
 }

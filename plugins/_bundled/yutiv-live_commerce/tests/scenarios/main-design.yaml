@@ -1,11 +1,12 @@
-feature: teewide-main-design
+feature: teewide-golf-main-design
 axes:
   auth: [guest, teewide_member, yutiv_member]
-  viewport: [1440, 1920, 390]
+  viewport: [1440x900, 1920x1080, 390x844, 1440x500, 390x500, zoom_200_percent]
   broadcast: [empty]
 assertions:
-  - decorative preview is explicitly identified as not a live broadcast
+  - one golf hero and header are rendered without duplicated mobile and desktop content
+  - the original PC PNG bytes are reused in desktop and mobile without external hotlinks
   - login register account post logout and live links are retained
-  - mobile menu fits viewport with long member display names
+  - header stays on one row and buttons remain reachable on short and zoomed screens
   - no storefront rewards buyer data or disabled seller CTA is rendered
 tests: [Feature/TeeWideMainDesignTest.php, Feature/TeeWideSessionIsolationTest.php]
