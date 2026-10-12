@@ -17,9 +17,11 @@ final class SellerBrand
         $brand = null;
         if (TeeWideConfig::roleFor(request()->getHost()) !== TeeWideHost::ROLE_FOREIGN) {
             // channel은 LiveController에서 공개 판매자를 검증한 결과입니다.
-            $channel = request()->attributes->get('teewide.public_channel');
-            $slug = (string) config(TeeWideConfig::KEY.'.brand_tenant', '');
-            $brand = $channel['name'] ?? TeeWidePresenter::findPublicTenant($slug)?->name;
+            try {
+                $brand = LiveContext::tenant()?->name;
+            } catch (\Throwable) {
+                $brand = null;
+            }
         }
         // 미설정/조회 실패를 다른 판매자 또는 내부 솔루션 브랜드로 대체하지 않습니다.
         request()->attributes->set('teewide.seller_brand', $brand ?: '라이브');

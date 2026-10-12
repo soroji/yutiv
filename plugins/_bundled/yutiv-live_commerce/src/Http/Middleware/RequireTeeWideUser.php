@@ -5,6 +5,7 @@ namespace Plugins\Yutiv\LiveCommerce\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -26,8 +27,11 @@ class RequireTeeWideUser
         }
 
         // 로그인 후 원래 가려던 곳으로 돌려보낸다.
+        if ($request->expectsJson()) {
+            return response()->json(['success' => false, 'message' => '로그인 후 다시 시도해 주세요.'], 401);
+        }
         $request->session()->put('url.intended', $request->fullUrl());
 
-        return redirect()->route('teewide.login');
+        return redirect(TeeWidePresenter::route('teewide.login'));
     }
 }

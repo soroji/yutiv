@@ -6,6 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+// 도메인 루트 확장 라우트도 G7 라우트 파일이 소유하여 route:cache에 포함합니다.
+// 구버전/비활성/미설치 플러그인에서는 기존 웹 라우트에 개입하지 않습니다.
+$liveProvider = app()->getProvider('Plugins\\Yutiv\\LiveCommerce\\Providers\\LiveCommerceServiceProvider');
+if ($liveProvider && method_exists($liveProvider, 'registerPublicRoutes')) {
+    $liveProvider->registerPublicRoutes();
+}
+
 // 개발용 라우트 - 디버그 모드 + 관리자 인증 필수
 Route::get('/dev', function () {
     // 1. 디버그 모드 확인

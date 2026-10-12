@@ -3,6 +3,8 @@
 namespace Plugins\Yutiv\LiveCommerce\Support;
 
 use Illuminate\Support\Facades\Log;
+use Plugins\Yutiv\LiveCommerce\Enums\LiveEntity;
+use Plugins\Yutiv\LiveCommerce\Models\LiveRecord;
 use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
 
@@ -238,13 +240,30 @@ final class TeeWidePresenter
      */
     public static function portalUrl(): string
     {
+        try {
+            $host = request()->getHost();
+            if (LiveRecord::entity(LiveEntity::Domain)->newQuery()->where('host', $host)->where('active', true)->exists()) {
+                return self::scheme().'://'.$host;
+            }
+        } catch (\Throwable) {
+        }
+
         return self::scheme().'://'.TeeWideConfig::rootHost();
     }
 
     /** 라이브 절대 URL. */
     public static function liveUrl(): string
     {
+        if (self::portalUrl() !== self::scheme().'://'.TeeWideConfig::rootHost()) {
+            return self::portalUrl().'/shop';
+        }
+
         return self::scheme().'://'.TeeWideConfig::liveHost();
+    }
+
+    public static function route(string $name, array $parameters = []): string
+    {
+        return self::portalUrl().route($name, $parameters, false);
     }
 
     /**

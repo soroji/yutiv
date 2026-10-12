@@ -2,9 +2,12 @@
 
 namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Support\Facades\Schema;
 use Plugins\Yutiv\LiveCommerce\Database\Seeders\LiveTenantSeeder;
 use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
+use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
 
@@ -48,17 +51,17 @@ class TeeWideTenantDatabaseTest extends PluginTestCase
         }
     }
 
-    public function test_TeeWide_회원_테이블은_YUTIV_users_와_별개다(): void
+    public function test_tee_wide_회원_테이블은_yuti_v_users_와_별개다(): void
     {
         // 같은 테이블을 쓰면 세션 경계가 데이터 레벨에서 무너진다.
         $this->assertTrue(Schema::hasTable('users'), 'YUTIV users 테이블 전제가 바뀌었습니다');
-        $this->assertNotSame('users', (new \Plugins\Yutiv\LiveCommerce\Models\TeeWideUser)->getTable());
-        $this->assertSame('teewide_users', (new \Plugins\Yutiv\LiveCommerce\Models\TeeWideUser)->getTable());
+        $this->assertNotSame('users', (new TeeWideUser)->getTable());
+        $this->assertSame('teewide_users', (new TeeWideUser)->getTable());
     }
 
     // ── 시더 ────────────────────────────────────────────────────────────────
 
-    public function test_GolfIF_시더는_몇_번_실행해도_중복되지_않는다(): void
+    public function test_golf_i_f_시더는_몇_번_실행해도_중복되지_않는다(): void
     {
         $seeder = new LiveTenantSeeder;
 
@@ -69,7 +72,7 @@ class TeeWideTenantDatabaseTest extends PluginTestCase
         $this->assertSame(1, LiveTenant::query()->where('slug', 'golfif')->count());
     }
 
-    public function test_시더_재실행이_UUID_를_바꾸지_않는다(): void
+    public function test_시더_재실행이_uui_d_를_바꾸지_않는다(): void
     {
         $before = LiveTenant::query()->where('slug', 'golfif')->value('uuid');
         $this->assertNotNull($before);
@@ -85,11 +88,11 @@ class TeeWideTenantDatabaseTest extends PluginTestCase
         (new LiveTenantSeeder)->run();
 
         // 기본 비밀번호를 가진 계정은 그 자체가 취약점이다.
-        $this->assertSame(0, \Plugins\Yutiv\LiveCommerce\Models\TeeWideUser::query()->count());
+        $this->assertSame(0, TeeWideUser::query()->count());
         $this->assertNull(LiveTenant::query()->where('slug', 'golfif')->value('owner_user_id'));
     }
 
-    public function test_GolfIF_표시값이_Phase_1A_와_같다(): void
+    public function test_golf_i_f_표시값이_phase_1_a_와_같다(): void
     {
         $tenant = LiveTenant::query()->where('slug', 'golfif')->first();
 
@@ -117,7 +120,7 @@ class TeeWideTenantDatabaseTest extends PluginTestCase
         $response->assertDontSee('정지된 채널');
     }
 
-    public function test_active_채널은_200_이고_이름이_DB_값이다(): void
+    public function test_active_채널은_200_이고_이름이_d_b_값이다(): void
     {
         $this->seedLiveTenant(['slug' => 'open-shop', 'name' => '열린 채널', 'description' => 'DB 에서 온 소개']);
 
@@ -138,12 +141,12 @@ class TeeWideTenantDatabaseTest extends PluginTestCase
         }
     }
 
-    public function test_설정에만_있고_DB_에_없는_slug_는_열리지_않는다(): void
+    public function test_설정에만_있고_d_b_에_없는_slug_는_열리지_않는다(): void
     {
         // 설정에는 golfif 가 있지만 DB 행을 지우면 닫혀야 한다 — DB 가 권위 소스다.
         LiveTenant::query()->where('slug', 'golfif')->delete();
 
-        $this->assertContains('golfif', \Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig::knownTenants(),
+        $this->assertContains('golfif', TeeWideConfig::knownTenants(),
             '이 테스트의 전제(설정에 golfif 존재)가 깨졌습니다');
 
         $this->get('http://'.self::LIVE_HOST.'/golfif')->assertNotFound();
@@ -163,11 +166,16 @@ class TeeWideTenantDatabaseTest extends PluginTestCase
     public function test_조회_실패시_채널을_열지_않는다(): void
     {
         // 테이블을 없애 조회를 실패시킨다. fail-open 이면 여기서 slug 가 열린다.
-        Schema::drop('live_tenants');
+        Schema::rename('live_tenants', 'live_tenants_unavailable_test');
+        try {
 
-        $this->assertSame([], TeeWidePresenter::publicTenants(), '조회 실패인데 목록이 비어 있지 않습니다');
-        $this->assertNull(TeeWidePresenter::publicChannel('golfif'), '조회 실패인데 채널이 열렸습니다');
+            $this->assertSame([], TeeWidePresenter::publicTenants(), '조회 실패인데 목록이 비어 있지 않습니다');
+            $this->assertNull(TeeWidePresenter::publicChannel('golfif'), '조회 실패인데 채널이 열렸습니다');
 
-        $this->get('http://'.self::LIVE_HOST.'/golfif')->assertNotFound();
+            $this->get('http://'.self::LIVE_HOST.'/golfif')->assertNotFound();
+        } finally {
+            Schema::rename('live_tenants_unavailable_test', 'live_tenants');
+            RefreshDatabaseState::$migrated = false;
+        }
     }
 }

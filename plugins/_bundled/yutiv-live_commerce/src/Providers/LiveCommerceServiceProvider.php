@@ -12,10 +12,13 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Plugins\Yutiv\LiveCommerce\Console\LiveMaintainCommand;
+use Plugins\Yutiv\LiveCommerce\Contracts\LiveRepositoryInterface;
 use Plugins\Yutiv\LiveCommerce\Contracts\SellerBrandRepositoryInterface;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\AccountController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\Auth\LoginController;
@@ -25,7 +28,12 @@ use Plugins\Yutiv\LiveCommerce\Http\Controllers\LiveController;
 use Plugins\Yutiv\LiveCommerce\Http\Controllers\PortalController;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\RequireTeeWideUser;
+use Plugins\Yutiv\LiveCommerce\Http\Middleware\ResolveLiveTenant;
+use Plugins\Yutiv\LiveCommerce\Repositories\LiveRepository;
 use Plugins\Yutiv\LiveCommerce\Repositories\SellerBrandRepository;
+use Plugins\Yutiv\LiveCommerce\Services\LiveMediaService;
+use Plugins\Yutiv\LiveCommerce\Support\LiveRoutes;
+use Plugins\Yutiv\LiveCommerce\Support\ScopedLiveUserProvider;
 use Plugins\Yutiv\LiveCommerce\Support\SellerBrand;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
@@ -54,6 +62,8 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
 
     protected string $pluginIdentifier = 'yutiv-live_commerce';
 
+    protected array $storageServices = [LiveMediaService::class];
+
     /**
      * 인증 쓰기 요청 제한 — 분당 시도 횟수.
      *
@@ -62,9 +72,17 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
      */
     private const AUTH_THROTTLE = '10,1';
 
+    private bool $publicRoutesRegistered = false;
+
+    protected function loadExtensionTranslations(): void
+    {
+        $this->loadTranslationsFrom(dirname(__DIR__, 2).'/lang', $this->translationNamespace());
+    }
+
     public function register(): void
     {
         parent::register();
+        $this->app->bind(LiveRepositoryInterface::class, LiveRepository::class);
         $this->app->bind(SellerBrandRepositoryInterface::class, SellerBrandRepository::class);
 
         // 설정 병합 — env 가 비어 있으면 config/live-commerce.php 의 기본값(비활성)이 남는다.
@@ -85,6 +103,9 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
         }
 
         $this->registerTeeWideAuth();
+        if ($this->app->runningInConsole()) {
+            $this->commands([LiveMaintainCommand::class]);
+        }
         $this->registerTeeWideViews();
         $this->app->make(ExceptionHandler::class)->renderable(function (\Throwable $error, Request $request) {
             if (TeeWideConfig::roleFor($request->getHost()) === TeeWideHost::ROLE_FOREIGN
@@ -102,7 +123,9 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
                 'liveUrl' => TeeWidePresenter::liveUrl(),
             ], $status, $error instanceof HttpExceptionInterface ? $error->getHeaders() : []);
         });
-        $this->registerTeeWideRoutes();
+        if (! $this->app->routesAreCached()) {
+            $this->registerPublicRoutes();
+        }
     }
 
     /**
@@ -116,6 +139,7 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
      */
     private function registerTeeWideAuth(): void
     {
+        Auth::provider('live_scoped', fn ($app, array $config) => new ScopedLiveUserProvider($app['hash'], $config['model']));
         config(TeeWideAuth::configValues());
     }
 
@@ -147,9 +171,14 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
      * 켜고 끈다. 포털·라이브 HTML 은 플러그인이 활성이고 `TEEWIDE_ENABLED` 가 켜져 있으면
      * 항상 등록된다.
      */
-    private function registerTeeWideRoutes(): void
+    public function registerPublicRoutes(): void
     {
+        if ($this->publicRoutesRegistered || ! $this->pluginIsActive() || ! TeeWideConfig::active()) {
+            return;
+        }
+        $this->publicRoutesRegistered = true;
         $stack = $this->teeWideStack();
+        LiveRoutes::register($stack);
         $diagnostics = TeeWideConfig::diagnosticsEnabled();
 
         // ── 계정 포털: teewide.com ──────────────────────────────────────────
@@ -246,6 +275,7 @@ class LiveCommerceServiceProvider extends BasePluginServiceProvider
             ShareErrorsFromSession::class,
             ValidateCsrfToken::class,
             SubstituteBindings::class,
+            ResolveLiveTenant::class,
         ];
     }
 

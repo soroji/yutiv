@@ -11,11 +11,11 @@
     <a class="tw-golf-logo" href="{{ $portalUrl }}">{{ $sellerBrand }}<span aria-hidden="true">.</span></a>
     <nav class="tw-golf-member-menu" aria-label="계정 메뉴">
         @if ($teeWideUser === null)
-            <a href="{{ route('teewide.login') }}">로그인</a>
-            <a href="{{ route('teewide.register') }}">회원가입</a>
+            <a href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.login') }}">로그인</a>
+            <a href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.register') }}">회원가입</a>
         @else
-            <a href="{{ route('teewide.account') }}">내 계정</a>
-            <form method="POST" action="{{ route('teewide.logout') }}">
+            <a href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.account') }}">내 계정</a>
+            <form method="POST" action="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.logout') }}">
                 @csrf
                 <button type="submit">로그아웃</button>
             </form>
@@ -34,11 +34,11 @@
             <summary>메뉴</summary>
             <nav aria-label="모바일 계정 메뉴">
                 @if ($teeWideUser !== null)
-                    <a class="tw-btn tw-btn--quiet" href="{{ route('teewide.account') }}">내 계정</a>
-                    <form class="tw-logout" method="POST" action="{{ route('teewide.logout') }}">@csrf<button type="submit" class="tw-btn tw-btn--ghost">로그아웃</button></form>
+                    <a class="tw-btn tw-btn--quiet" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.account') }}">내 계정</a>
+                    <form class="tw-logout" method="POST" action="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.logout') }}">@csrf<button type="submit" class="tw-btn tw-btn--ghost">로그아웃</button></form>
                 @else
-                    <a class="tw-btn tw-btn--quiet" href="{{ route('teewide.login') }}">로그인</a>
-                    <a class="tw-btn tw-btn--ghost" href="{{ route('teewide.register') }}">회원가입</a>
+                    <a class="tw-btn tw-btn--quiet" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.login') }}">로그인</a>
+                    <a class="tw-btn tw-btn--ghost" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.register') }}">회원가입</a>
                 @endif
             </nav>
         </details>
@@ -46,18 +46,18 @@
             <a class="tw-btn tw-btn--quiet" href="{{ $liveUrl }}">라이브 둘러보기</a>
 
             @if ($teeWideUser !== null)
-                <a class="tw-btn tw-btn--quiet tw-account-label" href="{{ route('teewide.account') }}">
+                <a class="tw-btn tw-btn--quiet tw-account-label" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.account') }}">
                     {{ $teeWideUser->displayName() }} 님
                 </a>
 
                 {{-- 로그아웃은 POST — 링크로 두면 이미지·프리페치로 강제 실행된다. --}}
-                <form class="tw-logout" method="POST" action="{{ route('teewide.logout') }}">
+                <form class="tw-logout" method="POST" action="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.logout') }}">
                     @csrf
                     <button type="submit" class="tw-btn tw-btn--ghost">로그아웃</button>
                 </form>
             @else
-                <a class="tw-btn tw-btn--ghost" href="{{ route('teewide.login') }}">로그인</a>
-                <a class="tw-btn tw-btn--primary" href="{{ route('teewide.register') }}">회원가입</a>
+                <a class="tw-btn tw-btn--ghost" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.login') }}">로그인</a>
+                <a class="tw-btn tw-btn--primary" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.register') }}">회원가입</a>
             @endif
 
         </nav>

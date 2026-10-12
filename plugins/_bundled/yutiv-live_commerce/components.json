@@ -1,0 +1,10 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "identifier": "yutiv-live_commerce",
+    "version": "0.2.0",
+    "components": {
+        "basic": [],
+        "composite": [],
+        "layout": []
+    }
+}

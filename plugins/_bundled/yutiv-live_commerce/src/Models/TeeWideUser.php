@@ -4,6 +4,7 @@ namespace Plugins\Yutiv\LiveCommerce\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
@@ -18,8 +19,8 @@ use Illuminate\Support\Str;
  * @property string $name
  * @property string|null $nickname
  * @property string $status
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property \Illuminate\Support\Carbon|null $last_login_at
+ * @property Carbon|null $email_verified_at
+ * @property Carbon|null $last_login_at
  */
 class TeeWideUser extends Authenticatable
 {
@@ -30,6 +31,8 @@ class TeeWideUser extends Authenticatable
     public const STATUS_WITHDRAWN = 'withdrawn';
 
     protected $table = 'teewide_users';
+
+    protected $attributes = ['session_version' => 1, 'must_change_password' => false];
 
     /**
      * `password` 는 대량 할당 대상이지만, 반드시 해시된 값만 넣는다.
@@ -43,17 +46,27 @@ class TeeWideUser extends Authenticatable
         'nickname',
         'status',
         'email_verified_at',
+        'tenant_id',
+        'username',
+        'session_version',
+        'must_change_password',
+        'customs_code',
         'last_login_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'customs_code',
     ];
 
     protected function casts(): array
     {
         return [
+            'tenant_id' => 'integer',
+            'session_version' => 'integer',
+            'must_change_password' => 'boolean',
+            'customs_code' => 'encrypted',
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             // Laravel 이 대입 시점에 해시한다 — 평문이 DB 로 가는 경로를 막는 안전망이다.

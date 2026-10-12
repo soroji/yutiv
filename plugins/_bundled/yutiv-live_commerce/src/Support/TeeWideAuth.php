@@ -70,7 +70,7 @@ final class TeeWideAuth
                 'provider' => self::PROVIDER,
             ],
             'auth.providers.'.self::PROVIDER => [
-                'driver' => 'eloquent',
+                'driver' => 'live_scoped',
                 'model' => TeeWideUser::class,
             ],
         ];

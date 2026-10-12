@@ -3,6 +3,8 @@
 namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\StartSession;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
 use Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
@@ -40,7 +42,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
 
     // ── 쿠키 이름·도메인 ────────────────────────────────────────────────────
 
-    public function test_TeeWide_요청은_전용_세션_쿠키를_쓴다(): void
+    public function test_tee_wide_요청은_전용_세션_쿠키를_쓴다(): void
     {
         // 세션 설정 값은 진단 엔드포인트가 알린다 — 제품 화면은 그런 것을 노출하지 않는다.
         $this->get('http://'.self::ROOT_HOST.'/_teewide/session')
@@ -58,7 +60,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
             ->assertJsonPath('session_domain', '.teewide.test');
     }
 
-    public function test_YUTIV_세션_설정은_변경되지_않는다(): void
+    public function test_yuti_v_세션_설정은_변경되지_않는다(): void
     {
         $originalCookie = config('session.cookie');
         $originalDomain = config('session.domain');
@@ -71,10 +73,10 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         $this->assertSame($originalDomain, config('session.domain'));
     }
 
-    public function test_YUTIV_요청은_TeeWide_쿠키_설정을_받지_않는다(): void
+    public function test_yuti_v_요청은_tee_wide_쿠키_설정을_받지_않는다(): void
     {
         // yutiv 호스트로 들어온 요청에서 미들웨어를 직접 태워도 설정이 바뀌지 않아야 한다.
-        $request = \Illuminate\Http\Request::create('http://'.self::YUTIV_HOST.'/', 'GET');
+        $request = Request::create('http://'.self::YUTIV_HOST.'/', 'GET');
         $before = config('session.cookie');
 
         $this->app->make(ConfigureTeeWideSession::class)->handle($request, fn ($r) => response('ok'));
@@ -101,7 +103,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         $read->assertOk()->assertJsonPath('marker', 'phase0-marker');
     }
 
-    public function test_TeeWide_쿠키_도메인이_서브도메인_공유를_허용한다(): void
+    public function test_tee_wide_쿠키_도메인이_서브도메인_공유를_허용한다(): void
     {
         $response = $this->get('http://'.self::ROOT_HOST.'/_teewide/session?write=x');
 
@@ -113,7 +115,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
 
     // ── YUTIV ↔ TeeWide 격리 ────────────────────────────────────────────────
 
-    public function test_TeeWide_쿠키를_yutiv_요청에_넣어도_TeeWide_사용자가_아니다(): void
+    public function test_tee_wide_쿠키를_yutiv_요청에_넣어도_tee_wide_사용자가_아니다(): void
     {
         $write = $this->get('http://'.self::ROOT_HOST.'/_teewide/session?write=leak-check');
         $sessionId = $write->getCookie('teewide_session', false)?->getValue();
@@ -144,7 +146,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
             'yutiv 응답이 TeeWide 진단 area 를 담고 있습니다.'.$diagnostics);
     }
 
-    public function test_YUTIV_로그인_세션이_TeeWide_사용자로_인정되지_않는다(): void
+    public function test_yuti_v_로그인_세션이_tee_wide_사용자로_인정되지_않는다(): void
     {
         $user = User::factory()->create();
 
@@ -186,7 +188,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
 
     // ── 미들웨어 순서 (설계 계약) ───────────────────────────────────────────
 
-    public function test_세션_설정_미들웨어가_StartSession_보다_먼저_선언된다(): void
+    public function test_세션_설정_미들웨어가_start_session_보다_먼저_선언된다(): void
     {
         $routes = $this->teeWideRoutes();
         $this->assertNotEmpty($routes);
@@ -195,7 +197,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
             $stack = $route->middleware();
 
             $configureAt = array_search(ConfigureTeeWideSession::class, $stack, true);
-            $startAt = array_search(\Illuminate\Session\Middleware\StartSession::class, $stack, true);
+            $startAt = array_search(StartSession::class, $stack, true);
 
             $this->assertNotFalse($configureAt, $route->getName().' 에 세션 설정 미들웨어가 없습니다');
             $this->assertNotFalse($startAt, $route->getName().' 에 StartSession 이 없습니다');
@@ -207,7 +209,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         }
     }
 
-    public function test_TeeWide_스택은_YUTIV_web_그룹을_쓰지_않는다(): void
+    public function test_tee_wide_스택은_yuti_v_web_그룹을_쓰지_않는다(): void
     {
         // web 그룹을 쓰면 SetLocale·Boost·확장 게이트 등 YUTIV 전처리가 끼어든다.
         foreach ($this->teeWideRoutes() as $route) {
@@ -215,7 +217,7 @@ class TeeWideSessionIsolationTest extends PluginTestCase
         }
     }
 
-    public function test_프로바이더가_YUTIV_세션_설정을_건드리지_않는다(): void
+    public function test_프로바이더가_yuti_v_세션_설정을_건드리지_않는다(): void
     {
         $source = (string) file_get_contents(
             base_path('plugins/_bundled/yutiv-live_commerce/src/Providers/LiveCommerceServiceProvider.php')
@@ -233,11 +235,10 @@ class TeeWideSessionIsolationTest extends PluginTestCase
             '프로바이더 boot 이 없습니다'
         );
 
-        // src/routes/*.php 를 쓰면 코어 로더가 plugins/{id} 프리픽스를 강제해
-        // 도메인 루트 라우트를 만들 수 없다. 그 파일이 없어야 한다.
-        $this->assertFalse(
-            is_dir(base_path('plugins/_bundled/yutiv-live_commerce/src/routes')),
-            'src/routes 가 있으면 코어 로더가 프리픽스를 강제해 도메인 라우트와 충돌합니다.'
-        );
+        // 도메인 업무는 LiveRoutes, 본사 API만 공식 plugin API prefix를 사용합니다.
+        $source = file_get_contents(base_path('plugins/_bundled/yutiv-live_commerce/src/routes/api.php'));
+        $this->assertStringContainsString("Route::get('admin/office'", $source);
+        $this->assertStringNotContainsString("Route::get('/login'", $source);
+        $this->assertStringNotContainsString("Route::get('/seller'", $source);
     }
 }

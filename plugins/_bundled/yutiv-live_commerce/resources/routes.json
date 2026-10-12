@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "routes": [
+        {
+            "path": "*/admin/plugins/yutiv-live_commerce/office",
+            "layout": "live_office",
+            "auth_required": true,
+            "meta": {
+                "title": "라이브 관리",
+                "permission": "yutiv-live_commerce.management.manage"
+            }
+        }
+    ]
+}

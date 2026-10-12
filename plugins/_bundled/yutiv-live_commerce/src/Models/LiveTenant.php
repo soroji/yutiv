@@ -39,6 +39,11 @@ class LiveTenant extends Model
         'initials',
         'status',
         'owner_user_id',
+        'timezone',
+        'reservation_minutes',
+        'return_days',
+        'logo_path',
+        'contact_links',
     ];
 
     protected static function booted(): void
@@ -48,6 +53,11 @@ class LiveTenant extends Model
                 $tenant->uuid = (string) Str::uuid();
             }
         });
+    }
+
+    protected function casts(): array
+    {
+        return ['contact_links' => 'array', 'reservation_minutes' => 'integer', 'return_days' => 'integer'];
     }
 
     /**

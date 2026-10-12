@@ -4,14 +4,17 @@ namespace Plugins\Yutiv\LiveCommerce\Tests;
 
 use App\Enums\ExtensionStatus;
 use App\Models\Plugin as PluginModel;
+use App\Models\User as YutivUser;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Route;
-use App\Models\User as YutivUser;
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
 use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
@@ -24,14 +27,8 @@ use Tests\TestCase;
 /**
  * TeeWide 라이브커머스 테스트 베이스 (Phase 0).
  *
- * ── 로컬 실행 불가 안내 ─────────────────────────────────────────────────────
- * 이 스위트는 프로젝트 PHPUnit 관례를 따르지만 **작성 환경에서는 실행되지 않았다.**
- * 로컬 PHP 가 7.4 이고 `vendor/` 가 비어 있어 Laravel 부팅 자체가 불가능하다.
- * 호스트 정규화 규칙만 PHP 7.4 로도 도는 독립 하네스가 실행 검증한다:
- *
- *     php tests/TeeWide/yutiv-live-commerce-check.php --verbose
- *
- * 나머지(라우트 매칭·세션·차단)는 **서버에서만** 증명된다.
+ * 격리 MySQL 및 PHPUnit 검증을 위한 기반 클래스입니다.
+ * 대상 버전별 실행 결과는 docs/LIVE_OPERATIONS.md를 확인하세요.
  *
  * ── 플러그인 부팅: 두 가지 경로 ─────────────────────────────────────────────
  * `App\Providers\PluginServiceProvider` 는 `plugins/` 바로 아래만 훑으므로(비재귀)
@@ -212,7 +209,7 @@ abstract class PluginTestCase extends TestCase
             BootTimeLiveCommerceServiceProvider::$trace[] = 'RegisterProviders::merge 호출됨';
         }
 
-        $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+        $app->make(Kernel::class)->bootstrap();
 
         $this->routeCountAfterBootstrap = count($app['router']->getRoutes()->getRoutes());
 
@@ -344,6 +341,7 @@ abstract class PluginTestCase extends TestCase
         unset($attributes['password']);
 
         return TeeWideUser::query()->create(array_merge([
+            'tenant_id' => LiveTenant::where('slug', 'golfif')->value('id'),
             'email' => 'member@teewide.test',
             'name' => '테스트 회원',
             'status' => TeeWideUser::STATUS_ACTIVE,
@@ -617,6 +615,7 @@ abstract class PluginTestCase extends TestCase
     {
         return array_merge([
             'enabled' => true,
+            'brand_tenant' => 'golfif',
             'root_host' => self::ROOT_HOST,
             'live_host' => self::LIVE_HOST,
             'session' => [
@@ -720,7 +719,7 @@ abstract class PluginTestCase extends TestCase
      */
     protected function matchedRoute(string $url, string $method = 'GET'): ?\Illuminate\Routing\Route
     {
-        $request = \Illuminate\Http\Request::create($url, $method);
+        $request = Request::create($url, $method);
 
         try {
             return $this->app['router']->getRoutes()->match($request);
@@ -749,7 +748,7 @@ abstract class PluginTestCase extends TestCase
      */
     protected function routingDiagnostics(string $url, string $method = 'GET'): string
     {
-        $request = \Illuminate\Http\Request::create($url, $method);
+        $request = Request::create($url, $method);
         $lines = [];
 
         $lines[] = "요청: {$method} {$url} (host={$request->getHost()})";
@@ -909,7 +908,7 @@ abstract class PluginTestCase extends TestCase
      */
     protected static function teeWideRouteNames(): array
     {
-        return [
+        $names = [
             'teewide.account',
             'teewide.account.brand',
             'teewide.live.home',
@@ -923,6 +922,8 @@ abstract class PluginTestCase extends TestCase
             'teewide.register',
             'teewide.register.store',
         ];
+
+        return self::withOperationsRoutes($names);
     }
 
     /**
@@ -935,7 +936,7 @@ abstract class PluginTestCase extends TestCase
      */
     protected static function teeWideProductRouteNames(): array
     {
-        return [
+        $names = [
             'teewide.account',
             'teewide.account.brand',
             'teewide.live.home',
@@ -947,6 +948,8 @@ abstract class PluginTestCase extends TestCase
             'teewide.register',
             'teewide.register.store',
         ];
+
+        return self::withOperationsRoutes($names);
     }
 
     /**
@@ -965,6 +968,18 @@ abstract class PluginTestCase extends TestCase
         return $diagnostics ? self::teeWideRouteNames() : self::teeWideProductRouteNames();
     }
 
+    private static function withOperationsRoutes(array $names): array
+    {
+        foreach (['root', 'live'] as $host) {
+            foreach (['assets.css', 'assets.css.extensionless', 'assets.js', 'assets.js.extensionless', 'broadcast', 'cart', 'customer.task', 'my', 'media', 'order', 'order.task', 'password.change', 'password.forgot', 'password.reset', 'product', 'sale-link', 'seller', 'seller.catalog', 'seller.login', 'seller.media', 'seller.order', 'seller.task', 'shop'] as $name) {
+                $names[] = 'teewide.ops.'.$host.'.'.$name;
+            }
+        }
+        sort($names);
+
+        return $names;
+    }
+
     /**
      * 액션이 이 플러그인의 운영 컨트롤러인가.
      *
@@ -980,6 +995,12 @@ abstract class PluginTestCase extends TestCase
             // 인증 컨트롤러는 Auth\ 하위 네임스페이스다.
             'Auth\\LoginController',
             'Auth\\RegisterController',
+            'Customer\\LiveCustomerController',
+            'Customer\\LiveShopController',
+            'Seller\\LiveOfficeController',
+            'Seller\\LiveWorkflowController',
+            'LiveAssetController',
+            'LiveMediaController',
         ] as $controller) {
             if (str_contains($action, 'Plugins\\Yutiv\\LiveCommerce\\Http\\Controllers\\'.$controller)) {
                 return true;
@@ -1066,7 +1087,7 @@ abstract class PluginTestCase extends TestCase
     /**
      * 등록된 LiveCommerceServiceProvider 계열 인스턴스들 (구상 클래스명 => 인스턴스).
      *
-     * @return array<string, \Illuminate\Support\ServiceProvider>
+     * @return array<string, ServiceProvider>
      */
     protected function registeredLiveCommerceProviders(): array
     {

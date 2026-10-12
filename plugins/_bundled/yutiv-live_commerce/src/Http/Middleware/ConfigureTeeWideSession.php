@@ -95,14 +95,13 @@ class ConfigureTeeWideSession
 
         $snapshot = config('session');
 
-        config([
-            'session.cookie' => TeeWideConfig::sessionCookie(),
-            'session.domain' => TeeWideConfig::sessionDomain(),
-        ]);
+        $legacyHost = in_array($request->getHost(), [TeeWideConfig::rootHost(), TeeWideConfig::liveHost()], true);
+        $cookie = TeeWideConfig::sessionCookie().($legacyHost ? '' : '_'.substr(hash('sha256', $request->getHost()), 0, 16));
+        config(['session.cookie' => $cookie, 'session.domain' => $legacyHost ? TeeWideConfig::sessionDomain() : null]);
 
         // ② 요청 범위 스코프를 연다 — 전용 Store + 쓰고 버리는 매니저 + 바인딩 교체.
         //    호스트 SessionManager 에는 아무 것도 설치하지 않는다.
-        $token = TeeWideSessionScope::enter($this->app, $hostStore, TeeWideConfig::sessionCookie());
+        $token = TeeWideSessionScope::enter($this->app, $hostStore, $cookie);
 
         // ③ guard 가 새 Store 를 보도록 guard 캐시를 비운다 (로그아웃이 아니다).
         $this->forgetGuards();

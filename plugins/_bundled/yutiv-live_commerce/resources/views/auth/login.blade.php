@@ -20,20 +20,20 @@
                     <p class="tw-alert" role="alert">{{ $errors->first() }}</p>
                 @endif
 
-                <form class="tw-form" method="POST" action="{{ route('teewide.login.store') }}" novalidate>
+                <form class="tw-form" method="POST" action="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.login.store') }}" novalidate>
                     @csrf
 
                     <div class="tw-field">
                         <label class="tw-label" for="tw-email">
-                            이메일<span class="tw-label__req" aria-hidden="true">*</span>
+                            이메일 또는 직원 아이디<span class="tw-label__req" aria-hidden="true">*</span>
                         </label>
                         <input
                             class="tw-input"
-                            type="email"
+                            type="text"
                             id="tw-email"
                             name="email"
                             value="{{ old('email') }}"
-                            autocomplete="email"
+                            autocomplete="username"
                             required
                             @error('email') aria-invalid="true" aria-describedby="tw-email-error" @enderror
                         >
@@ -70,7 +70,8 @@
                 </form>
 
                 <p class="tw-auth__foot">
-                    계정이 없으신가요? <a href="{{ route('teewide.register') }}">회원가입</a>
+                    <a href="{{ $portalUrl }}/password/forgot">비밀번호 재설정</a> ·
+                    계정이 없으신가요? <a href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.register') }}">회원가입</a>
                 </p>
             </div>
         </div>

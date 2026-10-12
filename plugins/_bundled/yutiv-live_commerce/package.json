@@ -1,0 +1,9 @@
+{
+  "name": "@plugins/yutiv-live_commerce",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"build": "vite build", "test:run": "vitest run"},
+  "dependencies": {"qrcode-generator": "2.0.4"},
+  "devDependencies": {"vite": "5.4.21", "vitest": "2.1.9", "jsqr": "1.4.0"}
+}

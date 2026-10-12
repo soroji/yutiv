@@ -2,7 +2,8 @@
     // TeeWide 호스트는 코어 /api/plugins 자산 라우트도 차단합니다. 게이트를 넓히지 않고
     // 설치된 플러그인의 원본 PNG를 그대로 CSS에 포함해 동일 호스트에서 로드합니다.
     $pluginRoot = dirname((new \ReflectionClass(\Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider::class))->getFileName(), 3);
-    $golfBackground = 'data:image/png;base64,'.base64_encode(file_get_contents($pluginRoot.'/resources/assets/golfif-pc.png'));
+    $useGolfBackground = \Plugins\Yutiv\LiveCommerce\Support\LiveContext::requireTenant()->slug === config('yutiv_live_commerce.brand_tenant');
+    $golfBackground = $useGolfBackground ? 'data:image/png;base64,'.base64_encode(file_get_contents($pluginRoot.'/resources/assets/golfif-pc.png')) : '';
 @endphp
 @push('styles')
     html[data-teewide-area="portal"] {
@@ -14,7 +15,7 @@
     html[data-teewide-area="portal"] .tw-shell::before,
     html[data-teewide-area="portal"] .tw-shell::after {content:"";position:absolute;inset:0;pointer-events:none;}
     html[data-teewide-area="portal"] .tw-shell::before {
-        z-index:-2;background-image:url('{!! $golfBackground !!}');
+        z-index:-2;@if($useGolfBackground) background-image:url('{!! $golfBackground !!}'); @else background:linear-gradient(120deg,#f6f8f1 20%,#c4d9c8 65%,#2f6950); @endif
         background-size:cover;background-position:center center;
     }
     html[data-teewide-area="portal"] .tw-shell::after {
@@ -74,4 +75,7 @@
         .tw-golf-title {font-size:28px;}
         .tw-golf-member-menu a,.tw-golf-member-menu button {padding:0 8px;}
     }
+    .tw-golf-selling {margin-top:24px;display:grid;gap:8px;max-width:520px;color:#153e29;}
+    .tw-golf-selling p {font-size:13px;font-weight:700;margin:0;}
+    .tw-golf-selling a {padding:10px 16px;border-radius:6px;background:#ffffffc9;color:#153e29;text-decoration:none;overflow-wrap:anywhere;}
 @endpush

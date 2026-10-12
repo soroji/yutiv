@@ -3,6 +3,10 @@
 namespace Plugins\Yutiv\LiveCommerce\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
+use Plugins\Yutiv\LiveCommerce\Enums\LiveEntity;
+use Plugins\Yutiv\LiveCommerce\Http\Controllers\Customer\LiveShopController;
+use Plugins\Yutiv\LiveCommerce\Services\LiveOfficeService;
+use Plugins\Yutiv\LiveCommerce\Support\LiveContext;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -23,6 +27,11 @@ class LiveController
 {
     public function home(): View
     {
+        $tenant = LiveContext::requireTenant();
+        if (app(LiveOfficeService::class)->query(LiveEntity::Broadcast, $tenant->id)->where('state', 'selling')->where('sale_starts_at', '<=', now())->where('sale_ends_at', '>', now())->exists()) {
+            return app(LiveShopController::class)->index();
+        }
+
         return view('teewide::live.home', [
             'onAir' => TeeWidePresenter::onAir(),
             'upcoming' => TeeWidePresenter::upcoming(),
@@ -42,6 +51,11 @@ class LiveController
         }
 
         request()->attributes->set('teewide.public_channel', $channel);
+
+        $current = LiveContext::requireTenant();
+        if (app(LiveOfficeService::class)->query(LiveEntity::Broadcast, $current->id)->where('state', 'selling')->where('sale_starts_at', '<=', now())->where('sale_ends_at', '>', now())->exists()) {
+            return app(LiveShopController::class)->index();
+        }
 
         return view('teewide::live.channel', [
             'channel' => $channel,

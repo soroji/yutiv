@@ -19,7 +19,7 @@
                     <p class="tw-alert" role="alert">입력한 내용을 다시 확인해 주세요.</p>
                 @endif
 
-                <form class="tw-form" method="POST" action="{{ route('teewide.register.store') }}" novalidate>
+                <form class="tw-form" method="POST" action="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.register.store') }}" novalidate>
                     @csrf
 
                     <div class="tw-field">
@@ -122,7 +122,7 @@
                 </form>
 
                 <p class="tw-auth__foot">
-                    이미 계정이 있으신가요? <a href="{{ route('teewide.login') }}">로그인</a>
+                    이미 계정이 있으신가요? <a href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.login') }}">로그인</a>
                 </p>
             </div>
         </div>

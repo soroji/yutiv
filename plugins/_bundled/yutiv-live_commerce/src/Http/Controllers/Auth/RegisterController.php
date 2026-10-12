@@ -4,10 +4,11 @@ namespace Plugins\Yutiv\LiveCommerce\Http\Controllers\Auth;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use Plugins\Yutiv\LiveCommerce\Http\Requests\LiveRegistrationRequest;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
+use Plugins\Yutiv\LiveCommerce\Services\LiveOrderService;
+use Plugins\Yutiv\LiveCommerce\Support\LiveContext;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 
@@ -27,7 +28,7 @@ class RegisterController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(LiveRegistrationRequest $request): RedirectResponse
     {
         // 이메일은 검증 **전에** 정규화한다. 그래야 unique 검사와 실제 저장이
         // 같은 값을 본다 — 'A@b.com ' 과 'a@b.com' 이 다른 계정이 되면 안 된다.
@@ -35,19 +36,10 @@ class RegisterController
             'email' => TeeWideUser::normalizeEmail($request->input('email')),
         ]);
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'email' => [
-                'required', 'string', 'email', 'max:191',
-                Rule::unique('teewide_users', 'email'),
-            ],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'terms' => ['accepted'],
-        ], [
-            'terms.accepted' => '이용약관에 동의해야 가입할 수 있습니다.',
-        ]);
+        $validated = $request->validated();
 
         $user = TeeWideUser::query()->create([
+            'tenant_id' => LiveContext::requireTenant()->id,
             'name' => $validated['name'],
             'email' => $validated['email'],
             // 평문은 여기서 끝난다. 로그에도 DB 에도 남지 않는다.
@@ -59,9 +51,11 @@ class RegisterController
 
         // 가입 전 세션 ID 를 그대로 들고 로그인 상태가 되면 세션 고정 공격에 노출된다.
         $request->session()->regenerate();
+        $request->session()->put('live.session_version', $user->session_version);
+        app(LiveOrderService::class)->mergeCart($user->tenant_id, $user->id, (string) $request->session()->get('live.cart_key', ''));
 
         $user->forceFill(['last_login_at' => now()])->save();
 
-        return redirect()->route('teewide.account');
+        return redirect(TeeWidePresenter::route('teewide.account'));
     }
 }

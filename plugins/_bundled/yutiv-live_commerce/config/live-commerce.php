@@ -23,6 +23,7 @@ return [
     |
     */
     'enabled' => (bool) env('TEEWIDE_ENABLED', false),
+    'account_mail_enabled' => (bool) env('LIVE_ACCOUNT_MAIL_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------

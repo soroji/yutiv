@@ -87,7 +87,7 @@
                         <ul class="tw-owned">
                             @foreach ($ownedChannels as $channel)
                                 <li class="tw-owned__item">
-                                    <form method="POST" action="{{ route('teewide.account.brand', ['tenant' => $channel['slug']]) }}" class="tw-form tw-brand-form">
+                                    <form method="POST" action="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.account.brand', ['tenant' => $channel['slug']]) }}" class="tw-form tw-brand-form">
                                         @csrf
                                         <label class="tw-label" for="brand-{{ $channel['slug'] }}">고객에게 표시할 브랜드 이름</label>
                                         <input class="tw-input" id="brand-{{ $channel['slug'] }}" name="name" value="{{ $channel['name'] }}" maxlength="100" required>

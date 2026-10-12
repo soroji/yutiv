@@ -3,12 +3,12 @@
 namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
 use Illuminate\Http\Request;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\EncryptedStore;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;
 use Illuminate\Session\Store;
-use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\ConfigureTeeWideSession;
+use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideSessionScope;
 use Plugins\Yutiv\LiveCommerce\Tests\PluginTestCase;
 
@@ -54,7 +54,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
 
     // ── 호스트 매니저가 그대로인가 ──────────────────────────────────────────
 
-    public function test_TeeWide_요청_후_forgetDrivers_는_새_Store_를_만든다(): void
+    public function test_tee_wide_요청_후_forget_drivers_는_새_store_를_만든다(): void
     {
         $manager = $this->app->make('session');
         $before = $this->app['session']->driver();
@@ -76,7 +76,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         );
     }
 
-    public function test_forgetDrivers_후_새_Store_는_이전_attributes_를_물려받지_않는다(): void
+    public function test_forget_drivers_후_새_store_는_이전_attributes_를_물려받지_않는다(): void
     {
         $manager = $this->app->make('session');
 
@@ -114,7 +114,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         );
     }
 
-    public function test_비활성_스코프에서는_플러그인이_Store_생성에_개입하지_않는다(): void
+    public function test_비활성_스코프에서는_플러그인이_store_생성에_개입하지_않는다(): void
     {
         $manager = $this->app->make('session');
 
@@ -131,7 +131,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         $this->assertNotSame($first, $second, '플러그인 creator 가 고정된 Store 를 돌려주고 있습니다.');
     }
 
-    public function test_StartSession_바인딩이_요청_후_원래_인스턴스로_돌아온다(): void
+    public function test_start_session_바인딩이_요청_후_원래_인스턴스로_돌아온다(): void
     {
         $before = spl_object_id($this->app->make(StartSession::class));
         $managerBefore = spl_object_id($this->app->make('session'));
@@ -185,7 +185,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         $this->assertSame($hostHandler, $store->getHandler(), 'host handler 가 공유되지 않았습니다');
     }
 
-    public function test_creator_가_Store_를_반환하면_TypeError_가_난다(): void
+    public function test_creator_가_store_를_반환하면_type_error_가_난다(): void
     {
         // 잘못된 구현을 실제로 태워, 왜 handler 여야 하는지 실행으로 고정한다.
         $hostStore = $this->app['session']->driver();
@@ -198,7 +198,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         $manager->driver('array');
     }
 
-    public function test_TeeWide_Store_는_encrypt_설정에_따라_만들어진다(): void
+    public function test_tee_wide_store_는_encrypt_설정에_따라_만들어진다(): void
     {
         $this->assertFalse((bool) config('session.encrypt'), '이 환경 전제: encrypt=false');
 
@@ -213,7 +213,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         $this->assertSame(TeeWideConfig::sessionCookie(), $seen->getName());
     }
 
-    public function test_encrypt_가_켜지면_EncryptedStore_가_만들어진다(): void
+    public function test_encrypt_가_켜지면_encrypted_store_가_만들어진다(): void
     {
         config(['session.encrypt' => true]);
 
@@ -227,12 +227,12 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         $this->assertSame(TeeWideConfig::sessionCookie(), $seen->getName());
     }
 
-    public function test_TeeWide_HTTP_요청이_500_이_아니라_200_이다(): void
+    public function test_tee_wide_htt_p_요청이_500_이_아니라_200_이다(): void
     {
         // 6차 서버 실행에서는 이 경로가 TypeError 로 무너졌다.
         $this->get('http://'.self::ROOT_HOST.'/')
             ->assertOk()
-            ->assertSee('라이브로 연결되는 새로운 쇼핑');
+            ->assertSee('방송으로 만나는 상품,');
 
         $this->get('http://'.self::ROOT_HOST.'/_teewide/session')
             ->assertOk()
@@ -280,7 +280,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
 
     // ── 새 Application 누수 ─────────────────────────────────────────────────
 
-    public function test_새_SessionManager_는_플러그인_creator_없이_동작한다(): void
+    public function test_새_session_manager_는_플러그인_creator_없이_동작한다(): void
     {
         $this->runTeeWideRequest();
 
@@ -301,7 +301,7 @@ class TeeWideSessionDriverLifecycleTest extends PluginTestCase
         );
     }
 
-    public function test_YUTIV_TeeWide_YUTIV_TeeWide_경계가_각각_독립적이다(): void
+    public function test_yuti_v_tee_wide_yuti_v_tee_wide_경계가_각각_독립적이다(): void
     {
         $manager = $this->app->make('session');
         $hostId = spl_object_id($manager->driver());

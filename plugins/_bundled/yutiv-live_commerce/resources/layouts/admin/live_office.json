@@ -1,0 +1,1792 @@
+{
+    "version": "1.0.0",
+    "layout_name": "live_office",
+    "extends": "_admin_base",
+    "permissions": [
+        "yutiv-live_commerce.management.manage"
+    ],
+    "meta": {
+        "title": "라이브 관리"
+    },
+    "initLocal": {
+        "tenant": {
+            "name": "",
+            "slug": "",
+            "status": "draft",
+            "timezone": "Asia/Seoul",
+            "reservation_minutes": 60,
+            "return_days": 7
+        },
+        "domain": {
+            "host": "",
+            "active": "false",
+            "primary": "false"
+        },
+        "account": {
+            "name": "",
+            "username": "",
+            "email": "",
+            "role": "owner",
+            "user_id": ""
+        },
+        "permission": {
+            "user_id": "",
+            "role": "sales",
+            "active": "true"
+        },
+        "lock": {
+            "user_id": "",
+            "locked": "true"
+        },
+        "legacy": {
+            "user_id": "",
+            "reason": ""
+        },
+        "temporaryPassword": "",
+        "success": "",
+        "error": ""
+    },
+    "data_sources": [
+        {
+            "id": "office",
+            "type": "api",
+            "endpoint": "/api/plugins/yutiv-live_commerce/admin/office",
+            "method": "GET",
+            "auth_required": true,
+            "auto_fetch": true,
+            "params": {
+                "tenant": "{{query.tenant ?? \"\"}}"
+            },
+            "loading_strategy": "blocking"
+        }
+    ],
+    "slots": {
+        "content": [
+            {
+                "type": "basic",
+                "name": "Div",
+                "props": {
+                    "className": "admin-page-content live-admin-office"
+                },
+                "children": [
+                    {
+                        "type": "basic",
+                        "name": "A",
+                        "props": {
+                            "href": "/admin",
+                            "className": "btn btn-secondary"
+                        },
+                        "text": "관리자 홈"
+                    },
+                    {
+                        "name": "Div",
+                        "props": {
+                            "className": "space-y-6"
+                        },
+                        "children": [
+                            {
+                                "name": "H1",
+                                "text": "라이브 관리",
+                                "props": {
+                                    "className": "text-2xl font-bold"
+                                },
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Span",
+                                "text": "업체·도메인·계정·업무 권한을 관리합니다. 도메인 등록은 DNS·TLS 준비를 의미하지 않습니다.",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "A",
+                                "props": {
+                                    "href": "/admin/plugins/yutiv-live_commerce/office",
+                                    "className": "btn btn-secondary "
+                                },
+                                "text": "새 업체 생성",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Span",
+                                "if": "{{!office?.data && !office?.error}}",
+                                "text": "운영 데이터를 불러오고 있습니다.",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Span",
+                                "if": "{{!!office?.error}}",
+                                "props": {
+                                    "role": "alert"
+                                },
+                                "text": "운영 데이터를 불러오지 못했습니다. 권한·연결을 확인하고 다시 시도해 주세요.",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Button",
+                                "props": {
+                                    "type": "button",
+                                    "className": "btn btn-primary "
+                                },
+                                "text": "데이터 새로고침",
+                                "actions": [
+                                    {
+                                        "type": "click",
+                                        "handler": "refetchDataSource",
+                                        "params": {
+                                            "dataSourceId": "office"
+                                        }
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "iteration": {
+                                    "item_var": "tenant",
+                                    "source": "{{office?.data?.tenants ?? []}}"
+                                },
+                                "children": [
+                                    {
+                                        "name": "A",
+                                        "props": {
+                                            "href": "/admin/plugins/yutiv-live_commerce/office?tenant={{tenant.id}}",
+                                            "className": "btn btn-secondary "
+                                        },
+                                        "text": "{{tenant.name}} · {{tenant.status}}",
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Span",
+                                "if": "{{!!_local.error}}",
+                                "props": {
+                                    "role": "alert",
+                                    "className": "text-red-700"
+                                },
+                                "text": "{{_local.error ?? \"\"}}",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Span",
+                                "if": "{{!!_local.success}}",
+                                "props": {
+                                    "role": "status"
+                                },
+                                "text": "{{_local.success ?? \"\"}}",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "if": "{{!!_local.temporaryPassword}}",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "Span",
+                                        "text": "임시 비밀번호 — 지금 안전하게 전달하세요. 이 화면을 떠나면 다시 조회할 수 없습니다.",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "{{_local.temporaryPassword ?? \"\"}}",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Button",
+                                        "props": {
+                                            "type": "button",
+                                            "className": "btn btn-primary "
+                                        },
+                                        "text": "표시 닫기",
+                                        "actions": [
+                                            {
+                                                "type": "click",
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "local",
+                                                    "temporaryPassword": ""
+                                                }
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ],
+                        "type": "basic"
+                    },
+                    {
+                        "name": "Div",
+                        "props": {
+                            "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                        },
+                        "children": [
+                            {
+                                "name": "H2",
+                                "text": "업체 생성·수정",
+                                "props": {
+                                    "className": "text-xl font-semibold"
+                                },
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Span",
+                                "text": "새 업체는 준비 상태로 생성하고, 도메인·소유자 확인 후 활성화하세요.",
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Form",
+                                "props": {
+                                    "dataKey": "tenant",
+                                    "id": "tenant"
+                                },
+                                "children": [
+                                    {
+                                        "name": "Div",
+                                        "props": {
+                                            "className": "space-y-2"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Label",
+                                                "props": {
+                                                    "htmlFor": "tenant-name"
+                                                },
+                                                "text": "브랜드 이름",
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Input",
+                                                "props": {
+                                                    "id": "tenant-name",
+                                                    "name": "name",
+                                                    "type": "text",
+                                                    "className": "w-full",
+                                                    "required": true,
+                                                    "autoBinding": false,
+                                                    "value": "{{_local.tenant?.name ?? ''}}"
+                                                },
+                                                "type": "basic",
+                                                "actions": [
+                                                    {
+                                                        "type": "change",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "tenant.name": "{{$event.target.value}}"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Div",
+                                        "props": {
+                                            "className": "space-y-2"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Label",
+                                                "props": {
+                                                    "htmlFor": "tenant-slug"
+                                                },
+                                                "text": "업체 식별명",
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Input",
+                                                "props": {
+                                                    "id": "tenant-slug",
+                                                    "name": "slug",
+                                                    "type": "text",
+                                                    "className": "w-full",
+                                                    "required": true,
+                                                    "autoBinding": false,
+                                                    "value": "{{_local.tenant?.slug ?? ''}}"
+                                                },
+                                                "type": "basic",
+                                                "actions": [
+                                                    {
+                                                        "type": "change",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "tenant.slug": "{{$event.target.value}}"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Div",
+                                        "props": {
+                                            "className": "space-y-2"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Label",
+                                                "props": {
+                                                    "htmlFor": "tenant-reservation_minutes"
+                                                },
+                                                "text": "입금 예약 시간 (분)",
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Input",
+                                                "props": {
+                                                    "id": "tenant-reservation_minutes",
+                                                    "name": "reservation_minutes",
+                                                    "type": "number",
+                                                    "className": "w-full",
+                                                    "required": true,
+                                                    "autoBinding": false,
+                                                    "value": "{{_local.tenant?.reservation_minutes ?? ''}}"
+                                                },
+                                                "type": "basic",
+                                                "actions": [
+                                                    {
+                                                        "type": "change",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "tenant.reservation_minutes": "{{$event.target.value}}"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Div",
+                                        "props": {
+                                            "className": "space-y-2"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Label",
+                                                "props": {
+                                                    "htmlFor": "tenant-return_days"
+                                                },
+                                                "text": "반품기간 (일)",
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Input",
+                                                "props": {
+                                                    "id": "tenant-return_days",
+                                                    "name": "return_days",
+                                                    "type": "number",
+                                                    "className": "w-full",
+                                                    "required": true,
+                                                    "autoBinding": false,
+                                                    "value": "{{_local.tenant?.return_days ?? ''}}"
+                                                },
+                                                "type": "basic",
+                                                "actions": [
+                                                    {
+                                                        "type": "change",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "tenant.return_days": "{{$event.target.value}}"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Div",
+                                        "children": [
+                                            {
+                                                "name": "Label",
+                                                "props": {
+                                                    "htmlFor": "tenant-status"
+                                                },
+                                                "text": "업체 상태",
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Select",
+                                                "props": {
+                                                    "id": "tenant-status",
+                                                    "name": "status",
+                                                    "value": "{{String(_local.tenant?.status ?? '')}}",
+                                                    "autoBinding": false,
+                                                    "options": [
+                                                        {
+                                                            "value": "draft",
+                                                            "label": "준비"
+                                                        },
+                                                        {
+                                                            "value": "active",
+                                                            "label": "활성"
+                                                        },
+                                                        {
+                                                            "value": "suspended",
+                                                            "label": "중지"
+                                                        }
+                                                    ]
+                                                },
+                                                "actions": [
+                                                    {
+                                                        "type": "change",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "tenant.status": "{{$event.target.value}}"
+                                                        }
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Div",
+                                        "children": [
+                                            {
+                                                "name": "Label",
+                                                "props": {
+                                                    "htmlFor": "tenant-timezone"
+                                                },
+                                                "text": "업체 시간대",
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Select",
+                                                "props": {
+                                                    "id": "tenant-timezone",
+                                                    "name": "timezone",
+                                                    "value": "{{String(_local.tenant?.timezone ?? '')}}",
+                                                    "autoBinding": false,
+                                                    "options": [
+                                                        {
+                                                            "value": "Asia/Seoul",
+                                                            "label": "서울"
+                                                        },
+                                                        {
+                                                            "value": "Asia/Shanghai",
+                                                            "label": "상하이"
+                                                        }
+                                                    ]
+                                                },
+                                                "actions": [
+                                                    {
+                                                        "type": "change",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "tenant.timezone": "{{$event.target.value}}"
+                                                        }
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Button",
+                                        "props": {
+                                            "type": "button",
+                                            "className": "btn btn-primary "
+                                        },
+                                        "text": "현재 업체 값 불러오기",
+                                        "if": "{{!!office?.data?.selected}}",
+                                        "actions": [
+                                            {
+                                                "type": "click",
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "local",
+                                                    "tenant": "{{office.data.selected}}"
+                                                }
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Button",
+                                        "props": {
+                                            "type": "button",
+                                            "className": "btn btn-primary mt-4"
+                                        },
+                                        "text": "저장",
+                                        "actions": [
+                                            {
+                                                "type": "click",
+                                                "handler": "apiCall",
+                                                "auth_required": true,
+                                                "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/tenant",
+                                                "params": {
+                                                    "method": "POST",
+                                                    "body": {
+                                                        "name": "{{_local.tenant?.name ?? ''}}",
+                                                        "slug": "{{_local.tenant?.slug ?? ''}}",
+                                                        "reservation_minutes": "{{_local.tenant?.reservation_minutes ?? ''}}",
+                                                        "return_days": "{{_local.tenant?.return_days ?? ''}}",
+                                                        "status": "{{_local.tenant?.status ?? \"draft\"}}",
+                                                        "timezone": "{{_local.tenant?.timezone ?? \"Asia/Seoul\"}}"
+                                                    }
+                                                },
+                                                "onSuccess": [
+                                                    {
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                            "success": "저장했습니다.",
+                                                            "error": ""
+                                                        }
+                                                    },
+                                                    {
+                                                        "handler": "refetchDataSource",
+                                                        "params": {
+                                                            "dataSourceId": "office"
+                                                        }
+                                                    }
+                                                ],
+                                                "onError": [
+                                                    {
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                            "success": "",
+                                                            "temporaryPassword": ""
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ],
+                        "type": "basic"
+                    },
+                    {
+                        "name": "Div",
+                        "if": "{{!!query.tenant}}",
+                        "props": {
+                            "className": "space-y-6"
+                        },
+                        "children": [
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "card p-6 space-y-3"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "업체별 판매·재고·인센티브 요약",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "{{office?.data?.selected?.name ?? \"\"}} · {{office?.data?.selected?.status ?? \"\"}}",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "{{\"판매 가능 \" + (office?.data?.summary?.stock?.available ?? 0) + \"개 · 예약 \" + (office?.data?.summary?.stock?.reserved ?? 0) + \"개 · 예상 인센티브 \" + (office?.data?.summary?.incentives?.expected ?? 0) + \"원 · 확정 \" + (office?.data?.summary?.incentives?.confirmed ?? 0) + \"원\"}}",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "{{\"최근 한 달 순매출 \" + Object.values(office?.data?.summary?.periods ?? {}).reduce((sum,x) => sum + x.net_sales,0) + \"원 (업체 시간대·주문일 기준)\"}}",
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "공식 도메인",
+                                        "props": {
+                                            "className": "text-xl font-semibold"
+                                        },
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Form",
+                                        "props": {
+                                            "dataKey": "domain",
+                                            "id": "domain"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Div",
+                                                "props": {
+                                                    "className": "space-y-2"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "domain-host"
+                                                        },
+                                                        "text": "도메인 (스킴·경로 제외)",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Input",
+                                                        "props": {
+                                                            "id": "domain-host",
+                                                            "name": "host",
+                                                            "type": "text",
+                                                            "className": "w-full",
+                                                            "required": true,
+                                                            "autoBinding": false,
+                                                            "value": "{{_local.domain?.host ?? ''}}"
+                                                        },
+                                                        "type": "basic",
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "domain.host": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "domain-active"
+                                                        },
+                                                        "text": "활성",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "domain-active",
+                                                            "name": "active",
+                                                            "value": "{{String(_local.domain?.active ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": [
+                                                                {
+                                                                    "value": "false",
+                                                                    "label": "아니요"
+                                                                },
+                                                                {
+                                                                    "value": "true",
+                                                                    "label": "예"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "domain.active": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "domain-primary"
+                                                        },
+                                                        "text": "대표 도메인",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "domain-primary",
+                                                            "name": "primary",
+                                                            "value": "{{String(_local.domain?.primary ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": [
+                                                                {
+                                                                    "value": "false",
+                                                                    "label": "아니요"
+                                                                },
+                                                                {
+                                                                    "value": "true",
+                                                                    "label": "예"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "domain.primary": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Button",
+                                                "props": {
+                                                    "type": "button",
+                                                    "className": "btn btn-primary mt-4"
+                                                },
+                                                "text": "저장",
+                                                "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/domain",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": {
+                                                                "host": "{{_local.domain?.host ?? \"\"}}",
+                                                                "active": "{{_local.domain?.active === \"true\"}}",
+                                                                "primary": "{{_local.domain?.primary === \"true\"}}"
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                                    "success": "저장했습니다.",
+                                                                    "error": ""
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "office"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "success": "",
+                                                                    "temporaryPassword": ""
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "계정 발급·재설정",
+                                        "props": {
+                                            "className": "text-xl font-semibold"
+                                        },
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "저장할 때 새 임시 비밀번호를 발급하며 기존 세션을 무효화합니다. 기존 비밀번호 조회 기능은 없습니다.",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Form",
+                                        "props": {
+                                            "dataKey": "account",
+                                            "id": "account"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "account-user_id"
+                                                        },
+                                                        "text": "재설정 대상 (미선택: 신규 발급)",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "account-user_id",
+                                                            "name": "user_id",
+                                                            "value": "{{String(_local.account?.user_id ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": "{{(office?.data?.accounts ?? []).map(x => ({value:String(x.id),label:x.username}))}}"
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "account.user_id": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "props": {
+                                                    "className": "space-y-2"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "account-name"
+                                                        },
+                                                        "text": "담당자 표시 이름",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Input",
+                                                        "props": {
+                                                            "id": "account-name",
+                                                            "name": "name",
+                                                            "type": "text",
+                                                            "className": "w-full",
+                                                            "required": true,
+                                                            "autoBinding": false,
+                                                            "value": "{{_local.account?.name ?? ''}}"
+                                                        },
+                                                        "type": "basic",
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "account.name": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "props": {
+                                                    "className": "space-y-2"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "account-username"
+                                                        },
+                                                        "text": "로그인 아이디",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Input",
+                                                        "props": {
+                                                            "id": "account-username",
+                                                            "name": "username",
+                                                            "type": "text",
+                                                            "className": "w-full",
+                                                            "required": true,
+                                                            "autoBinding": false,
+                                                            "value": "{{_local.account?.username ?? ''}}"
+                                                        },
+                                                        "type": "basic",
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "account.username": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "props": {
+                                                    "className": "space-y-2"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "account-email"
+                                                        },
+                                                        "text": "이메일 (선택)",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Input",
+                                                        "props": {
+                                                            "id": "account-email",
+                                                            "name": "email",
+                                                            "type": "email",
+                                                            "className": "w-full",
+                                                            "required": true,
+                                                            "autoBinding": false,
+                                                            "value": "{{_local.account?.email ?? ''}}"
+                                                        },
+                                                        "type": "basic",
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "account.email": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "account-role"
+                                                        },
+                                                        "text": "업무 권한",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "account-role",
+                                                            "name": "role",
+                                                            "value": "{{String(_local.account?.role ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": [
+                                                                {
+                                                                    "value": "owner",
+                                                                    "label": "소유자"
+                                                                },
+                                                                {
+                                                                    "value": "sales",
+                                                                    "label": "판매·상담"
+                                                                },
+                                                                {
+                                                                    "value": "warehouse",
+                                                                    "label": "창고"
+                                                                },
+                                                                {
+                                                                    "value": "finance",
+                                                                    "label": "재무"
+                                                                },
+                                                                {
+                                                                    "value": "customs",
+                                                                    "label": "통관"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "account.role": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Button",
+                                                "props": {
+                                                    "type": "button",
+                                                    "className": "btn btn-primary mt-4"
+                                                },
+                                                "text": "저장",
+                                                "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/account",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": {
+                                                                "user_id": "{{_local.account?.user_id || null}}",
+                                                                "name": "{{_local.account?.name ?? \"\"}}",
+                                                                "username": "{{_local.account?.username ?? \"\"}}",
+                                                                "email": "{{_local.account?.email || null}}",
+                                                                "role": "{{_local.account?.role ?? \"owner\"}}"
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                                    "success": "저장했습니다.",
+                                                                    "error": ""
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "office"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "success": "",
+                                                                    "temporaryPassword": ""
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "직원 연결·권한",
+                                        "props": {
+                                            "className": "text-xl font-semibold"
+                                        },
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Form",
+                                        "props": {
+                                            "dataKey": "permission",
+                                            "id": "permission"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "permission-user_id"
+                                                        },
+                                                        "text": "대상 계정",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "permission-user_id",
+                                                            "name": "user_id",
+                                                            "value": "{{String(_local.permission?.user_id ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": "{{(office?.data?.accounts ?? []).map(x => ({value:String(x.id),label:x.username}))}}"
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "permission.user_id": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "permission-role"
+                                                        },
+                                                        "text": "업무 권한",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "permission-role",
+                                                            "name": "role",
+                                                            "value": "{{String(_local.permission?.role ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": [
+                                                                {
+                                                                    "value": "owner",
+                                                                    "label": "소유자"
+                                                                },
+                                                                {
+                                                                    "value": "sales",
+                                                                    "label": "판매·상담"
+                                                                },
+                                                                {
+                                                                    "value": "warehouse",
+                                                                    "label": "창고"
+                                                                },
+                                                                {
+                                                                    "value": "finance",
+                                                                    "label": "재무"
+                                                                },
+                                                                {
+                                                                    "value": "customs",
+                                                                    "label": "통관"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "permission.role": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "permission-active"
+                                                        },
+                                                        "text": "업무 접근 허용",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "permission-active",
+                                                            "name": "active",
+                                                            "value": "{{String(_local.permission?.active ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": [
+                                                                {
+                                                                    "value": "false",
+                                                                    "label": "아니요"
+                                                                },
+                                                                {
+                                                                    "value": "true",
+                                                                    "label": "예"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "permission.active": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Button",
+                                                "props": {
+                                                    "type": "button",
+                                                    "className": "btn btn-primary mt-4"
+                                                },
+                                                "text": "저장",
+                                                "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/permission",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": {
+                                                                "user_id": "{{_local.permission?.user_id ?? \"\"}}",
+                                                                "role": "{{_local.permission?.role ?? \"sales\"}}",
+                                                                "active": "{{_local.permission?.active === \"true\"}}"
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                                    "success": "저장했습니다.",
+                                                                    "error": ""
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "office"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "success": "",
+                                                                    "temporaryPassword": ""
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "계정 잠금·해제",
+                                        "props": {
+                                            "className": "text-xl font-semibold"
+                                        },
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Form",
+                                        "props": {
+                                            "dataKey": "lock",
+                                            "id": "lock"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "lock-user_id"
+                                                        },
+                                                        "text": "대상 계정",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "lock-user_id",
+                                                            "name": "user_id",
+                                                            "value": "{{String(_local.lock?.user_id ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": "{{(office?.data?.accounts ?? []).map(x => ({value:String(x.id),label:x.username}))}}"
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "lock.user_id": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "lock-locked"
+                                                        },
+                                                        "text": "잠금",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "lock-locked",
+                                                            "name": "locked",
+                                                            "value": "{{String(_local.lock?.locked ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": [
+                                                                {
+                                                                    "value": "false",
+                                                                    "label": "아니요"
+                                                                },
+                                                                {
+                                                                    "value": "true",
+                                                                    "label": "예"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "lock.locked": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Button",
+                                                "props": {
+                                                    "type": "button",
+                                                    "className": "btn btn-primary mt-4"
+                                                },
+                                                "text": "저장",
+                                                "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/lock",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": {
+                                                                "user_id": "{{_local.lock?.user_id ?? \"\"}}",
+                                                                "locked": "{{_local.lock?.locked === \"true\"}}"
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                                    "success": "저장했습니다.",
+                                                                    "error": ""
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "office"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "success": "",
+                                                                    "temporaryPassword": ""
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "기존 미귀속 계정 전환",
+                                        "props": {
+                                            "className": "text-xl font-semibold"
+                                        },
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "text": "실제 소속을 확인한 계정만 전환합니다. 판매자 권한은 별도로 연결하세요.",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Form",
+                                        "props": {
+                                            "dataKey": "legacy",
+                                            "id": "legacy"
+                                        },
+                                        "children": [
+                                            {
+                                                "name": "Div",
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "legacy-user_id"
+                                                        },
+                                                        "text": "확인한 기존 계정",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Select",
+                                                        "props": {
+                                                            "id": "legacy-user_id",
+                                                            "name": "user_id",
+                                                            "value": "{{String(_local.legacy?.user_id ?? '')}}",
+                                                            "autoBinding": false,
+                                                            "options": "{{(office?.data?.legacy_users ?? []).map(x => ({value:String(x.id),label:x.name}))}}"
+                                                        },
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "legacy.user_id": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "basic"
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Div",
+                                                "props": {
+                                                    "className": "space-y-2"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "name": "Label",
+                                                        "props": {
+                                                            "htmlFor": "legacy-reason"
+                                                        },
+                                                        "text": "귀속 확인 근거 (개인정보 제외)",
+                                                        "type": "basic"
+                                                    },
+                                                    {
+                                                        "name": "Input",
+                                                        "props": {
+                                                            "id": "legacy-reason",
+                                                            "name": "reason",
+                                                            "type": "text",
+                                                            "className": "w-full",
+                                                            "required": true,
+                                                            "autoBinding": false,
+                                                            "value": "{{_local.legacy?.reason ?? ''}}"
+                                                        },
+                                                        "type": "basic",
+                                                        "actions": [
+                                                            {
+                                                                "type": "change",
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "legacy.reason": "{{$event.target.value}}"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "name": "Button",
+                                                "props": {
+                                                    "type": "button",
+                                                    "className": "btn btn-primary mt-4"
+                                                },
+                                                "text": "저장",
+                                                "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/legacy",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": {
+                                                                "user_id": "{{_local.legacy?.user_id ?? \"\"}}",
+                                                                "reason": "{{_local.legacy?.reason ?? \"\"}}"
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                                    "success": "저장했습니다.",
+                                                                    "error": ""
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "office"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "success": "",
+                                                                    "temporaryPassword": ""
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            }
+                                        ],
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "등록 도메인",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "iteration": {
+                                            "item_var": "item",
+                                            "source": "{{office?.data?.domains ?? []}}"
+                                        },
+                                        "text": "{{item.host}} · 활성 {{item.active}} · DNS/TLS 미확인",
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "업체 계정",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Span",
+                                        "iteration": {
+                                            "item_var": "item",
+                                            "source": "{{office?.data?.accounts ?? []}}"
+                                        },
+                                        "text": "{{item.name}} · {{item.username}} · {{item.status}}",
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "최근 감사 이력",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Div",
+                                        "iteration": {
+                                            "item_var": "item",
+                                            "source": "{{office?.data?.audit ?? []}}"
+                                        },
+                                        "text": "{{item.created_at}} · {{item.actor_type}} · {{item.action}}",
+                                        "type": "basic",
+                                        "props": {
+                                            "className": "live-audit-row"
+                                        }
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "name": "Div",
+                                "props": {
+                                    "className": "card p-6 space-y-3"
+                                },
+                                "children": [
+                                    {
+                                        "name": "H2",
+                                        "text": "브랜드 로고",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Label",
+                                        "props": {
+                                            "htmlFor": "live-hq-logo"
+                                        },
+                                        "text": "PNG·JPEG·WebP, 최대 5MB",
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Input",
+                                        "props": {
+                                            "id": "live-hq-logo",
+                                            "type": "file",
+                                            "accept": "image/png,image/jpeg,image/webp",
+                                            "autoBinding": false
+                                        },
+                                        "type": "basic"
+                                    },
+                                    {
+                                        "name": "Button",
+                                        "props": {
+                                            "type": "button",
+                                            "className": "btn btn-primary ",
+                                            "data-live-hq-logo-save": "{{query.tenant}}"
+                                        },
+                                        "text": "로고 저장",
+                                        "type": "basic"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ],
+                        "type": "basic"
+                    }
+                ]
+            }
+        ]
+    }
+}

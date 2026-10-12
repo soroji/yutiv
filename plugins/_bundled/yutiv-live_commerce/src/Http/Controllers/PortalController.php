@@ -3,6 +3,9 @@
 namespace Plugins\Yutiv\LiveCommerce\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
+use Plugins\Yutiv\LiveCommerce\Enums\LiveEntity;
+use Plugins\Yutiv\LiveCommerce\Services\LiveOfficeService;
+use Plugins\Yutiv\LiveCommerce\Support\LiveContext;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 
@@ -28,6 +31,7 @@ class PortalController
             'features' => TeeWidePresenter::portalFeatures(),
             'portalUrl' => TeeWidePresenter::portalUrl(),
             'liveUrl' => TeeWidePresenter::liveUrl(),
+            'sellingBroadcasts' => app(LiveOfficeService::class)->query(LiveEntity::Broadcast, LiveContext::requireTenant()->id)->where('state', 'selling')->where('sale_starts_at', '<=', now())->where('sale_ends_at', '>', now())->orderBy('id')->get(['id', 'name']),
         ]);
     }
 }

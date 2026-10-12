@@ -1,0 +1,32 @@
+[
+  {
+    "action": "as-receive",
+    "status": 200
+  },
+  {
+    "action": "as-dispatch",
+    "status": 200
+  },
+  {
+    "cameraFallback": "카메라 QR 스캔을 지원하지 않습니다. QR 식별번호를 직접 입력해 주세요."
+  },
+  {
+    "cameraDeniedMock": "카메라를 사용할 수 없습니다. 권한을 확인하거나 QR 식별번호를 직접 입력해 주세요."
+  },
+  {
+    "invalidName": 422
+  },
+  {
+    "offline": "오프라인 상태입니다. 연결 후 다시 시도해 주세요."
+  },
+  {
+    "missingCsrf": 419
+  },
+  {
+    "emptyShop": true
+  },
+  {
+    "headquartersLogo": 200,
+    "headquartersMobileWidth": 390
+  }
+]

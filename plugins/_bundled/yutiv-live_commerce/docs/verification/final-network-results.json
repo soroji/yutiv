@@ -1,0 +1,45 @@
+{
+  "results": [
+    {
+      "name": "seller",
+      "width": 1440,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "name": "headquarters",
+      "width": 1440,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "name": "seller",
+      "width": 1920,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "name": "headquarters",
+      "width": 1920,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "name": "seller",
+      "width": 390,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "name": "headquarters",
+      "width": 390,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "emptyShop": true
+    }
+  ],
+  "failures": [],
+  "externalRequests": "blocked with local 204 synthetic responses"
+}

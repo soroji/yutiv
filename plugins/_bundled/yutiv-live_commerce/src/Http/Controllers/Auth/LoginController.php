@@ -6,7 +6,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Plugins\Yutiv\LiveCommerce\Http\Requests\LiveLoginRequest;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
+use Plugins\Yutiv\LiveCommerce\Services\LiveOrderService;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideAuth;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 
@@ -30,16 +32,13 @@ class LoginController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(LiveLoginRequest $request): RedirectResponse
     {
         $request->merge([
             'email' => TeeWideUser::normalizeEmail($request->input('email')),
         ]);
 
-        $credentials = $request->validate([
-            'email' => ['required', 'string', 'email', 'max:191'],
-            'password' => ['required', 'string'],
-        ]);
+        $credentials = $request->safe()->only(['email', 'password']);
 
         $remember = $request->boolean('remember');
 
@@ -62,10 +61,12 @@ class LoginController
 
         // 로그인 직전 세션 ID 를 버린다 (세션 고정 공격 방어).
         $request->session()->regenerate();
+        $request->session()->put('live.session_version', $user->session_version);
+        app(LiveOrderService::class)->mergeCart($user->tenant_id, $user->id, (string) $request->session()->get('live.cart_key', ''));
 
         $user->forceFill(['last_login_at' => now()])->save();
 
-        return redirect()->intended(route('teewide.account'));
+        return redirect($user->must_change_password ? TeeWidePresenter::portalUrl().'/password/change' : TeeWidePresenter::route('teewide.account'));
     }
 
     /**
@@ -81,6 +82,6 @@ class LoginController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('teewide.portal');
+        return redirect(TeeWidePresenter::portalUrl());
     }
 }

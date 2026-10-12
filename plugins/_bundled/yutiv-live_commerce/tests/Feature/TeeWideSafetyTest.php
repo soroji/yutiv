@@ -3,6 +3,7 @@
 namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
 use App\Enums\ExtensionStatus;
+use Illuminate\Http\Request;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
 use Plugins\Yutiv\LiveCommerce\Providers\LiveCommerceServiceProvider;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
@@ -19,12 +20,26 @@ class TeeWideSafetyTest extends PluginTestCase
 
     public function test_설정_파일_기본값이_비활성이다(): void
     {
-        $config = require base_path('plugins/_bundled/yutiv-live_commerce/config/live-commerce.php');
-
-        $this->assertFalse($config['enabled'], 'TEEWIDE_ENABLED 기본값이 false 가 아닙니다');
+        $previous = [$_ENV['TEEWIDE_ENABLED'] ?? null, $_SERVER['TEEWIDE_ENABLED'] ?? null, getenv('TEEWIDE_ENABLED')];
+        unset($_ENV['TEEWIDE_ENABLED'], $_SERVER['TEEWIDE_ENABLED']);
+        putenv('TEEWIDE_ENABLED');
+        try {
+            $config = require base_path('plugins/_bundled/yutiv-live_commerce/config/live-commerce.php');
+            $this->assertFalse($config['enabled'], 'TEEWIDE_ENABLED 기본값이 false 가 아닙니다');
+        } finally {
+            if ($previous[0] !== null) {
+                $_ENV['TEEWIDE_ENABLED'] = $previous[0];
+            }
+            if ($previous[1] !== null) {
+                $_SERVER['TEEWIDE_ENABLED'] = $previous[1];
+            }
+            if ($previous[2] !== false) {
+                putenv('TEEWIDE_ENABLED='.$previous[2]);
+            }
+        }
     }
 
-    public function test_TEEWIDE_ENABLED_가_false_면_라우트가_등록되지_않는다(): void
+    public function test_teewid_e_enable_d_가_false_면_라우트가_등록되지_않는다(): void
     {
         $this->configureTeeWide(['enabled' => false]);
         $this->bootPlugin();
@@ -68,7 +83,7 @@ class TeeWideSafetyTest extends PluginTestCase
     {
         $this->configureTeeWide(['enabled' => false]);
 
-        $request = \Illuminate\Http\Request::create('http://'.self::ROOT_HOST.'/anything', 'GET');
+        $request = Request::create('http://'.self::ROOT_HOST.'/anything', 'GET');
         $called = false;
 
         $response = (new TeeWideHostGate)->handle($request, function ($r) use (&$called) {
@@ -81,11 +96,11 @@ class TeeWideSafetyTest extends PluginTestCase
         $this->assertSame('passed-through', $response->getContent());
     }
 
-    public function test_비TeeWide_호스트는_게이트를_그대로_통과한다(): void
+    public function test_비_tee_wide_호스트는_게이트를_그대로_통과한다(): void
     {
         $this->configureTeeWide();
 
-        $request = \Illuminate\Http\Request::create('http://'.self::YUTIV_HOST.'/products', 'GET');
+        $request = Request::create('http://'.self::YUTIV_HOST.'/products', 'GET');
         $called = false;
 
         (new TeeWideHostGate)->handle($request, function ($r) use (&$called) {
@@ -111,7 +126,7 @@ class TeeWideSafetyTest extends PluginTestCase
         $this->assertNotSame(404, $response->getStatusCode(), 'TeeWide 가 yutiv 검색을 막았습니다');
     }
 
-    public function test_TeeWide_는_기존_라우트를_제거하거나_덮어쓰지_않는다(): void
+    public function test_tee_wide_는_기존_라우트를_제거하거나_덮어쓰지_않는다(): void
     {
         $before = count($this->app['router']->getRoutes()->getRoutes());
 

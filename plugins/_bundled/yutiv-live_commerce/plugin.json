@@ -2,22 +2,36 @@
     "identifier": "yutiv-live_commerce",
     "vendor": "yutiv",
     "name": {
-        "ko": "TeeWide 라이브커머스",
+        "ko": "라이브",
         "en": "TeeWide Live Commerce",
         "ja": "TeeWide ライブコマース",
         "zh-CN": "TeeWide 直播电商"
     },
-    "version": "0.1.4",
+    "version": "0.2.0",
     "description": {
-        "ko": "TeeWide 멀티업체 라이브 판매 플랫폼. Phase 0 은 도메인·세션 격리 기술 스파이크이며 기본 비활성입니다.",
-        "en": "TeeWide multi-tenant live selling platform. Phase 0 is a domain/session isolation spike and is disabled by default.",
-        "ja": "TeeWide マルチテナント・ライブ販売基盤。Phase 0 はドメイン・セッション分離の技術検証で、既定は無効です。",
-        "zh-CN": "TeeWide 多商户直播销售平台。Phase 0 为域名/会话隔离技术验证，默认关闭。"
+        "ko": "업체별 독립 라이브 판매·주문·재고·인센티브 운영",
+        "en": "Independent tenant live operations, bank-transfer records, inventory and incentives. Disabled by default.",
+        "ja": "事業者別のライブ運営、入金確認、在庫およびインセンティブ管理。既定では無効。",
+        "zh-CN": "商户独立直播运营、入账记录、库存与激励管理。默认关闭。"
     },
     "license": "MIT",
     "g7_version": ">=7.0.9",
     "dependencies": {
         "modules": {},
         "plugins": {}
+    },
+    "assets": {
+        "css": {
+            "entry": "resources/css/live.css",
+            "output": "dist/css/plugin.css"
+        },
+        "js": {
+            "entry": "resources/js/index.js",
+            "output": "dist/js/plugin.iife.js"
+        }
+    },
+    "loading": {
+        "priority": 50,
+        "strategy": "global"
     }
 }

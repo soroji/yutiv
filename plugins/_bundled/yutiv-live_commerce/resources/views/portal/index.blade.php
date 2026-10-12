@@ -16,14 +16,15 @@
                 <span>라이브 보러가기</span><span aria-hidden="true">↗</span>
             </a>
             @if ($teeWideUser === null)
-                <a class="tw-golf-action tw-golf-action--account" href="{{ route('teewide.register') }}">
+                <a class="tw-golf-action tw-golf-action--account" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.register') }}">
                     <span>회원가입</span><span aria-hidden="true">→</span>
                 </a>
             @else
-                <a class="tw-golf-action tw-golf-action--account" href="{{ route('teewide.account') }}">
+                <a class="tw-golf-action tw-golf-action--account" href="{{ \Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter::route('teewide.account') }}">
                     <span>내 계정</span><span aria-hidden="true">→</span>
                 </a>
             @endif
         </div>
+        @if(count($sellingBroadcasts ?? []))<div class="tw-golf-selling" aria-label="현재 판매 중인 방송"><p>현재 판매 중인 방송</p>@foreach($sellingBroadcasts as $broadcast)<a href="{{ $portalUrl }}/shop/broadcasts/{{ $broadcast->id }}">{{ $broadcast->name }} · 상품 보기 →</a>@endforeach</div>@endif
     </section>
 @endsection

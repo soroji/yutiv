@@ -7,22 +7,9 @@ use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 
 /**
- * TeeWide 라이브커머스 (Phase 0 기술 스파이크).
- *
- * ── 이 단계의 범위 ──────────────────────────────────────────────────────────
- * 라이브커머스 기능을 만들지 않는다. 아래 네 가지를 **실제 코드와 자동 테스트로**
- * 증명하는 것이 전부다.
- *
- *   1. yutiv.com 과 teewide.com / live.teewide.com 의 라우트 격리
- *   2. yutiv.com 세션과 TeeWide 세션의 완전한 분리
- *   3. teewide.com 과 live.teewide.com 사이의 TeeWide 세션 공유
- *   4. config:cache / route:cache 및 플러그인 비활성 상태의 안전성
- *
- * 회원가입·주문·상품·재고·엑셀은 Phase 1 이후다.
- *
- * ── 기본 비활성 ─────────────────────────────────────────────────────────────
- * `TEEWIDE_ENABLED` 기본값이 false 다. 플러그인을 번들 상태로 두거나 설치·활성화만
- * 해도 기존 yutiv.com 은 아무 영향을 받지 않는다. 라우트도 미들웨어도 붙지 않는다.
+ * 업체별 독립 라이브 운영 플러그인.
+ * 기존 TeeWide 호스트·세션 경계를 유지하며 본사 관제와 업체 운영을 제공합니다.
+ * 기본 비활성: 설치·활성화 외에 TEEWIDE_ENABLED 명시 설정이 필요합니다.
  */
 class Plugin extends AbstractPlugin
 {
@@ -52,26 +39,30 @@ class Plugin extends AbstractPlugin
     }
 
     /**
-     * Phase 0 은 관리자 메뉴를 만들지 않는다.
-     *
-     * 메뉴·화면은 Phase 3(tenant) 이후에 붙인다. 지금 만들면 비활성 상태에서도
-     * 관리자 메뉴가 보이는 부작용만 생긴다.
+     * 활성 확장의 본사 라이브 관리 메뉴.
      *
      * @return array<int, array<string, mixed>>
      */
     public function getAdminMenus(): array
     {
-        return [];
+        return [['name' => ['ko' => '라이브', 'en' => 'Live'], 'slug' => 'live-management', 'url' => '/admin/plugins/yutiv-live_commerce/office', 'icon' => 'fas fa-video', 'order' => 65]];
     }
 
     /**
-     * Phase 0 은 자체 권한을 선언하지 않는다.
+     * 본사 관리 권한. 판매자 직원 역할과 별개입니다.
      *
      * @return array<string, mixed>
      */
     public function getPermissions(): array
     {
-        return [];
+        return ['name' => ['ko' => '라이브', 'en' => 'Live'], 'description' => ['ko' => '본사 라이브 업체 관리', 'en' => 'Live management'],
+            'categories' => [['identifier' => 'management', 'name' => ['ko' => '업체 관리', 'en' => 'Tenant management'],
+                'permissions' => [['action' => 'manage', 'name' => ['ko' => '라이브 관리', 'en' => 'Manage live'], 'description' => ['ko' => '업체·계정·도메인 관제', 'en' => 'Manage tenants, accounts and domains']]]]]];
+    }
+
+    public function getSchedules(): array
+    {
+        return [['command' => 'live:maintain --batch=100 --seconds=45', 'schedule' => 'everyMinute', 'description' => '라이브 예약 만료 및 인센티브 대사']];
     }
 
     /**

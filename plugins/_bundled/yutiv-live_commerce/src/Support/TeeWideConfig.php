@@ -2,6 +2,9 @@
 
 namespace Plugins\Yutiv\LiveCommerce\Support;
 
+use Plugins\Yutiv\LiveCommerce\Enums\LiveEntity;
+use Plugins\Yutiv\LiveCommerce\Models\LiveRecord;
+
 /**
  * 설정 접근 단일 창구.
  *
@@ -136,6 +139,18 @@ class TeeWideConfig
      */
     public static function roleFor($host): string
     {
-        return TeeWideHost::role($host, self::rootHost(), self::liveHost());
+        $legacy = TeeWideHost::role($host, self::rootHost(), self::liveHost());
+        if ($legacy !== TeeWideHost::ROLE_FOREIGN) {
+            return $legacy;
+        }
+        try {
+            // 정지 도메인도 본사 SPA로 빠지지 않게 인식합니다. 활성 판정은 LiveContext가 합니다.
+            if (LiveRecord::entity(LiveEntity::Domain)->newQuery()->where('host', TeeWideHost::canonical($host))->exists()) {
+                return TeeWideHost::ROLE_ROOT;
+            }
+        } catch (\Throwable) {
+        }
+
+        return TeeWideHost::ROLE_FOREIGN;
     }
 }
