@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'report_corrupt' => 'Saved report integrity check failed.',
+    'receipt_key' => 'This key belongs to an existing receipt. Open a new receipt form.',
+    'receipt_quantity' => 'Receive 1 to 200 units per batch.',
+    'receipt_code' => 'This product code is already used in this tenant. Enter a new code.',
+    'receipt_option' => 'This option already exists. Reuse the existing option.',
+    'ledger_limit' => 'Ledger date range must not exceed 366 days.',
+    'label_limit' => 'Select a receipt or unit; at most 200 labels are allowed.',
     'as_dispatch_state' => 'A/S 입고 후 후속 조정이 없는 물품만 원래 상태로 출고할 수 있습니다.',
     'as_receive_state' => '판매 가능·반품·판매 출고 상태의 물품만 A/S 입고할 수 있습니다.',
     'terms' => 'You must agree to the terms to register.',

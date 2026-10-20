@@ -1,0 +1,9 @@
+{
+  "original": "http://teewide.test:18973/seller/reports/f535d74e-f84e-4618-b4ce-71535c8b257a",
+  "regenerated": "http://teewide.test:18973/seller/reports/2f8058f1-5ebb-4498-bf68-d3a1171c302b",
+  "oldClosing": 4200,
+  "newClosing": 4201,
+  "oldRows": 532,
+  "immutable": true,
+  "allSequences": true
+}

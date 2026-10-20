@@ -44,7 +44,9 @@
         },
         "temporaryPassword": "",
         "success": "",
-        "error": ""
+        "error": "",
+        "loadedTenant": "",
+        "busy": false
     },
     "data_sources": [
         {
@@ -57,7 +59,11 @@
             "params": {
                 "tenant": "{{query.tenant ?? \"\"}}"
             },
-            "loading_strategy": "blocking"
+            "loading_strategy": "blocking",
+            "initLocal": {
+                "tenant": "{{data.selected ?? {name: '', slug: '', status: 'draft', timezone: 'Asia/Seoul', reservation_minutes: 60, return_days: 7} }}",
+                "loadedTenant": "{{data.selected?.id ?? ''}}"
+            }
         }
     ],
     "slots": {
@@ -69,6 +75,15 @@
                     "className": "admin-page-content live-admin-office"
                 },
                 "children": [
+                    {
+                        "type": "basic",
+                        "name": "A",
+                        "props": {
+                            "href": "/admin/plugins/yutiv-live_commerce/office",
+                            "className": "btn btn-secondary"
+                        },
+                        "text": "신규 업체 생성"
+                    },
                     {
                         "type": "basic",
                         "name": "A",
@@ -227,7 +242,7 @@
                         "children": [
                             {
                                 "name": "H2",
-                                "text": "업체 생성·수정",
+                                "text": "{{query.tenant ? \"기존 업체 수정\" : \"신규 업체 생성\"}}",
                                 "props": {
                                     "className": "text-xl font-semibold"
                                 },
@@ -504,7 +519,7 @@
                                             "className": "btn btn-primary "
                                         },
                                         "text": "현재 업체 값 불러오기",
-                                        "if": "{{!!office?.data?.selected}}",
+                                        "if": "{{false}}",
                                         "actions": [
                                             {
                                                 "type": "click",
@@ -521,10 +536,21 @@
                                         "name": "Button",
                                         "props": {
                                             "type": "button",
-                                            "className": "btn btn-primary mt-4"
+                                            "className": "btn btn-primary mt-4",
+                                            "disabled": "{{!!_local.busy || (!!query.tenant && String(_local.loadedTenant ?? '') !== String(query.tenant))}}"
                                         },
                                         "text": "저장",
                                         "actions": [
+                                            {
+                                                "type": "click",
+                                                "handler": "setState",
+                                                "params": {
+                                                    "target": "local",
+                                                    "busy": true,
+                                                    "success": "저장 중입니다…",
+                                                    "error": ""
+                                                }
+                                            },
                                             {
                                                 "type": "click",
                                                 "handler": "apiCall",
@@ -546,6 +572,13 @@
                                                         "handler": "setState",
                                                         "params": {
                                                             "target": "local",
+                                                            "busy": false
+                                                        }
+                                                    },
+                                                    {
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
                                                             "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
                                                             "success": "저장했습니다.",
                                                             "error": ""
@@ -563,7 +596,14 @@
                                                         "handler": "setState",
                                                         "params": {
                                                             "target": "local",
-                                                            "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                            "busy": false
+                                                        }
+                                                    },
+                                                    {
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
                                                             "success": "",
                                                             "temporaryPassword": ""
                                                         }
@@ -773,10 +813,21 @@
                                                 "name": "Button",
                                                 "props": {
                                                     "type": "button",
-                                                    "className": "btn btn-primary mt-4"
+                                                    "className": "btn btn-primary mt-4",
+                                                    "disabled": "{{!!_local.busy || (!!query.tenant && String(_local.loadedTenant ?? '') !== String(query.tenant))}}"
                                                 },
                                                 "text": "저장",
                                                 "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "busy": true,
+                                                            "success": "저장 중입니다…",
+                                                            "error": ""
+                                                        }
+                                                    },
                                                     {
                                                         "type": "click",
                                                         "handler": "apiCall",
@@ -791,6 +842,13 @@
                                                             }
                                                         },
                                                         "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
                                                             {
                                                                 "handler": "setState",
                                                                 "params": {
@@ -812,7 +870,14 @@
                                                                 "handler": "setState",
                                                                 "params": {
                                                                     "target": "local",
-                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
                                                                     "success": "",
                                                                     "temporaryPassword": ""
                                                                 }
@@ -1069,10 +1134,21 @@
                                                 "name": "Button",
                                                 "props": {
                                                     "type": "button",
-                                                    "className": "btn btn-primary mt-4"
+                                                    "className": "btn btn-primary mt-4",
+                                                    "disabled": "{{!!_local.busy || !_local.loadedTenant || !!_local.account?.user_id}}"
                                                 },
-                                                "text": "저장",
+                                                "text": "신규 계정 발급",
                                                 "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "busy": true,
+                                                            "success": "저장 중입니다…",
+                                                            "error": ""
+                                                        }
+                                                    },
                                                     {
                                                         "type": "click",
                                                         "handler": "apiCall",
@@ -1089,6 +1165,13 @@
                                                             }
                                                         },
                                                         "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
                                                             {
                                                                 "handler": "setState",
                                                                 "params": {
@@ -1110,7 +1193,14 @@
                                                                 "handler": "setState",
                                                                 "params": {
                                                                     "target": "local",
-                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
                                                                     "success": "",
                                                                     "temporaryPassword": ""
                                                                 }
@@ -1119,6 +1209,87 @@
                                                     }
                                                 ],
                                                 "type": "basic"
+                                            },
+                                            {
+                                                "name": "Button",
+                                                "props": {
+                                                    "type": "button",
+                                                    "className": "btn btn-primary mt-4",
+                                                    "disabled": "{{!!_local.busy || !_local.account?.user_id || String(_local.loadedTenant ?? \"\") !== String(query.tenant ?? \"\")}}"
+                                                },
+                                                "text": "선택 계정 비밀번호 재설정",
+                                                "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "busy": true,
+                                                            "success": "저장 중입니다…",
+                                                            "error": ""
+                                                        }
+                                                    },
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "apiCall",
+                                                        "auth_required": true,
+                                                        "target": "/api/plugins/yutiv-live_commerce/admin/{{query.tenant ?? 0}}/reset-password",
+                                                        "params": {
+                                                            "method": "POST",
+                                                            "body": {
+                                                                "user_id": "{{_local.account?.user_id}}"
+                                                            }
+                                                        },
+                                                        "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "temporaryPassword": "{{response.data?.temporary_password ?? \"\"}}",
+                                                                    "success": "저장했습니다.",
+                                                                    "error": ""
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "refetchDataSource",
+                                                                "params": {
+                                                                    "dataSourceId": "office"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "onError": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
+                                                                    "success": "",
+                                                                    "temporaryPassword": ""
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "type": "basic"
+                                            },
+                                            {
+                                                "type": "basic",
+                                                "name": "P",
+                                                "text": "신규 발급은 계정 선택을 비워 두고 진행합니다. 비밀번호 재설정은 선택한 기존 계정의 이름·로그인 ID·권한을 유지하며 기존 세션을 만료시킵니다. 임시 비밀번호는 30초 후 숨겨집니다."
                                             }
                                         ],
                                         "type": "basic"
@@ -1291,10 +1462,21 @@
                                                 "name": "Button",
                                                 "props": {
                                                     "type": "button",
-                                                    "className": "btn btn-primary mt-4"
+                                                    "className": "btn btn-primary mt-4",
+                                                    "disabled": "{{!!_local.busy || String(_local.loadedTenant ?? '') !== String(query.tenant ?? '') || !(office?.data?.accounts?.length > 0)}}"
                                                 },
                                                 "text": "저장",
                                                 "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "busy": true,
+                                                            "success": "저장 중입니다…",
+                                                            "error": ""
+                                                        }
+                                                    },
                                                     {
                                                         "type": "click",
                                                         "handler": "apiCall",
@@ -1309,6 +1491,13 @@
                                                             }
                                                         },
                                                         "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
                                                             {
                                                                 "handler": "setState",
                                                                 "params": {
@@ -1330,7 +1519,14 @@
                                                                 "handler": "setState",
                                                                 "params": {
                                                                     "target": "local",
-                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
                                                                     "success": "",
                                                                     "temporaryPassword": ""
                                                                 }
@@ -1342,6 +1538,12 @@
                                             }
                                         ],
                                         "type": "basic"
+                                    },
+                                    {
+                                        "type": "basic",
+                                        "name": "P",
+                                        "if": "{{!(office?.data?.accounts?.length > 0)}}",
+                                        "text": "이 업체에는 계정이 없습니다. 먼저 신규 계정을 발급하세요."
                                     }
                                 ],
                                 "type": "basic"
@@ -1455,10 +1657,21 @@
                                                 "name": "Button",
                                                 "props": {
                                                     "type": "button",
-                                                    "className": "btn btn-primary mt-4"
+                                                    "className": "btn btn-primary mt-4",
+                                                    "disabled": "{{!!_local.busy || String(_local.loadedTenant ?? '') !== String(query.tenant ?? '') || !(office?.data?.accounts?.length > 0)}}"
                                                 },
                                                 "text": "저장",
                                                 "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "busy": true,
+                                                            "success": "저장 중입니다…",
+                                                            "error": ""
+                                                        }
+                                                    },
                                                     {
                                                         "type": "click",
                                                         "handler": "apiCall",
@@ -1472,6 +1685,13 @@
                                                             }
                                                         },
                                                         "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
                                                             {
                                                                 "handler": "setState",
                                                                 "params": {
@@ -1493,7 +1713,14 @@
                                                                 "handler": "setState",
                                                                 "params": {
                                                                     "target": "local",
-                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
                                                                     "success": "",
                                                                     "temporaryPassword": ""
                                                                 }
@@ -1505,6 +1732,12 @@
                                             }
                                         ],
                                         "type": "basic"
+                                    },
+                                    {
+                                        "type": "basic",
+                                        "name": "P",
+                                        "if": "{{!(office?.data?.accounts?.length > 0)}}",
+                                        "text": "이 업체에는 계정이 없습니다. 먼저 신규 계정을 발급하세요."
                                     }
                                 ],
                                 "type": "basic"
@@ -1525,7 +1758,7 @@
                                     },
                                     {
                                         "name": "Span",
-                                        "text": "실제 소속을 확인한 계정만 전환합니다. 판매자 권한은 별도로 연결하세요.",
+                                        "text": "일반 초기 설정과 별도인 기존 미귀속 계정 전환입니다. 신원·소속을 확인하고 근거를 기록한 경우에만 사용하세요. 자동으로 판매자 권한을 주지 않으며, 일반 신규 업체 개설에는 필요하지 않습니다.",
                                         "type": "basic"
                                     },
                                     {
@@ -1614,10 +1847,21 @@
                                                 "name": "Button",
                                                 "props": {
                                                     "type": "button",
-                                                    "className": "btn btn-primary mt-4"
+                                                    "className": "btn btn-primary mt-4",
+                                                    "disabled": "{{!!_local.busy || (!!query.tenant && String(_local.loadedTenant ?? '') !== String(query.tenant))}}"
                                                 },
                                                 "text": "저장",
                                                 "actions": [
+                                                    {
+                                                        "type": "click",
+                                                        "handler": "setState",
+                                                        "params": {
+                                                            "target": "local",
+                                                            "busy": true,
+                                                            "success": "저장 중입니다…",
+                                                            "error": ""
+                                                        }
+                                                    },
                                                     {
                                                         "type": "click",
                                                         "handler": "apiCall",
@@ -1631,6 +1875,13 @@
                                                             }
                                                         },
                                                         "onSuccess": [
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "busy": false
+                                                                }
+                                                            },
                                                             {
                                                                 "handler": "setState",
                                                                 "params": {
@@ -1652,7 +1903,14 @@
                                                                 "handler": "setState",
                                                                 "params": {
                                                                     "target": "local",
-                                                                    "error": "{{error.message ?? \"저장하지 못했습니다. 권한·입력·현재 상태를 확인하세요.\"}}",
+                                                                    "busy": false
+                                                                }
+                                                            },
+                                                            {
+                                                                "handler": "setState",
+                                                                "params": {
+                                                                    "target": "local",
+                                                                    "error": "{{Object.values(error.errors ?? []).flat().join(\" / \") || error.message || \"저장하지 못했습니다. 권한·입력·연결을 확인하세요.\"}}",
                                                                     "success": "",
                                                                     "temporaryPassword": ""
                                                                 }

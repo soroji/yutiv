@@ -1,0 +1,19 @@
+{
+
+    "from": "0.2.0",
+
+    "to": "0.4.0",
+
+    "original_rows_and_qr_unchanged": true,
+
+    "post_upgrade_units": 5,
+
+    "receipt_retry_preserved": true,
+
+    "saved_report_reprint": true,
+
+    "stock_closing": 5,
+
+    "basis": "operational-events-2"
+
+}

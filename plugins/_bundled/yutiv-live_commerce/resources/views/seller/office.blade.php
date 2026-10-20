@@ -4,6 +4,15 @@
 @endsection
 @section('content')
 <h1>{{ $menuTitle }}</h1><p class="live-help">{{ $tenant->name }} · {{ $tenant->timezone }} · 예약 기본 {{ $tenant->reservation_minutes }}분</p>
+@if(in_array($section, ['products','product-receive','receipts','labels','options','receive'], true))
+<nav class="live-panel live-workflow-nav" aria-label="상품 업무">
+@if($role->allows('catalog'))<a href="/seller/products">상품 목록·초안</a>@endif
+@if($role->allows('inventory'))<a href="/seller/product-receive">상품 등록·추가 입고</a><a href="/seller/receipts">입고 내역·QR 출력</a>@endif
+@if($role->allows('labels'))<a href="/seller/labels">기존 물품 QR 재출력</a>@endif
+</nav>@endif
+@if($section === 'product-receive') @include('teewide::seller.product-receive') @endif
+@if($section === 'receipts') @include('teewide::seller.receipts') @endif
+@if($section === 'ledger') @include('teewide::seller.ledger') @endif
 @if ($summary)
 @if($section==='statistics')<form method="GET" class="live-panel live-grid">@foreach(['broadcast_id'=>'방송','channel_id'=>'채널','showhost_id'=>'쇼호스트 / 공동 참여','product_id'=>'상품','option_id'=>'상품 옵션'] as $field=>$label)<label>{{ $label }}<select name="{{ $field }}"><option value="">전체</option>@foreach($choices[$field] ?? [] as $choice)<option value="{{ $choice->id }}" @selected((string)request($field)===(string)$choice->id)>{{ $choice->name }}</option>@endforeach</select></label>@endforeach @foreach(['from','to','basis','period'] as $field)@if(request($field))<input type="hidden" name="{{ $field }}" value="{{ request($field) }}">@endif @endforeach<button class="live-button" type="submit">조건별 통계 조회</button></form>@endif
 @if ($section === 'statistics')<form method="GET" class="live-panel live-grid"><div class="live-field"><label for="from">시작일</label><input type="date" id="from" name="from" value="{{ request('from', now()->subMonth()->format('Y-m-d')) }}"></div><div class="live-field"><label for="to">종료일</label><input type="date" id="to" name="to" value="{{ request('to', now()->format('Y-m-d')) }}"></div><div class="live-field"><label for="basis">집계 기준</label><select id="basis" name="basis"><option value="created_at">주문일</option><option value="paid_at" @selected(request('basis')==='paid_at')>입금일</option></select></div><div class="live-field"><label for="period">기간 단위</label><select id="period" name="period"><option value="day">일</option><option value="week" @selected(request('period')==='week')>주</option><option value="month" @selected(request('period')==='month')>월</option></select></div><button class="live-button" type="submit">통계 조회</button></form>@endif
@@ -45,13 +54,14 @@
 </form></section>@endif
 @if ($section === 'incentives')<p class="live-help">예상 → 배송 완료 및 반품기간/구매확정 후 확정 → 담당자 승인·지급 기록. 은행 송금 기능은 없습니다. 음수 조정은 후속 정산에서 회수할 금액입니다.</p>@endif
 @if($section==='incentives')<section class="live-panel"><h2>대상별 원장 합계</h2><div class="live-table-wrap"><table class="live-table"><thead><tr><th>대상</th><th>상태</th><th>금액</th></tr></thead><tbody>@forelse($balances as $balance)<tr><td>{{ $balance->display_name }}</td><td>{{ ['expected'=>'예상 (확정 전)','confirmed'=>'확정','payment'=>'승인·지급 기록','adjustment'=>'회수 부족·조정','recovery'=>'회수 확인 기록'][$balance->kind] ?? $balance->kind }}</td><td>{{ number_format($balance->amount) }}원</td></tr>@empty<tr><td colspan="3">아직 인센티브 원장 내역이 없습니다.</td></tr>@endforelse</tbody></table></div><a href="/seller/orders">주문별 검토·승인·회수로</a></section>@endif
-@if ($section !== 'labels' && count($rows)>0)<section class="live-panel"><h2>등록 내역</h2><div class="live-table-wrap"><table class="live-table"><thead><tr><th>항목</th><th>현재 상태</th><th>작업</th></tr></thead><tbody>@foreach ($rows as $row)<tr><td>{{ $row->name ?? $row->bank ?? $row->uuid ?? $row->beneficiary ?? $row->action ?? '항목' }}@if(isset($row->amount)) · {{ number_format($row->amount) }}원 @endif</td><td>{{ $row->state ?? $row->payment_state ?? $row->role ?? (isset($row->active) ? ($row->active?'사용':'중지') : '') }}</td><td>
+@if (!in_array($section,['labels','receipts'],true) && count($rows)>0)<section class="live-panel"><h2>등록 내역</h2><div class="live-table-wrap"><table class="live-table"><thead><tr><th>항목</th><th>현재 상태</th><th>작업</th></tr></thead><tbody>@foreach ($rows as $row)<tr><td>{{ $row->name ?? $row->bank ?? $row->uuid ?? $row->beneficiary ?? $row->action ?? '항목' }}@if(isset($row->amount)) · {{ number_format($row->amount) }}원 @endif</td><td>{{ $row->state ?? $row->payment_state ?? $row->role ?? (isset($row->active) ? ($row->active?'사용':'중지') : '') }}</td><td>
+@if($section==='products' && $role->allows('inventory'))<a href="/seller/product-receive?product_id={{ $row->id }}">옵션·추가 입고·복사</a>@endif
 @if($fields !== [])<a href="/seller/{{ $section }}?edit={{ $row->id }}">수정</a>@endif
 @if($section==='orders')<a href="/seller/order/{{ $row->uuid }}">주문·출고 보기</a>@endif
 @if($section==='sale-links')<a href="/s/{{ $row->code }}" target="_blank" rel="noopener">판매 페이지</a><button type="button" data-copy="{{ $portalUrl }}/s/{{ $row->code }}" class="live-button live-button--quiet">링크 복사</button><div data-qr="{{ $portalUrl }}/s/{{ $row->code }}" style="width:100px"></div>@endif
 @if(in_array($section,['inventory','receive','ship','returns'],true))<a href="/seller/inventory?unit={{ $row->uuid }}">물품 이력·정정</a><a href="/seller/labels?unit={{ $row->uuid }}">단건 라벨</a>@endif
 @if($section==='options')<div data-qr="P:{{ $row->qr_code }}" style="width:100px"></div>@endif
 </td></tr>@endforeach</tbody></table></div>@if(method_exists($rows,'links')){{ $rows->links() }}@endif</section>
-@elseif ($section !== 'dashboard' && $section !== 'statistics' && $section !== 'brand' && $section !== 'labels')<p class="live-empty">아직 등록된 내역이 없습니다. 위에서 첫 항목을 등록해 주세요.</p>@endif
+@elseif (!in_array($section,['dashboard','statistics','brand','labels','receipts','product-receive','ledger'],true))<p class="live-empty">아직 등록된 내역이 없습니다. 위에서 첫 항목을 등록해 주세요.</p>@endif
 @isset($unitDetail) @include('teewide::seller.unit-history') @endisset
 @endsection

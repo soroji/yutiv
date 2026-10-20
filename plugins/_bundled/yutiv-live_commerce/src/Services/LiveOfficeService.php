@@ -51,6 +51,11 @@ class LiveOfficeService extends LiveWorkflow
             $data['choices']['return_lines'] = $this->records->query(E::OrderLine, $tenant)->where('shipped', '>', 0)->orderByDesc('id')->limit(100)->get();
             if ($section === 'labels') {
                 $query = $this->records->query(E::Unit, $tenant)->orderBy('id');
+                if (request()->filled('batch')) {
+                    $receipt = $this->row(E::Receipt, $tenant, (int) request('batch'));
+                    $query->where('receipt_key', $receipt->receipt_key);
+                    $data['receiptBatch'] = $receipt;
+                }
                 if (request()->filled('receipt')) {
                     $unit = $this->records->query(E::Unit, $tenant)->where('uuid', request('receipt'))->firstOrFail();
                     $query->where('receipt_key', $unit->receipt_key);
@@ -58,7 +63,8 @@ class LiveOfficeService extends LiveWorkflow
                 if (request()->filled('unit')) {
                     $query->where('uuid', request('unit'));
                 }
-                $data['rows'] = $query->limit(200)->get();
+                abort_if((clone $query)->count() > 200, 422, __('yutiv-live_commerce::live.label_limit'));
+                $data['rows'] = $query->get();
                 foreach ($data['rows'] as $unit) {
                     $option = $this->row(E::Option, $tenant, $unit->option_id);
                     $product = $this->row(E::Product, $tenant, $option->product_id);

@@ -1,0 +1,6 @@
+{
+  "manifests": 28,
+  "consumers": [],
+  "coreSurfaceChanged": false,
+  "g7Constraint": ">=7.0.9"
+}

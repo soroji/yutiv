@@ -1,5 +1,7 @@
 # 라이브 독립 운영 시스템
 
+> 이 문서는 0.2.0 기준 구조·검증 기록입니다. 현재 0.4.0의 입고/QR은 [RECEIPTS_LEDGER.md](RECEIPTS_LEDGER.md), 기간 장부/저장 보고서는 [LEDGER_040.md](LEDGER_040.md), 최종 검증은 [VERIFICATION_040.md](VERIFICATION_040.md)를 참조하세요.
+
 ## 작업 기준과 구조
 
 시작 기준: main / `88ca7956eb5bdb676f581270626e02003247ae0a`, Git 작업 트리 깨끗함.

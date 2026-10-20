@@ -1,0 +1,19 @@
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+
+
+Runtime:       PHP 8.4.26
+
+Configuration: C:\Temp\live-workflow-isolated\phpunit.xml
+
+
+
+.                                                                   1 / 1 (100%)
+
+
+
+Time: 00:24.544, Memory: 66.00 MB
+
+
+
+OK (1 test, 216 assertions)

@@ -1,0 +1,18 @@
+{
+  "selectedLoaded": true,
+  "newFormBlank": true,
+  "fieldError422": true,
+  "existingSave": true,
+  "newAccount": true,
+  "passwordResetPreservesUsername": true,
+  "passwordAutoHidden": true,
+  "crossTenantLateResponseBlocked": true,
+  "noAccountsActionsDisabled": true,
+  "sidebarDomCount": 1,
+  "widths": [
+    1440,
+    1920,
+    390
+  ],
+  "errors": []
+}

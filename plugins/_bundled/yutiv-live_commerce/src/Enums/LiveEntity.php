@@ -25,4 +25,7 @@ enum LiveEntity: string
     case Incentive = 'live_incentive_ledger';
     case Audit = 'live_audit';
     case Operation = 'live_operations';
+    case Receipt = 'live_receipts';
+    case Report = 'live_reports';
+    case ReportRow = 'live_report_rows';
 }

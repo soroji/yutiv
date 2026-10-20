@@ -30,7 +30,7 @@ class LiveWorkflowController
             'as-receive', 'as-dispatch' => $this->inventory->serviceUnit($tenant->id, $user->id, $d['qr'], $action === 'as-dispatch', $d['location'], $d['reason'], $d['operation_key']),
             'stock-correction' => $this->inventory->correct($tenant->id, $user->id, $d['qr'], $d['movement_id'], $d['reason'], $d['operation_key']),
             'scan' => $this->inventory->preview($tenant->id, $d['qrs'], $d['order_id'] ?? null),
-            'label-print' => $this->inventory->labelPrint($tenant->id, $user->id, $d['qrs'], $d['width'], $d['height'], $d['operation_key']),
+            'label-print' => $this->inventory->labelPrint($tenant->id, $user->id, $d['qrs'], $d['width'], $d['height'], $d['operation_key'], $d['batch'] ?? null),
             'attribution' => app(LiveOrderAdjustmentService::class)->attribution($tenant->id, $user->id, $d['line_id'], $d['channel_id'], $d['showhost_id'] ?? null, $d['reason'], $d['operation_key']),
             'bank-notice' => app(LiveOrderAdjustmentService::class)->bank($tenant->id, $user->id, $d['order_id'], $d['bank_id'], $d['reason'], $d['operation_key']),
             'recovery' => app(LiveOrderAdjustmentService::class)->recovery($tenant->id, $user->id, $d['line_id'], $d['beneficiary'], $d['amount'], $d['reason'], $d['operation_key']),

@@ -1,0 +1,2703 @@
+현재 버전: 0.2.0
+
+최신 버전: 0.4.0
+
+업데이트 소스: bundled
+
+레이아웃 전략: overwrite
+
+
+
+php.exe :   0/11 [>---------------------------] 시작 중...
+
+위치 줄:2 문자:1
+
++ & C:/Temp/yutiv-php84/php.exe artisan plugin:update yutiv-live_commer ...
+
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    + CategoryInfo          : NotSpecified: (  0/11 [>------...------] 시작 중...:String) [], RemoteException
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+
+
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → CHANGELOG.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → components.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → composer.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → config\live-commerce.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → database\migrations\2026_09_11_000001_create_teewide_users_table.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → database\migrations\2026_09_11_000002_create_live_tenants_table.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → database\migrations\2026_09_11_000003_seed_initial_live_tenants.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → database\migrations\2026_10_13_000004_create_live_operations.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → dist\css\plugin.css
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → dist\js\plugin.iife.js
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\api\README.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\CHANGED_FILES.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\LIVE_OPERATIONS.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\MAIN_BACKGROUND.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\SELLER_BRAND.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\camera-fallback-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\customer-order-final-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\empty-shop-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\final-network-results.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\flow-results.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\headquarters-final-1440.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\headquarters-final-1920.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\headquarters-final-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\headquarters-logo-mobile.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\labels-50x30.pdf
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\labels-final-1440.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\main-1440.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\main-1920.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\main-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\offline-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\repair-final-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\second-brand-final.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\seller-final-1440.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\seller-final-1920.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\seller-final-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\states-results.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\verification\validation-error-390.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → docs\VERIFICATION.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → lang\en\live.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → lang\ko\live.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → LICENSE
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → package-lock.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → package.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → plugin.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → plugin.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → README.md
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\assets\golfif-pc.png
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\css\live.css
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\js\index.js
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\layouts\admin\live_office.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\routes.json
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\account\index.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\auth\login.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\auth\register.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\customer\account.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\customer\cart.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\customer\order.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\customer\password.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\customer\shop.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\errors\request.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\layouts\operations.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\layouts\teewide.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\live\channel.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\live\home.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\mail\reset.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\partials\broadcast-preview.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\partials\main-styles.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\partials\portal-golf-styles.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\partials\portal-header.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\portal\index.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\labels.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\office.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\order.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\service-forms.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\staff.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\stock-forms.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → resources\views\seller\unit-history.blade.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Console\LiveMaintainCommand.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Contracts\LiveRepositoryInterface.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Contracts\SellerBrandRepositoryInterface.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Database\Seeders\LiveTenantSeeder.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Enums\BroadcastState.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Enums\DeliveryState.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Enums\LiveEntity.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Enums\PaymentState.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Enums\StaffRole.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Enums\StockState.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\AccountController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Admin\LiveManagementController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Auth\LoginController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Auth\RegisterController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Customer\LiveCustomerController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Customer\LiveShopController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\DiagnosticsController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\LiveAssetController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\LiveController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\LiveMediaController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\PortalController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Seller\LiveOfficeController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Controllers\Seller\LiveWorkflowController.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Middleware\ConfigureTeeWideSession.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Middleware\RequireTeeWideUser.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Middleware\ResolveLiveTenant.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Middleware\TeeWideHostGate.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveCatalogRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveCustomerRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveHeadquartersMediaRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveHeadquartersRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveLoginRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveMediaRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveOfficeRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveRegistrationRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\LiveWorkflowRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Http\Requests\UpdateBrandRequest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Mail\LivePasswordResetMail.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Models\LiveRecord.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Models\LiveTenant.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Models\TeeWideUser.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Providers\LiveCommerceServiceProvider.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Repositories\LiveRepository.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Repositories\SellerBrandRepository.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\routes\api.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Rules\ApprovedExternalUrl.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\IncentiveCalculator.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveAccountService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveCatalogService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveCustomerService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveDomainService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveHeadquartersService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveIncentiveService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveInventoryService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveMediaService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveOfficeService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveOrderAdjustmentService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveOrderService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LivePasswordResetService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveReturnService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveStatisticsService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\LiveWorkflow.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Services\SellerBrandService.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\LiveContext.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\LiveForms.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\LiveRoutes.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\ScopedLiveUserProvider.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\SellerBrand.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\TeeWideAuth.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\TeeWideConfig.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\TeeWideHost.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\TeeWidePresenter.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → src\Support\TeeWideSessionScope.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\LiveOperationsTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\SellerBrandTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideAuthTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideDiagnosticsSwitchTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideDomainRoutingTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideHostGateTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideMainDesignTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideSafetyTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideScreenTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideSessionBoundaryTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideSessionDriverLifecycleTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideSessionIsolationTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideSessionScopeTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideTenantDatabaseTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Feature\TeeWideTestIsolationTest.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\PluginTestCase.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\scenarios\main-design.yaml
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\scenarios\seller-brand.yaml
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Support\BootTimeLiveCommerceServiceProvider.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → tests\Support\live-concurrency-worker.php
+
+  1/11 [==>-------------------------] 백업 생성 중...
+
+   → vite.config.js
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → CHANGELOG.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → components.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → composer.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → config\live-commerce.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → database\migrations\2026_09_11_000001_create_teewide_users_table.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → database\migrations\2026_09_11_000002_create_live_tenants_table.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → database\migrations\2026_09_11_000003_seed_initial_live_tenants.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → database\migrations\2026_10_13_000004_create_live_operations.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → database\migrations\2026_10_20_000005_create_live_receipts_table.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → database\migrations\2026_10_20_000006_create_live_reports_tables.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → dist\css\plugin.css
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → dist\js\plugin.iife.js
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\api\admin.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\api\logo.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\api\office.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\api\README.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\CHANGED_FILES.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\LIVE_OPERATIONS.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\MAIN_BACKGROUND.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\RECEIPTS_LEDGER.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\SELLER_BRAND.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\camera-fallback-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\customer-order-final-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\empty-shop-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\final-network-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\flow-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\headquarters-final-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\headquarters-final-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\headquarters-final-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\headquarters-logo-mobile.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\labels-50x30.pdf
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\labels-final-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\live-as-regression.log
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\live-final-regression.log
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\live-hq-final.log
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\live-label-verify.log
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\live-official-build.log
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\live-vendor-verify-final.log
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\main-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\main-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\main-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\offline-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\build.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\fresh-install.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\git-diff-stat.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\git-status.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\git-summary.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\headquarters-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\headquarters-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\headquarters-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\headquarters-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\labels-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\labels-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\labels-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\labels.pdf
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\ledger-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\ledger-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\ledger-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\ledger.pdf
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\pdf-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\period-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\phpunit.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\pint.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\products-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\products-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\products-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\qr-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\receive-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\release-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\smoke.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\upgrade.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\receipts-ledger\vitest.txt
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\repair-final-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\second-brand-final.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\seller-final-1440.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\seller-final-1920.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\seller-final-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\states-results.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\verification\validation-error-390.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\VERIFICATION.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → docs\VERIFICATION_030.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → lang\en\live.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → lang\ko\live.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → LICENSE
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → package-lock.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → package.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → plugin.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → plugin.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → README.md
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\assets\golfif-pc.png
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\css\live.css
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\js\index.js
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\js\receipt.js
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\js\tests\setup.ts
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\js\__tests__\layouts\headquarters.test.tsx
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\js\__tests__\receipt.test.ts
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\layouts\admin\live_office.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\routes.json
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\account\index.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\auth\login.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\auth\register.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\customer\account.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\customer\cart.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\customer\order.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\customer\password.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\customer\shop.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\errors\request.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\layouts\operations.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\layouts\teewide.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\live\channel.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\live\home.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\mail\reset.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\partials\broadcast-preview.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\partials\main-styles.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\partials\portal-golf-styles.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\partials\portal-header.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\portal\index.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\labels.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\ledger-periods.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\ledger.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\office.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\order.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\product-receive.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\receipts.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\report-detail.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\saved-report.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\service-forms.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\staff.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\stock-forms.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → resources\views\seller\unit-history.blade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Console\LiveMaintainCommand.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Contracts\LiveRepositoryInterface.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Contracts\SellerBrandRepositoryInterface.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Database\Seeders\LiveTenantSeeder.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\BroadcastState.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\DeliveryState.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\LiveEntity.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\PaymentState.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\ReportRowKind.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\StaffRole.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Enums\StockState.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\AccountController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Admin\LiveManagementController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Auth\LoginController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Auth\RegisterController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Customer\LiveCustomerController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Customer\LiveShopController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\DiagnosticsController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\LiveAssetController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\LiveController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\LiveMediaController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\PortalController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Seller\LiveOfficeController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Controllers\Seller\LiveWorkflowController.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Middleware\ConfigureTeeWideSession.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Middleware\RequireTeeWideUser.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Middleware\ResolveLiveTenant.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Middleware\TeeWideHostGate.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveCatalogRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveCustomerRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveHeadquartersMediaRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveHeadquartersRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveLoginRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveMediaRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveOfficeRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveReceiptRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveRegistrationRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\LiveWorkflowRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Http\Requests\UpdateBrandRequest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Mail\LivePasswordResetMail.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Models\LiveRecord.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Models\LiveTenant.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Models\TeeWideUser.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Providers\LiveCommerceServiceProvider.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Repositories\LiveRepository.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Repositories\SellerBrandRepository.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\routes\api.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Rules\ApprovedExternalUrl.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\IncentiveCalculator.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveAccountService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveCatalogService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveCustomerService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveDomainService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveHeadquartersService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveIncentiveService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveInventoryService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveLedgerService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveMediaService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveOfficeService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveOrderAdjustmentService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveOrderService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LivePasswordResetService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveReceiptService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveReturnService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveStatisticsService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\LiveWorkflow.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Services\SellerBrandService.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\LiveContext.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\LiveForms.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\LiveRoutes.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\ScopedLiveUserProvider.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\SellerBrand.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\TeeWideAuth.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\TeeWideConfig.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\TeeWideHost.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\TeeWidePresenter.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → src\Support\TeeWideSessionScope.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\LiveLedgerScaleTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\LiveOperationsTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\LiveReceiptLedgerTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\SellerBrandTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideAuthTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideDiagnosticsSwitchTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideDomainRoutingTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideHostGateTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideMainDesignTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideSafetyTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideScreenTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideSessionBoundaryTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideSessionDriverLifecycleTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideSessionIsolationTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideSessionScopeTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideTenantDatabaseTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Feature\TeeWideTestIsolationTest.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\browser.cjs
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\fixture.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\headquarters.cjs
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\ledger-lock-worker.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\ledger-lock.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\ledger-scale-fixture.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\ledger040.cjs
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\periods.cjs
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\sales-fixture.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\upgrade.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\verify-pdf.py
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Playwright\verify-qr.cjs
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\PluginTestCase.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\scenarios\main-design.yaml
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\scenarios\receipt-ledger.yaml
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\scenarios\seller-brand.yaml
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Support\BootTimeLiveCommerceServiceProvider.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Support\LedgerSynthetic.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → tests\Support\live-concurrency-worker.php
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → vite.config.js
+
+  3/11 [=======>--------------------] 스테이징 중...
+
+   → vitest.config.ts
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → CHANGELOG.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → components.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → composer.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → config\live-commerce.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → database\migrations\2026_09_11_000001_create_teewide_users_table.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → database\migrations\2026_09_11_000002_create_live_tenants_table.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → database\migrations\2026_09_11_000003_seed_initial_live_tenants.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → database\migrations\2026_10_13_000004_create_live_operations.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → database\migrations\2026_10_20_000005_create_live_receipts_table.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → database\migrations\2026_10_20_000006_create_live_reports_tables.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → dist\css\plugin.css
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → dist\js\plugin.iife.js
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\api\admin.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\api\logo.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\api\office.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\api\README.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\CHANGED_FILES.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\LIVE_OPERATIONS.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\MAIN_BACKGROUND.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\RECEIPTS_LEDGER.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\SELLER_BRAND.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\camera-fallback-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\customer-order-final-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\empty-shop-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\final-network-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\flow-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\headquarters-final-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\headquarters-final-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\headquarters-final-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\headquarters-logo-mobile.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\labels-50x30.pdf
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\labels-final-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\live-as-regression.log
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\live-final-regression.log
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\live-hq-final.log
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\live-label-verify.log
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\live-official-build.log
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\live-vendor-verify-final.log
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\main-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\main-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\main-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\offline-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\build.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\fresh-install.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\git-diff-stat.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\git-status.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\git-summary.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\headquarters-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\headquarters-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\headquarters-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\headquarters-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\labels-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\labels-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\labels-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\labels.pdf
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\ledger-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\ledger-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\ledger-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\ledger.pdf
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\pdf-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\period-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\phpunit.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\pint.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\products-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\products-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\products-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\qr-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\receive-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\release-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\smoke.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\upgrade.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\receipts-ledger\vitest.txt
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\repair-final-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\second-brand-final.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\seller-final-1440.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\seller-final-1920.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\seller-final-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\states-results.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\verification\validation-error-390.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\VERIFICATION.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → docs\VERIFICATION_030.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → lang\en\live.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → lang\ko\live.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → LICENSE
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → package-lock.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → package.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → plugin.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → plugin.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → README.md
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\assets\golfif-pc.png
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\css\live.css
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\js\index.js
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\js\receipt.js
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\js\tests\setup.ts
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\js\__tests__\layouts\headquarters.test.tsx
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\js\__tests__\receipt.test.ts
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\layouts\admin\live_office.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\routes.json
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\account\index.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\auth\login.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\auth\register.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\customer\account.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\customer\cart.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\customer\order.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\customer\password.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\customer\shop.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\errors\request.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\layouts\operations.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\layouts\teewide.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\live\channel.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\live\home.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\mail\reset.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\partials\broadcast-preview.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\partials\main-styles.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\partials\portal-golf-styles.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\partials\portal-header.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\portal\index.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\labels.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\ledger-periods.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\ledger.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\office.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\order.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\product-receive.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\receipts.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\report-detail.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\saved-report.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\service-forms.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\staff.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\stock-forms.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → resources\views\seller\unit-history.blade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Console\LiveMaintainCommand.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Contracts\LiveRepositoryInterface.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Contracts\SellerBrandRepositoryInterface.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Database\Seeders\LiveTenantSeeder.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\BroadcastState.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\DeliveryState.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\LiveEntity.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\PaymentState.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\ReportRowKind.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\StaffRole.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Enums\StockState.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\AccountController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Admin\LiveManagementController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Auth\LoginController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Auth\RegisterController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Customer\LiveCustomerController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Customer\LiveShopController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\DiagnosticsController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\LiveAssetController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\LiveController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\LiveMediaController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\PortalController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Seller\LiveOfficeController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Controllers\Seller\LiveWorkflowController.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Middleware\ConfigureTeeWideSession.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Middleware\RequireTeeWideUser.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Middleware\ResolveLiveTenant.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Middleware\TeeWideHostGate.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveCatalogRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveCustomerRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveHeadquartersMediaRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveHeadquartersRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveLoginRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveMediaRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveOfficeRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveReceiptRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveRegistrationRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\LiveWorkflowRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Http\Requests\UpdateBrandRequest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Mail\LivePasswordResetMail.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Models\LiveRecord.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Models\LiveTenant.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Models\TeeWideUser.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Providers\LiveCommerceServiceProvider.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Repositories\LiveRepository.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Repositories\SellerBrandRepository.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\routes\api.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Rules\ApprovedExternalUrl.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\IncentiveCalculator.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveAccountService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveCatalogService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveCustomerService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveDomainService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveHeadquartersService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveIncentiveService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveInventoryService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveLedgerService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveMediaService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveOfficeService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveOrderAdjustmentService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveOrderService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LivePasswordResetService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveReceiptService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveReturnService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveStatisticsService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\LiveWorkflow.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Services\SellerBrandService.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\LiveContext.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\LiveForms.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\LiveRoutes.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\ScopedLiveUserProvider.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\SellerBrand.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\TeeWideAuth.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\TeeWideConfig.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\TeeWideHost.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\TeeWidePresenter.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → src\Support\TeeWideSessionScope.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\LiveLedgerScaleTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\LiveOperationsTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\LiveReceiptLedgerTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\SellerBrandTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideAuthTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideDiagnosticsSwitchTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideDomainRoutingTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideHostGateTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideMainDesignTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideSafetyTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideScreenTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideSessionBoundaryTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideSessionDriverLifecycleTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideSessionIsolationTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideSessionScopeTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideTenantDatabaseTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Feature\TeeWideTestIsolationTest.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\browser.cjs
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\fixture.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\headquarters.cjs
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\ledger-lock-worker.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\ledger-lock.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\ledger-scale-fixture.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\ledger040.cjs
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\periods.cjs
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\sales-fixture.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\upgrade.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\verify-pdf.py
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Playwright\verify-qr.cjs
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\PluginTestCase.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\scenarios\main-design.yaml
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\scenarios\receipt-ledger.yaml
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\scenarios\seller-brand.yaml
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Support\BootTimeLiveCommerceServiceProvider.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Support\LedgerSynthetic.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → tests\Support\live-concurrency-worker.php
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → vite.config.js
+
+  4/11 [==========>-----------------] 파일 교체 중...
+
+   → vitest.config.ts
+
+  5/11 [============>---------------] 재로드 중...
+
+
+
+  7/11 [=================>----------] 오토로드 갱신 중...
+
+
+
+  8/11 [====================>-------] DB 갱신 중...
+
+
+
+ 11/11 [============================] 레이아웃 갱신 중...
+
+
+
+ 12/12 [============================] 정리 중...
+
+
+
+
+
+✅ 플러그인 "yutiv-live_commerce" 업데이트 완료
+
+   v0.2.0 → v0.4.0

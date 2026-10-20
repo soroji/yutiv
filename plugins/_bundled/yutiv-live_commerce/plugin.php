@@ -3,6 +3,7 @@
 namespace Plugins\Yutiv\LiveCommerce;
 
 use App\Extension\AbstractPlugin;
+use App\Extension\ExtensionManager;
 use Plugins\Yutiv\LiveCommerce\Http\Middleware\TeeWideHostGate;
 use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
 
@@ -13,6 +14,14 @@ use Plugins\Yutiv\LiveCommerce\Support\TeeWideConfig;
  */
 class Plugin extends AbstractPlugin
 {
+    public function install(): bool
+    {
+        // 초기 시드 migration은 공식 설치의 오토로드 파일 갱신보다 먼저 실행됩니다.
+        ExtensionManager::registerExtensionAutoloadPaths('plugins', $this->getIdentifier());
+
+        return parent::install();
+    }
+
     /**
      * 호스트 게이트 — TeeWide 호스트에서 YUTIV 콘텐츠가 나가지 않게 막는다.
      *

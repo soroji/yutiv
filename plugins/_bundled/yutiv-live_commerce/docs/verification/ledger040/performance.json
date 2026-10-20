@@ -1,0 +1,41 @@
+{
+    "sizes": {
+        "options": 520,
+        "units": 4200,
+        "movements": 25200,
+        "orders": 2601,
+        "lines": 10404,
+        "events": 20808
+    },
+    "metrics": {
+        "day": {
+            "from": "2026-10-01",
+            "to": "2026-10-01",
+            "milliseconds": 510.69,
+            "peak_bytes": 106954752,
+            "peak_increment_bytes": 0,
+            "queries": 19
+        },
+        "week": {
+            "from": "2026-10-01",
+            "to": "2026-10-07",
+            "milliseconds": 581.27,
+            "peak_bytes": 106954752,
+            "peak_increment_bytes": 0,
+            "queries": 19
+        },
+        "month": {
+            "from": "2026-10-01",
+            "to": "2026-10-31",
+            "milliseconds": 556.35,
+            "peak_bytes": 106954752,
+            "peak_increment_bytes": 0,
+            "queries": 19
+        },
+        "save": {
+            "milliseconds": 1122.37,
+            "peak_bytes": 106954752,
+            "queries": 58
+        }
+    }
+}

@@ -1,0 +1,27 @@
+{
+
+    "worker": {
+
+        "milliseconds": 651.61,
+
+        "result": {
+
+            "ok": true,
+
+            "units": 1
+
+        }
+
+    },
+
+    "locking_queries": [],
+
+    "before_closing": 4200,
+
+    "saved_summary_closing": 4200,
+
+    "saved_detail_closing": 4200,
+
+    "after_closing": 4201
+
+}

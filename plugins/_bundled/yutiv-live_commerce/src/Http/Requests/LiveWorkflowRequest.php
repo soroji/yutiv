@@ -28,7 +28,7 @@ class LiveWorkflowRequest extends FormRequest
 
         return match ($this->route('action')) {
             'receive' => $key + ['option_id' => ['required', 'integer', 'min:1'], 'quantity' => ['required', 'integer', 'min:1', 'max:200'], 'location' => ['required', 'string', 'max:100']],
-            'label-print' => $key + ['qrs' => ['required', 'array', 'min:1', 'max:200'], 'qrs.*' => ['required', 'uuid', 'distinct'], 'width' => ['required', 'integer', 'min:30', 'max:100'], 'height' => ['required', 'integer', 'min:20', 'max:100']],
+            'label-print' => $key + ['batch' => ['nullable', 'integer', 'min:1'], 'qrs' => ['required', 'array', 'min:1', 'max:200'], 'qrs.*' => ['required', 'uuid', 'distinct'], 'width' => ['required', 'integer', 'min:30', 'max:100'], 'height' => ['required', 'integer', 'min:20', 'max:100']],
             'as-receive', 'as-dispatch' => $key + $reason + ['qr' => ['required', 'uuid'], 'location' => ['required', 'string', 'max:100']],
             'stock-correction' => $key + $reason + ['qr' => ['required', 'uuid'], 'movement_id' => ['required', 'integer', 'min:1']],
             'transition' => $key + $reason + ['qr' => ['required', 'uuid'], 'state' => ['required', Rule::in(['available', 'as', 'defective', 'lost', 'disposed'])], 'location' => ['required', 'string', 'max:100']],

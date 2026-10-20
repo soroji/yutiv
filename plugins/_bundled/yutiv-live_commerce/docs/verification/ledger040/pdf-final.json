@@ -1,0 +1,87 @@
+{
+
+  "parts": [
+
+    {
+
+      "part": 1,
+
+      "pages": 14,
+
+      "width_mm": 297.01,
+
+      "height_mm": 209.89
+
+    },
+
+    {
+
+      "part": 2,
+
+      "pages": 14,
+
+      "width_mm": 297.01,
+
+      "height_mm": 209.89
+
+    },
+
+    {
+
+      "part": 3,
+
+      "pages": 14,
+
+      "width_mm": 297.01,
+
+      "height_mm": 209.89
+
+    },
+
+    {
+
+      "part": 4,
+
+      "pages": 14,
+
+      "width_mm": 297.01,
+
+      "height_mm": 209.89
+
+    },
+
+    {
+
+      "part": 5,
+
+      "pages": 14,
+
+      "width_mm": 297.01,
+
+      "height_mm": 209.89
+
+    },
+
+    {
+
+      "part": 6,
+
+      "pages": 5,
+
+      "width_mm": 297.01,
+
+      "height_mm": 209.89
+
+    }
+
+  ],
+
+  "all_pdf_detail_sequences": true,
+
+  "detail_rows": 532,
+
+  "reprint_text_identical": true,
+
+  "text_inside_page_bounds": true
+
+}

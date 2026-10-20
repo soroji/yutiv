@@ -10,6 +10,19 @@ use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
 
 class LiveAccountService extends LiveWorkflow
 {
+    public function resetPassword(int $tenant, int $actor, int $id): array
+    {
+        return $this->records->transaction(function () use ($tenant, $actor, $id) {
+            LiveTenant::whereKey($tenant)->lockForUpdate()->firstOrFail();
+            $user = TeeWideUser::where('tenant_id', $tenant)->lockForUpdate()->findOrFail($id);
+            $password = Str::password(20);
+            $user->fill(['password' => Hash::make($password), 'must_change_password' => true, 'session_version' => $user->session_version + 1, 'remember_token' => null])->save();
+            $this->audit($tenant, $actor, 'account.password_reset', ['user_id' => $id]);
+
+            return ['user_id' => $id, 'username' => $user->username, 'temporary_password' => $password];
+        });
+    }
+
     public function issue(int $tenant, int $actor, array $data, ?int $id = null): array
     {
         return $this->records->transaction(function () use ($tenant, $actor, $data, $id) {

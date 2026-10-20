@@ -1,0 +1,237 @@
+php.exe : Deprecation Notice: JsonSchema\Constraints\BaseConstraint::__construct(): Implicitly marking parameter $facto
+
+ry as nullable is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bi
+
+n/composer.phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/BaseConstraint.php:41
+
+위치 줄:2 문자:327
+
++ ... g -Tail 12; & C:/Temp/yutiv-php84/php.exe C:/ProgramData/ComposerSetu ...
+
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    + CategoryInfo          : NotSpecified: (Deprecation Not...nstraint.php:41:String) [], RemoteException
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+
+Deprecation Notice: JsonSchema\Constraints\BaseConstraint::addError(): Implicitly marking parameter $path as nullable i
+
+s deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/
+
+vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/BaseConstraint.php:46
+
+Deprecation Notice: JsonSchema\Constraints\BaseConstraint::addError(): Implicitly marking parameter $more as nullable i
+
+s deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/
+
+vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/BaseConstraint.php:46
+
+Deprecation Notice: JsonSchema\Constraints\Factory::__construct(): Implicitly marking parameter $schemaStorage as nulla
+
+ble is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.
+
+phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/Factory.php:76
+
+Deprecation Notice: JsonSchema\Constraints\Factory::__construct(): Implicitly marking parameter $uriRetriever as nullab
+
+le is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.p
+
+har/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/Factory.php:76
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::incrementPath(): Implicitly marking parameter $path as nullable
+
+is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar
+
+/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:42
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkArray(): Implicitly marking parameter $path as nullable is
+
+deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ve
+
+ndor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:68
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkObject(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:86
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkType(): Implicitly marking parameter $path as nullable is d
+
+eprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ven
+
+dor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:103
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkUndefined(): Implicitly marking parameter $path as nullable
+
+ is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.pha
+
+r/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:119
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkString(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:136
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkNumber(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:152
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkEnum(): Implicitly marking parameter $path as nullable is d
+
+eprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ven
+
+dor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:168
+
+Deprecation Notice: JsonSchema\Constraints\Constraint::checkFormat(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/Constraint.php:184
+
+Deprecation Notice: JsonSchema\Constraints\ConstraintInterface::addError(): Implicitly marking parameter $path as nulla
+
+ble is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.
+
+phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ConstraintInterface.php:43
+
+Deprecation Notice: JsonSchema\Constraints\ConstraintInterface::addError(): Implicitly marking parameter $more as nulla
+
+ble is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.
+
+phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ConstraintInterface.php:43
+
+Deprecation Notice: JsonSchema\Constraints\ConstraintInterface::check(): Implicitly marking parameter $path as nullable
+
+ is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.pha
+
+r/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ConstraintInterface.php:64
+
+Deprecation Notice: JsonSchema\SchemaStorage::__construct(): Implicitly marking parameter $uriRetriever as nullable is
+
+deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ve
+
+ndor/justinrainbow/json-schema/src/JsonSchema/SchemaStorage.php:19
+
+Deprecation Notice: JsonSchema\SchemaStorage::__construct(): Implicitly marking parameter $uriResolver as nullable is d
+
+eprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ven
+
+dor/justinrainbow/json-schema/src/JsonSchema/SchemaStorage.php:19
+
+Deprecation Notice: JsonSchema\Constraints\SchemaConstraint::check(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/SchemaConstraint.php:31
+
+Deprecation Notice: JsonSchema\Constraints\UndefinedConstraint::check(): Implicitly marking parameter $path as nullable
+
+ is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.pha
+
+r/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/UndefinedConstraint.php:34
+
+Deprecation Notice: JsonSchema\Constraints\TypeConstraint::check(): Implicitly marking parameter $path as nullable is d
+
+eprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ven
+
+dor/justinrainbow/json-schema/src/JsonSchema/Constraints/TypeConstraint.php:42
+
+Deprecation Notice: JsonSchema\Constraints\ObjectConstraint::check(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/ObjectConstraint.php:30
+
+Deprecation Notice: JsonSchema\Constraints\ObjectConstraint::validatePatternProperties(): Implicitly marking parameter
+
+$path as nullable is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup
+
+/bin/composer.phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ObjectConstraint.php:54
+
+Deprecation Notice: JsonSchema\Constraints\ObjectConstraint::validateElement(): Implicitly marking parameter $path as n
+
+ullable is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/compo
+
+ser.phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ObjectConstraint.php:93
+
+Deprecation Notice: JsonSchema\Constraints\ObjectConstraint::validateProperties(): Implicitly marking parameter $path a
+
+s nullable is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/co
+
+mposer.phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ObjectConstraint.php:135
+
+Deprecation Notice: JsonSchema\Constraints\ObjectConstraint::validateMinMaxConstraint(): Implicitly marking parameter $
+
+path as nullable is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/
+
+bin/composer.phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/ObjectConstraint.php:177
+
+Deprecation Notice: JsonSchema\Constraints\StringConstraint::check(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/StringConstraint.php:25
+
+Deprecation Notice: JsonSchema\Constraints\FormatConstraint::check(): Implicitly marking parameter $path as nullable is
+
+ deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/v
+
+endor/justinrainbow/json-schema/src/JsonSchema/Constraints/FormatConstraint.php:27
+
+Deprecation Notice: JsonSchema\Constraints\CollectionConstraint::check(): Implicitly marking parameter $path as nullabl
+
+e is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.ph
+
+ar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/CollectionConstraint.php:25
+
+Deprecation Notice: JsonSchema\Constraints\CollectionConstraint::validateItems(): Implicitly marking parameter $path as
+
+ nullable is deprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/com
+
+poser.phar/vendor/justinrainbow/json-schema/src/JsonSchema/Constraints/CollectionConstraint.php:64
+
+Deprecation Notice: JsonSchema\Constraints\EnumConstraint::check(): Implicitly marking parameter $path as nullable is d
+
+eprecated, the explicit nullable type must be used instead in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/ven
+
+dor/justinrainbow/json-schema/src/JsonSchema/Constraints/EnumConstraint.php:25
+
+Deprecation Notice: Constant E_STRICT is deprecated in phar://C:/ProgramData/ComposerSetup/bin/composer.phar/src/Compos
+
+er/Util/Silencer.php:36
+
+> @php artisan config:clear --ansi
+
+
+
+  [37;44m INFO [39;49m Configuration cache cleared successfully.
+
+
+
+> @php vendor/bin/phpunit --testsuite=Installation
+
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+
+
+Runtime:       PHP 8.4.26
+
+Configuration: C:\Temp\live-workflow-isolated\phpunit.xml
+
+
+
+..                                                                  2 / 2 (100%)
+
+
+
+Time: 00:24.788, Memory: 66.00 MB
+
+
+
+OK (2 tests, 29 assertions)

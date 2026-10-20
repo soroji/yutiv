@@ -1,0 +1,26 @@
+feature: operational-ledger-v2
+axes:
+  period: [day, week, month]
+  scope: [all_products, selected_product, other_tenant]
+  role: [owner, finance, sales, warehouse, customs]
+  output: [live_page, saved_report, saved_part_reprint]
+  data: [empty, normal_workflow, above_all_previous_caps]
+effects:
+  - period_order_cash_cancel_return_refund_dates_remain_separate
+  - cumulative_deposit_recheck_delta_can_be_negative_and_review_is_zero
+  - current_paid_cohort_residual_is_not_period_revenue
+  - initial_receive_transition_chain_terminal_state_location_validation
+  - opening_plus_signed_flows_equals_closing_reserved_internal_as_zero
+  - global_totals_equal_all_screen_pages_and_all_saved_parts
+  - report_sources_use_one_repeatable_read_snapshot_without_tenant_mutex
+  - concurrent_receipt_completes_while_report_is_being_saved
+  - saved_names_order_return_state_and_totals_immutable_after_source_updates
+  - regenerate_creates_separate_uuid_version
+  - finance_permissions_and_tenant_404_on_saved_read
+  - additive_020_to_040_update_preserves_original_qr_history
+evidence:
+  - tests/Feature/LiveLedgerScaleTest.php
+  - tests/Feature/LiveReceiptLedgerTest.php
+  - tests/Feature/LiveOperationsTest.php
+  - tests/Playwright/ledger040.cjs
+  - tests/Playwright/ledger-lock.php

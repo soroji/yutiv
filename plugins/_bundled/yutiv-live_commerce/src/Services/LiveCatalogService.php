@@ -19,6 +19,8 @@ class LiveCatalogService extends LiveWorkflow
                 }
             }
             if ($entity === E::Option) {
+                $data['name'] = trim($data['name']);
+                abort_if($this->records->query(E::Option, $tenant)->where('product_id', $data['product_id'])->where('name', $data['name'])->when($id, fn ($q) => $q->where('id', '!=', $id))->exists(), 422, __('yutiv-live_commerce::live.receipt_option'));
                 if ($id) {
                     abort_unless($this->row($entity, $tenant, $id, true)->product_id === (int) $data['product_id'], 409, __('yutiv-live_commerce::live.errors.e_9a5489f976'));
                 }

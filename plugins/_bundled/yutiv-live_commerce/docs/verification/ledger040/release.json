@@ -1,0 +1,19 @@
+{
+  "versions": {
+    "plugin.json": "0.4.0",
+    "composer.json": "0.4.0",
+    "package.json": "0.4.0",
+    "package-lock.json": "0.4.0",
+    "components.json": "0.4.0"
+  },
+  "sha256": {
+    "plugin.json": "64f83d6ef0803f145525c5b1b42875aa3180c9d56c1c3e62e597a789973b7088",
+    "composer.json": "e7422e92470608596cef4f6b83d23f4b150133152525cbf6e231014cc91b1f88",
+    "package.json": "c1a8bb2b35f873379b159f7357214178b72c952884d3033f144af7f489c8edb3",
+    "package-lock.json": "1de05366830818feb42b193db013b5586c12d6aaca2116118e319c38407f9685",
+    "components.json": "382784511224c2d088e75b9560f737ead2b524ad128804181426cc6ae3cc53c9",
+    "dist/css/plugin.css": "452ee6a086a10f5ae1e91787f91e0d49143df671c376b3d05c0694316dc11bf6",
+    "dist/js/plugin.iife.js": "e33234df081bf349c0a36a10bc40cf9e6f0a78d61040c2a541b8925c3c15be10"
+  },
+  "source_map_reference": false
+}

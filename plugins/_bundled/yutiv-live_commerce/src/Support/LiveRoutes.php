@@ -50,6 +50,9 @@ final class LiveRoutes
         Route::post('/seller/media/{kind}', [LiveMediaController::class, 'store'])->where('kind', 'logo|product')->middleware(RequireTeeWideUser::class)->name('seller.media');
         Route::get('/live-media/{kind}/{record}', [LiveMediaController::class, 'show'])->where('kind', 'logo|product')->where('record', '[0-9]+|logo')->name('media');
         Route::get('/seller/login', [LoginController::class, 'show'])->name('seller.login');
+        Route::post('/seller/reports', [LiveOfficeController::class, 'saveReport'])->middleware(RequireTeeWideUser::class)->name('seller.reports.store');
+        Route::get('/seller/reports/{uuid}', [LiveOfficeController::class, 'savedReport'])->whereUuid('uuid')->middleware(RequireTeeWideUser::class)->name('seller.reports.show');
+        Route::post('/seller/receipt', [LiveOfficeController::class, 'receive'])->middleware(RequireTeeWideUser::class)->name('seller.receipt');
         Route::get('/seller/order/{uuid}', [LiveOfficeController::class, 'order'])->whereUuid('uuid')->middleware(RequireTeeWideUser::class)->name('seller.order');
         Route::get('/seller/{section?}', [LiveOfficeController::class, 'index'])->where('section', '[a-z-]+')->middleware(RequireTeeWideUser::class)->name('seller');
         Route::post('/seller/catalog/{entity}/{record?}', [LiveOfficeController::class, 'store'])->where('entity', 'products|options|channels|showhosts|broadcasts|broadcast-items|sale-links|banks')->whereNumber('record')->middleware(RequireTeeWideUser::class)->name('seller.catalog');

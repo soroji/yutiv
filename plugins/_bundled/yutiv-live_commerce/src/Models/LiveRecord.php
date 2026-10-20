@@ -15,7 +15,7 @@ class LiveRecord extends Model
     protected function casts(): array
     {
         return ['active' => 'boolean', 'primary' => 'boolean', 'default' => 'boolean', 'published' => 'boolean', 'sellable' => 'boolean', 'disputed' => 'boolean',
-            'data' => 'array', 'result' => 'array', 'snapshot' => 'array', 'attribution' => 'array', 'host_shares' => 'array', 'bank_snapshot' => 'encrypted:array',
+            'items' => 'array', 'received_at' => 'datetime', 'data' => 'array', 'result' => 'array', 'snapshot' => 'array', 'attribution' => 'array', 'host_shares' => 'array', 'bank_snapshot' => 'encrypted:array',
             'account_number' => 'encrypted', 'delivery' => 'encrypted:array',
             'expires_at' => 'datetime', 'reservation_released_at' => 'datetime', 'used_at' => 'datetime', 'paid_at' => 'datetime', 'delivered_at' => 'datetime', 'confirmed_at' => 'datetime',
             'starts_at' => 'datetime', 'ends_at' => 'datetime', 'sale_starts_at' => 'datetime', 'sale_ends_at' => 'datetime'];

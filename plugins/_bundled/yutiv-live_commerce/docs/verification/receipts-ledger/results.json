@@ -1,0 +1,24 @@
+{
+  "receiptUrl": "http://teewide.test:18973/seller/receipts?batch=45",
+  "labels": 10,
+  "qrs": [
+    "4577817f-a793-4af1-ba7f-b186b9511161",
+    "5f0da6c5-f24c-4bac-9b2e-4d635ddfaa2f",
+    "4473b1d7-44a0-4b6a-8876-7a1a3981078f",
+    "d77891a1-65cb-4fa8-b19a-a073f4d91f42",
+    "5e266c62-9590-44c3-90a2-4ec7fcbc041f",
+    "da1d90ce-7ed9-46e4-9d46-b1bf2565d1a4",
+    "754a6ef0-d8e6-4fe9-9dbd-38bac47ac507",
+    "0afc0365-345c-49bb-b390-bc1533c6c5f8",
+    "1133fe19-dbf4-4ece-a32e-d99cc1ca1a4a",
+    "56feeeca-81de-43d0-a5db-cd4a125a151d"
+  ],
+  "qrUnique": true,
+  "refreshStable": true,
+  "widths": [
+    1440,
+    1920,
+    390
+  ],
+  "errors": []
+}

@@ -1,0 +1,103 @@
+{
+
+    "source_sizes": {
+
+        "options": 520,
+
+        "units": 4201,
+
+        "movements": 25201,
+
+        "orders": 2601,
+
+        "lines": 10404,
+
+        "events": 20808
+
+    },
+
+    "metrics": {
+
+        "day": {
+
+            "from": "2026-10-01",
+
+            "to": "2026-10-01",
+
+            "milliseconds": 512.55,
+
+            "queries": 20,
+
+            "peak_bytes": 41943040,
+
+            "peak_increment_bytes": 0,
+
+            "opening": 4200,
+
+            "closing": 4200
+
+        },
+
+        "week": {
+
+            "from": "2026-10-01",
+
+            "to": "2026-10-07",
+
+            "milliseconds": 470.08,
+
+            "queries": 20,
+
+            "peak_bytes": 41943040,
+
+            "peak_increment_bytes": 0,
+
+            "opening": 4200,
+
+            "closing": 4200
+
+        },
+
+        "month": {
+
+            "from": "2026-10-01",
+
+            "to": "2026-10-31",
+
+            "milliseconds": 468.63,
+
+            "queries": 20,
+
+            "peak_bytes": 41943040,
+
+            "peak_increment_bytes": 0,
+
+            "opening": 4200,
+
+            "closing": 4201
+
+        },
+
+        "save": {
+
+            "milliseconds": 1020.32,
+
+            "queries": 59,
+
+            "peak_bytes": 46137344,
+
+            "peak_increment_bytes": 4194304
+
+        }
+
+    },
+
+    "saved_rows": 533,
+
+    "saved_parts": 6,
+
+    "php": "8.4.26",
+
+    "mysql": "8.4.11"
+
+}

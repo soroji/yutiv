@@ -49,6 +49,7 @@ class LiveManagementController extends AdminBaseController
             $result = match ($action) {
                 'domain' => ['domain' => $this->domains->save($id, $actor, $data['host'], $data['active'], $data['primary'])],
                 'account' => $this->accounts->issue($id, $actor, $data, $data['user_id'] ?? null),
+                'reset-password' => $this->accounts->resetPassword($id, $actor, $data['user_id']),
                 'permission' => $this->voidResult(fn () => $this->accounts->permission($id, $actor, $data['user_id'], $data['role'], $data['active'])),
                 'lock' => $this->voidResult(fn () => $this->accounts->lock($id, $actor, $data['user_id'], $data['locked'])),
                 'legacy' => $this->voidResult(fn () => $this->accounts->transferLegacy($id, $actor, $data['user_id'], $data['reason'])),
@@ -59,7 +60,7 @@ class LiveManagementController extends AdminBaseController
             RouteCacheHelper::rebuild();
         }
 
-        return ResponseHelper::success('common.success', $result);
+        return ResponseHelper::success('common.success', $result)->header('Cache-Control', 'no-store');
     }
 
     private function voidResult(callable $work): array

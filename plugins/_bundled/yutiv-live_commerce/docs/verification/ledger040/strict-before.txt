@@ -1,0 +1,29 @@
+{
+
+    "location": true,
+
+    "state": true
+
+}
+
+   RuntimeException
+
+
+
+  SQL collation weakened strict ledger validation
+
+
+
+  at plugins\_bundled\yutiv-live_commerce\tests\Playwright\ledger-binary.php:33
+
+     29▕   $result[$key]=$report['stock'][$option->id]['complete'];
+
+     30▕  }
+
+     31▕ }finally{$unit->update(['state'=>'available','location'=>'Case-Shelf']);}
+
+     32▕ echo json_encode($result,JSON_PRETTY_PRINT);
+
+  ➜  33▕ if($result!==['location'=>false,'state'=>false]){throw new RuntimeException('SQL collation weakened strict ledger validation');}
+
+     34▕

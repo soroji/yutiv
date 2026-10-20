@@ -1,5 +1,6 @@
 import qrcode from 'qrcode-generator';
 import '../css/live.css';
+import { initReceipts } from './receipt';
 
 export function qrSvg(value) {
     const qr = qrcode(0, 'M'); qr.addData(value); qr.make();
@@ -23,6 +24,7 @@ function payload(form) {
     }
     if (typeof result.qrs === 'string') result.qrs = result.qrs.split(/[\s,]+/).filter(Boolean);
     for (const key of ['active','primary','default','published','sellable','locked']) if (key in result) result[key] = result[key] === '1';
+    if (form.receiptItems) result.items = form.receiptItems();
     return result;
 }
 function attachForm(form) {
@@ -37,11 +39,12 @@ function attachForm(form) {
             if (!upload) headers['Content-Type']='application/json';
             const response = await fetch(form.action, {method:'POST',credentials:'same-origin',headers,body:upload ? new FormData(form) : JSON.stringify(payload(form))});
             const body = await response.json();
-            if (!response.ok) { const first = Object.values(body.errors || {}).flat()[0]; throw new Error(first || (response.status===403?'이 작업의 권한이 없습니다.':'입력과 현재 업무 상태를 확인하고 다시 시도해 주세요.')); }
+            if (!response.ok) { const first = Object.values(body.errors || {}).flat()[0]; throw new Error(first || body.message || (response.status===403?'이 작업의 권한이 없습니다.':'입력과 현재 업무 상태를 확인하고 다시 시도해 주세요.')); }
             const data = body.data || {}; message(form, data.message || (data.state==='review'?'금액/재고 검토가 필요합니다. 출고할 수 없습니다.':'저장했습니다. 새로고침하면 최신 내용을 확인할 수 있습니다.'));
-            if (data.temporary_password) { message(form, `임시 비밀번호: ${data.temporary_password} — 지금 복사하여 안전하게 전달하세요. 화면을 떠나면 다시 볼 수 없습니다.`); }
+            if (data.temporary_password) { message(form, `임시 비밀번호: ${data.temporary_password} — 지금 복사하여 안전하게 전달하세요. 30초 후 표시를 닫습니다.`); setTimeout(()=>message(form,'임시 비밀번호 표시를 닫았습니다.'),30000); }
             if (data.order) { const link = document.createElement('a'); link.href='/orders/'+encodeURIComponent(data.order); link.textContent='주문 및 입금 안내 보기'; form.querySelector('[data-live-message]')?.append(link); }
             if (data.units) { const link=document.createElement('a');link.href='/seller/labels?receipt='+encodeURIComponent(data.units[0]);link.textContent='입고 QR 라벨 출력';form.querySelector('[data-live-message]')?.append(link); }
+            if (data.receipt_id) { window.location.assign('/seller/receipts?batch='+encodeURIComponent(data.receipt_id)); return; }
             if (data.code && form.dataset.customs) { message(form, '통관부호: '+data.code+' (형식 등록, 외부 유효성 미확인)'); setTimeout(()=>message(form,'조회 표시를 닫았습니다.'),30000); }
             if(data.image_url){let preview=form.querySelector('[data-image-preview]');if(!preview){preview=document.createElement('img');preview.dataset.imagePreview='1';preview.alt='저장한 이미지 미리보기';preview.style.maxWidth='200px';form.append(preview);}preview.src=data.image_url+'?v='+Date.now();}
         } catch (error) { message(form, error instanceof Error ? error.message : '처리하지 못했습니다. 다시 시도해 주세요.', true); }
@@ -60,6 +63,9 @@ async function camera(button) {
     } catch { status.textContent='카메라를 사용할 수 없습니다. 권한을 확인하거나 QR 식별번호를 직접 입력해 주세요.'; }
 }
 export function initLive(root=document) {
+    initReceipts(root);
+    root.querySelectorAll('[data-ledger-print]').forEach(button=>button.addEventListener('click',()=>{document.body.classList.add('live-print-ledger');window.print();}));
+    window.addEventListener('afterprint',()=>document.body.classList.remove('live-print-ledger'));
     root.querySelectorAll('[data-live-menu]').forEach(button=>{if(!button.dataset.bound){button.dataset.bound='1';button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(open));button.closest('header').toggleAttribute('data-menu-open',open);});}});
     root.querySelectorAll('form[data-live-form]').forEach(attachForm);
     root.querySelectorAll('[data-qr]').forEach(el=>{if(!el.dataset.qrRendered){el.innerHTML=qrSvg(el.dataset.qr);el.dataset.qrRendered='1';}});
@@ -82,12 +88,17 @@ export function initLive(root=document) {
         const labels=[...root.querySelectorAll('[data-label-unit]')];
         const selected=labels.filter(label=>label.querySelector('[data-label-select]').checked);
         if (!selected.length) { status.textContent='출력할 물품을 선택해 주세요.'; return; }
+        for (const label of selected) {
+            const text=label.querySelector('.live-label-text');
+            for(let size=8;size>=6;size-=.25){text.style.fontSize=size+'pt';if(text.scrollHeight<=text.clientHeight && text.scrollWidth<=text.clientWidth)break;}
+            if(text.scrollHeight>text.clientHeight || text.scrollWidth>text.clientWidth){status.textContent='상품명·옵션이 라벨 규격을 초과합니다. 용지 크기를 늘린 뒤 다시 출력하세요.';return;}
+        }
         button.disabled=true;
         try {
-            const response=await fetch('/seller/tasks/label-print',{method:'POST',credentials:'same-origin',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]')?.content||''},body:JSON.stringify({operation_key:operationKey(),qrs:selected.map(label=>label.dataset.labelUnit),width:Number(button.dataset.width),height:Number(button.dataset.height)})});
+            const response=await fetch('/seller/tasks/label-print',{method:'POST',credentials:'same-origin',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]')?.content||''},body:JSON.stringify({operation_key:operationKey(),qrs:selected.map(label=>label.dataset.labelUnit),width:Number(button.dataset.width),height:Number(button.dataset.height),...(button.dataset.batch ? {batch:Number(button.dataset.batch)} : {})})});
             if (!response.ok) throw new Error('인쇄 요청 이력을 저장하지 못했습니다. 권한과 연결을 확인하고 다시 시도해 주세요.');
             labels.forEach(label=>label.toggleAttribute('data-unselected',!selected.includes(label)));
-            status.textContent='인쇄 요청을 기록했습니다. 대화상자에서 프린터·용지·배율을 확인해 주세요.';
+            status.textContent=`선택 ${selected.length}개 / 라벨 ${selected.length}장. 인쇄 요청을 기록했습니다. 대화상자에서 프린터·용지·배율을 확인해 주세요.`;
             window.print();
         } catch(error) {status.textContent=error.message;} finally{button.disabled=false;}
     }));
@@ -121,3 +132,12 @@ document.addEventListener('click', async event => {
         status.setAttribute('role', 'alert');
     } finally { button.disabled = false; }
 });
+// 임시 비밀번호는 G7 로컬 상태에만 두고 30초 후 제거합니다.
+let passwordTimer, shownPassword='';
+new MutationObserver(()=>{
+    if(!document.querySelector('.live-admin-office'))return;
+    const password=window.G7Core?.state?.getLocal?.()?.temporaryPassword || '';
+    if(password===shownPassword)return;
+    shownPassword=password;clearTimeout(passwordTimer);
+    if(password)passwordTimer=setTimeout(()=>{window.G7Core?.state?.setLocal({temporaryPassword:''});shownPassword='';},30000);
+}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});

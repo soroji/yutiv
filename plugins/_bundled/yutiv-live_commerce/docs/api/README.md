@@ -1,4 +1,4 @@
-# 독립 라이브 API 0.2.0
+# 독립 라이브 API 0.4.0
 
 ## 공통 계약
 
@@ -132,3 +132,70 @@ broadcast_id/channel_id/showhost_id/product_id/option_id 선택.
 labels: receipt=입고물품UUID,unit=단일UUID,width,height. inventory: unit=물품UUID.
 GET `/shop`, `/shop/products/{product}`, `/shop/broadcasts/{broadcast}`, `/s/{code}`, `/cart`, `/orders/{uuid}`, `/my`.
 공개 상품은 공개/판매 가능 여부와 방송 판매 기간을 다시 검사합니다. 주문은 가격과 재고를 서버에서 다시 확인합니다.
+
+## 0.3.0 등록·입고와 매출정산
+
+`POST /seller/receipt`는 승인된 업체 호스트의 직원 세션과 CSRF를 요구한다. `inventory` 권한이 필요하며 mode=new/copy는 `catalog` 권한도 필요하다.
+
+| 입력 | 규칙 |
+| --- | --- |
+| operation_key | 영숫자·하이픈, 최대 64자. 같은 입력 재시도는 같은 배치 반환, 다른 입력은 409 |
+| mode | new / copy / existing |
+| product_id | copy/existing의 원본 상품 ID. 업체 소유 검사 |
+| name, code, description?, published, sellable | new/copy의 새 상품 정보. code 업체 내 중복 불가, 상태는 boolean |
+| items | 1~50행, 이름 중복 불가. existing은 각 행 option_id 필요 |
+| items[].name, price, discount, quantity | 이름 최대 200자, 가격·할인·수량 정수. 할인≤가격, 수량 0~200, 전체 합계 1~200 |
+| location, memo? | 위치 필수 최대100자, 메모 최대2000자 |
+
+```http
+POST /seller/receipt
+Accept: application/json
+Content-Type: application/json
+X-CSRF-TOKEN: <직원 세션 CSRF>
+
+{"operation_key":"receipt-demo-001","mode":"new","name":"합성 셔츠","code":"SHIRT-NEW","description":"입고 초안","published":false,"sellable":true,"location":"A창고","memo":"검수 완료","items":[{"name":"색상: 검정 / 사이즈: M","price":10000,"discount":0,"quantity":10}]}
+```
+
+```json
+{"success":true,"message":"...","data":{"receipt_id":42,"quantity":10,"product_id":12}}
+```
+
+새 상품·옵션·물품·이동·배치·감사를 한 트랜잭션으로 확정한다. 실패 시 부분 입고는 남지 않는다. 입력 오류422, 타업체/타상품 옵션404, 권한403, 멱등 충돌409.
+과거 입고일 입력·배치 수정/취소는 지원하지 않는다. 초안은 기존 `/seller/catalog/products`로 저장한다.
+
+`GET /seller/receipts?batch=42`는 HTML 입고 내역이며 batch, from, to, search(상품명/코드), option_id, actor_id, location 필터를 받는다. 업체 시간대 일자, 종료일 포함.
+`GET /seller/labels?batch=42`는 해당 배치의 실제 물품 UUID만 표시한다. labels 권한을 유지한다.
+기존 `POST /seller/tasks/label-print`의 qrs/width/height/operation_key에 `batch`(양의 정수, 선택)를 추가했다. 제출된 모든 QR이 그 업체·배치 소유인지 검사한다. 인쇄 요청 기록은 실물 출력 완료가 아니다.
+
+`GET /seller/ledger?from=2026-10-01&to=2026-10-31&period=day`는 settlement 권한의 HTML 운영 장부다.
+period는 day/week/month, 날짜 최대366일, 업체 시간대 [시작일00시, 종료일다음날00시) 기준이다.
+이동 원장으로 복원한 기초/기말과 현재 상태를 구분한다. 입금은 누적 확인액의 기록일별 변동이고 환불은 이벤트 기록일별 금액이다.
+조회·인쇄 상한과 산출 불가 조건은 [장부 운영 지침](../RECEIPTS_LEDGER.md)을 참조한다.
+
+`POST /api/plugins/yutiv-live_commerce/admin/{tenant}/reset-password`는 본사 Bearer 인증·관리자·management.manage 권한을 요구한다.
+body는 `{"user_id":7}`이다. 해당 업체 계정만 허용하며 이름·로그인 ID·이메일·권한·잠금 상태를 유지하고 비밀번호 해시/세션 버전/강제 변경 상태만 바꾼다.
+응답 data는 `{"user_id":7,"username":"operator","temporary_password":"<일회 표시>"}`이며 DB·감사·멱등 결과에 평문을 남기지 않는다. 타업체 계정404, 입력422, 권한403.
+기존 account action의 재발급 호환성은 유지하지만 UI는 신규 발급과 비밀번호 재설정을 별도 버튼으로 제공한다.
+
+## 자동 생성 본사 API 목차
+
+> **소유**: 플러그인 `yutiv-live_commerce` · **생성**: `php artisan api:docgen` (실측 기반).
+> 아래 표는 자동 생성됩니다. 각 문서를 열면 엔드포인트별 파라미터·응답·예시를 볼 수 있습니다.
+
+<!-- @generated:start:api-readme-index -->
+- **문서 수**: 3 · **엔드포인트 수**: 3
+
+| 문서 | 도메인 | 엔드포인트 |
+| --- | --- | --- |
+| [admin.md](admin.md) | `admin` | 1 |
+| [logo.md](logo.md) | `logo` | 1 |
+| [office.md](office.md) | `office` | 1 |
+
+<!-- @generated:end -->
+
+## 저장 운영 보고서 (web)
+
+GET /seller/ledger: from/to(Y-m-d), period(day/week/month), product_id(양의 정수), page(양의 정수). settlement 권한, 전체 조건 합계/20개 옵션 목록.
+POST /seller/reports: 동일 기간/상품 조건, web 세션+CSRF+settlement. 성공 302 /seller/reports/{uuid}. 매번 별도 버전 생성.
+GET /seller/reports/{uuid}?part=1: settlement, 업체 격리, 저장 집계와 최대100행 상세. 다른 업체/없는 UUID 404, 무결성 불일치409, 잘못된 입력422. HTML 응답.
+집계식/현금 기록의 상품 조건/불변성/분할 인쇄는 [장부 기준](../LEDGER_040.md)을 따른다. 이 web 경로는 API JSON 응답 봉투를 사용하지 않는다.

@@ -78,25 +78,39 @@ class LiveInventoryService extends LiveWorkflow
         return ['items' => $items, 'scanned' => count($items), 'remaining' => $remaining, 'partial' => $remaining !== null && count($items) < $remaining, 'changed' => false];
     }
 
-    public function labelPrint(int $tenant, int $actor, array $qrs, int $width, int $height, string $key): array
+    public function labelPrint(int $tenant, int $actor, array $qrs, int $width, int $height, string $key, ?int $batch = null): array
     {
         sort($qrs);
 
-        return $this->once($tenant, 'label-print:'.$key, compact('qrs', 'width', 'height'), function () use ($tenant, $actor, $qrs, $width, $height) {
+        $input = compact('qrs', 'width', 'height');
+        if ($batch !== null) {
+            $input['batch'] = $batch;
+        }
+
+        return $this->once($tenant, 'label-print:'.$key, $input, function () use ($tenant, $actor, $qrs, $width, $height, $batch) {
             abort_unless($this->records->query(E::Unit, $tenant)->whereIn('uuid', $qrs)->count() === count($qrs), 404);
+            if ($batch !== null) {
+                $receipt = $this->row(E::Receipt, $tenant, $batch);
+                abort_unless($this->records->query(E::Unit, $tenant)->where('receipt_key', $receipt->receipt_key)->whereIn('uuid', $qrs)->count() === count($qrs), 404);
+            }
             $this->audit($tenant, $actor, 'labels.print_requested', ['units' => $qrs, 'width_mm' => $width, 'height_mm' => $height, 'physical_print_verified' => false]);
 
             return ['recorded' => true, 'physical_print_verified' => false];
         });
     }
 
-    public function receive(int $tenant, int $actor, int $option, int $quantity, string $location, string $key): array
+    public function receive(int $tenant, int $actor, int $option, int $quantity, string $location, string $key, ?string $receiptKey = null): array
     {
-        return $this->once($tenant, 'receive:'.$key, compact('option', 'quantity', 'location'), function () use ($tenant, $actor, $option, $quantity, $location, $key) {
+        $input = compact('option', 'quantity', 'location');
+        if ($receiptKey !== null) {
+            $input['receiptKey'] = $receiptKey;
+        }
+
+        return $this->once($tenant, 'receive:'.$key, $input, function () use ($tenant, $actor, $option, $quantity, $location, $key, $receiptKey) {
             $this->row(E::Option, $tenant, $option, true);
             $units = [];
             for ($i = 0; $i < $quantity; $i++) {
-                $unit = $this->records->create(E::Unit, $tenant, ['uuid' => (string) Str::uuid(), 'option_id' => $option, 'state' => 'available', 'location' => $location, 'receipt_key' => $key]);
+                $unit = $this->records->create(E::Unit, $tenant, ['uuid' => (string) Str::uuid(), 'option_id' => $option, 'state' => 'available', 'location' => $location, 'receipt_key' => $receiptKey ?? $key]);
                 $this->movement($unit, $actor, $key, 'receive', null, '입고');
                 $units[] = $unit->uuid;
             }

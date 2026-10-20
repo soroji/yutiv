@@ -1,0 +1,67 @@
+ M plugins/_bundled/yutiv-live_commerce/CHANGELOG.md
+ M plugins/_bundled/yutiv-live_commerce/README.md
+ M plugins/_bundled/yutiv-live_commerce/components.json
+ M plugins/_bundled/yutiv-live_commerce/composer.json
+ M plugins/_bundled/yutiv-live_commerce/dist/css/plugin.css
+ M plugins/_bundled/yutiv-live_commerce/dist/js/plugin.iife.js
+ M plugins/_bundled/yutiv-live_commerce/docs/LIVE_OPERATIONS.md
+ M plugins/_bundled/yutiv-live_commerce/docs/api/README.md
+ M plugins/_bundled/yutiv-live_commerce/lang/en/live.php
+ M plugins/_bundled/yutiv-live_commerce/lang/ko/live.php
+ M plugins/_bundled/yutiv-live_commerce/package-lock.json
+ M plugins/_bundled/yutiv-live_commerce/package.json
+ M plugins/_bundled/yutiv-live_commerce/plugin.json
+ M plugins/_bundled/yutiv-live_commerce/plugin.php
+ M plugins/_bundled/yutiv-live_commerce/resources/css/live.css
+ M plugins/_bundled/yutiv-live_commerce/resources/js/index.js
+ M plugins/_bundled/yutiv-live_commerce/resources/layouts/admin/live_office.json
+ M plugins/_bundled/yutiv-live_commerce/resources/views/layouts/operations.blade.php
+ M plugins/_bundled/yutiv-live_commerce/resources/views/seller/labels.blade.php
+ M plugins/_bundled/yutiv-live_commerce/resources/views/seller/office.blade.php
+ M plugins/_bundled/yutiv-live_commerce/src/Enums/LiveEntity.php
+ M plugins/_bundled/yutiv-live_commerce/src/Http/Controllers/Admin/LiveManagementController.php
+ M plugins/_bundled/yutiv-live_commerce/src/Http/Controllers/Seller/LiveOfficeController.php
+ M plugins/_bundled/yutiv-live_commerce/src/Http/Controllers/Seller/LiveWorkflowController.php
+ M plugins/_bundled/yutiv-live_commerce/src/Http/Requests/LiveHeadquartersRequest.php
+ M plugins/_bundled/yutiv-live_commerce/src/Http/Requests/LiveOfficeRequest.php
+ M plugins/_bundled/yutiv-live_commerce/src/Http/Requests/LiveWorkflowRequest.php
+ M plugins/_bundled/yutiv-live_commerce/src/Models/LiveRecord.php
+ M plugins/_bundled/yutiv-live_commerce/src/Services/LiveAccountService.php
+ M plugins/_bundled/yutiv-live_commerce/src/Services/LiveCatalogService.php
+ M plugins/_bundled/yutiv-live_commerce/src/Services/LiveInventoryService.php
+ M plugins/_bundled/yutiv-live_commerce/src/Services/LiveOfficeService.php
+ M plugins/_bundled/yutiv-live_commerce/src/Support/LiveRoutes.php
+ M plugins/_bundled/yutiv-live_commerce/src/routes/api.php
+ M plugins/_bundled/yutiv-live_commerce/tests/Feature/LiveOperationsTest.php
+ M plugins/_bundled/yutiv-live_commerce/tests/PluginTestCase.php
+?? plugins/_bundled/yutiv-live_commerce/database/migrations/2026_10_20_000005_create_live_receipts_table.php
+?? plugins/_bundled/yutiv-live_commerce/database/migrations/2026_10_20_000006_create_live_reports_tables.php
+?? plugins/_bundled/yutiv-live_commerce/docs/LEDGER_040.md
+?? plugins/_bundled/yutiv-live_commerce/docs/RECEIPTS_LEDGER.md
+?? plugins/_bundled/yutiv-live_commerce/docs/VERIFICATION_030.md
+?? plugins/_bundled/yutiv-live_commerce/docs/VERIFICATION_040.md
+?? plugins/_bundled/yutiv-live_commerce/docs/api/admin.md
+?? plugins/_bundled/yutiv-live_commerce/docs/api/logo.md
+?? plugins/_bundled/yutiv-live_commerce/docs/api/office.md
+?? plugins/_bundled/yutiv-live_commerce/docs/verification/ledger040/
+?? plugins/_bundled/yutiv-live_commerce/docs/verification/receipts-ledger/
+?? plugins/_bundled/yutiv-live_commerce/resources/js/__tests__/
+?? plugins/_bundled/yutiv-live_commerce/resources/js/receipt.js
+?? plugins/_bundled/yutiv-live_commerce/resources/js/tests/
+?? plugins/_bundled/yutiv-live_commerce/resources/views/seller/ledger-periods.blade.php
+?? plugins/_bundled/yutiv-live_commerce/resources/views/seller/ledger.blade.php
+?? plugins/_bundled/yutiv-live_commerce/resources/views/seller/product-receive.blade.php
+?? plugins/_bundled/yutiv-live_commerce/resources/views/seller/receipts.blade.php
+?? plugins/_bundled/yutiv-live_commerce/resources/views/seller/report-detail.blade.php
+?? plugins/_bundled/yutiv-live_commerce/resources/views/seller/saved-report.blade.php
+?? plugins/_bundled/yutiv-live_commerce/src/Enums/ReportRowKind.php
+?? plugins/_bundled/yutiv-live_commerce/src/Http/Requests/LiveReceiptRequest.php
+?? plugins/_bundled/yutiv-live_commerce/src/Services/LiveLedgerService.php
+?? plugins/_bundled/yutiv-live_commerce/src/Services/LiveReceiptService.php
+?? plugins/_bundled/yutiv-live_commerce/tests/Feature/LiveLedgerScaleTest.php
+?? plugins/_bundled/yutiv-live_commerce/tests/Feature/LiveReceiptLedgerTest.php
+?? plugins/_bundled/yutiv-live_commerce/tests/Playwright/
+?? plugins/_bundled/yutiv-live_commerce/tests/Support/LedgerSynthetic.php
+?? plugins/_bundled/yutiv-live_commerce/tests/scenarios/ledger-snapshots.yaml
+?? plugins/_bundled/yutiv-live_commerce/tests/scenarios/receipt-ledger.yaml
+?? plugins/_bundled/yutiv-live_commerce/vitest.config.ts

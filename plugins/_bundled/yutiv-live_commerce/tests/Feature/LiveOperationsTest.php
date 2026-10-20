@@ -2,6 +2,7 @@
 
 namespace Plugins\Yutiv\LiveCommerce\Tests\Feature;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -17,6 +18,7 @@ use Plugins\Yutiv\LiveCommerce\Services\LiveAccountService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveCatalogService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveIncentiveService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveInventoryService;
+use Plugins\Yutiv\LiveCommerce\Services\LiveLedgerService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveOrderAdjustmentService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveOrderService;
 use Plugins\Yutiv\LiveCommerce\Services\LivePasswordResetService;
@@ -27,6 +29,124 @@ use Symfony\Component\Process\Process;
 
 class LiveOperationsTest extends TeeWideMainDesignTest
 {
+    public function test_ledger_deposit_rechecks_are_deltas_and_review_is_not_a_second_deposit(): void
+    {
+        extract($this->fixture());
+        $repo = app(LiveRepositoryInterface::class);
+        $orders = app(LiveOrderService::class);
+        app(LiveInventoryService::class)->receive($tenant->id, $user->id, $option->id, 2, '격리 창고', 'deposit-delta-stock');
+        $cart = $orders->addCart($tenant->id, $user->id, 'deposit-delta-cart', $broadcast->id, $option->id, 2, null, 'deposit-delta-cart');
+        $result = $orders->create($tenant->id, $user->id, [$cart['line']], ['name' => '합성 고객'], 'deposit-delta-order');
+        $order = $repo->query(E::Order, $tenant->id)->where('uuid', $result['order'])->firstOrFail();
+        $orders->deposit($tenant->id, $user->id, $order->id, 100000, 'deposit-delta-one');
+        $orders->deposit($tenant->id, $user->id, $order->id, 200000, 'deposit-delta-two');
+        $orders->resolveDeposit($tenant->id, $user->id, $order->id, 200000, '금액 재확인', 'deposit-review');
+        $date = now($tenant->timezone)->format('Y-m-d');
+        $report = app(LiveLedgerService::class)->report($tenant->id, $user->id, $date, $date, 'day');
+        $this->assertSame(200000, array_sum(array_column($report['periods'], 'deposit')));
+    }
+
+    public function test_ledger_uses_distinct_order_deposit_cancel_return_refund_dates(): void
+    {
+        extract($this->fixture());
+        $repo = app(LiveRepositoryInterface::class);
+        $inventory = app(LiveInventoryService::class);
+        $orders = app(LiveOrderService::class);
+        $ledger = app(LiveLedgerService::class);
+        $this->travelTo(Carbon::parse('2026-10-20 01:00:00', 'UTC'));
+        // 방송 판매 가능 시간을 테스트 기간 전체로 명시합니다.
+        $broadcast->fill(['sale_starts_at' => now()->subDay(), 'sale_ends_at' => now()->addDays(10)])->save();
+        $inventory->receive($tenant->id, $user->id, $option->id, 3, '격리 창고', 'ledger-receive');
+        $cart = $orders->addCart($tenant->id, $user->id, 'ledger-cart', $broadcast->id, $option->id, 3, null, 'ledger-cart');
+        $result = $orders->create($tenant->id, $user->id, [$cart['line']], ['name' => '합성 고객'], 'ledger-order');
+        $order = $repo->query(E::Order, $tenant->id)->where('uuid', $result['order'])->firstOrFail();
+        $order->fill(['expires_at' => now()->addDays(10)])->save();
+        $line = $repo->query(E::OrderLine, $tenant->id)->where('order_id', $order->id)->firstOrFail();
+        $qrs = $repo->query(E::Unit, $tenant->id)->orderBy('id')->pluck('uuid')->all();
+        $this->travel(1)->days();
+        $orders->deposit($tenant->id, $user->id, $order->id, 300000, 'ledger-deposit');
+        $this->travel(1)->days();
+        $orders->ship($tenant->id, $user->id, $order->id, array_slice($qrs, 0, 2), 'ledger-ship');
+        $this->travel(1)->days();
+        $orders->cancel($tenant->id, $user->id, $line->id, 1, '합성 취소', 'ledger-cancel');
+        $this->travel(1)->days();
+        app(LiveReturnService::class)->receive($tenant->id, $user->id, $line->id, [$qrs[0]], '합성 반품', 'ledger-return');
+        $this->travel(1)->days();
+        app(LiveReturnService::class)->refundRecord($tenant->id, $user->id, $order->id, 200000, '합성 환불 기록', 'ledger-refund');
+        $report = $ledger->report($tenant->id, $user->id, '2026-10-20', '2026-10-25', 'day');
+        $this->assertSame(300000, $report['periods']['2026-10-20']['ordered']);
+        $this->assertSame(300000, $report['periods']['2026-10-21']['deposit']);
+        $this->assertSame(0, $report['periods']['2026-10-21']['ordered']);
+        $this->assertSame(2, $report['periods']['2026-10-22']['shipped']);
+        $this->assertSame(100000, $report['periods']['2026-10-23']['cancel']);
+        $this->assertSame(100000, $report['periods']['2026-10-24']['return']);
+        $this->assertSame(200000, $report['periods']['2026-10-25']['refund']);
+        $this->assertSame(100000, array_sum($report['channels']));
+        $stock = $report['stock'][$option->id];
+        $this->assertSame($stock['closing'], $stock['opening'] + $stock['receive'] + $stock['ship'] + $stock['return'] + $stock['loss'] + $stock['as_in'] + $stock['as_out'] + $stock['adjustment']);
+        $this->assertSame(2, $stock['closing']);
+        $past = $ledger->report($tenant->id, $user->id, '2026-10-22', '2026-10-22', 'day');
+        $this->assertSame(1, $past['stock'][$option->id]['closing']);
+        $this->assertSame(2, array_sum(array_intersect_key($past['stock'][$option->id]['states'], array_flip(['available', 'reserved', 'returned', 'as', 'defective']))));
+    }
+
+    public function test_ledger_cross_month_orders_cash_and_deductions(): void
+    {
+        extract($this->fixture());
+        $repo = app(LiveRepositoryInterface::class);
+        $inventory = app(LiveInventoryService::class);
+        $orders = app(LiveOrderService::class);
+        $ledger = app(LiveLedgerService::class);
+        $this->travelTo(Carbon::parse('2026-09-29 01:00:00', 'UTC'));
+        // 방송 판매 가능 시간을 테스트 기간 전체로 명시합니다.
+        $broadcast->fill(['sale_starts_at' => now()->subDay(), 'sale_ends_at' => now()->addDays(10)])->save();
+        $inventory->receive($tenant->id, $user->id, $option->id, 3, '격리 창고', 'ledger-receive');
+        $cart = $orders->addCart($tenant->id, $user->id, 'ledger-cart', $broadcast->id, $option->id, 3, null, 'ledger-cart');
+        $result = $orders->create($tenant->id, $user->id, [$cart['line']], ['name' => '합성 고객'], 'ledger-order');
+        $order = $repo->query(E::Order, $tenant->id)->where('uuid', $result['order'])->firstOrFail();
+        $order->fill(['expires_at' => now()->addDays(10)])->save();
+        $line = $repo->query(E::OrderLine, $tenant->id)->where('order_id', $order->id)->firstOrFail();
+        $qrs = $repo->query(E::Unit, $tenant->id)->orderBy('id')->pluck('uuid')->all();
+        $this->travel(1)->days();
+        $orders->deposit($tenant->id, $user->id, $order->id, 300000, 'ledger-deposit');
+        $this->travel(1)->days();
+        $orders->ship($tenant->id, $user->id, $order->id, array_slice($qrs, 0, 2), 'ledger-ship');
+        $this->travel(1)->days();
+        $orders->cancel($tenant->id, $user->id, $line->id, 1, '합성 취소', 'ledger-cancel');
+        $this->travel(1)->days();
+        app(LiveReturnService::class)->receive($tenant->id, $user->id, $line->id, [$qrs[0]], '합성 반품', 'ledger-return');
+        $this->travel(1)->days();
+        app(LiveReturnService::class)->refundRecord($tenant->id, $user->id, $order->id, 200000, '합성 환불 기록', 'ledger-refund');
+        $report = $ledger->report($tenant->id, $user->id, '2026-09-29', '2026-10-04', 'day');
+        $this->assertSame(300000, $report['periods']['2026-09-29']['ordered']);
+        $this->assertSame(300000, $report['periods']['2026-09-30']['deposit']);
+        $this->assertSame(0, $report['periods']['2026-09-30']['ordered']);
+        $this->assertSame(2, $report['periods']['2026-10-01']['shipped']);
+        $this->assertSame(100000, $report['periods']['2026-10-02']['cancel']);
+        $this->assertSame(100000, $report['periods']['2026-10-03']['return']);
+        $this->assertSame(200000, $report['periods']['2026-10-04']['refund']);
+        $this->assertSame(100000, array_sum($report['channels']));
+        $stock = $report['stock'][$option->id];
+        $this->assertSame($stock['closing'], $stock['opening'] + $stock['receive'] + $stock['ship'] + $stock['return'] + $stock['loss'] + $stock['as_in'] + $stock['as_out'] + $stock['adjustment']);
+        $this->assertSame(2, $stock['closing']);
+        $past = $ledger->report($tenant->id, $user->id, '2026-10-01', '2026-10-01', 'day');
+        $this->assertSame(1, $past['stock'][$option->id]['closing']);
+        $this->assertSame(2, array_sum(array_intersect_key($past['stock'][$option->id]['states'], array_flip(['available', 'reserved', 'returned', 'as', 'defective']))));
+        $september = $ledger->report($tenant->id, $user->id, '2026-09-01', '2026-09-30', 'month');
+        $october = $ledger->report($tenant->id, $user->id, '2026-10-01', '2026-10-31', 'month');
+        $this->assertSame(300000, $september['periods']['2026-09']['ordered']);
+        $this->assertSame(300000, $september['periods']['2026-09']['deposit']);
+        $this->assertSame(0, $september['periods']['2026-09']['cancel']);
+        $this->assertSame(0, $october['periods']['2026-10']['ordered']);
+        $this->assertSame(0, $october['periods']['2026-10']['deposit']);
+        $this->assertSame(100000, $october['periods']['2026-10']['cancel']);
+        $this->assertSame(100000, $october['periods']['2026-10']['return']);
+        $this->assertSame(200000, $october['periods']['2026-10']['refund']);
+        $this->assertSame($september['stock_totals']['closing'], $october['stock_totals']['opening']);
+        $this->assertSame(100000, $september['sales_totals']['cohort_net_sales']);
+        $this->assertSame(0, $october['sales_totals']['cohort_net_sales']);
+    }
+
     protected function fixture(): array
     {
         $tenant = $this->seedGolfifTenant();
@@ -196,6 +316,8 @@ class LiveOperationsTest extends TeeWideMainDesignTest
     {
         $tenant = $this->seedGolfifTenant();
         $migration = require dirname(__DIR__, 2).'/database/migrations/2026_10_13_000004_create_live_operations.php';
+        $receipts = require dirname(__DIR__, 2).'/database/migrations/2026_10_20_000005_create_live_receipts_table.php';
+        $receipts->down();
         $migration->down();
         $id = DB::table('teewide_users')->insertGetId(['name' => '기존 합성 계정', 'email' => 'legacy-only@example.test', 'password' => Hash::make('isolated-legacy-password'), 'status' => 'active', 'uuid' => (string) Str::uuid(), 'created_at' => now(), 'updated_at' => now()]);
         $legacy = TeeWideUser::findOrFail($id);
@@ -203,6 +325,7 @@ class LiveOperationsTest extends TeeWideMainDesignTest
         $hash = $legacy->password;
         $uuid = $legacy->uuid;
         $migration->up();
+        $receipts->up();
         $legacy->refresh();
         $this->assertNull($legacy->tenant_id);
         $this->assertSame($hash, $legacy->password);

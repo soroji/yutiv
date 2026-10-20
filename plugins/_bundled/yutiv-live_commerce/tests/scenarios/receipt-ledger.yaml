@@ -1,0 +1,21 @@
+feature: receipt-ledger
+axes:
+  product: [new, copy, existing, default-option]
+  quantity: [valid, zero, negative, fractional, invalid, over-limit]
+  scope: [own-tenant, foreign-tenant, foreign-batch]
+  role: [owner, sales, warehouse, finance, customs]
+  time: [before-start, start-inclusive, end-exclusive, historical, missing-history]
+  retry: [same-key-same-input, same-key-different-input, failure-rollback, legacy-key-collision]
+effects:
+  - atomic-product-options-units-movements-receipt-operation
+  - immutable-unit-qr-reprint-and-batch-filter
+  - stock-opening-plus-signed-flows-equals-closing
+  - order-date-distinct-from-deposit-cancel-return-refund-event-date
+  - password-reset-preserves-profile-and-revokes-session
+coverage:
+  backend: tests/Feature/LiveReceiptLedgerTest.php
+  regression: tests/Feature/LiveOperationsTest.php
+  browser: tests/Playwright/browser.cjs
+  headquarters: tests/Playwright/headquarters.cjs
+  frontend: resources/js/__tests__/receipt.test.ts
+  layout: resources/js/__tests__/layouts/headquarters.test.tsx

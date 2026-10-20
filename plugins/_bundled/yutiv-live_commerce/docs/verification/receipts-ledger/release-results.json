@@ -1,0 +1,16 @@
+{
+  "manifestsScanned": 28,
+  "consumers": [],
+  "versions": {
+    "plugin.json": "0.3.0",
+    "composer.json": "0.3.0",
+    "package.json": "0.3.0",
+    "package-lock.json": "0.3.0",
+    "components.json": "0.3.0"
+  },
+  "hashes": {
+    "dist/js/plugin.iife.js": "e33234df081bf349c0a36a10bc40cf9e6f0a78d61040c2a541b8925c3c15be10",
+    "dist/css/plugin.css": "bc244ada857cd1b5d3dff3308c955e18bc82fb4023f4cab2bc1f12723819adec",
+    "components.json": "822acf9f85000dbc8793d4cbfd7da2a772f0cb9a46a6436e6175c01496242ae7"
+  }
+}

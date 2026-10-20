@@ -1,0 +1,12 @@
+{
+  "labels.pdf": {
+    "pages": 10,
+    "width_mm": 50.12,
+    "height_mm": 29.97
+  },
+  "ledger.pdf": {
+    "pages": 10,
+    "width_mm": 297.01,
+    "height_mm": 209.89
+  }
+}

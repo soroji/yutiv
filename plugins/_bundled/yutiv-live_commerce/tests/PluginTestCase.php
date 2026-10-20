@@ -971,7 +971,7 @@ abstract class PluginTestCase extends TestCase
     private static function withOperationsRoutes(array $names): array
     {
         foreach (['root', 'live'] as $host) {
-            foreach (['assets.css', 'assets.css.extensionless', 'assets.js', 'assets.js.extensionless', 'broadcast', 'cart', 'customer.task', 'my', 'media', 'order', 'order.task', 'password.change', 'password.forgot', 'password.reset', 'product', 'sale-link', 'seller', 'seller.catalog', 'seller.login', 'seller.media', 'seller.order', 'seller.task', 'shop'] as $name) {
+            foreach (['assets.css', 'assets.css.extensionless', 'assets.js', 'assets.js.extensionless', 'broadcast', 'cart', 'customer.task', 'my', 'media', 'order', 'order.task', 'password.change', 'password.forgot', 'password.reset', 'product', 'sale-link', 'seller', 'seller.catalog', 'seller.login', 'seller.media', 'seller.order', 'seller.receipt', 'seller.reports.show', 'seller.reports.store', 'seller.task', 'shop'] as $name) {
                 $names[] = 'teewide.ops.'.$host.'.'.$name;
             }
         }

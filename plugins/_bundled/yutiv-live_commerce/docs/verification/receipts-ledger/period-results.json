@@ -1,0 +1,14 @@
+{
+  "day": {
+    "printed": true,
+    "nonzeroSalesVerified": true
+  },
+  "week": {
+    "printed": true,
+    "nonzeroSalesVerified": true
+  },
+  "month": {
+    "printed": true,
+    "nonzeroSalesVerified": true
+  }
+}

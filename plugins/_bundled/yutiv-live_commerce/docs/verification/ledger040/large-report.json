@@ -1,0 +1,25 @@
+{
+
+    "uuid": "cb02cbdc-1192-4ec3-bf1f-45d00cea2170",
+
+    "rows": 56920,
+
+    "parts": 570,
+
+    "first_sequence": 1,
+
+    "last_sequence": 56920,
+
+    "metrics": {
+
+        "milliseconds": 16045.13,
+
+        "queries": 1578,
+
+        "peak_bytes": 54525952,
+
+        "peak_increment_bytes": 14680064
+
+    }
+
+}
