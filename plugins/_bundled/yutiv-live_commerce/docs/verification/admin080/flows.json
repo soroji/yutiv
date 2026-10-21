@@ -1,0 +1,33 @@
+{
+  "savedUrl": "http://teewide.test:18974/seller/accounting/reports/ece98e33-9d8c-4450-a79b-f87bead65722",
+  "reprintSame": true,
+  "expenseAmount": 12345,
+  "fullExpenseKrw": 10412345,
+  "pageTotalsSame": true,
+  "setupReadOnlyBefore": {
+    "empty_tenant": 3,
+    "counts": {
+      "live_finance_states": 0,
+      "live_operations": 0,
+      "live_audit": 2,
+      "live_expenses": 0,
+      "live_fund_entries": 0,
+      "live_reports": 0
+    }
+  },
+  "setupAfter": {
+    "empty_tenant": 3,
+    "counts": {
+      "live_finance_states": 1,
+      "live_operations": 1,
+      "live_audit": 4,
+      "live_expenses": 0,
+      "live_fund_entries": 0,
+      "live_reports": 0
+    }
+  },
+  "limitedAccessDenied": true,
+  "regression": true,
+  "pdfs": 2,
+  "errors": []
+}

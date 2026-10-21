@@ -1,8 +1,8 @@
 @php($r=$financialResult)
-<p>업무용 관리 보고서 · {{ $r['from'] }} ~ {{ $r['to'] }} · {{ $r['timezone'] }} · 기준 {{ $r['basis_version'] }}</p>
-<p>{{ $r['revenue_basis'] }} 입금액은 회계상 매출로 간주하지 않습니다. 세금·감가상각·외화 자금 재평가는 포함하지 않습니다.</p>
+<p>업무용 관리 보고서 · {{ $r['from'] }} ~ {{ $r['to'] }} · {{ $r['timezone'] }} · 출고 기준 관리매출·FIFO 원가</p>
+<details class="finance-help finance-metadata"><summary>집계 기준과 보고서 정보</summary><p>집계 기준 버전 {{ $r['basis_version'] }}</p><p>{{ $r['revenue_basis'] }} 입금액은 회계상 매출로 간주하지 않습니다. 세금·감가상각·외화 자금 재평가는 포함하지 않습니다.</p>
 <p>관리 기준 적용 시작 {{ $r['fifo_started_at']??'미적용' }} · 적용 전 출고 매출·원가를 소급 추정하지 않습니다. 미확정 항목이 있는 기간은 완전한 손익이 아닙니다.</p>
-<div class="finance-cards">
+</details><div class="finance-cards">
 @foreach(['revenue'=>'출고 기준 관리매출','cogs'=>'등록 FIFO 원가 합계','loss'=>'등록 손실·복원 합계','fixed'=>'고정 운영비','variable'=>'변동 운영비','incentive'=>'확정 인센티브','fees'=>'이체 수수료','management_subtotal'=>'잠정 관리손익 소계','external_in'=>'기록된 외부 유입','external_out'=>'기록된 외부 유출','cash_net'=>'기록분 현금 순변동'] as $key=>$label)<article><h3>{{ $label }}</h3><strong>{{ $r['totals'][$key]===null?'미확정':number_format($r['totals'][$key]).'원' }}</strong></article>@endforeach
 </div>
 @if(array_key_exists('known_management_subtotal',$r['totals'])&&$r['totals']['management_subtotal']===null)<p>등록 금액 참고소계 {{ number_format($r['totals']['known_management_subtotal']) }}원. 미확정·누락 금액을 반영한 손익은 확정할 수 없습니다.</p>@endif

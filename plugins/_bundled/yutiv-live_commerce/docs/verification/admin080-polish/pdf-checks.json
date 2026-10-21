@@ -1,0 +1,38 @@
+[
+  {
+    "file": "expenses.pdf",
+    "pages": 1,
+    "all_pages_have_text": true,
+    "title_present": true,
+    "admin_and_scroll_cues_excluded": true,
+    "text_within_page": true,
+    "a4_mm": [
+      210.2,
+      297.3
+    ]
+  },
+  {
+    "file": "large-overview.pdf",
+    "pages": 1,
+    "all_pages_have_text": true,
+    "title_present": true,
+    "admin_and_scroll_cues_excluded": true,
+    "text_within_page": true,
+    "a4_mm": [
+      210.2,
+      297.3
+    ]
+  },
+  {
+    "file": "overview.pdf",
+    "pages": 1,
+    "all_pages_have_text": true,
+    "title_present": true,
+    "admin_and_scroll_cues_excluded": true,
+    "text_within_page": true,
+    "a4_mm": [
+      210.2,
+      297.3
+    ]
+  }
+]

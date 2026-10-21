@@ -1,0 +1,68 @@
+{
+  "head": "d222ad35d0ef23e6f010dc0c34fb79a9207e390b",
+  "version": {
+    "plugin.json": "0.8.0",
+    "components.json": "0.8.0",
+    "composer.json": "0.8.0",
+    "package.json": "0.8.0",
+    "package-lock.json": "0.8.0"
+  },
+  "prior_uncommitted_changes_preserved": true,
+  "outside_plugin_changes": [],
+  "calculation_policies_unchanged": true,
+  "existing_service_change": "LiveFinanceReportService CASE sign -1/1 to exact DECIMAL -1.0/1.0; fixes MySQL unsigned reversal error 1690",
+  "new_read_only_query": "LiveFinanceDashboardService; tenant/date scoped currency-period expense decomposition in existing snapshot",
+  "migration": false,
+  "stored_report_schema_and_existing_snapshots_unchanged": true,
+  "asset_sha256": {
+    "dist/css/plugin.css": {
+      "workspace": "da88d76b426be7f5aca55cd89a1825900b1d364214ac11721a2f9d2ed53077b4",
+      "isolated_bundled": "da88d76b426be7f5aca55cd89a1825900b1d364214ac11721a2f9d2ed53077b4",
+      "isolated_active": "da88d76b426be7f5aca55cd89a1825900b1d364214ac11721a2f9d2ed53077b4"
+    },
+    "dist/js/plugin.iife.js": {
+      "workspace": "262908943421c6cf13b29bc2d45ba9d430db29796804a27060f50807b07e46d8",
+      "isolated_bundled": "262908943421c6cf13b29bc2d45ba9d430db29796804a27060f50807b07e46d8",
+      "isolated_active": "262908943421c6cf13b29bc2d45ba9d430db29796804a27060f50807b07e46d8"
+    }
+  },
+  "tests": {
+    "full_php": {
+      "tests": 243,
+      "assertions": 72827,
+      "time": "08:07.413",
+      "memory_mb": 144
+    },
+    "final_ui_currency": {
+      "tests": 7,
+      "assertions": 2471,
+      "time": "00:27.405",
+      "memory_mb": 78
+    },
+    "javascript": {
+      "files": 5,
+      "tests": 13
+    },
+    "smoke": {
+      "tests": 2,
+      "assertions": 29
+    },
+    "php_lint": {
+      "files": 229,
+      "failures": 0
+    }
+  },
+  "screenshots": 62,
+  "pdfs": 2,
+  "actual_environment": {
+    "php": "8.4.26",
+    "mysql": "8.4.11",
+    "chrome": "155.0.8059.84"
+  },
+  "target_environment": {
+    "php": "8.3.6",
+    "mysql": "8.0.46",
+    "directly_tested": false
+  },
+  "production_access_commit_push_deploy": false
+}

@@ -13,6 +13,7 @@ use Plugins\Yutiv\LiveCommerce\Services\LiveCashService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveExpenseService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveFifoService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveFinanceAssetService;
+use Plugins\Yutiv\LiveCommerce\Services\LiveFinanceDashboardService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveFinanceEvidenceService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveFinanceReportService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveFinanceSetupService;
@@ -40,15 +41,21 @@ class LiveFinanceController
         $period = $request->input('period', 'day');
         $state = $this->office->query(E::FinanceState, $t)->first();
         $report = null;
+        $dashboard = null;
         $rows = null;
         // A sales-only role must never construct a cost-bearing report, even if the view hides fields.
-        if ($role->allows('finance.read') && in_array($section, ['overview', 'reports'], true)) {
-            $report = app(LiveFinanceReportService::class)->report($t, $user->id, $from, $to, $period);
+        if ($state && $role->allows('finance.read') && in_array($section, ['overview', 'reports'], true)) {
+            $reports = app(LiveFinanceReportService::class);
+            [$report, $dashboard] = $reports->snapshot(function () use ($reports, $t, $user, $from, $to, $period) {
+                $result = $reports->report($t, $user->id, $from, $to, $period);
+
+                return [$result, app(LiveFinanceDashboardService::class)->forReport($t, $result)];
+            });
         }
         $q = match ($section) {
             'expenses' => $this->office->query(E::Expense, $t)->whereBetween('occurred_on', [$from, $to]),'accounts' => $this->office->query(E::MoneyTransfer, $t),'reports' => $this->office->query(E::Report, $t)->where('report_kind', ReportKind::Finance->value),'sales' => $this->office->query(E::Order, $t)->when($request->integer('order_id'), fn ($q) => $q->whereKey($request->integer('order_id')))->when($request->filled('search'), fn ($q) => $q->where('uuid', 'like', '%'.$request->input('search').'%')),default => null
         };
-        $expenseTotals = $section === 'expenses' ? (clone $q)->select('currency')->selectRaw("SUM(amount_original * CASE WHEN source_kind='reversal' THEN -1 ELSE 1 END) original_sum,SUM(amount_krw * CASE WHEN source_kind='reversal' THEN -1 ELSE 1 END) krw_sum,SUM(CASE WHEN amount_krw IS NULL THEN 1 ELSE 0 END) unknown_rows")->groupBy('currency')->get() : null;
+        $expenseTotals = $section === 'expenses' ? (clone $q)->select('currency')->selectRaw("SUM(amount_original * CASE WHEN source_kind='reversal' THEN -1.0 ELSE 1.0 END) original_sum,SUM(amount_krw * CASE WHEN source_kind='reversal' THEN -1.0 ELSE 1.0 END) krw_sum,SUM(CASE WHEN amount_krw IS NULL THEN 1 ELSE 0 END) unknown_rows")->groupBy('currency')->get() : null;
         if ($q) {
             $rows = $q->orderByDesc('id')->paginate(20)->withQueryString();
         }
@@ -66,7 +73,7 @@ class LiveFinanceController
         $fundEntries = $section === 'accounts' ? $this->office->query(E::FundEntry, $t)->whereBetween('occurred_on', [$from, $to])->when($request->integer('fund_id'), fn ($q) => $q->where('fund_id', $request->integer('fund_id')))->orderByDesc('id')->paginate(20, ['*'], 'entries_page')->withQueryString() : null;
         $currentBalances = $section === 'sales' && $role->allows('finance.read') ? app(LiveFinanceReportService::class)->currentBalances($t) : null;
 
-        return view('teewide::seller.finance', compact('tenant', 'role', 'state', 'section', 'from', 'to', 'period', 'report', 'rows', 'assets', 'assetRows', 'funds', 'categories', 'banks', 'payments', 'recurring', 'closings', 'evidence', 'currentBalances', 'expenseTotals', 'fundEntries') + ['teeWideUser' => $user, 'sections' => self::SECTIONS, 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl()]);
+        return view('teewide::seller.finance', compact('tenant', 'role', 'state', 'section', 'from', 'to', 'period', 'report', 'dashboard', 'rows', 'assets', 'assetRows', 'funds', 'categories', 'banks', 'payments', 'recurring', 'closings', 'evidence', 'currentBalances', 'expenseTotals', 'fundEntries') + ['teeWideUser' => $user, 'sections' => self::SECTIONS, 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl()]);
     }
 
     public function store(LiveFinanceActionRequest $request)
@@ -106,7 +113,7 @@ class LiveFinanceController
         $tenant = LiveContext::requireTenant();
         $user = LiveContext::user();
 
-        return view('teewide::seller.finance-report', app(LiveFinanceReportService::class)->saved($tenant->id, $user->id, $uuid, $request->integer('part', 1)) + ['orientation' => $request->input('orientation', 'portrait'), 'tenant' => $tenant, 'teeWideUser' => $user, 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl()]);
+        return view('teewide::seller.finance-report', app(LiveFinanceReportService::class)->saved($tenant->id, $user->id, $uuid, $request->integer('part', 1)) + ['role'=>StaffRole::from($this->office->query(E::Staff,$tenant->id)->where('user_id',$user->id)->firstOrFail()->role),'orientation' => $request->input('orientation', 'portrait'), 'tenant' => $tenant, 'teeWideUser' => $user, 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl()]);
     }
 
     public function evidence(LiveFinanceEvidenceRequest $request)

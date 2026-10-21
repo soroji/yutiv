@@ -1,0 +1,8 @@
+{
+  "routeCache": true,
+  "searchEmpty": true,
+  "pendingDisabled": true,
+  "validationStatus": 422,
+  "errorAlert": true,
+  "keyboardFocus": true
+}

@@ -1,0 +1,419 @@
+{
+  "chrome": "155.0.8059.84",
+  "measure": [
+    {
+      "section": "broadcasts",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(19, 92, 66)",
+        "color": "rgb(255, 255, 255)",
+        "height": 38,
+        "decoration": "none"
+      }
+    },
+    {
+      "section": "accounting/overview",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(19, 92, 66)",
+        "color": "rgb(255, 255, 255)",
+        "height": 38,
+        "decoration": "none"
+      }
+    },
+    {
+      "section": "accounting/sales",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(237, 242, 239)",
+        "color": "rgb(41, 78, 61)",
+        "height": 38,
+        "decoration": "none"
+      }
+    },
+    {
+      "section": "accounting/expenses",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(237, 242, 239)",
+        "color": "rgb(41, 78, 61)",
+        "height": 38,
+        "decoration": "none"
+      }
+    },
+    {
+      "section": "accounting/accounts",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(237, 242, 239)",
+        "color": "rgb(41, 78, 61)",
+        "height": 38,
+        "decoration": "none"
+      }
+    },
+    {
+      "section": "accounting/assets",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(237, 242, 239)",
+        "color": "rgb(41, 78, 61)",
+        "height": 38,
+        "decoration": "none"
+      }
+    },
+    {
+      "section": "accounting/reports",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgb(237, 242, 239)",
+        "color": "rgb(41, 78, 61)",
+        "height": 38,
+        "decoration": "none"
+      }
+    }
+  ],
+  "errors": []
+}

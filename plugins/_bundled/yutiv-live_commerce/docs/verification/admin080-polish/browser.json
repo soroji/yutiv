@@ -1,0 +1,83 @@
+{
+  "chrome": "155.0.8059.84",
+  "widths": [
+    1440,
+    1920,
+    390
+  ],
+  "broadcastUrls": {
+    "manage": "/seller/broadcasts/8?list=",
+    "customer": "/shop/broadcasts/8",
+    "reset": "/seller/broadcasts"
+  },
+  "taskGroups": 4,
+  "allSevenActionsAccessible": true,
+  "menusReadOnly": {
+    "before": {
+      "live_finance_states": 1,
+      "live_operations": 28,
+      "live_audit": 50,
+      "live_expenses": 5,
+      "live_expense_payments": 1,
+      "live_expense_recoveries": 0,
+      "live_expense_categories": 9,
+      "live_recurring_expenses": 0,
+      "live_fund_entries": 4,
+      "live_reports": 1,
+      "live_report_rows": 17
+    },
+    "after": {
+      "live_finance_states": 1,
+      "live_operations": 28,
+      "live_audit": 50,
+      "live_expenses": 5,
+      "live_expense_payments": 1,
+      "live_expense_recoveries": 0,
+      "live_expense_categories": 9,
+      "live_recurring_expenses": 0,
+      "live_fund_entries": 4,
+      "live_reports": 1,
+      "live_report_rows": 17
+    },
+    "posts": 0
+  },
+  "wholeExpenseTotals": [
+    [
+      "CNY",
+      "40000"
+    ],
+    [
+      "KRW",
+      "10000"
+    ]
+  ],
+  "kpiPeriodOnce": true,
+  "nativeTouch": {
+    "source": "Chrome CDP trusted touchStart/touchMove/touchEnd",
+    "trustedEvents": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "visibleColumns": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "endScrollLeft": 584,
+    "wholeTotal": "30,000원",
+    "pageOverflow": false
+  },
+  "largeAmounts": {
+    "cnyKrw": 123333372331,
+    "profit": -122333402331,
+    "receivable": 1000000000,
+    "noClipping": true
+  },
+  "restricted403": true,
+  "errors": []
+}

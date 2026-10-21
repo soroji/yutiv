@@ -1,0 +1,38 @@
+[
+  {
+    "file": "data-custom.pdf",
+    "pages": 2,
+    "A4_mm": [
+      210.2,
+      297.3
+    ],
+    "admin_controls_excluded": true,
+    "whole_period_ledger_present": true,
+    "page_text": [
+      {
+        "page": 1,
+        "characters": 928
+      },
+      {
+        "page": 2,
+        "characters": 404
+      }
+    ]
+  },
+  {
+    "file": "data-month.pdf",
+    "pages": 1,
+    "A4_mm": [
+      210.2,
+      297.3
+    ],
+    "admin_controls_excluded": true,
+    "whole_period_ledger_present": true,
+    "page_text": [
+      {
+        "page": 1,
+        "characters": 802
+      }
+    ]
+  }
+]

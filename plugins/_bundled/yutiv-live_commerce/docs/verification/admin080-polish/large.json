@@ -1,0 +1,50 @@
+{
+    "unset_tenant": 6,
+    "unset_counts": {
+        "live_finance_states": 1,
+        "live_operations": 28,
+        "live_audit": 30,
+        "live_expenses": 6,
+        "live_fund_entries": 4,
+        "live_reports": 0
+    },
+    "data_tenant": 6,
+    "totals": {
+        "ordered": 2000000000,
+        "cancel": 0,
+        "return": 0,
+        "revenue": 1000000000,
+        "cogs": 20000,
+        "loss": 0,
+        "fixed": 123333382331,
+        "variable": 0,
+        "deposit": 1000005000,
+        "refund": 0,
+        "external_in": 1000005000,
+        "external_out": 3800,
+        "fees": 0,
+        "incentive": 0,
+        "cash_net": 1000001200,
+        "management_subtotal": -122333402331,
+        "known_management_subtotal": -122333402331
+    },
+    "customers": {
+        "orders": 2,
+        "receivable_krw": 1000000000,
+        "customer_credit_krw": 5000,
+        "refunded_krw": 0
+    },
+    "currency_costs": {
+        "KRW": {
+            "original_minor": 1000000,
+            "known_krw": 10000,
+            "unknown_rows": 0
+        },
+        "CNY": {
+            "original_minor": 12345698912,
+            "known_krw": 123333372331,
+            "unknown_rows": 0
+        }
+    },
+    "flags": []
+}

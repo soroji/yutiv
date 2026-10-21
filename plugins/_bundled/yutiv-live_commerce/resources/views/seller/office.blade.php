@@ -3,8 +3,8 @@
 @foreach ($menu as $key => $item)<a href="/seller/{{ $key }}" @if($section === $key || (in_array($section,['channels','showhosts'],true) && $key==='broadcasts')) aria-current="page" @endif>{{ $item[0] }}</a>@endforeach
 @endsection
 @section('content')
-@if(in_array($section,['channels','showhosts'],true))<nav class="broadcast-tabs" aria-label="방송관리"><a href="/seller/broadcasts">방송 목록</a><a href="/seller/broadcasts/channels" @if($section==='channels') aria-current="page" @endif>유튜브 채널</a><a href="/seller/broadcasts/showhosts" @if($section==='showhosts') aria-current="page" @endif>쇼호스트</a></nav>@endif
 <h1>{{ $menuTitle }}</h1><p class="live-help">{{ $tenant->name }} · {{ $tenant->timezone }} · 예약 기본 {{ $tenant->reservation_minutes }}분</p>
+@if(in_array($section,['channels','showhosts'],true))<nav class="broadcast-tabs" aria-label="방송관리"><a href="/seller/broadcasts">방송 목록</a><a href="/seller/broadcasts/channels" @if($section==='channels') aria-current="page" @endif>유튜브 채널</a><a href="/seller/broadcasts/showhosts" @if($section==='showhosts') aria-current="page" @endif>쇼호스트</a></nav>@endif
 
 @if($section === 'product-receive') @include('teewide::seller.product-receive') @endif
 @if($section === 'receipts') @include('teewide::seller.receipts') @endif

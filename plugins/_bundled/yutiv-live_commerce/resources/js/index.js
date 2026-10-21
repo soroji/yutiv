@@ -7,6 +7,7 @@ import { initReceipts } from './receipt';
 import { initProducts } from './products';
 import { initBroadcasts } from './broadcasts';
 import '../css/broadcasts.css';
+import '../css/admin.css';
 
 export function qrSvg(value) {
     const qr = qrcode(0, 'M'); qr.addData(value); qr.make();
@@ -75,6 +76,7 @@ async function camera(button) {
 export function initLive(root=document) {
     initReceipts(root);
     initProducts(root);
+    root.querySelectorAll('[data-seller-menu]').forEach(button=>{if(button.dataset.bound)return;button.dataset.bound='1';button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(open));button.querySelector('span').textContent=open?'접기':'펼치기';button.closest('.seller-sidebar').toggleAttribute('data-open',open);});});
     initBroadcasts(root);
     root.querySelectorAll('[data-ledger-print]').forEach(button=>button.addEventListener('click',()=>{document.body.classList.add('live-print-ledger');window.print();}));
     window.addEventListener('afterprint',()=>document.body.classList.remove('live-print-ledger'));

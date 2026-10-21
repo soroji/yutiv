@@ -1,0 +1,24 @@
+[
+  {
+    "name": "overview.pdf",
+    "pages": 4,
+    "a4_mm": [
+      210.2,
+      297.3
+    ],
+    "all_pages_have_text": true,
+    "menus_tabs_actions_excluded": true,
+    "period_table_present": true
+  },
+  {
+    "name": "saved-report.pdf",
+    "pages": 36,
+    "a4_mm": [
+      210.2,
+      297.3
+    ],
+    "all_pages_have_text": true,
+    "menus_tabs_actions_excluded": true,
+    "period_table_present": true
+  }
+]

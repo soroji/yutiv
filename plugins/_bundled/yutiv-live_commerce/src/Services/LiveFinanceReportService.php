@@ -130,7 +130,8 @@ class LiveFinanceReportService extends LiveWorkflow
         $expense = $this->records->query(E::Expense, $tenant)->where('occurred_on', '>=', $from)->where('occurred_on', '<=', $to)->whereNotNull('amount_krw');
         $cash = $this->records->query(E::FundEntry, $tenant)->where('occurred_on', '>=', $from)->where('occurred_on', '<=', $to);
         $incentives = $this->records->query(E::Incentive, $tenant)->where('created_at', '>=', $utcA)->where('created_at', '<', $utcB);
-        $sign = "CASE WHEN source_kind='reversal' THEN -1 ELSE 1 END";
+        // DECIMAL 부호로 unsigned 금액의 역분개도 정확히 음수 합산합니다.
+        $sign = "CASE WHEN source_kind='reversal' THEN -1.0 ELSE 1.0 END";
         $datasets = [
             $this->periodAggregate(clone $alloc, 'recognized_at', ['revenue' => 'revenue_krw', 'cogs' => "CASE WHEN kind IN ('sale','return') THEN amount_krw ELSE 0 END", 'loss' => "CASE WHEN kind IN ('loss','restore') THEN amount_krw ELSE 0 END"], $buckets),
             $this->periodAggregate(clone $expense, 'occurred_on', ['fixed' => "CASE WHEN cost_group='fixed' AND treatment IN ('operating','fee') THEN amount_krw*($sign) ELSE 0 END", 'variable' => "CASE WHEN cost_group='variable' AND treatment IN ('operating','fee') THEN amount_krw*($sign) ELSE 0 END"], $buckets, false),

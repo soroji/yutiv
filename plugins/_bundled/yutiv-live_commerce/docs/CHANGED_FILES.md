@@ -1,3 +1,20 @@
+# 0.8.0 최종 변경 범위
+
+최신 표시 보완: [캡처 검토 반영·영향 검증](ADMIN_UI_080_POLISH.md). 이번 지시 시작 시 미커밋 backend/database 128개 파일은 모두 동일하며 Blade/CSS/표시 JS·빌드/검증/문서만 보완했다.
+
+
+추가 최종 보완: [4개 KPI·기간 장부·최신 검증](ADMIN_UI_080_FINAL.md). LiveFinanceDashboardService의 화면용 읽기 집계와 같은 snapshot 연결, Report Service의 역분개 SQL 부호 형식만 추가 보완했다. 기존 금융 계산 규칙과 저장 스냅샷은 유지한다. 앞선 미커밋 변경을 보존했다.
+
+기준/종료 HEAD `d222ad35d0ef23e6f010dc0c34fb79a9207e390b`, main. 시작 작업 트리 깨끗함. 기존 구현을 보존하고 변경을 `plugins/_bundled/yutiv-live_commerce/` 안으로 한정. commit·push·운영 접속·배포 없음.
+
+공통 operations 레이아웃과 seller/navigation, 기존 Office 메뉴 원본을 사용하는 LiveSellerNavigation, 재무 표시용 LiveDisplay, 방송/회계 Blade, admin CSS와 finance/index JS, 메뉴/역할 전달 Controller, 미설정 보고서 조회 조건, 0.8.0 manifest 5종과 공식 dist, 회귀 테스트·브라우저 스크립트·검증 자료를 포함한다. 금융 Contract/Enum과 migration 변경 없음. Report Service의 SQL 부호 연산 보완 외 금융 계산 규칙 변경 없음. 원장·계산·기존 데이터 변환 없음. 코어·다른 확장·공개 Golfif·YUTIV 쇼핑몰·개인 스토어 변경 없음.
+
+[원인·구현·검증·배포 자료](ADMIN_UI_080.md) · [릴리스 검증](verification/admin080/release.json)
+
+---
+
+아래는 이전 작업 당시의 기록이다.
+
 # 0.7.0 최종 변경 범위
 
 시작 HEAD `09389ffbea5691593dd536ecff7c46ec1352fb63`, main. 시작 작업 트리 깨끗함. 변경은 `plugins/_bundled/yutiv-live_commerce/` 내부, commit/push 없음.

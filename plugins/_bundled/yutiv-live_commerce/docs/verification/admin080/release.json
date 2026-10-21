@@ -1,0 +1,59 @@
+{
+  "baseline_head": "d222ad35d0ef23e6f010dc0c34fb79a9207e390b",
+  "final_head": "d222ad35d0ef23e6f010dc0c34fb79a9207e390b",
+  "versions": {
+    "plugin.json": "0.8.0",
+    "components.json": "0.8.0",
+    "composer.json": "0.8.0",
+    "package.json": "0.8.0",
+    "package-lock.json": "0.8.0"
+  },
+  "assets_sha256": {
+    "dist/css/plugin.css": {
+      "workspace": "182f89ef504db698fda590fb6c839b6585ec7c3e2d02bfe3e30093536403c56e",
+      "isolated_bundled": "182f89ef504db698fda590fb6c839b6585ec7c3e2d02bfe3e30093536403c56e",
+      "isolated_active": "182f89ef504db698fda590fb6c839b6585ec7c3e2d02bfe3e30093536403c56e"
+    },
+    "dist/js/plugin.iife.js": {
+      "workspace": "9da1d04f492d412f4fbfc7ff5fe2ead2e59cbcd58e634acb861480dd688a0b3b",
+      "isolated_bundled": "9da1d04f492d412f4fbfc7ff5fe2ead2e59cbcd58e634acb861480dd688a0b3b",
+      "isolated_active": "9da1d04f492d412f4fbfc7ff5fe2ead2e59cbcd58e634acb861480dd688a0b3b"
+    }
+  },
+  "outside_plugin_changes": [],
+  "financial_services_contracts_enums_database_unchanged": true,
+  "migration_added": false,
+  "production_access": false,
+  "commit_push_deploy": false,
+  "actual_environment": {
+    "php": "8.4.26",
+    "mysql": "8.4.11",
+    "chrome": "155.0.8059.84",
+    "isolated_mysql_port": 33319
+  },
+  "target_environment": {
+    "php": "8.3.6",
+    "mysql": "8.0.46",
+    "directly_tested": false
+  },
+  "tests": {
+    "php_tests": 242,
+    "assertions": 72456,
+    "duration": "07:43.071",
+    "peak_memory_mb": 144,
+    "ui_tests": 6,
+    "ui_assertions": 2097,
+    "js_tests": 13,
+    "smoke_tests": 2,
+    "smoke_assertions": 29,
+    "php_lint_files": 224
+  },
+  "screenshots": 106,
+  "pdfs": 2,
+  "official_update": "0.7.0 -> 0.8.0",
+  "viewport_widths": [
+    1440,
+    1920,
+    390
+  ]
+}

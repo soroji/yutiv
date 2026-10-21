@@ -109,7 +109,7 @@ class LiveOfficeController
         $tenant = LiveContext::requireTenant();
 
         return view('teewide::seller.saved-report', array_merge(app(LiveLedgerService::class)->saved($tenant->id, $user->id, $uuid, $request->integer('part', 1)), [
-            'tenant' => $tenant, 'teeWideUser' => $user, 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl(),
+            'role'=>StaffRole::from($this->office->query(LiveEntity::Staff,$tenant->id)->where('user_id',$user->id)->firstOrFail()->role),'tenant' => $tenant, 'teeWideUser' => $user, 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl(),
         ]));
     }
 
@@ -142,16 +142,6 @@ class LiveOfficeController
 
     public function menu(StaffRole $role): array
     {
-        $menu = array_filter(self::MENU, fn ($item) => $role->allows($item[1]));
-        unset($menu['banks'],$menu['statistics'],$menu['ledger'],$menu['inventory'],$menu['labels'], $menu['options'], $menu['receive'], $menu['product-receive'], $menu['receipts']);
-        if ($role->allows('statistics') && ! $role->allows('finance.read')) {
-            unset($menu['accounting']);
-            $menu['accounting/sales']=['매출·현재 주문 분석','statistics'];
-        }
-        if ($role->allows('inventory') && ! $role->allows('catalog')) {
-            $menu['products'] = ['상품관리', 'inventory'];
-        }
-
-        return $menu;
+        return \Plugins\Yutiv\LiveCommerce\Support\LiveSellerNavigation::menu($role);
     }
 }

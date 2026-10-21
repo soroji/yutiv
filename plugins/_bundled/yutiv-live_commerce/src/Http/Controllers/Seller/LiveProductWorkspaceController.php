@@ -23,13 +23,7 @@ class LiveProductWorkspaceController
         $staff = $this->workspace->query(E::Staff, $tenant->id)->where('user_id', $user->id)->where('active', true)->firstOrFail();
         $role = StaffRole::from($staff->role);
         LiveContext::authorize($role->allows('catalog') ? 'catalog' : ($role->allows('inventory') ? 'inventory' : 'labels'));
-        $menu = array_filter(LiveOfficeController::MENU, fn ($entry) => $role->allows($entry[1]));
-        unset($menu['banks'],$menu['statistics'],$menu['ledger'],$menu['inventory'],$menu['options'],$menu['receive'],$menu['receipts'],$menu['product-receive'],$menu['labels']);
-        if ($role->allows('statistics') && ! $role->allows('finance.read')) {
-            unset($menu['accounting']);
-            $menu['accounting/sales']=['매출·현재 주문 분석','statistics'];
-        }
-        $menu['products'] = ['상품관리', 'inventory'];
+        $menu=\Plugins\Yutiv\LiveCommerce\Support\LiveSellerNavigation::menu($role);
 
         return ['tenant' => $tenant, 'teeWideUser' => $user, 'role' => $role, 'menu' => $menu, 'section' => 'products', 'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl()];
     }

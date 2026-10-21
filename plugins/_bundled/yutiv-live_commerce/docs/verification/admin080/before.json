@@ -1,0 +1,317 @@
+{
+  "chrome": "155.0.8059.84",
+  "measure": [
+    {
+      "section": "broadcasts",
+      "menu": [
+        {
+          "text": "운영 현황",
+          "href": "/seller/dashboard"
+        },
+        {
+          "text": "방송관리",
+          "href": "/seller/broadcasts"
+        },
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "판매 링크",
+          "href": "/seller/sale-links"
+        },
+        {
+          "text": "회계관리",
+          "href": "/seller/accounting"
+        },
+        {
+          "text": "주문·입금 확인",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "출고",
+          "href": "/seller/ship"
+        },
+        {
+          "text": "반품·A/S",
+          "href": "/seller/returns"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        },
+        {
+          "text": "브랜드·상담 링크",
+          "href": "/seller/brand"
+        },
+        {
+          "text": "직원·권한",
+          "href": "/seller/staff"
+        },
+        {
+          "text": "작업 이력",
+          "href": "/seller/audit"
+        }
+      ],
+      "tab": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(20, 82, 59)",
+        "height": 25.59375,
+        "decoration": "underline"
+      }
+    },
+    {
+      "section": "accounting/overview",
+      "menu": [
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "주문 관리",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "회계 현황",
+          "href": "/seller/accounting/overview"
+        },
+        {
+          "text": "매출·입금·미수",
+          "href": "/seller/accounting/sales"
+        },
+        {
+          "text": "매입·지출",
+          "href": "/seller/accounting/expenses"
+        },
+        {
+          "text": "계좌·자금 이동",
+          "href": "/seller/accounting/accounts"
+        },
+        {
+          "text": "재고 자산·체류",
+          "href": "/seller/accounting/assets"
+        },
+        {
+          "text": "보고서·관리 마감",
+          "href": "/seller/accounting/reports"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        }
+      ],
+      "tab": null
+    },
+    {
+      "section": "accounting/sales",
+      "menu": [
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "주문 관리",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "회계 현황",
+          "href": "/seller/accounting/overview"
+        },
+        {
+          "text": "매출·입금·미수",
+          "href": "/seller/accounting/sales"
+        },
+        {
+          "text": "매입·지출",
+          "href": "/seller/accounting/expenses"
+        },
+        {
+          "text": "계좌·자금 이동",
+          "href": "/seller/accounting/accounts"
+        },
+        {
+          "text": "재고 자산·체류",
+          "href": "/seller/accounting/assets"
+        },
+        {
+          "text": "보고서·관리 마감",
+          "href": "/seller/accounting/reports"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        }
+      ],
+      "tab": null
+    },
+    {
+      "section": "accounting/expenses",
+      "menu": [
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "주문 관리",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "회계 현황",
+          "href": "/seller/accounting/overview"
+        },
+        {
+          "text": "매출·입금·미수",
+          "href": "/seller/accounting/sales"
+        },
+        {
+          "text": "매입·지출",
+          "href": "/seller/accounting/expenses"
+        },
+        {
+          "text": "계좌·자금 이동",
+          "href": "/seller/accounting/accounts"
+        },
+        {
+          "text": "재고 자산·체류",
+          "href": "/seller/accounting/assets"
+        },
+        {
+          "text": "보고서·관리 마감",
+          "href": "/seller/accounting/reports"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        }
+      ],
+      "tab": null
+    },
+    {
+      "section": "accounting/accounts",
+      "menu": [
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "주문 관리",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "회계 현황",
+          "href": "/seller/accounting/overview"
+        },
+        {
+          "text": "매출·입금·미수",
+          "href": "/seller/accounting/sales"
+        },
+        {
+          "text": "매입·지출",
+          "href": "/seller/accounting/expenses"
+        },
+        {
+          "text": "계좌·자금 이동",
+          "href": "/seller/accounting/accounts"
+        },
+        {
+          "text": "재고 자산·체류",
+          "href": "/seller/accounting/assets"
+        },
+        {
+          "text": "보고서·관리 마감",
+          "href": "/seller/accounting/reports"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        }
+      ],
+      "tab": null
+    },
+    {
+      "section": "accounting/assets",
+      "menu": [
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "주문 관리",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "회계 현황",
+          "href": "/seller/accounting/overview"
+        },
+        {
+          "text": "매출·입금·미수",
+          "href": "/seller/accounting/sales"
+        },
+        {
+          "text": "매입·지출",
+          "href": "/seller/accounting/expenses"
+        },
+        {
+          "text": "계좌·자금 이동",
+          "href": "/seller/accounting/accounts"
+        },
+        {
+          "text": "재고 자산·체류",
+          "href": "/seller/accounting/assets"
+        },
+        {
+          "text": "보고서·관리 마감",
+          "href": "/seller/accounting/reports"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        }
+      ],
+      "tab": null
+    },
+    {
+      "section": "accounting/reports",
+      "menu": [
+        {
+          "text": "상품 관리",
+          "href": "/seller/products"
+        },
+        {
+          "text": "주문 관리",
+          "href": "/seller/orders"
+        },
+        {
+          "text": "회계 현황",
+          "href": "/seller/accounting/overview"
+        },
+        {
+          "text": "매출·입금·미수",
+          "href": "/seller/accounting/sales"
+        },
+        {
+          "text": "매입·지출",
+          "href": "/seller/accounting/expenses"
+        },
+        {
+          "text": "계좌·자금 이동",
+          "href": "/seller/accounting/accounts"
+        },
+        {
+          "text": "재고 자산·체류",
+          "href": "/seller/accounting/assets"
+        },
+        {
+          "text": "보고서·관리 마감",
+          "href": "/seller/accounting/reports"
+        },
+        {
+          "text": "인센티브·정산",
+          "href": "/seller/incentives"
+        }
+      ],
+      "tab": null
+    }
+  ],
+  "errors": []
+}

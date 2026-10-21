@@ -1,4 +1,9 @@
-# TeeWide 라이브커머스 0.7.0
+# TeeWide 라이브커머스 0.8.0
+
+- [0.8.0 최종 캡처 피드백·모바일 장부·UI 검증](docs/ADMIN_UI_080_POLISH.md)
+
+- [0.8.0 회계 현황 최종 기준·실제 화면·A4 검증](docs/ADMIN_UI_080_FINAL.md)
+- [0.8.0 판매자 공통 메뉴·회계 UI·검증·배포 자료](docs/ADMIN_UI_080.md)
 
 - [0.7.0 방송관리 통합·참여자·판매상품·검증](docs/BROADCAST_070.md)
 

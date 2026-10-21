@@ -1,0 +1,76 @@
+{
+  "head": "d222ad35d0ef23e6f010dc0c34fb79a9207e390b",
+  "version": {
+    "plugin.json": "0.8.0",
+    "components.json": "0.8.0",
+    "composer.json": "0.8.0",
+    "package.json": "0.8.0",
+    "package-lock.json": "0.8.0"
+  },
+  "scope": "display-only polish; prior uncommitted changes preserved",
+  "backend_database_files_byte_identical": 128,
+  "calculation_ledger_snapshots_schema_changed": false,
+  "outside_plugin_changes": [],
+  "assets_sha256": {
+    "dist/css/plugin.css": {
+      "workspace": "127b3dc5b79391a46c4a05b08516edb952c3f0abcfe3d4542cd0164d23a73917",
+      "isolated_bundled": "127b3dc5b79391a46c4a05b08516edb952c3f0abcfe3d4542cd0164d23a73917",
+      "isolated_active": "127b3dc5b79391a46c4a05b08516edb952c3f0abcfe3d4542cd0164d23a73917"
+    },
+    "dist/js/plugin.iife.js": {
+      "workspace": "0a33d77067dec8f43e1d8169a5c156de548088b857197c192404f32b8060d300",
+      "isolated_bundled": "0a33d77067dec8f43e1d8169a5c156de548088b857197c192404f32b8060d300",
+      "isolated_active": "0a33d77067dec8f43e1d8169a5c156de548088b857197c192404f32b8060d300"
+    }
+  },
+  "checks": {
+    "php_ui_tests": 2,
+    "php_ui_assertions": 739,
+    "js_files": 2,
+    "js_tests": 3,
+    "affected_php_lint": 7,
+    "whole_finance_suite_repeated": false,
+    "browser_pass": true,
+    "native_trusted_touch": {
+      "source": "Chrome CDP trusted touchStart/touchMove/touchEnd",
+      "trustedEvents": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "visibleColumns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "endScrollLeft": 584,
+      "wholeTotal": "30,000원",
+      "pageOverflow": false
+    },
+    "pdfs": 3,
+    "pdf_pages": [
+      1,
+      1,
+      1
+    ],
+    "php_ui_time": "00:30.038",
+    "visible_unknown_cost_badge": true
+  },
+  "images": 29,
+  "environment": {
+    "php": "8.4.26",
+    "mysql": "8.4.11",
+    "chrome": "155.0.8059.84",
+    "database": "localhost:33319 isolated synthetic only"
+  },
+  "target": {
+    "php": "8.3.6",
+    "mysql": "8.0.46",
+    "directly_tested": false
+  },
+  "commit_push_production_access_deploy": false
+}

@@ -7,7 +7,7 @@
         "ja": "TeeWide ライブコマース",
         "zh-CN": "TeeWide 直播电商"
     },
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": {
         "ko": "업체별 독립 라이브 판매·주문·재고·인센티브 운영",
         "en": "Independent tenant live operations, bank-transfer records, inventory and incentives. Disabled by default.",
