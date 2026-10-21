@@ -4,12 +4,7 @@
 @endsection
 @section('content')
 <h1>{{ $menuTitle }}</h1><p class="live-help">{{ $tenant->name }} · {{ $tenant->timezone }} · 예약 기본 {{ $tenant->reservation_minutes }}분</p>
-@if(in_array($section, ['products','product-receive','receipts','labels','options','receive'], true))
-<nav class="live-panel live-workflow-nav" aria-label="상품 업무">
-@if($role->allows('catalog'))<a href="/seller/products">상품 목록·초안</a>@endif
-@if($role->allows('inventory'))<a href="/seller/product-receive">상품 등록·추가 입고</a><a href="/seller/receipts">입고 내역·QR 출력</a>@endif
-@if($role->allows('labels'))<a href="/seller/labels">기존 물품 QR 재출력</a>@endif
-</nav>@endif
+
 @if($section === 'product-receive') @include('teewide::seller.product-receive') @endif
 @if($section === 'receipts') @include('teewide::seller.receipts') @endif
 @if($section === 'ledger') @include('teewide::seller.ledger') @endif

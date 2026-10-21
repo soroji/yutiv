@@ -1,9 +1,14 @@
-# TeeWide 라이브커머스 0.4.0
+# TeeWide 라이브커머스 0.6.0
+
+- [0.6.0 재고 통합·회계관리 기준과 적용](docs/ACCOUNTING_060.md)
+- [0.6.0 검증·성능·공식 업데이트 결과](docs/VERIFICATION_060.md)
 
 업체별 독립 상품·입고·QR·주문·재고·입금·환불·인센티브 운영 플러그인입니다.
 상품관리에서 신규/복사 상품·추가 입고·입고 배치 조회·QR 출력을 연결하고, 매출정산에서 기간별 운영 장부를 조회·인쇄합니다.
 
-- [입고·QR·서버 반영·자동 실행](docs/RECEIPTS_LEDGER.md)
+- [0.5.0 상품 목록·옵션·입고단가·QR 이력·적용과 복구](docs/PRODUCT_WORKSPACE_050.md)
+- [0.5.0 검증·성능·PC/모바일 화면](docs/VERIFICATION_050.md)
+- [기존 입고·QR·서버 반영·자동 실행](docs/RECEIPTS_LEDGER.md)
 - [0.4.0 기간 집계·불변 보고서·분할 출력](docs/LEDGER_040.md)
 - [0.4.0 성능 및 격리 검증](docs/VERIFICATION_040.md)
 - [0.3.0 검증 결과와 남은 제한](docs/VERIFICATION_030.md)

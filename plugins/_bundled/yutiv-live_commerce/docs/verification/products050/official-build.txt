@@ -1,0 +1,21 @@
+📂 빌드 소스: _bundled (C:\Temp\live-products050-browser\plugins/_bundled/yutiv-live_commerce)
+🔨 빌드 시작: yutiv-live_commerce (프로덕션)
+
+> @plugins/yutiv-live_commerce@0.5.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 6 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/css/plugin.css     15.20 kB │ gzip:  3.63 kB
+dist/js/plugin.iife.js  41.27 kB │ gzip: 15.53 kB
+✓ built in 248ms
+✅ 빌드 완료: yutiv-live_commerce
+   - JS: dist/js/plugin.iife.js (42.32 KB)
+   - CSS: dist/css/plugin.css (14.84 KB)
+   - components.json 생성됨 (컴포넌트 0개)
+   - 캐시 버전 갱신됨
+
+💡 활성 디렉토리에 반영하려면: php artisan plugin:update yutiv-live_commerce

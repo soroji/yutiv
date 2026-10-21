@@ -1,3 +1,15 @@
+# 0.6.0 최종 변경 범위
+
+시작/종료 HEAD `783906c3fd531c350102baba5c701198c7bdad73`, branch main. 기존 미커밋 0.5 작업을 보존했다. 변경은 `plugins/_bundled/yutiv-live_commerce/` 내부에 한정되며 commit/push 없음.
+
+배포 대상: 플러그인 전체. 재고 실사·관리 회계 Service/Contract/Enum/Controller/Request, migration 000008~000011, 기존 입고·출고·취소·반품·인센티브 연계, Blade 화면·기존 JS/CSS, 0.6.0 manifest 및 dist, 테스트·API/집계/복구 문서·검증 증거 포함. 코어/다른 확장 변경 없음. 다른 번들 소비 확장 최소 버전 변경 대상 없음.
+
+[검증 결과](VERIFICATION_060.md) · [집계/적용 기준](ACCOUNTING_060.md) · [릴리스 해시](verification/accounting060/release.json)
+
+---
+
+아래는 이전 작업의 변경 기록으로 당시 HEAD/건수이다.
+
 # 최종 변경 파일
 
 시작/종료 HEAD: `88ca7956eb5bdb676f581270626e02003247ae0a`, branch `main`. commit/push 없음.

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "management-report-last-part.pdf",
+    "pages": 51,
+    "width_mm": 297.0,
+    "height_mm": 209.9,
+    "all_pages_have_text": true,
+    "characters": 34228,
+    "detail_first": 23801,
+    "detail_last": 23900,
+    "detail_count": 100,
+    "detail_sequence_contiguous": true
+  },
+  {
+    "file": "management-report-part-1.pdf",
+    "pages": 40,
+    "width_mm": 209.9,
+    "height_mm": 297.0,
+    "all_pages_have_text": true,
+    "characters": 42145,
+    "detail_first": 1,
+    "detail_last": 100,
+    "detail_count": 100,
+    "detail_sequence_contiguous": true
+  }
+]

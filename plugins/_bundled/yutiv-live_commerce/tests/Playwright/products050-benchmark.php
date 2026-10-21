@@ -1,0 +1,10 @@
+<?php
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\DB;
+use Plugins\Yutiv\LiveCommerce\Enums\LiveEntity as E;
+use Plugins\Yutiv\LiveCommerce\Models\LiveTenant;
+use Plugins\Yutiv\LiveCommerce\Services\LiveProductWorkspace;
+$root=dirname(__DIR__,5);require $root.'/vendor/autoload.php';$app=require $root.'/bootstrap/app.php';$app->make(Kernel::class)->bootstrap();if(!str_contains(str_replace('\\','/',base_path()),'/live-products050-browser'))throw new RuntimeException('isolated copy required');$db=DB::connection();foreach([$db->getPdo(),$db->getReadPdo()] as $pdo){$r=$pdo->query('SELECT DATABASE() db,@@port port')->fetch(PDO::FETCH_ASSOC);if($r['db']!=='live_products050_isolated_browser'||(int)$r['port']!==33319)throw new RuntimeException('isolated DB required');}
+$tenant=LiveTenant::where('slug','golfif')->firstOrFail();$service=app(LiveProductWorkspace::class);$counts=[];foreach(['Product','Option','Unit','Receipt','ReceiptItem','LabelRequest','Movement'] as $entity)$counts[$entity]=$service->query(constant(E::class.'::'.$entity),$tenant->id)->count();$runs=[];
+foreach([['per_page'=>20],['per_page'=>100],['per_page'=>20,'stock'=>'yes'],['per_page'=>20,'date_basis'=>'received','from'=>'2026-10-01','to'=>'2026-10-31']] as $filters){$db->flushQueryLog();$db->enableQueryLog();memory_reset_peak_usage();$start=hrtime(true);$rows=$service->products($tenant->id,$tenant->timezone,$filters);$runs[]=['filters'=>$filters,'total'=>$rows->total(),'page_rows'=>$rows->count(),'milliseconds'=>round((hrtime(true)-$start)/1e6,3),'peak_mib'=>round(memory_get_peak_usage(true)/1048576,2),'queries'=>count($db->getQueryLog())];$db->disableQueryLog();}
+$result=['php'=>PHP_VERSION,'mysql'=>$db->selectOne('SELECT VERSION() v')->v,'port'=>33319,'counts'=>$counts,'runs'=>$runs];file_put_contents(base_path('products050-evidence/performance.json'),json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR));echo json_encode($result,JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR);

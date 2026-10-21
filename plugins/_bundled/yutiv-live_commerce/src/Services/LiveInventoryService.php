@@ -87,12 +87,13 @@ class LiveInventoryService extends LiveWorkflow
             $input['batch'] = $batch;
         }
 
-        return $this->once($tenant, 'label-print:'.$key, $input, function () use ($tenant, $actor, $qrs, $width, $height, $batch) {
+        return $this->once($tenant, 'label-print:'.$key, $input, function () use ($tenant, $actor, $qrs, $width, $height, $batch, $key) {
             abort_unless($this->records->query(E::Unit, $tenant)->whereIn('uuid', $qrs)->count() === count($qrs), 404);
             if ($batch !== null) {
                 $receipt = $this->row(E::Receipt, $tenant, $batch);
                 abort_unless($this->records->query(E::Unit, $tenant)->where('receipt_key', $receipt->receipt_key)->whereIn('uuid', $qrs)->count() === count($qrs), 404);
             }
+            app(LiveProductWorkspace::class)->printRequest($tenant, $actor, ['operation_key' => 'legacy-'.hash('sha256', $key), 'qrs' => $qrs, 'width' => $width, 'height' => $height, 'copies' => 1]);
             $this->audit($tenant, $actor, 'labels.print_requested', ['units' => $qrs, 'width_mm' => $width, 'height_mm' => $height, 'physical_print_verified' => false]);
 
             return ['recorded' => true, 'physical_print_verified' => false];
@@ -111,7 +112,7 @@ class LiveInventoryService extends LiveWorkflow
             $units = [];
             for ($i = 0; $i < $quantity; $i++) {
                 $unit = $this->records->create(E::Unit, $tenant, ['uuid' => (string) Str::uuid(), 'option_id' => $option, 'state' => 'available', 'location' => $location, 'receipt_key' => $receiptKey ?? $key]);
-                $this->movement($unit, $actor, $key, 'receive', null, '입고');
+                $this->movement($unit, $actor, $key, 'receive', null, '입고', $receiptKey !== null);
                 $units[] = $unit->uuid;
             }
             $this->audit($tenant, $actor, 'inventory.receive', ['option_id' => $option, 'quantity' => $quantity]);
@@ -141,11 +142,15 @@ class LiveInventoryService extends LiveWorkflow
         });
     }
 
-    public function movement(LiveRecord $unit, int $actor, string $key, string $type, ?array $before, string $reason): void
+    public function movement(LiveRecord $unit, int $actor, string $key, string $type, ?array $before, string $reason, bool $pendingCost = false): void
     {
-        $this->records->create(E::Movement, $unit->tenant_id, ['unit_id' => $unit->id, 'operation_key' => $key, 'type' => $type,
+        $revision=$this->records->query(E::InventoryRevision,$unit->tenant_id)->where('option_id',$unit->option_id)->lockForUpdate()->first();
+        if($revision)$revision->increment('revision');
+        else $this->records->create(E::InventoryRevision,$unit->tenant_id,['option_id'=>$unit->option_id,'revision'=>1]);
+        $movement=$this->records->create(E::Movement, $unit->tenant_id, ['unit_id' => $unit->id, 'operation_key' => $key, 'type' => $type,
             'from_state' => $before['state'] ?? null, 'to_state' => $unit->state, 'from_location' => $before['location'] ?? null,
             'to_location' => $unit->location, 'actor_id' => $actor, 'reason' => $reason, 'order_line_id' => $before['order_line_id'] ?? $unit->order_line_id]);
+        app(LiveFifoService::class)->movement($unit,$movement,$pendingCost);
     }
 
     public function reconcile(int $tenant): array

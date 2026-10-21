@@ -14,8 +14,8 @@ enum StaffRole: string
     {
         return $this === self::Owner || in_array($ability, match ($this) {
             self::Sales => ['catalog', 'broadcast', 'orders', 'contacts', 'statistics'],
-            self::Warehouse => ['inventory', 'shipping', 'labels', 'orders'],
-            self::Finance => ['banks', 'deposit', 'refund', 'settlement', 'orders', 'statistics'],
+            self::Warehouse => ['inventory.count-confirm','inventory', 'shipping', 'labels', 'orders'],
+            self::Finance => ['finance.read','finance.expense','finance.payment','finance.accounts','finance.transfer','finance.cost','banks', 'deposit', 'refund', 'settlement', 'orders', 'statistics'],
             self::Customs => ['customs', 'shipping', 'orders'],
             default => [],
         }, true);

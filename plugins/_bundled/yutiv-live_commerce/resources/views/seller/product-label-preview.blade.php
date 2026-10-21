@@ -1,0 +1,6 @@
+@extends('teewide::layouts.operations')
+@section('content')
+<style>.live-label{width:{{ $data['width'] }}mm;height:{{ $data['height'] }}mm}@media print{@page{size:{{ $data['width'] }}mm {{ $data['height'] }}mm;margin:0}}</style>
+<section class="live-products-workspace"><h1>QR 미리보기</h1><p>선택 {{ count($units) }}개 · 물품당 {{ $data['copies'] }}장 · 총 {{ count($units)*$data['copies'] }}장 · {{ $data['width'] }}×{{ $data['height'] }}mm. 기존 UUID를 사용합니다.</p><p>브라우저 인쇄창에서 용지/방향/배율100%·머리말/꼬리말 끄기를 확인하세요. 실제 인쇄 성공은 확인할 수 없습니다.</p><button type="button" class="live-button" data-workspace-print>인쇄 요청 · 인쇄창 열기</button><button type="button" data-workspace-reprint hidden>같은 물품 다시 인쇄 요청</button><p data-workspace-print-status role="status"></p><script type="application/json" data-workspace-print-data>@json($data)</script></section>
+<div class="live-labels">@foreach($units as $unit)@for($copy=0;$copy<$data['copies'];$copy++)<article class="live-label" data-label-unit="{{ $unit->uuid }}"><div data-qr="U:{{ $unit->uuid }}"></div><div class="live-label-text"><strong>{{ $tenant->name }} · {{ substr($unit->uuid,0,8) }}</strong><p>{{ $products[$options[$unit->option_id]->product_id]->name }} · {{ $options[$unit->option_id]->name }}</p><p class="live-label-code">{{ $unit->uuid }}</p></div></article>@endfor @endforeach</div>
+@endsection

@@ -36,7 +36,7 @@ class LiveOrderAdjustmentService extends LiveWorkflow
             $order = $this->row(E::Order, $tenant, $orderId, true);
             abort_unless(in_array($order->payment_state, ['pending', 'review', 'expired'], true), 409, __('yutiv-live_commerce::live.errors.e_74fa717509'));
             $bank = $this->row(E::Bank, $tenant, $bankId, true);
-            abort_unless($bank->active, 409, __('yutiv-live_commerce::live.errors.e_34e5a80449'));
+            abort_unless($bank->active && $bank->customer_visible, 409, __('yutiv-live_commerce::live.errors.e_34e5a80449'));
             $notice = ['bank' => $bank->bank, 'number' => $bank->account_number, 'holder' => $bank->holder, 'account_id' => $bank->id];
             $this->records->create(E::Event, $tenant, ['order_id' => $orderId, 'operation_key' => $key, 'type' => 'bank_notice', 'amount' => 0,
                 'data' => ['bank_id' => $bankId, 'encrypted_notice' => encrypt($notice), 'reason' => $reason, 'notification_state' => 'customer_portal_available', 'external_message_sent' => false], 'actor_id' => $actor]);

@@ -12,6 +12,7 @@ use Plugins\Yutiv\LiveCommerce\Services\LiveInventoryService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveOfficeService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveOrderAdjustmentService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveOrderService;
+use Plugins\Yutiv\LiveCommerce\Services\LiveReceiptService;
 use Plugins\Yutiv\LiveCommerce\Services\LiveReturnService;
 use Plugins\Yutiv\LiveCommerce\Support\LiveContext;
 
@@ -26,6 +27,11 @@ class LiveWorkflowController
         $user = LiveContext::user();
         $d = $request->validated();
         $action = $request->route('action');
+        $legacyCashPrefix = match ($action) {'deposit'=>'deposit:', 'resolve-deposit'=>'resolve-deposit:', 'refund'=>'refund:', 'incentive'=>'incentive-payment:', 'recovery'=>'recovery:', default=>null};
+        if ($legacyCashPrefix && $this->office->query(E::FinanceState,$tenant->id)->exists()) {
+            // Completed pre-upgrade operations may be retried; new records need an actual fund/date.
+            abort_unless($this->office->query(E::Operation,$tenant->id)->where('operation_key',$legacyCashPrefix.$d['operation_key'])->exists(),409,__('yutiv-live_commerce::live.finance_incremental_required'));
+        }
         $result = match ($action) {
             'as-receive', 'as-dispatch' => $this->inventory->serviceUnit($tenant->id, $user->id, $d['qr'], $action === 'as-dispatch', $d['location'], $d['reason'], $d['operation_key']),
             'stock-correction' => $this->inventory->correct($tenant->id, $user->id, $d['qr'], $d['movement_id'], $d['reason'], $d['operation_key']),
@@ -34,7 +40,7 @@ class LiveWorkflowController
             'attribution' => app(LiveOrderAdjustmentService::class)->attribution($tenant->id, $user->id, $d['line_id'], $d['channel_id'], $d['showhost_id'] ?? null, $d['reason'], $d['operation_key']),
             'bank-notice' => app(LiveOrderAdjustmentService::class)->bank($tenant->id, $user->id, $d['order_id'], $d['bank_id'], $d['reason'], $d['operation_key']),
             'recovery' => app(LiveOrderAdjustmentService::class)->recovery($tenant->id, $user->id, $d['line_id'], $d['beneficiary'], $d['amount'], $d['reason'], $d['operation_key']),
-            'receive' => $this->inventory->receive($tenant->id, $user->id, $d['option_id'], $d['quantity'], $d['location'], $d['operation_key']),
+            'receive' => $this->receive($tenant->id, $user->id, $d),
             'transition' => $this->inventory->transition($tenant->id, $user->id, $d['qr'], $d['state'], $d['location'], $d['reason'], $d['operation_key']),
             'ship' => $this->orders->ship($tenant->id, $user->id, $d['order_id'], $d['qrs'], $d['operation_key']),
             'deposit' => $this->orders->deposit($tenant->id, $user->id, $d['order_id'], $d['amount'], $d['operation_key'], $d['reason']),
@@ -57,6 +63,18 @@ class LiveWorkflowController
         }
 
         return ResponseHelper::success('common.success', $result);
+    }
+
+    private function receive(int $tenant, int $actor, array $d): array
+    {
+        if ($this->office->query(E::Operation, $tenant)->where('operation_key', 'receive:'.$d['operation_key'])->exists()) {
+            return $this->inventory->receive($tenant, $actor, $d['option_id'], $d['quantity'], $d['location'], $d['operation_key']);
+        }
+        $option = $this->office->query(E::Option, $tenant)->findOrFail($d['option_id']);
+        $result = app(LiveReceiptService::class)->receive($tenant, $actor, ['operation_key' => 'single-'.hash('sha256', $d['operation_key']), 'mode' => 'existing', 'product_id' => $option->product_id, 'location' => $d['location'], 'items' => [['option_id' => $option->id, 'name' => $option->name, 'price' => $option->price, 'discount' => $option->discount, 'unit_cost' => $d['unit_cost'], 'quantity' => $d['quantity']]]]);
+        $result['return_url'] = '/seller/products?completed='.$result['receipt_id'];
+
+        return $result;
     }
 
     private function permission(int $tenant, int $actor, array $data): array

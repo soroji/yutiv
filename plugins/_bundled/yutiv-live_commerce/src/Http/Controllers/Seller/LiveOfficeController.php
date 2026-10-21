@@ -24,7 +24,7 @@ class LiveOfficeController
 {
     public const MENU = ['dashboard' => ['운영 현황', 'orders'], 'broadcasts' => ['방송 관리', 'broadcast'], 'channels' => ['유튜브 채널', 'broadcast'], 'showhosts' => ['쇼호스트', 'broadcast'],
         'products' => ['상품 관리', 'catalog'], 'options' => ['상품 옵션', 'catalog'], 'broadcast-items' => ['방송 판매 상품', 'broadcast'], 'sale-links' => ['판매 링크', 'broadcast'],
-        'orders' => ['주문·입금 확인', 'orders'], 'banks' => ['입금계좌', 'banks'], 'receive' => ['입고', 'inventory'], 'ship' => ['출고', 'shipping'],
+        'accounting' => ['회계관리', 'statistics'], 'orders' => ['주문·입금 확인', 'orders'], 'banks' => ['입금계좌', 'banks'], 'receive' => ['입고', 'inventory'], 'ship' => ['출고', 'shipping'],
         'inventory' => ['재고·실사·조정', 'inventory'], 'returns' => ['반품·A/S', 'inventory'], 'statistics' => ['매출 통계', 'statistics'], 'incentives' => ['인센티브·정산', 'settlement'],
         'labels' => ['상품 관리 · QR 라벨', 'labels'], 'receipts' => ['입고 내역', 'inventory'], 'product-receive' => ['상품 등록·입고', 'inventory'], 'ledger' => ['매출정산', 'settlement'], 'brand' => ['브랜드·상담 링크', 'brand'], 'staff' => ['직원·권한', 'staff'], 'audit' => ['작업 이력', 'audit']];
 
@@ -61,7 +61,7 @@ class LiveOfficeController
                 ->orderByDesc('id')->paginate(20)->withQueryString();
         }
         $data['ledger'] = $section === 'ledger' ? app(LiveLedgerService::class)->report($tenant->id, $user->id, $request->input('from', now($tenant->timezone)->format('Y-m-d')), $request->input('to', now($tenant->timezone)->format('Y-m-d')), $request->input('period', 'day'), $request->integer('product_id') ?: null, $request->integer('page', 1)) : null;
-        $data['savedReports'] = $section === 'ledger' ? $this->office->query(LiveEntity::Report, $tenant->id)->orderByDesc('id')->paginate(10, ['id', 'uuid', 'created_at', 'actor_id'], 'reports_page')->withQueryString() : null;
+        $data['savedReports'] = $section === 'ledger' ? $this->office->query(LiveEntity::Report, $tenant->id)->where('report_kind',\Plugins\Yutiv\LiveCommerce\Enums\ReportKind::Operational->value)->orderByDesc('id')->paginate(10, ['id', 'uuid', 'created_at', 'actor_id'], 'reports_page')->withQueryString() : null;
         $data['summary'] = in_array($section, ['dashboard', 'statistics'], true) ? $this->statistics->summary($tenant->id, $request->input('from', now()->subMonth()->format('Y-m-d')), $request->input('to', now()->format('Y-m-d')),
             $request->input('basis', 'created_at'), $request->input('period', 'day'), $request->only(['broadcast_id', 'channel_id', 'showhost_id', 'product_id', 'option_id'])) : null;
 
@@ -80,7 +80,9 @@ class LiveOfficeController
 
     public function receive(LiveReceiptRequest $request): JsonResponse
     {
-        return ResponseHelper::success('common.success', app(LiveReceiptService::class)->receive(LiveContext::requireTenant()->id, LiveContext::user()->id, $request->validated()));
+        $result=app(LiveReceiptService::class)->receive(LiveContext::requireTenant()->id, LiveContext::user()->id, $request->validated());
+        $result['return_url']=app(\Plugins\Yutiv\LiveCommerce\Services\LiveProductWorkspace::class)->back(($request->input('list')??''),$result['receipt_id']);
+        return ResponseHelper::success('common.success',$result);
     }
 
     public function saveReport(LiveOfficeRequest $request)
@@ -122,6 +124,7 @@ class LiveOfficeController
             'menu' => $this->menu($role),
             'lines' => $lines, 'effectiveIncentives' => $effectiveIncentives,
             'events' => $events,
+            'financeActive' => $this->office->query(LiveEntity::FinanceState,$tenant->id)->exists(),
             'channels' => $this->office->query($e::Channel, $tenant->id)->where('active', true)->get(),
             'hosts' => $this->office->query($e::Showhost, $tenant->id)->where('active', true)->get(),
             'banks' => $role->allows('banks') ? $this->office->query($e::Bank, $tenant->id)->where('active', true)->get() : collect(),
@@ -131,9 +134,13 @@ class LiveOfficeController
     private function menu(StaffRole $role): array
     {
         $menu = array_filter(self::MENU, fn ($item) => $role->allows($item[1]));
-        unset($menu['labels'], $menu['options'], $menu['receive'], $menu['product-receive'], $menu['receipts']);
+        unset($menu['banks'],$menu['statistics'],$menu['ledger'],$menu['inventory'],$menu['labels'], $menu['options'], $menu['receive'], $menu['product-receive'], $menu['receipts']);
+        if ($role->allows('statistics') && ! $role->allows('finance.read')) {
+            unset($menu['accounting']);
+            $menu['accounting/sales']=['매출·현재 주문 분석','statistics'];
+        }
         if ($role->allows('inventory') && ! $role->allows('catalog')) {
-            $menu['product-receive'] = ['상품 추가 입고', 'inventory'];
+            $menu['products'] = ['상품관리', 'inventory'];
         }
 
         return $menu;

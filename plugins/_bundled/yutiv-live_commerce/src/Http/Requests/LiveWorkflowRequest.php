@@ -4,8 +4,10 @@ namespace Plugins\Yutiv\LiveCommerce\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Plugins\Yutiv\LiveCommerce\Enums\LiveEntity;
 use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
 use Plugins\Yutiv\LiveCommerce\Rules\ApprovedExternalUrl;
+use Plugins\Yutiv\LiveCommerce\Services\LiveProductWorkspace;
 use Plugins\Yutiv\LiveCommerce\Support\LiveContext;
 
 class LiveWorkflowRequest extends FormRequest
@@ -21,13 +23,18 @@ class LiveWorkflowRequest extends FormRequest
         return true;
     }
 
+    private function legacyReceiptRetry(): bool
+    {
+        return app(LiveProductWorkspace::class)->query(LiveEntity::Operation, LiveContext::requireTenant()->id)->where('operation_key', 'receive:'.$this->input('operation_key', ''))->exists();
+    }
+
     public function rules(): array
     {
         $key = ['operation_key' => ['required', 'string', 'max:100']];
         $reason = ['reason' => ['required', 'string', 'max:1000', 'not_regex:/P[0-9]{12}/']];
 
         return match ($this->route('action')) {
-            'receive' => $key + ['option_id' => ['required', 'integer', 'min:1'], 'quantity' => ['required', 'integer', 'min:1', 'max:200'], 'location' => ['required', 'string', 'max:100']],
+            'receive' => $key + ['unit_cost' => [Rule::requiredIf(! $this->legacyReceiptRetry()), 'nullable', 'integer', 'min:0', 'max:1000000000'], 'option_id' => ['required', 'integer', 'min:1'], 'quantity' => ['required', 'integer', 'min:1', 'max:200'], 'location' => ['required', 'string', 'max:100']],
             'label-print' => $key + ['batch' => ['nullable', 'integer', 'min:1'], 'qrs' => ['required', 'array', 'min:1', 'max:200'], 'qrs.*' => ['required', 'uuid', 'distinct'], 'width' => ['required', 'integer', 'min:30', 'max:100'], 'height' => ['required', 'integer', 'min:20', 'max:100']],
             'as-receive', 'as-dispatch' => $key + $reason + ['qr' => ['required', 'uuid'], 'location' => ['required', 'string', 'max:100']],
             'stock-correction' => $key + $reason + ['qr' => ['required', 'uuid'], 'movement_id' => ['required', 'integer', 'min:1']],

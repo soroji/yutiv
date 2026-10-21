@@ -1,0 +1,11 @@
+{
+    "rollbackRejected": true,
+    "countsUnchanged": {
+        "live_receipt_items": 9,
+        "live_label_requests": 4,
+        "live_stock_units": 4323
+    },
+    "browserPurchaseAmount": 49000,
+    "originalUnitCostLinks": 6,
+    "salePriceUnchanged": 15000
+}

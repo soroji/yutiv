@@ -13,7 +13,7 @@ class LiveCatalogService extends LiveWorkflow
     {
         return $this->records->transaction(function () use ($entity, $tenant, $actor, $data, $id) {
             LiveTenant::query()->whereKey($tenant)->lockForUpdate()->firstOrFail();
-            foreach (['product_id' => E::Product, 'channel_id' => E::Channel, 'bank_account_id' => E::Bank, 'broadcast_id' => E::Broadcast, 'option_id' => E::Option, 'showhost_id' => E::Showhost] as $field => $reference) {
+            foreach (['category_id' => E::Category, 'product_id' => E::Product, 'channel_id' => E::Channel, 'bank_account_id' => E::Bank, 'broadcast_id' => E::Broadcast, 'option_id' => E::Option, 'showhost_id' => E::Showhost] as $field => $reference) {
                 if (! empty($data[$field])) {
                     $this->row($reference, $tenant, $data[$field], true);
                 }

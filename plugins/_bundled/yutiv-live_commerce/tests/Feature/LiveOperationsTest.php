@@ -289,7 +289,7 @@ class LiveOperationsTest extends TeeWideMainDesignTest
         $changed->assertOk()->assertJsonPath('data.saved', true);
         $newCookie = $changed->getCookie('teewide_session', false);
         $this->assertNotNull($newCookie);
-        $this->withUnencryptedCookie('teewide_session', $newCookie->getValue())->get('http://'.self::ROOT_HOST.'/seller/products')->assertOk()->assertSee('상품 관리');
+        $this->withUnencryptedCookie('teewide_session', $newCookie->getValue())->get('http://'.self::ROOT_HOST.'/seller/products')->assertOk()->assertSee('상품관리');
         $this->postJson('http://'.self::ROOT_HOST.'/seller/catalog/banks', ['bank' => '권한 없는 은행'])->assertForbidden();
         $accounts->permission($tenant->id, 999, $issued['user_id'], 'sales', false);
         $this->postJson('http://'.self::ROOT_HOST.'/seller/catalog/products', ['name' => '권한 회수 이후 상품', 'code' => 'BLOCKED'])->assertUnauthorized();
@@ -317,6 +317,8 @@ class LiveOperationsTest extends TeeWideMainDesignTest
         $tenant = $this->seedGolfifTenant();
         $migration = require dirname(__DIR__, 2).'/database/migrations/2026_10_13_000004_create_live_operations.php';
         $receipts = require dirname(__DIR__, 2).'/database/migrations/2026_10_20_000005_create_live_receipts_table.php';
+        $workspace = require dirname(__DIR__, 2).'/database/migrations/2026_10_21_000007_create_live_product_workspace.php';
+        $workspace->down();
         $receipts->down();
         $migration->down();
         $id = DB::table('teewide_users')->insertGetId(['name' => '기존 합성 계정', 'email' => 'legacy-only@example.test', 'password' => Hash::make('isolated-legacy-password'), 'status' => 'active', 'uuid' => (string) Str::uuid(), 'created_at' => now(), 'updated_at' => now()]);
@@ -326,6 +328,7 @@ class LiveOperationsTest extends TeeWideMainDesignTest
         $uuid = $legacy->uuid;
         $migration->up();
         $receipts->up();
+        $workspace->up();
         $legacy->refresh();
         $this->assertNull($legacy->tenant_id);
         $this->assertSame($hash, $legacy->password);

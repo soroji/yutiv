@@ -971,7 +971,7 @@ abstract class PluginTestCase extends TestCase
     private static function withOperationsRoutes(array $names): array
     {
         foreach (['root', 'live'] as $host) {
-            foreach (['assets.css', 'assets.css.extensionless', 'assets.js', 'assets.js.extensionless', 'broadcast', 'cart', 'customer.task', 'my', 'media', 'order', 'order.task', 'password.change', 'password.forgot', 'password.reset', 'product', 'sale-link', 'seller', 'seller.catalog', 'seller.login', 'seller.media', 'seller.order', 'seller.receipt', 'seller.reports.show', 'seller.reports.store', 'seller.task', 'shop'] as $name) {
+            foreach (['assets.css', 'assets.css.extensionless', 'assets.js', 'assets.js.extensionless', 'broadcast', 'cart', 'customer.task', 'my', 'media', 'order', 'order.task', 'password.change', 'password.forgot', 'password.reset', 'product', 'sale-link', 'seller', 'seller.catalog', 'seller.login', 'seller.media', 'seller.order', 'finance.index','finance.action','finance.report','finance.evidence.show','finance.evidence.store','products.stock','products.stock.store','products.stock.legacy','products.index','products.show','products.receive','products.qr','products.action','products.legacy-labels','products.legacy-receive','seller.receipt', 'seller.reports.show', 'seller.reports.store', 'seller.task', 'shop'] as $name) {
                 $names[] = 'teewide.ops.'.$host.'.'.$name;
             }
         }
@@ -998,6 +998,9 @@ abstract class PluginTestCase extends TestCase
             'Customer\\LiveCustomerController',
             'Customer\\LiveShopController',
             'Seller\\LiveOfficeController',
+            'Seller\\LiveStockCountController',
+            'Seller\\LiveFinanceController',
+            'Seller\\LiveProductWorkspaceController',
             'Seller\\LiveWorkflowController',
             'LiveAssetController',
             'LiveMediaController',

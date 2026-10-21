@@ -1,0 +1,31 @@
+{
+    "from": "0.4.0",
+    "to": "0.5.0",
+    "unchanged": {
+        "live_products": {
+            "count": 48,
+            "sha256": "a2c3fa51cb29769c6fdce76509f11b4c3cfff932ccbc27afdf8651f08b63cdda"
+        },
+        "live_options": {
+            "count": 588,
+            "sha256": "91c54b67b721c3a0e81441c4fdce74f6537ee58f4e892b3be319d00660829019"
+        },
+        "live_stock_units": {
+            "count": 4313,
+            "sha256": "311a430281f8660baab27f17f06a150ced6b3172f6879c4dd83581e707743cfd"
+        },
+        "live_stock_movements": {
+            "count": 25320,
+            "sha256": "53e70c68ac157b3fe1ec9b41e0ccfb20d53e81781f11a3a779947304bd1606b3"
+        },
+        "live_reports": {
+            "count": 11,
+            "sha256": "da5ca509028b806928d8b532e1835f3fec0d8b26fe5c9325530f44c9407df32c"
+        },
+        "live_report_rows": {
+            "count": 118822,
+            "sha256": "9d78eb7f19b8898fac95f68287f800e9ec64d77033b6cb2927eadf84bc351fe8"
+        }
+    },
+    "legacy_cost_link_null": true
+}

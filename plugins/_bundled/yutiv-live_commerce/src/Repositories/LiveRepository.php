@@ -11,7 +11,8 @@ class LiveRepository implements LiveRepositoryInterface
 {
     public function query(LiveEntity $entity, int $tenantId): Builder
     {
-        return LiveRecord::entity($entity)->newQuery()->where('tenant_id', $tenantId);
+        $model=LiveRecord::entity($entity);
+        return $model->newQuery()->where($model->qualifyColumn('tenant_id'),$tenantId);
     }
 
     public function create(LiveEntity $entity, int $tenantId, array $data): LiveRecord

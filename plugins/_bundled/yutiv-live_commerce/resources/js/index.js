@@ -1,6 +1,10 @@
 import qrcode from 'qrcode-generator';
 import '../css/live.css';
+import '../css/products.css';
+import '../css/finance.css';
+import { initFinance } from './finance';
 import { initReceipts } from './receipt';
+import { initProducts } from './products';
 
 export function qrSvg(value) {
     const qr = qrcode(0, 'M'); qr.addData(value); qr.make();
@@ -23,8 +27,9 @@ function payload(form) {
         else result[name] = value;
     }
     if (typeof result.qrs === 'string') result.qrs = result.qrs.split(/[\s,]+/).filter(Boolean);
-    for (const key of ['active','primary','default','published','sellable','locked']) if (key in result) result[key] = result[key] === '1';
+    for (const key of ['active','primary','default','published','sellable','locked','customer_visible','acknowledge_incomplete']) if (key in result) result[key] = result[key] === '1';
     if (form.receiptItems) result.items = form.receiptItems();
+    if (form.receiptAxes) result.axes = form.receiptAxes();
     return result;
 }
 function attachForm(form) {
@@ -44,10 +49,12 @@ function attachForm(form) {
             if (data.temporary_password) { message(form, `임시 비밀번호: ${data.temporary_password} — 지금 복사하여 안전하게 전달하세요. 30초 후 표시를 닫습니다.`); setTimeout(()=>message(form,'임시 비밀번호 표시를 닫았습니다.'),30000); }
             if (data.order) { const link = document.createElement('a'); link.href='/orders/'+encodeURIComponent(data.order); link.textContent='주문 및 입금 안내 보기'; form.querySelector('[data-live-message]')?.append(link); }
             if (data.units) { const link=document.createElement('a');link.href='/seller/labels?receipt='+encodeURIComponent(data.units[0]);link.textContent='입고 QR 라벨 출력';form.querySelector('[data-live-message]')?.append(link); }
-            if (data.receipt_id) { window.location.assign('/seller/receipts?batch='+encodeURIComponent(data.receipt_id)); return; }
+            if (data.receipt_id) { window.location.assign(data.return_url || '/seller/receipts?batch='+encodeURIComponent(data.receipt_id)); return; }
+            if(form.hasAttribute('data-stock-count')&&data.return_url){window.location.assign(data.return_url);return;}
+            if(form.hasAttribute('data-workspace-refresh'))window.location.reload();
             if (data.code && form.dataset.customs) { message(form, '통관부호: '+data.code+' (형식 등록, 외부 유효성 미확인)'); setTimeout(()=>message(form,'조회 표시를 닫았습니다.'),30000); }
             if(data.image_url){let preview=form.querySelector('[data-image-preview]');if(!preview){preview=document.createElement('img');preview.dataset.imagePreview='1';preview.alt='저장한 이미지 미리보기';preview.style.maxWidth='200px';form.append(preview);}preview.src=data.image_url+'?v='+Date.now();}
-        } catch (error) { message(form, error instanceof Error ? error.message : '처리하지 못했습니다. 다시 시도해 주세요.', true); }
+        } catch (error) { form.querySelectorAll('[data-product-status]').forEach(input=>input.checked=input.defaultChecked);message(form, error instanceof Error ? error.message : '처리하지 못했습니다. 다시 시도해 주세요.', true); }
         finally { delete form.dataset.busy; buttons.forEach(b=>b.disabled=false); }
     });
 }
@@ -64,6 +71,7 @@ async function camera(button) {
 }
 export function initLive(root=document) {
     initReceipts(root);
+    initProducts(root);
     root.querySelectorAll('[data-ledger-print]').forEach(button=>button.addEventListener('click',()=>{document.body.classList.add('live-print-ledger');window.print();}));
     window.addEventListener('afterprint',()=>document.body.classList.remove('live-print-ledger'));
     root.querySelectorAll('[data-live-menu]').forEach(button=>{if(!button.dataset.bound){button.dataset.bound='1';button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(open));button.closest('header').toggleAttribute('data-menu-open',open);});}});
@@ -104,6 +112,7 @@ export function initLive(root=document) {
     }));
     root.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='복사했습니다'}catch{b.textContent='복사하지 못했습니다. 주소를 직접 선택해 주세요.'}}));
 }
+if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>initFinance(document)); else initFinance(document);
 if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>initLive()); else initLive();
 
 // Keep File outside layout expression serialization; use G7's authenticated API client.

@@ -65,6 +65,7 @@ class LiveIncentiveService extends LiveWorkflow
         if ($target === $current) {
             return;
         }
+        app(LiveFinancePeriodService::class)->assertOpen($tenant);
         $last = (clone $query)->max('id') ?? 0;
         $this->records->create(E::Incentive, $tenant, ['order_line_id' => $line, 'beneficiary' => $beneficiary, 'kind' => $kind,
             'amount' => $target - $current, 'operation_key' => 'sync:'.$line.':'.$beneficiary.':'.$kind.':'.$last.':'.$target]);

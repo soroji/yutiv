@@ -1,0 +1,28 @@
+feature: inventory-accounting-060
+axes:
+  role: [owner, finance, sales, warehouse, customs, customer, foreign-tenant]
+  count: [draft, edited, confirmed-retry, changed-by-receipt, changed-by-shipment, reserved, unidentified-surplus, wrong-location, lost-recovered]
+  money: [KRW-integer, CNY-two-decimals, six-decimal-rate, half-up, cumulative-partial-rounding, unknown-cost, pending-rate]
+  payment: [unpaid, paid, partial, multiple, over-limit, recovery, duplicate-key, different-payload, future-date, backdated-negative-balance]
+  cash: [partial, multiple, surplus-credit, stock-recheck, insufficient-stock, cancelled, returned, partial-refund, original-notice-preserved]
+  transfer: [requested, withdrawn, received, cancelled-before-withdrawal, cancel-pending, returned-principal, same-currency, separate-fee]
+  fifo: [opening-known, opening-unknown, multiple-layers, actual-QR-independent, sale, original-return-restoration, loss, restored-loss, customer-owned-AS, concurrent-shipment]
+  recurring: [day-31, February, duplicate-month, unpaid-KRW, pending-CNY, archived-category, closed-period, bounded-maintenance]
+  report: [day, week, month, custom, current-analysis, source-snapshot, changed-product-name, changed-order, same-key-retry, separate-regeneration, close, stale-close, reopen-reason, split-100, portrait, landscape]
+effects:
+  - existing-product-option-unit-QR-receipt-print-history-identities-preserved
+  - no-inventory-purchase-plus-FIFO-double-expense
+  - no-transfer-principal-as-cost-or-premature-receiver-cash
+  - no-cumulative-receipt-overwrite-after-finance-activation
+  - period-cash-and-management-recognition-separated
+  - incomplete-data-is-visible-and-never-invented-zero-cost
+  - no-long-tenant-lock-during-report-read-or-save
+  - immutable-report-and-source-digests-with-tenant-cost-permissions
+verification:
+  feature: [LiveFinanceDomainTest, LiveStockCountTest, LiveMoneyTest, LiveLedgerScaleTest, LiveOperationsTest, LiveProductWorkspaceTest]
+  frontend: [finance.test.ts, products.test.ts, receipt.test.ts, headquarters.test.tsx]
+  browser: [accounting060.cjs, products050.cjs]
+  load: accounting060-benchmark.php
+  upgrade: accounting060-upgrade.php
+  actual_runtime: PHP-8.4.26-MySQL-8.4.11
+  target_runtime: PHP-8.3.6-MySQL-8.0.46

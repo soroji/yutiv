@@ -39,7 +39,13 @@ class LiveReceiptLedgerTest extends TeeWideMainDesignTest
         $this->loginRole($role);
         foreach (['product-receive' => $inventory, 'labels' => $labels, 'ledger' => $ledger] as $section => $allowed) {
             $response = $this->get('http://'.self::ROOT_HOST.'/seller/'.$section);
-            $allowed ? $response->assertOk() : $response->assertForbidden();
+            if ($allowed && ($section === 'labels' || ($section === 'product-receive' && $role === 'warehouse'))) {
+                $response->assertRedirect();
+            } elseif ($allowed) {
+                $response->assertOk();
+            } else {
+                $response->assertForbidden();
+            }
         }
         $response = $this->withCredentials()->postJson('http://'.self::ROOT_HOST.'/seller/receipt', $this->input('role-'.$role));
         $role === 'owner' ? $response->assertOk() : $response->assertForbidden();
@@ -64,8 +70,8 @@ class LiveReceiptLedgerTest extends TeeWideMainDesignTest
     {
         return ['operation_key' => $key, 'mode' => 'new', 'name' => '격리 입고 상품', 'code' => $key, 'description' => '합성 데이터', 'published' => false, 'sellable' => true,
             'location' => '격리 창고', 'memo' => '입고 테스트', 'items' => [
-                ['name' => '검정 / S', 'price' => 10000, 'discount' => 100, 'quantity' => 2],
-                ['name' => '검정 / M', 'price' => 10000, 'discount' => 0, 'quantity' => 3],
+                ['name' => '검정 / S', 'price' => 10000, 'discount' => 100, 'unit_cost' => 1000, 'quantity' => 2],
+                ['name' => '검정 / M', 'price' => 10000, 'discount' => 0, 'unit_cost' => 1000, 'quantity' => 3],
             ]];
     }
 
@@ -98,13 +104,13 @@ class LiveReceiptLedgerTest extends TeeWideMainDesignTest
         $this->assertCount(5, array_unique($qrs));
         $options = $repo->query(E::Option, $tenant->id)->orderBy('id')->get();
         $second = ['operation_key' => 'batch-two', 'mode' => 'existing', 'product_id' => $first['product_id'], 'location' => '별도 창고', 'items' => [
-            ['option_id' => $options[0]->id, 'name' => $options[0]->name, 'price' => 1, 'discount' => 0, 'quantity' => 1],
+            ['option_id' => $options[0]->id, 'name' => $options[0]->name, 'price' => 1, 'discount' => 0, 'unit_cost' => 1000, 'quantity' => 1],
         ]];
         $next = $this->postJson($url, $second)->assertOk()->json('data');
         $this->assertNotSame($first['receipt_id'], $next['receipt_id']);
         $this->assertSame(2, $repo->query(E::Option, $tenant->id)->count());
         $this->assertSame(10000, (int) $options[0]->fresh()->price);
-        $this->get('http://'.self::ROOT_HOST.'/seller/labels?batch='.$first['receipt_id'])->assertOk()->assertSee('입고 '.$first['receipt_id'].'번');
+        $this->get('http://'.self::ROOT_HOST.'/seller/product-qr?batch='.$first['receipt_id'])->assertOk()->assertSee('물품 선택');
         $this->get('http://'.self::ROOT_HOST.'/seller/receipts?batch='.$first['receipt_id'])->assertOk()->assertSee('입고 완료: '.$first['receipt_id'].'번');
         $inventory = app(LiveInventoryService::class);
         $this->assertSame($inventory->labelPrint($tenant->id, $user->id, $qrs, 50, 30, 'print-one', $first['receipt_id']), $inventory->labelPrint($tenant->id, $user->id, $qrs, 50, 30, 'print-one', $first['receipt_id']));
@@ -167,13 +173,13 @@ class LiveReceiptLedgerTest extends TeeWideMainDesignTest
         $catalog = app(LiveCatalogService::class);
         $product = $catalog->save(E::Product, $tenant->id, 0, ['name' => '기본 상품', 'code' => 'DEFAULT']);
         $option = $catalog->save(E::Option, $tenant->id, 0, ['name' => '기본', 'product_id' => $product->id, 'price' => 0]);
-        $data = ['operation_key' => 'default-one', 'mode' => 'existing', 'product_id' => $product->id, 'location' => '창고', 'items' => [['option_id' => $option->id, 'name' => '기본', 'price' => 0, 'discount' => 0, 'quantity' => 1]]];
+        $data = ['operation_key' => 'default-one', 'mode' => 'existing', 'product_id' => $product->id, 'location' => '창고', 'items' => [['option_id' => $option->id, 'name' => '기본', 'price' => 0, 'discount' => 0, 'unit_cost' => 1000, 'quantity' => 1]]];
         $this->postJson('http://'.self::ROOT_HOST.'/seller/receipt', $data)->assertOk();
         $other = LiveTenant::create(['name' => '다른 업체', 'slug' => 'isolated-other', 'status' => 'active']);
         $foreign = app(LiveReceiptService::class)->receive($other->id, 0, $this->input('other-batch'));
         $foreignReport = app(LiveLedgerService::class)->save($other->id, 0, '2026-10-01', '2026-10-31', 'day');
         $this->get('http://'.self::ROOT_HOST.'/seller/reports/'.$foreignReport)->assertForbidden();
-        $this->get('http://'.self::ROOT_HOST.'/seller/labels?batch='.$foreign['receipt_id'])->assertNotFound();
+        $this->get('http://'.self::ROOT_HOST.'/seller/product-qr?batch='.$foreign['receipt_id'])->assertNotFound();
         $data['operation_key'] = 'foreign-attempt';
         $data['product_id'] = $foreign['product_id'];
         $this->postJson('http://'.self::ROOT_HOST.'/seller/receipt', $data)->assertNotFound();

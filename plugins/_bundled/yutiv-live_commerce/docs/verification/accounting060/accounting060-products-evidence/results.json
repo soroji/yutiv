@@ -1,0 +1,25 @@
+{
+  "product": 55,
+  "batch": 61,
+  "code": "PRODUCTS050-1792541617799",
+  "labels": 8,
+  "uuids": [
+    "0114ed4b-1f43-438c-9882-3006a90ba581",
+    "0114ed4b-1f43-438c-9882-3006a90ba581",
+    "f821d650-19c8-4fcf-8a18-c6710736e492",
+    "f821d650-19c8-4fcf-8a18-c6710736e492",
+    "a4f86cec-b486-4404-b501-14e46c043bf4",
+    "a4f86cec-b486-4404-b501-14e46c043bf4",
+    "714deb03-52de-407c-8793-cb7b3b0b8f61",
+    "714deb03-52de-407c-8793-cb7b3b0b8f61"
+  ],
+  "printStatus": "인쇄 요청 #9 · 8장 기록됨. 실제 인쇄 성공 확인은 아닙니다.",
+  "viewports": [
+    1440,
+    1920,
+    390
+  ],
+  "failClosed": true,
+  "explicitReprint": true,
+  "errors": []
+}

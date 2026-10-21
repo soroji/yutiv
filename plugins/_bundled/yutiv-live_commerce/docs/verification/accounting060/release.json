@@ -1,0 +1,32 @@
+{
+  "version": "0.6.0",
+  "head_unchanged": "783906c3fd531c350102baba5c701198c7bdad73",
+  "changed_outside_plugin": [],
+  "manifests": {
+    "plugin.json": "0.6.0",
+    "composer.json": "0.6.0",
+    "package.json": "0.6.0",
+    "package-lock.json": "0.6.0",
+    "components.json": "0.6.0"
+  },
+  "dist_sha256": {
+    "dist/css/plugin.css": "97104fd3144c7a5d3539ace710be29a4b771c2c466ae111d2d77c324b30c2126",
+    "dist/js/plugin.iife.js": "2413a12f906381a6fe21da6c3ef25a45c6c2a6363815a370b6a09cb1dded2a6c"
+  },
+  "migrations": [
+    "2026_09_11_000001_create_teewide_users_table.php",
+    "2026_09_11_000002_create_live_tenants_table.php",
+    "2026_09_11_000003_seed_initial_live_tenants.php",
+    "2026_10_13_000004_create_live_operations.php",
+    "2026_10_20_000005_create_live_receipts_table.php",
+    "2026_10_20_000006_create_live_reports_tables.php",
+    "2026_10_21_000007_create_live_product_workspace.php",
+    "2026_10_21_000008_create_live_stock_counts_tables.php",
+    "2026_10_21_000009_create_live_finance_tables.php",
+    "2026_10_21_000010_index_live_finance_dates.php",
+    "2026_10_21_000011_preserve_live_cash_bank_identity.php"
+  ],
+  "official_build": true,
+  "deployment_executed": false,
+  "commit_push_executed": false
+}

@@ -63,8 +63,8 @@ class LiveOrderService extends LiveWorkflow
                 $price = $option->price - $option->discount;
                 $total += $price * $line->quantity;
                 $broadcast = $this->row(E::Broadcast, $tenant, $old['broadcast_id']);
-                $bank = $broadcast->bank_account_id ? $this->row(E::Bank, $tenant, $broadcast->bank_account_id) : $this->records->query(E::Bank, $tenant)->where('default', true)->where('active', true)->first();
-                abort_unless($bank && $bank->active, 409, __('yutiv-live_commerce::live.errors.e_5a3a8c4f44'));
+                $bank = $broadcast->bank_account_id ? $this->row(E::Bank, $tenant, $broadcast->bank_account_id) : $this->records->query(E::Bank, $tenant)->where('default', true)->where('active', true)->where('customer_visible',true)->first();
+                abort_unless($bank && $bank->active && $bank->customer_visible, 409, __('yutiv-live_commerce::live.errors.e_5a3a8c4f44'));
                 $bankIds[$bank->id] = $bank;
                 $prepared[] = [$line, $option, $product, $price, $attribution, $available];
                 // 동일 옵션의 다음 라인이 같은 재고를 고르지 않도록 트랜잭션 안에서 잠정 예약합니다.
@@ -119,9 +119,10 @@ class LiveOrderService extends LiveWorkflow
         });
     }
 
-    public function resolveDeposit(int $tenant, int $actor, int $orderId, int $received, string $reason, string $key): array
+    public function resolveDeposit(int $tenant, int $actor, int $orderId, int $received, string $reason, string $key, bool $allowSurplus = false): array
     {
-        return $this->once($tenant, 'resolve-deposit:'.$key, compact('orderId', 'received', 'reason'), function () use ($tenant, $actor, $orderId, $received, $reason, $key) {
+        $input=compact('orderId','received','reason');if($allowSurplus)$input['allowSurplus']=true;
+        return $this->once($tenant, 'resolve-deposit:'.$key, $input, function () use ($tenant, $actor, $orderId, $received, $reason, $key, $allowSurplus) {
             $order = $this->row(E::Order, $tenant, $orderId, true);
             abort_unless($order->payment_state === 'review' && $order->received === $received, 409, __('yutiv-live_commerce::live.errors.e_2d199496ec'));
             $lines = $this->records->query(E::OrderLine, $tenant)->where('order_id', $orderId)->orderBy('option_id')->lockForUpdate()->get();
@@ -138,9 +139,10 @@ class LiveOrderService extends LiveWorkflow
                     $unit->fill(['state' => 'reserved', 'order_line_id' => $line->id])->save();
                     $this->inventory->movement($unit, $actor, $key, 'rereserve', ['state' => 'available', 'location' => $unit->location], $reason);
                 }
-                $target += ($line->quantity - $line->cancelled) * $line->unit_price;
+                $target += ($line->quantity - $line->cancelled - ($allowSurplus ? $line->returned : 0)) * $line->unit_price;
             }
-            abort_unless($received === $target + $order->shipping, 409, __('yutiv-live_commerce::live.errors.e_9528343379'));
+            $credited=$allowSurplus?$received-(int)$this->records->query(E::Event,$tenant)->where('order_id',$orderId)->where('type','refund')->sum('amount'):$received;
+            abort_unless($allowSurplus ? $credited >= $target + $order->shipping : $credited === $target + $order->shipping, 409, __('yutiv-live_commerce::live.errors.e_9528343379'));
             $order->fill(['payment_state' => 'paid', 'paid_at' => now()])->save();
             $this->records->create(E::Event, $tenant, ['order_id' => $orderId, 'operation_key' => $key, 'type' => 'deposit_review', 'amount' => $received,
                 'data' => ['reason' => $reason, 'inventory_rechecked' => true], 'actor_id' => $actor]);

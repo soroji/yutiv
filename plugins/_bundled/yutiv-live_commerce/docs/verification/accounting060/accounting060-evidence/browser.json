@@ -1,0 +1,17 @@
+{
+  "funds": [
+    15,
+    16
+  ],
+  "expense": 10008,
+  "report": "44c36925-068f-45c6-94b4-b6a141e0a2cc",
+  "parts": 239,
+  "viewports": [
+    1440,
+    1920,
+    390
+  ],
+  "sameSummaryOnLastPart": true,
+  "reprintSame": true,
+  "errors": []
+}

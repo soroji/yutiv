@@ -1,5 +1,7 @@
 # 상품 입고·QR·매출정산 0.4.0
 
+> 0.5.0의 상품 목록 단일 화면·입고단가·출력 이력 및 신규 migration은 [상품 업무 기준](PRODUCT_WORKSPACE_050.md), 실제 검증과 화면은 [0.5.0 검증](VERIFICATION_050.md)을 따른다. 아래는 기존 구조와 운영 참고 기록이다.
+
 ## 구조와 저장 경계
 
 상품 `live_products` → 옵션 `live_options` → 개별 물품 `live_stock_units` → 이동 원장 `live_stock_movements` 관계를 유지한다.

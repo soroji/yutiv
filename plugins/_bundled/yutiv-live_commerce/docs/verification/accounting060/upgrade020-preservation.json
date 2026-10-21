@@ -1,0 +1,217 @@
+{
+
+  "from": "0.2.0",
+
+  "to": "0.6.0",
+
+  "original_commit": "e3e54760d",
+
+  "initial_install_seeder_classmap_bootstrap": true,
+
+  "preserved": {
+
+    "live_addresses": {
+
+      "rows": 0,
+
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+
+    },
+
+    "live_audit": {
+
+      "rows": 13,
+
+      "sha256": "cdbde215f5cf8d0e9f974f90f692e89ea107fc44894b0cf1e36c8da6b314d6d7"
+
+    },
+
+    "live_bank_accounts": {
+
+      "rows": 1,
+
+      "sha256": "7cc5f0b19b6930d785c8008ec6b1d474de849a8bd3952b40027f9c243ed28522"
+
+    },
+
+    "live_broadcast_items": {
+
+      "rows": 1,
+
+      "sha256": "7b05ccaa89422e18fe2fb22a478dd0e647a0cd855f380b727229c3fb4b7bed64"
+
+    },
+
+    "live_broadcasts": {
+
+      "rows": 1,
+
+      "sha256": "47ec8518ececc455a15aa70901b63085dbb871047a153fd5d363c7ddb4513be3"
+
+    },
+
+    "live_cart_lines": {
+
+      "rows": 0,
+
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+
+    },
+
+    "live_channels": {
+
+      "rows": 1,
+
+      "sha256": "11d309b0048712f41d421156ce7bf8a0fda040e3f5d316f32e70c1d68d41ad40"
+
+    },
+
+    "live_domains": {
+
+      "rows": 0,
+
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+
+    },
+
+    "live_incentive_ledger": {
+
+      "rows": 0,
+
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+
+    },
+
+    "live_operations": {
+
+      "rows": 5,
+
+      "sha256": "40b57d1e70db7d5cd7fbbb58a784352f3f685dfe026575e6251f66b73ef883aa"
+
+    },
+
+    "live_options": {
+
+      "rows": 1,
+
+      "sha256": "3a04e14dd422cec9e4fae313a3696ca8357b63b40e28f2d9a938b5e1efb0bdef"
+
+    },
+
+    "live_order_events": {
+
+      "rows": 1,
+
+      "sha256": "d801628e95fbf368f3280651db69eefdcf711ce06ad6363747954d0321d22c62"
+
+    },
+
+    "live_order_lines": {
+
+      "rows": 1,
+
+      "sha256": "a3b01ea08bf1c8febc3f89a404ffcb97b1c554d3de4fcba4681e9b58ae3563e8"
+
+    },
+
+    "live_orders": {
+
+      "rows": 1,
+
+      "sha256": "789f6f60cd921e46c91d85ea0a9c57f44bcfbb2943a15e6e05866416d017d45f"
+
+    },
+
+    "live_password_resets": {
+
+      "rows": 0,
+
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+
+    },
+
+    "live_products": {
+
+      "rows": 1,
+
+      "sha256": "f7c7e809f8c7baa7caff58c991b79c92159c2aca65e77c0c0cb29bf831c349a5"
+
+    },
+
+    "live_sale_links": {
+
+      "rows": 0,
+
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+
+    },
+
+    "live_showhosts": {
+
+      "rows": 1,
+
+      "sha256": "5351e69b6298ad24bc5012390f1c93001af45bb8e583f637f21eaa011afd6c61"
+
+    },
+
+    "live_staff": {
+
+      "rows": 1,
+
+      "sha256": "2e7c790f70a1f8e8f9533081d7114e59d14dcc53a5ef3ad524e858e897d64268"
+
+    },
+
+    "live_stock_movements": {
+
+      "rows": 5,
+
+      "sha256": "796f40f16d54b1f289ed65ad23484608af8606a50caad2b852469915c689b236"
+
+    },
+
+    "live_stock_units": {
+
+      "rows": 3,
+
+      "sha256": "7f423b0a145fa3f7fa656ebb878b029f8d74e1bdc22e910b32faf911fbfbdf5c"
+
+    },
+
+    "live_tenants": {
+
+      "rows": 1,
+
+      "sha256": "0ba805b58fa8d7daf5be10133b1c28eb129f5207b8d06e9ff6b9442940809baa"
+
+    },
+
+    "teewide_users": {
+
+      "rows": 1,
+
+      "sha256": "67fe7db2279265840c668a7a27efa3fdbe5dc295ba3411afa82d4e4929bb2ef3"
+
+    }
+
+  },
+
+  "old_receipt_deposit_ship_retries": true,
+
+  "bank_decrypts": true,
+
+  "unknown_opening_quantity": 2,
+
+  "unknown_opening_cost": true,
+
+  "saved_report_reprint": true,
+
+  "report_uuid": "5eb3bea5-0f78-419e-a9c9-914ee9d562f7",
+
+  "detail_rows": 9,
+
+  "original_source_files_sha256_verified": 171,
+
+  "original_archive_sha256": "e09fa6ba54e9435fb4eb5a581074c7e339c48c6c2e80602237ea6266f6c52222"
+
+}

@@ -1,0 +1,15 @@
+{
+  "versions": {
+    "plugin.json": "0.5.0",
+    "composer.json": "0.5.0",
+    "package.json": "0.5.0",
+    "package-lock.json": "0.5.0",
+    "components.json": "0.5.0"
+  },
+  "dependency_manifests_scanned": 22,
+  "consumers": [],
+  "assets": {
+    "dist/js/plugin.iife.js": "3fbee1e49518484f1f556e0f4ac5c7a4f34a6216c8634b44f3700e77f4718404",
+    "dist/css/plugin.css": "066953bebfdafd09441189162048d750fa2b9754b5fa9a33674517a91fa9d30d"
+  }
+}

@@ -1,0 +1,27 @@
+
+> @plugins/yutiv-live_commerce@0.5.0 test:run
+> vitest run
+
+
+ RUN  v2.1.9 D:/work/yutiv/plugins/_bundled/yutiv-live_commerce
+
+ ✓ resources/js/__tests__/receipt.test.ts (3 tests) 70ms
+ ✓ resources/js/__tests__/products.test.ts (4 tests) 174ms
+npm : stderr | resources/js/__tests__/layouts/headquarters.test.tsx > 본사 G7 레이아웃 저장 가드 > 선택한 업체 값을 표시하고 다른 업체/로딩 중 상태에서
+는 저장을 잠근다
+위치 줄:2 문자:1
++ npm run test:run > C:/Temp/products050-vitest-final.log 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (stderr | resour...중 상태에서는 저장을 잠근다:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+React does not recognize the `autoBinding` prop on a DOM element. If you intentionally want it to appear in the DOM as
+a custom attribute, spell it as lowercase `autobinding` instead. If you accidentally passed it from a parent component,
+ remove it from the DOM element.
+
+ ✓ resources/js/__tests__/layouts/headquarters.test.tsx (3 tests) 538ms
+
+ Test Files  3 passed (3)
+      Tests  10 passed (10)
+   Start at  06:47:48
+   Duration  16.80s (transform 3.41s, setup 5.66s, collect 4.90s, tests 782ms, environment 28.02s, prepare 2.29s)

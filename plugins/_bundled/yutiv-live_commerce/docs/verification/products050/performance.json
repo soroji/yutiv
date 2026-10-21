@@ -1,0 +1,60 @@
+{
+    "php": "8.4.26",
+    "mysql": "8.4.11",
+    "port": 33319,
+    "counts": {
+        "Product": 50,
+        "Option": 596,
+        "Unit": 4323,
+        "Receipt": 49,
+        "ReceiptItem": 9,
+        "LabelRequest": 4,
+        "Movement": 25330
+    },
+    "runs": [
+        {
+            "filters": {
+                "per_page": 20
+            },
+            "total": 50,
+            "page_rows": 20,
+            "milliseconds": 12.425,
+            "peak_mib": 40,
+            "queries": 2
+        },
+        {
+            "filters": {
+                "per_page": 100
+            },
+            "total": 50,
+            "page_rows": 50,
+            "milliseconds": 12.256,
+            "peak_mib": 40,
+            "queries": 2
+        },
+        {
+            "filters": {
+                "per_page": 20,
+                "stock": "yes"
+            },
+            "total": 50,
+            "page_rows": 20,
+            "milliseconds": 16.453,
+            "peak_mib": 40,
+            "queries": 2
+        },
+        {
+            "filters": {
+                "per_page": 20,
+                "date_basis": "received",
+                "from": "2026-10-01",
+                "to": "2026-10-31"
+            },
+            "total": 50,
+            "page_rows": 20,
+            "milliseconds": 13.894,
+            "peak_mib": 40,
+            "queries": 2
+        }
+    ]
+}

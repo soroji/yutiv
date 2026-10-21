@@ -1,0 +1,23 @@
+feature: product-workspace-050
+axes:
+  role: [owner, sales, warehouse, finance, customs, customer]
+  product: [legacy-zero-stock, new, copy, selected-existing, foreign]
+  filter: [name-code, category-unclassified, tenant-created-day, tenant-received-day, available-yes-no, state-exists, paging-stable]
+  options: [default, one-axis, three-axes, four-axes, axis-over-four, values-over-twenty, combinations-over-fifty, regenerate-preserve, remove-confirm]
+  cost: [missing, explicit-zero, negative, fractional, maximum, per-option, changed-next-batch, legacy-unknown]
+  print: [selected-current-page, recent-receipt, searched-unit, previous-request, legacy-audit, duplicate-key, explicit-reprint, failed-recording, copies-over-two-hundred]
+effects:
+  - receipt-transaction-product-option-unit-movement-batch-cost-link-operation
+  - existing-option-id-and-sale-price-unchanged
+  - context-roundtrip-and-hidden-result-notice
+  - preview-without-request-and-record-before-print
+  - original-unit-uuid-and-cost-free-label-history
+  - received-day-purchases-known-amount-unknown-quantity-without-cogs
+  - immutable-old-and-new-saved-report-versions
+coverage:
+  backend: tests/Feature/LiveProductWorkspaceTest.php
+  regression: tests/Feature/LiveReceiptLedgerTest.php, tests/Feature/LiveOperationsTest.php, tests/Feature/LiveLedgerScaleTest.php
+  frontend: resources/js/__tests__/products.test.ts
+  browser: tests/Playwright/products050.cjs
+  pdf: tests/Playwright/products050-pdf.py, tests/Playwright/products050-qr.cjs
+  upgrade: tests/Playwright/products-upgrade.php

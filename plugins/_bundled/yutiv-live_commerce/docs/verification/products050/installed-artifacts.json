@@ -1,0 +1,16 @@
+{
+  "allMatch": true,
+  "sha256": {
+    "plugin.json": "de11e9d36b9686894b6bf27f854269fadc831f7530bc1f5553d393305eba3780",
+    "components.json": "1d5cf6ec1441ac866caf7b6d68d27fdcf6284788365581af4b9ecb872436ce60",
+    "dist/js/plugin.iife.js": "3fbee1e49518484f1f556e0f4ac5c7a4f34a6216c8634b44f3700e77f4718404",
+    "dist/css/plugin.css": "066953bebfdafd09441189162048d750fa2b9754b5fa9a33674517a91fa9d30d",
+    "resources/views/seller/products.blade.php": "3fadcaee658aeec326443c7a45322da7a5b0d517cff4741aa8b8972128367e4b",
+    "resources/views/seller/product-intake.blade.php": "e5be4da3464a74851b9d68f93d72318f7063e6e48befc7d3b95db8e1b6e63c42",
+    "resources/views/seller/product-qr.blade.php": "3983a7cf66b0e51476d1c1ab1531fd3526165d45c282d31c9fe36faa411b9008",
+    "src/Services/LiveProductWorkspace.php": "e13224dd84b19e3d6a9021ac61783d3f8989606ae36ce466407b521abe6dd24f",
+    "src/Services/LiveLedgerService.php": "60a0a1ee8e33863e92d0deedd870e5ca9211d37f3ab2ddbf698e49893f64dd72",
+    "database/migrations/2026_10_21_000007_create_live_product_workspace.php": "94853cefe889d175aea066181d1f88366cba5294953b2e05bfcf6902be6f8eac"
+  },
+  "changesOnlyInsidePlugin": true
+}

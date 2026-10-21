@@ -34,6 +34,7 @@ abstract class LiveWorkflow
 
                 return $existing->result;
             }
+            if(preg_match('/^(receipt|receive|ship|cancel|return|refund|deposit|resolve-deposit|unit|stock-correction|as|incentive-payment|recovery):/',$key))app(LiveFinancePeriodService::class)->assertOpen($tenant);
             $result = $work();
             $this->records->create(E::Operation, $tenant, ['operation_key' => $key, 'request_hash' => $hash, 'result' => $result]);
 

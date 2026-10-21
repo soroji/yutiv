@@ -1,5 +1,7 @@
+import { initIntake } from './products';
 export function initReceipts(root = document) {
     root.querySelectorAll('[data-receipt-form]').forEach(form => {
+        if(form.hasAttribute('data-workspace-intake')){initIntake(form);return;}
         if (form.dataset.receiptBound) return;
         form.dataset.receiptBound = '1';
         const mode = form.querySelector('[data-receipt-mode]');

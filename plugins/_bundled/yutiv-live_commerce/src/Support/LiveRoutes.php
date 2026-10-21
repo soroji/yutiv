@@ -49,6 +49,21 @@ final class LiveRoutes
     {
         Route::post('/seller/media/{kind}', [LiveMediaController::class, 'store'])->where('kind', 'logo|product')->middleware(RequireTeeWideUser::class)->name('seller.media');
         Route::get('/live-media/{kind}/{record}', [LiveMediaController::class, 'show'])->where('kind', 'logo|product')->where('record', '[0-9]+|logo')->name('media');
+        Route::get('/seller/accounting/reports/{uuid}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveFinanceController::class,'saved'])->whereUuid('uuid')->middleware(RequireTeeWideUser::class)->name('finance.report');
+        Route::get('/seller/accounting/evidence/{id}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveFinanceController::class,'download'])->whereNumber('id')->middleware(RequireTeeWideUser::class)->name('finance.evidence.show');
+        Route::post('/seller/accounting/evidence', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveFinanceController::class,'evidence'])->middleware(RequireTeeWideUser::class)->name('finance.evidence.store');
+        Route::post('/seller/accounting/actions/{action}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveFinanceController::class,'store'])->where('action','[a-z-]+')->middleware(RequireTeeWideUser::class)->name('finance.action');
+        Route::get('/seller/accounting/{section?}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveFinanceController::class,'index'])->where('section','overview|sales|expenses|accounts|assets|reports')->middleware(RequireTeeWideUser::class)->name('finance.index');
+        Route::get('/seller/product-stock', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveStockCountController::class,'index'])->middleware(RequireTeeWideUser::class)->name('products.stock');
+        Route::post('/seller/product-stock/{action}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveStockCountController::class,'store'])->where('action','draft|confirm')->middleware(RequireTeeWideUser::class)->name('products.stock.store');
+        Route::get('/seller/inventory', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveStockCountController::class,'legacy'])->middleware(RequireTeeWideUser::class)->name('products.stock.legacy');
+        Route::get('/seller/products', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'index'])->middleware(RequireTeeWideUser::class)->name('products.index');
+        Route::get('/seller/products/{product}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'detail'])->whereNumber('product')->middleware(RequireTeeWideUser::class)->name('products.show');
+        Route::get('/seller/product-receive', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'receiveForm'])->middleware(RequireTeeWideUser::class)->name('products.receive');
+        Route::get('/seller/labels', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'legacyLabels'])->middleware(RequireTeeWideUser::class)->name('products.legacy-labels');
+        Route::get('/seller/receive', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'legacyReceive'])->middleware(RequireTeeWideUser::class)->name('products.legacy-receive');
+        Route::get('/seller/product-qr', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'qr'])->middleware(RequireTeeWideUser::class)->name('products.qr');
+        Route::post('/seller/product-actions/{action}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveProductWorkspaceController::class, 'action'])->where('action','category|product|preview|print')->middleware(RequireTeeWideUser::class)->name('products.action');
         Route::get('/seller/login', [LoginController::class, 'show'])->name('seller.login');
         Route::post('/seller/reports', [LiveOfficeController::class, 'saveReport'])->middleware(RequireTeeWideUser::class)->name('seller.reports.store');
         Route::get('/seller/reports/{uuid}', [LiveOfficeController::class, 'savedReport'])->whereUuid('uuid')->middleware(RequireTeeWideUser::class)->name('seller.reports.show');

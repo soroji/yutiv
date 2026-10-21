@@ -1,5 +1,7 @@
 @php($item=$row->data)
-@if($row->kind==='option')
+@if($row->kind==='purchase')
+    <strong>입고 당시 매입 기록 · 입고 #{{ $item['receipt_id'] }} · 옵션 #{{ $item['option_id'] }}</strong><p>입고단가 {{ $item['unit_cost']===null?'미등록':number_format($item['unit_cost']).'원' }} × {{ $item['quantity'] }}개 · 매입금액 {{ $item['purchase_amount']===null?'미등록':number_format($item['purchase_amount']).'원' }} · {{ $item['currency'] }} (매출원가 아님)</p>
+@elseif($row->kind==='option')
     <strong>{{ $item['stock']['code'] }} · {{ $item['stock']['product'] }} · {{ $item['stock']['option'] }}</strong>
     <p>재고 @foreach(['opening'=>'기초','receive'=>'입고','ship'=>'출고','return'=>'반품','loss'=>'망실·폐기','as_in'=>'A/S 접수','as_out'=>'A/S 반출','adjustment'=>'조정','closing'=>'기말'] as $field=>$label){{ $label }} {{ $item['stock']['complete'] ? $item['stock'][$field] : '산출 불가' }} · @endforeach</p>
     <p>주문 {{ $item['sales']['quantity'] }}개 / {{ number_format($item['sales']['ordered']) }}원 · 취소 {{ $item['sales']['cancel_quantity'] }}개 / {{ number_format($item['sales']['cancel']) }}원 · 반품 {{ $item['sales']['return_quantity'] }}개 / {{ number_format($item['sales']['return']) }}원 · 출고 {{ $item['sales']['shipped'] }}개 · 현재 잔여 상품금액 {{ number_format($item['sales']['cohort_net_sales']) }}원</p>

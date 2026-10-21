@@ -12,7 +12,7 @@ use Plugins\Yutiv\LiveCommerce\Models\TeeWideUser;
 /** Consistent, non-locking operational ledger. No accounting revenue recognition is implied. */
 class LiveLedgerService extends LiveWorkflow
 {
-    public const BASIS = 'operational-events-2';
+    public const BASIS = 'operational-events-3-purchases';
 
     public const PAGE_SIZE = 20;
 
@@ -91,7 +91,7 @@ class LiveLedgerService extends LiveWorkflow
             foreach ($this->db()->select("SELECT $case bucket,$sums FROM $source WHERE $where AND $time>=? AND $time<? GROUP BY bucket", [...$bindings, ...$bounds]) as $row) {
                 $periods[$row->bucket] ??= array_fill_keys(['quantity', 'ordered', 'deposit', 'cancel_quantity', 'cancel', 'return_quantity', 'return', 'refund', 'shipped'], 0);
                 foreach ($fields as $f => $expr) {
-                    $periods[$row->bucket][$f] += (int) $row->$f;
+                    $periods[$row->bucket][$f] = ($periods[$row->bucket][$f] ?? 0) + (int) $row->$f;
                 }
             }
         };
@@ -108,6 +108,17 @@ class LiveLedgerService extends LiveWorkflow
         $aggregate("$e e JOIN $o o ON o.id=e.order_id AND o.tenant_id=e.tenant_id", 'e.created_at', $fields, "e.tenant_id=$tenant AND e.type IN ('deposit','cancel','return','refund') $orderFilter $eventFilter");
         $unitFilter = $product ? " AND u.option_id IN (SELECT id FROM $op WHERE tenant_id=$tenant AND product_id=".(int) $product.')' : '';
         $aggregate("$m m JOIN $u u ON u.id=m.unit_id AND u.tenant_id=m.tenant_id", 'm.created_at', ['shipped' => '1'], "m.tenant_id=$tenant AND m.type='ship' $unitFilter");
+        $costTable = $this->table(E::ReceiptItem);
+        $receiptTable = $this->table(E::Receipt);
+        $costFilter = $product ? ' AND i.product_id='.(int) $product : '';
+        $aggregate("$costTable i JOIN $receiptTable r ON r.id=i.receipt_id AND r.tenant_id=i.tenant_id", 'r.received_at', [
+            'purchase_amount' => 'COALESCE(i.purchase_amount,0)',
+            'purchase_known_quantity' => 'CASE WHEN i.unit_cost IS NOT NULL THEN i.quantity ELSE 0 END',
+            'purchase_unknown_quantity' => 'CASE WHEN i.unit_cost IS NULL THEN i.quantity ELSE 0 END',
+        ], "i.tenant_id=$tenant $costFilter");
+        $aggregate("$m m JOIN $u u ON u.id=m.unit_id AND u.tenant_id=m.tenant_id", 'm.created_at', [
+            'purchase_unknown_quantity' => '1',
+        ], "m.tenant_id=$tenant AND m.type='receive' AND u.receipt_item_id IS NULL $unitFilter");
         $outstanding = (int) $this->db()->selectOne("SELECT COALESCE(SUM(GREATEST(0,COALESCE(d.due,0)+o.shipping-o.received)),0) amount FROM $o o LEFT JOIN (SELECT order_id,SUM((quantity-cancelled-returned)*unit_price) due FROM $l WHERE tenant_id=$tenant GROUP BY order_id) d ON d.order_id=o.id WHERE o.tenant_id=$tenant $orderFilter")->amount;
         $orderStates = $this->db()->select("SELECT o.payment_state,o.delivery_state,COUNT(*) quantity FROM $o o WHERE o.tenant_id=$tenant $orderFilter GROUP BY o.payment_state,o.delivery_state");
         $sales = $this->sales($tenant, $bounds, $product, $ids);
@@ -282,6 +293,11 @@ class LiveLedgerService extends LiveWorkflow
                     $append(ReportRowKind::Movement, $move->toArray());
                 }
             });
+            $this->records->query(E::ReceiptItem, $tenant)->whereIn('receipt_id', $this->records->query(E::Receipt, $tenant)->where('received_at', '>=', $a)->where('received_at', '<', $b)->select('id'))->when($product, fn ($q) => $q->where('product_id', $product))->chunkById(100, function ($batch) use ($append) {
+                foreach ($batch as $item) {
+                    $append(ReportRowKind::Purchase, ['receipt_id' => $item->receipt_id, 'option_id' => $item->option_id, 'product_id' => $item->product_id, 'unit_cost' => $item->unit_cost, 'quantity' => $item->quantity, 'purchase_amount' => $item->purchase_amount, 'currency' => $item->currency]);
+                }
+            });
             $flush();
             $report->update(['row_count' => $sequence]);
 
@@ -311,7 +327,7 @@ class LiveLedgerService extends LiveWorkflow
 
     public function saved(int $tenant, int $actor, string $uuid, int $part = 1): array
     {
-        $report = $this->records->query(E::Report, $tenant)->where('uuid', $uuid)->firstOrFail();
+        $report = $this->records->query(E::Report, $tenant)->where('report_kind',\Plugins\Yutiv\LiveCommerce\Enums\ReportKind::Operational->value)->where('uuid', $uuid)->firstOrFail();
         abort_unless(hash_equals($report->digest, $this->digest($report->result)), 409, __('yutiv-live_commerce::live.report_corrupt'));
         $parts = max(1, (int) ceil($report->row_count / 100));
         abort_if($part < 1 || $part > $parts, 404);
