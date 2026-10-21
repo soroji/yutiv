@@ -1,0 +1,1 @@
+@if($pages->previousPageUrl() || $pages->hasMorePages())<nav class="broadcast-tabs" aria-label="목록 페이지">@if($pages->previousPageUrl())<a href="{{ $pages->previousPageUrl() }}" rel="prev">이전</a>@endif<span>{{ $pages->currentPage() }}페이지</span>@if($pages->hasMorePages())<a href="{{ $pages->nextPageUrl() }}" rel="next">다음</a>@endif</nav>@endif

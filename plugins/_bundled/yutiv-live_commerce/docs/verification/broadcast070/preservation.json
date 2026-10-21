@@ -1,0 +1,183 @@
+{
+    "from": "0.6.0",
+    "to": "0.7.0",
+    "all_live_entity_tables_unchanged": true,
+    "tables": {
+        "live_domains": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_staff": {
+            "rows": 4,
+            "sha256": "53abd298a302d3f285e22a8c5918e9c811c86fa791338a252923b94994161b0d"
+        },
+        "live_addresses": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_password_resets": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_bank_accounts": {
+            "rows": 1,
+            "sha256": "2ae67d19ebdddd7d6a2267f707e8ca4dd7378c6912704e5966e609b71fedc6fc"
+        },
+        "live_products": {
+            "rows": 55,
+            "sha256": "0c2e087df5fcfac2a3db1e1f24527567922fa6981bd8a02cb520a6d13a4294f7"
+        },
+        "live_options": {
+            "rows": 616,
+            "sha256": "8111618acb283034327375ff31b4d782f1220d63ace04725591dad0ffa61ff5d"
+        },
+        "live_channels": {
+            "rows": 1,
+            "sha256": "92a4835f77becd8bbe7128b83fe6663043c09f69f83566c7eac8a09a0efde532"
+        },
+        "live_showhosts": {
+            "rows": 1,
+            "sha256": "28f2202910376639d741b1a8404d5c3dbc6ae14a4f686139b62d2237de73763e"
+        },
+        "live_broadcasts": {
+            "rows": 1,
+            "sha256": "9b292810af0f9d5b58b9f015458070dd118ee5ccee4814b3be1f5fba06bb11fa"
+        },
+        "live_broadcast_items": {
+            "rows": 1,
+            "sha256": "d8a937065207da06fb5a8312128c52119bae4c528b0687547bdacaf1e25d0c55"
+        },
+        "live_sale_links": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_cart_lines": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_orders": {
+            "rows": 2602,
+            "sha256": "59cdc15be05adf30408b09916b47fc24f344a8dac86864e12713ee805ba0eee5"
+        },
+        "live_order_lines": {
+            "rows": 10405,
+            "sha256": "dd7fb5e897c0e128f8264e09e83200619bbd3d8d57c6bde5f4037a5c34624fa2"
+        },
+        "live_stock_units": {
+            "rows": 4365,
+            "sha256": "877cbce50879e430103c6eb5808df01fe6f4b6354bde5f0665943b90231a8b92"
+        },
+        "live_stock_movements": {
+            "rows": 25374,
+            "sha256": "969c3ae6a28bb9d36ea42cb7b56795cd57dae9b949d2227c977e5896e93fcdcb"
+        },
+        "live_order_events": {
+            "rows": 20812,
+            "sha256": "227494bff59351094ff4f9ac33b79aba93dd449aaa90e690898e105fde1916fc"
+        },
+        "live_incentive_ledger": {
+            "rows": 2,
+            "sha256": "95ff807637cae2b054ee6489f323f8ef745125f24587bfd0d45aa44fae3e2529"
+        },
+        "live_audit": {
+            "rows": 608,
+            "sha256": "c20cef2db9dcf879f85053ecf7fe565c8e99bbce87397aec0fd9cb32cd23e576"
+        },
+        "live_operations": {
+            "rows": 288,
+            "sha256": "62edbf953a66b15f5caf9f11d1e130affd775f0e04b118b115d34acda6e84492"
+        },
+        "live_receipts": {
+            "rows": 63,
+            "sha256": "14d4cd13613255d8933a88f8dcda2e33eef25e9898dd366c3f9b720f8b928849"
+        },
+        "live_categories": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_finance_attachments": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_finance_states": {
+            "rows": 1,
+            "sha256": "e5af53fec5ccde0a059990f68ed86681bb388605de2b8550676b8bcf96d0abf2"
+        },
+        "live_expense_categories": {
+            "rows": 9,
+            "sha256": "e6e731e5f2a2b3534d66e610d6765c194e3772ccf48c4d85fee9f4cf2993fd03"
+        },
+        "live_expenses": {
+            "rows": 10008,
+            "sha256": "867ced2828d9c07a454467862dfeec124af9a6670091cc37b433104e7259b751"
+        },
+        "live_expense_recoveries": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_expense_payments": {
+            "rows": 8,
+            "sha256": "9f50f85ed1865672e13a13815671e0450d5f46c6e6de3ad2a837e7390db192fe"
+        },
+        "live_funds": {
+            "rows": 16,
+            "sha256": "94895928291b8e5e9622767a7b243ac38af78a45ccb110388ff45c125d56eaec"
+        },
+        "live_fund_entries": {
+            "rows": 16,
+            "sha256": "81e1b6558a811de0288333d780f7e303fc7af679fe498d95198dd3b83baee927"
+        },
+        "live_money_transfers": {
+            "rows": 8,
+            "sha256": "9f4a8c660c7ba6f220cbff3d7af808e441e01fce0c6d41cd73b5ea4c52f9c68a"
+        },
+        "live_recurring_expenses": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_finance_closings": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_fifo_options": {
+            "rows": 20,
+            "sha256": "9c2da69af324cbac045153fbfe92991e4d6f6cc10ceb0b18278dadebd599a926"
+        },
+        "live_fifo_layers": {
+            "rows": 29,
+            "sha256": "1e93fa67d3a94bb2650120592893b7fe3d9c6d6b7958c5ec6a730e0b31e3ec7c"
+        },
+        "live_fifo_allocations": {
+            "rows": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "live_stock_counts": {
+            "rows": 1,
+            "sha256": "bf72321f88fc5014fb23d3dac83b14e8d407de40c0970e81e470c50136de71b0"
+        },
+        "live_inventory_revisions": {
+            "rows": 20,
+            "sha256": "dfb906d56db6db10057a6dead96b73026a52e2d124804304228d0fe1bd0989a1"
+        },
+        "live_receipt_items": {
+            "rows": 38,
+            "sha256": "72b74c809839b2504449b93a892ff5c117d9bf5d0d826eb73a4fc945c1bbcde9"
+        },
+        "live_label_requests": {
+            "rows": 10,
+            "sha256": "26c0e6dfc1e827385e3e0db9b2e9792b36cd947c7b8034374dc952fc20abe3d6"
+        },
+        "live_label_request_units": {
+            "rows": 40,
+            "sha256": "9de2df0f07ffe441d8213bb4ddb8756e6d610aadcf7a9bcb2efd42dd0d7eff17"
+        },
+        "live_reports": {
+            "rows": 25,
+            "sha256": "5fe9f9e063fb4db1df6af5729d8026b137d5d30f0e33a5335e9da5b346559ef0"
+        },
+        "live_report_rows": {
+            "rows": 316450,
+            "sha256": "e9fd56693947ad875a7f744a5d4fada6219bd54f55c1ef17e60962d7e5da20c3"
+        }
+    }
+}

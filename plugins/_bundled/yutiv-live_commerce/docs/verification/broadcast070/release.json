@@ -1,0 +1,30 @@
+{
+  "version": "0.7.0",
+  "head_unchanged": "09389ffbea5691593dd536ecff7c46ec1352fb63",
+  "branch": "main",
+  "changed_outside_plugin": [],
+  "migration_added": false,
+  "manifests": {
+    "plugin.json": "0.7.0",
+    "composer.json": "0.7.0",
+    "package.json": "0.7.0",
+    "package-lock.json": "0.7.0",
+    "components.json": "0.7.0"
+  },
+  "dist_sha256": {
+    "dist/css/plugin.css": "ea039645d7e6d24ef3c965f26e3940c7655ca3e7c050b1797f6e5d362d6897ad",
+    "dist/js/plugin.iife.js": "8e1166e3ed4ba3939a15634d7bedfcae02dd261ba9923945bdec4504e9489d81"
+  },
+  "php": "8.4.26",
+  "mysql": "8.4.11",
+  "target_php": "8.3.6",
+  "target_mysql": "8.0.46",
+  "target_versions_executed": false,
+  "feature_tests": 236,
+  "feature_assertions": 70359,
+  "javascript_tests": 13,
+  "smoke_tests": 2,
+  "smoke_assertions": 29,
+  "commit_push_executed": false,
+  "production_access_deployment_executed": false
+}

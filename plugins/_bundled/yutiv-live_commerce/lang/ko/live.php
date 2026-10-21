@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'broadcast_policy' => '수수료 합계와 참여 쇼호스트 지급 지분(합계 100%)을 확인하세요.',
     'finance_fee_fund_required'=>'수수료를 실제 지급하는 자금 계정을 선택하세요.',
     'finance_future_date'=>'실제 확인 기록일은 미래일 수 없습니다.',
     'finance_generating'=>'같은 보고서를 생성 중입니다. 잠시 후 같은 작업으로 다시 조회하세요.',

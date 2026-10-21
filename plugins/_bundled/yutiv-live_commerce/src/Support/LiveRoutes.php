@@ -47,6 +47,12 @@ final class LiveRoutes
 
     private static function operations(): void
     {
+        Route::get('/seller/broadcasts/channels',[LiveOfficeController::class,'index'])->defaults('section','channels')->middleware(RequireTeeWideUser::class)->name('broadcasts.channels');
+        Route::get('/seller/broadcasts/showhosts',[LiveOfficeController::class,'index'])->defaults('section','showhosts')->middleware(RequireTeeWideUser::class)->name('broadcasts.hosts');
+        Route::get('/seller/broadcasts/create',[\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveBroadcastController::class,'create'])->middleware(RequireTeeWideUser::class)->name('broadcasts.create');
+        Route::get('/seller/broadcasts/{broadcast}',[\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveBroadcastController::class,'show'])->whereNumber('broadcast')->middleware(RequireTeeWideUser::class)->name('broadcasts.show');
+        Route::get('/seller/broadcasts',[\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveBroadcastController::class,'index'])->middleware(RequireTeeWideUser::class)->name('broadcasts.index');
+        Route::get('/seller/broadcast-items',[\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveBroadcastController::class,'legacy'])->middleware(RequireTeeWideUser::class)->name('broadcasts.legacy-items');
         Route::post('/seller/media/{kind}', [LiveMediaController::class, 'store'])->where('kind', 'logo|product')->middleware(RequireTeeWideUser::class)->name('seller.media');
         Route::get('/live-media/{kind}/{record}', [LiveMediaController::class, 'show'])->where('kind', 'logo|product')->where('record', '[0-9]+|logo')->name('media');
         Route::get('/seller/accounting/reports/{uuid}', [\Plugins\Yutiv\LiveCommerce\Http\Controllers\Seller\LiveFinanceController::class,'saved'])->whereUuid('uuid')->middleware(RequireTeeWideUser::class)->name('finance.report');

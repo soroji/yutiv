@@ -54,7 +54,7 @@ class LiveShopController
         }
         $cards = [];
         foreach ($broadcasts as $broadcast) {
-            $items = $this->office->query(E::BroadcastItem, $tenant->id)->where('broadcast_id', $broadcast->id)->where('active', true)->orderBy('position')->get();
+            $items = $this->office->query(E::BroadcastItem, $tenant->id)->where('broadcast_id', $broadcast->id)->where('active', true)->orderBy('position')->orderBy('id')->get();
             foreach ($items as $item) {
                 if ($link?->option_id && $item->option_id !== $link->option_id) {
                     continue;
@@ -65,7 +65,8 @@ class LiveShopController
                 }
                 $p = $this->office->query(E::Product, $tenant->id)->where('published', true)->where('sellable', true)->find($option->product_id);
                 if ($p) {
-                    $cards[] = ['broadcast' => $broadcast, 'option' => $option, 'product' => $p];
+                    $available=$this->office->query(E::Unit,$tenant->id)->where('option_id',$option->id)->where('state','available')->count();
+                    $cards[] = ['broadcast' => $broadcast, 'option' => $option, 'product' => $p,'available'=>$available];
                 }
             }
         }

@@ -30,6 +30,7 @@ class LiveOfficeService extends LiveWorkflow
         if (in_array($section, ['products', 'options', 'broadcasts', 'channels', 'showhosts', 'broadcast-items', 'sale-links', 'banks'], true)) {
             $entity = LiveForms::entity($section);
             $data['rows'] = $this->records->query($entity, $tenant)->orderByDesc('id')->paginate(20);
+            if ($section==='sale-links' && request()->integer('broadcast_id')) $data['rows']=$this->records->query($entity,$tenant)->where('broadcast_id',request()->integer('broadcast_id'))->orderByDesc('id')->paginate(20)->withQueryString();
             $data['fields'] = LiveForms::fields($section);
             if ($edit) {
                 $data['editing'] = $this->row($entity, $tenant, $edit);
@@ -107,6 +108,7 @@ class LiveOfficeService extends LiveWorkflow
     public function catalogData(LiveCatalogRequest $request): array
     {
         $data = $request->validated();
+        unset($data['broadcast_workspace'],$data['list'],$data['detail_query'],$data['channel_payment'],$data['separate_sales']);
         foreach (['channel', 'host'] as $rate) {
             $key = $rate.'_percent';
             if (isset($data[$key])) {

@@ -1,4 +1,6 @@
-# TeeWide 라이브커머스 0.6.0
+# TeeWide 라이브커머스 0.7.0
+
+- [0.7.0 방송관리 통합·참여자·판매상품·검증](docs/BROADCAST_070.md)
 
 - [0.6.0 재고 통합·회계관리 기준과 적용](docs/ACCOUNTING_060.md)
 - [0.6.0 검증·성능·공식 업데이트 결과](docs/VERIFICATION_060.md)

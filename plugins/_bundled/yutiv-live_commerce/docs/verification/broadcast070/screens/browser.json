@@ -1,0 +1,20 @@
+{
+  "detail": "http://teewide.test:18974/seller/broadcasts/7?list=search%3DSYNTHETIC070%26state%3Ddraft",
+  "listContext": true,
+  "participants": true,
+  "channelSwitch": true,
+  "separateSalesPreserved": true,
+  "productVisibility": true,
+  "viewports": [
+    1440,
+    1920,
+    390
+  ],
+  "regression": [
+    "products",
+    "accounting",
+    "orders",
+    "ship"
+  ],
+  "errors": []
+}

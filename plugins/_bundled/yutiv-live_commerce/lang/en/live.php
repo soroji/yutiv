@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'broadcast_policy' => 'Check the total fee rates and selected host shares (100% in total).',
     'finance_fee_fund_required'=>'Select the fund that actually pays the fee.',
     'fifo_reconcile' => 'FIFO quantity does not reconcile with physical holdings. Review the ledger and opening layers.',
     'finance_future_date' => 'An actual confirmation date cannot be in the future.',

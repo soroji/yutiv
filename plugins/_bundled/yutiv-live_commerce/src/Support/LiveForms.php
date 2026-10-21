@@ -34,7 +34,7 @@ final class LiveForms
                 'video_url' => $field('유튜브 방송 URL', 'url', false), 'starts_at' => $field('방송 시작 예정 (업체 시간)', 'datetime-local'), 'ends_at' => $field('방송 종료 예정 (업체 시간)', 'datetime-local'),
                 'sale_starts_at' => $field('판매 시작 (업체 시간)', 'datetime-local'), 'sale_ends_at' => $field('판매 종료 (업체 시간)', 'datetime-local'),
                 'state' => $field('방송 상태', 'choice', true, ['draft' => '준비', 'selling' => '판매 중', 'closed' => '종료']),
-                'channel_percent' => $field('채널 인센티브 (%)', 'text'), 'host_percent' => $field('쇼호스트 총 인센티브 (%)', 'text'), 'host_shares' => $field('참여 쇼호스트와 배분율', 'hosts', false)],
+                'channel_percent' => $field('채널 운영자 수수료 (%)', 'text'), 'host_percent' => $field('쇼호스트 수수료 (%)', 'text'), 'host_shares' => $field('쇼호스트별 지급 지분', 'hosts', false)],
             'broadcast-items' => ['broadcast_id' => $field('방송 회차', 'select', true, E::Broadcast), 'option_id' => $field('상품/옵션', 'select', true, E::Option),
                 'position' => $field('노출 순서', 'number'), 'active' => $field('판매 노출', 'checkbox', false), 'channel_percent' => $field('채널율 예외 (%)', 'text', false), 'host_percent' => $field('호스트율 예외 (%)', 'text', false)],
             'sale-links' => ['broadcast_id' => $field('방송 회차', 'select', true, E::Broadcast), 'channel_id' => $field('귀속 유튜브 채널', 'select', true, E::Channel),

@@ -1,0 +1,11 @@
+version: 0.7.0
+scope: isolated-live-only
+roles: [owner, sales, warehouse, finance]
+participants: [none, one, multiple, duplicate, foreign-tenant, existing-inactive]
+fees: [zero, decimal-two, invalid-sum, equal-share-remainder, item-override]
+time: [tenant-timezone, manual-name, regenerate-name, separate-sales, invalid-end, before, during, after]
+catalog: [search, category, stock, option-add, duplicate-add, order, hide, shared-product-preserved]
+attribution: [direct, sale-link, simultaneous-broadcasts, foreign-code, immutable-order]
+ui: [1440, 1920, 390]
+regression: [products, accounting, orders, shipping, stock-reconciliation]
+release: [official-build, update-060-to-070, unchanged-live-table-hashes, route-cache, vendor-verify]

@@ -31,21 +31,31 @@ class LiveCatalogService extends LiveWorkflow
             }
             if ($entity === E::Broadcast) {
                 $data['host_shares'] = $data['host_shares'] ?? [];
+                if ($data['host_shares']===[]) $data['host_rate']=0;
                 foreach (array_keys($data['host_shares'] ?? []) as $host) {
                     $this->row(E::Showhost, $tenant, (int) $host);
                 }
                 IncentiveCalculator::amounts(100000, $data['channel_rate'], $data['host_rate'], $data['channel_id'], $data['host_shares']);
                 if ($id) {
+                    foreach($this->records->query(E::BroadcastItem,$tenant)->where('broadcast_id',$id)->where('active',true)->get() as $item) {
+                        IncentiveCalculator::amounts(100000,$item->channel_rate ?? $data['channel_rate'],$item->host_rate ?? $data['host_rate'],$data['channel_id'],$data['host_shares']);
+                    }
                     $old = $this->row($entity, $tenant, $id, true);
                     $data['policy_version'] = $old->policy_version + 1;
                     abort_if($old->state === 'closed' && ($data['state'] ?? $old->state) === 'selling', 409, __('yutiv-live_commerce::live.errors.e_b56346d3d0'));
                 }
             }
             if ($entity === E::BroadcastItem) {
+                if (!$id && ($existing=$this->records->query(E::BroadcastItem,$tenant)->where('broadcast_id',$data['broadcast_id'])->where('option_id',$data['option_id'])->first())) return $existing;
                 $broadcast = $this->row(E::Broadcast, $tenant, $data['broadcast_id']);
                 $c = $data['channel_rate'] ?? $broadcast->channel_rate;
                 $h = $data['host_rate'] ?? $broadcast->host_rate;
                 abort_if($c + $h > 10000, 422);
+                IncentiveCalculator::amounts(100000,$c,$h,$broadcast->channel_id,$broadcast->host_shares);
+                if ($id) {
+                    $old=$this->row($entity,$tenant,$id,true);
+                    abort_unless((int)$old->broadcast_id===(int)$data['broadcast_id'] && (int)$old->option_id===(int)$data['option_id'],409,__('yutiv-live_commerce::live.broadcast_policy'));
+                }
             }
             if ($entity === E::SaleLink) {
                 if (! $id) {
@@ -85,6 +95,7 @@ class LiveCatalogService extends LiveWorkflow
         $broadcast = $this->row(E::Broadcast, $tenant, $broadcastId, true);
         abort_unless($broadcast->state === 'selling' && $broadcast->sale_starts_at <= now() && $broadcast->sale_ends_at > now(), 409, __('yutiv-live_commerce::live.errors.e_cf1d42433a'));
         $item = $this->records->query(E::BroadcastItem, $tenant)->where('broadcast_id', $broadcastId)->where('option_id', $optionId)->where('active', true)->firstOrFail();
+        IncentiveCalculator::amounts(100000,$item->channel_rate ?? $broadcast->channel_rate,$item->host_rate ?? $broadcast->host_rate,$broadcast->channel_id,$broadcast->host_shares);
         $link = null;
         if ($code !== null && $code !== '') {
             $link = $this->records->query(E::SaleLink, $tenant)->where('code', $code)->where('broadcast_id', $broadcastId)->where('active', true)->firstOrFail();

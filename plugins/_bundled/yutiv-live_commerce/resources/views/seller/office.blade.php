@@ -1,8 +1,9 @@
 @extends('teewide::layouts.operations', ['title' => $sellerBrand.' — '.$menuTitle])
 @section('navigation')
-@foreach ($menu as $key => $item)<a href="/seller/{{ $key }}" @if($section === $key) aria-current="page" @endif>{{ $item[0] }}</a>@endforeach
+@foreach ($menu as $key => $item)<a href="/seller/{{ $key }}" @if($section === $key || (in_array($section,['channels','showhosts'],true) && $key==='broadcasts')) aria-current="page" @endif>{{ $item[0] }}</a>@endforeach
 @endsection
 @section('content')
+@if(in_array($section,['channels','showhosts'],true))<nav class="broadcast-tabs" aria-label="방송관리"><a href="/seller/broadcasts">방송 목록</a><a href="/seller/broadcasts/channels" @if($section==='channels') aria-current="page" @endif>유튜브 채널</a><a href="/seller/broadcasts/showhosts" @if($section==='showhosts') aria-current="page" @endif>쇼호스트</a></nav>@endif
 <h1>{{ $menuTitle }}</h1><p class="live-help">{{ $tenant->name }} · {{ $tenant->timezone }} · 예약 기본 {{ $tenant->reservation_minutes }}분</p>
 
 @if($section === 'product-receive') @include('teewide::seller.product-receive') @endif
@@ -17,10 +18,11 @@
 @if($section==='statistics')<section class="live-panel"><h2>기간별 실적</h2><div class="live-table-wrap"><table class="live-table"><thead><tr><th>기간</th><th>주문</th><th>입금 상품금액</th><th>취소</th><th>반품</th><th>순매출</th><th>잔여 판매 수량</th><th>출고 수량</th><th>직접 판매</th></tr></thead><tbody>@forelse($summary['periods'] as $period=>$values)<tr><th>{{ $period }}</th>@foreach(['ordered','paid','cancelled','returned','net_sales','quantity','shipped','direct_sales'] as $field)<td>{{ number_format($values[$field]) }}</td>@endforeach</tr>@empty<tr><td colspan="9">선택한 기간의 판매 내역이 없습니다.</td></tr>@endforelse</tbody></table></div><p class="live-help">입금일 기준은 확인 입금 시점에 귀속합니다. 주문상품별 환불을 임의 배분하지 않으므로 조건 필터에서는 금융 환불 총액을 제외합니다. 공동 참여자별 분석은 동일 판매의 다른 관점이므로 합산하지 않습니다.</p></section>@endif
 @endif
 @if ($fields !== [])
+@if(in_array($section,['channels','showhosts'],true))<details @if($editing) open @endif><summary class="live-button">{{ $editing ? '항목 수정' : ($section==='channels' ? '채널 추가' : '쇼호스트 추가') }}</summary>@endif
 <section class="live-panel"><h2>{{ $editing ? '수정' : '새 항목 등록' }}</h2><form data-live-form method="POST" action="/seller/catalog/{{ $section }}{{ $editing ? '/'.$editing->id : '' }}">@csrf
 <div class="live-grid">@foreach ($fields as $name => $field)
 @php
-    $value = $editing?->{$name};
+    $value = $editing?->{$name} ?? ($section==='sale-links' && $name==='broadcast_id' ? request('broadcast_id') : null);
     if (str_ends_with($name, '_percent')) { $r = $editing?->{str_replace('_percent','_rate',$name)}; $value = $r === null ? ($field['required'] ? '0' : '') : intdiv($r,100).'.'.str_pad((string)($r%100),2,'0',STR_PAD_LEFT); }
     if ($value instanceof \Carbon\CarbonInterface) $value = $value->copy()->setTimezone($tenant->timezone)->format('Y-m-d\TH:i');
 @endphp
@@ -33,6 +35,7 @@
 @else<input id="field-{{ $name }}" name="{{ $name }}" type="{{ $field['type'] }}" value="{{ $value ?? ($field['type']==='number' ? '0' : '') }}" @required($field['required']) @if($field['type']==='number') min="0" @endif>
 @endif</div>@endforeach</div><button type="submit" class="live-button">{{ $editing ? '수정 저장' : '등록' }}</button><p class="live-status" data-live-message role="status"></p></form></section>
 @endif
+@if(in_array($section,['channels','showhosts'],true))</details>@endif
 @if (in_array($section, ['receive','inventory','ship','returns'], true)) @include('teewide::seller.stock-forms') @endif
 @if ($section === 'brand')<section class="live-panel"><h2>브랜드와 상담</h2><form data-live-form method="POST" action="/seller/tasks/brand">@csrf
 <div class="live-field"><label for="brand-name">고객에게 표시할 브랜드 이름</label><input id="brand-name" name="name" value="{{ $tenant->name }}" maxlength="100" required></div>

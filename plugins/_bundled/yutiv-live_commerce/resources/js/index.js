@@ -5,6 +5,8 @@ import '../css/finance.css';
 import { initFinance } from './finance';
 import { initReceipts } from './receipt';
 import { initProducts } from './products';
+import { initBroadcasts } from './broadcasts';
+import '../css/broadcasts.css';
 
 export function qrSvg(value) {
     const qr = qrcode(0, 'M'); qr.addData(value); qr.make();
@@ -51,6 +53,7 @@ function attachForm(form) {
             if (data.units) { const link=document.createElement('a');link.href='/seller/labels?receipt='+encodeURIComponent(data.units[0]);link.textContent='입고 QR 라벨 출력';form.querySelector('[data-live-message]')?.append(link); }
             if (data.receipt_id) { window.location.assign(data.return_url || '/seller/receipts?batch='+encodeURIComponent(data.receipt_id)); return; }
             if(form.hasAttribute('data-stock-count')&&data.return_url){window.location.assign(data.return_url);return;}
+            if(form.hasAttribute('data-broadcast-save')&&data.return_url){window.location.assign(data.return_url);return;}
             if(form.hasAttribute('data-workspace-refresh'))window.location.reload();
             if (data.code && form.dataset.customs) { message(form, '통관부호: '+data.code+' (형식 등록, 외부 유효성 미확인)'); setTimeout(()=>message(form,'조회 표시를 닫았습니다.'),30000); }
             if(data.image_url){let preview=form.querySelector('[data-image-preview]');if(!preview){preview=document.createElement('img');preview.dataset.imagePreview='1';preview.alt='저장한 이미지 미리보기';preview.style.maxWidth='200px';form.append(preview);}preview.src=data.image_url+'?v='+Date.now();}
@@ -72,6 +75,7 @@ async function camera(button) {
 export function initLive(root=document) {
     initReceipts(root);
     initProducts(root);
+    initBroadcasts(root);
     root.querySelectorAll('[data-ledger-print]').forEach(button=>button.addEventListener('click',()=>{document.body.classList.add('live-print-ledger');window.print();}));
     window.addEventListener('afterprint',()=>document.body.classList.remove('live-print-ledger'));
     root.querySelectorAll('[data-live-menu]').forEach(button=>{if(!button.dataset.bound){button.dataset.bound='1';button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')!=='true';button.setAttribute('aria-expanded',String(open));button.closest('header').toggleAttribute('data-menu-open',open);});}});

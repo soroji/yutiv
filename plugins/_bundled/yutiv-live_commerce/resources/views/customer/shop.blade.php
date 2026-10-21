@@ -13,7 +13,7 @@
 <input type="hidden" name="operation_key" value="{{ (string) \Illuminate\Support\Str::uuid() }}"><input type="hidden" name="broadcast_id" value="{{ $card['broadcast']->id }}"><input type="hidden" name="option_id" value="{{ $card['option']->id }}">
 @if ($saleCode)<input type="hidden" name="code" value="{{ $saleCode }}">@endif
 <div class="live-field"><label for="quantity-{{ $card['broadcast']->id }}-{{ $card['option']->id }}">수량</label><input id="quantity-{{ $card['broadcast']->id }}-{{ $card['option']->id }}" name="quantity" type="number" min="1" max="200" value="1" required></div>
-<button type="submit" class="live-button">장바구니에 담기</button><p class="live-status" data-live-message role="status"></p><a href="/cart">장바구니·주문으로</a>
+<button type="submit" class="live-button" @disabled($card['available']<1)>{{ $card['available']<1 ? '품절' : '장바구니에 담기' }}</button><p class="live-status" data-live-message role="status"></p><a href="/cart">장바구니·주문으로</a>
 </form></article>@endforeach</div>
 @foreach ($tenant->contact_links ?? [] as $name => $url)@if ($url)<a class="live-button live-button--quiet" href="{{ $url }}" target="_blank" rel="noopener noreferrer">{{ $name === 'kakao' ? '카카오' : '텔레그램' }} 상담</a>@endif @endforeach
 @endsection

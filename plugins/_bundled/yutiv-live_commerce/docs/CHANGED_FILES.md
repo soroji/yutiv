@@ -1,3 +1,15 @@
+# 0.7.0 최종 변경 범위
+
+시작 HEAD `09389ffbea5691593dd536ecff7c46ec1352fb63`, main. 시작 작업 트리 깨끗함. 변경은 `plugins/_bundled/yutiv-live_commerce/` 내부, commit/push 없음.
+
+방송 Workspace/Controller/Request와 기존 Catalog/Office 연결, 방송 목록·상세·참여자 선택·상품 관리 Blade/JS/CSS, 메뉴/기존 URL 연계, 고객 품절 표시·정렬, 판매자 PC 화면 밀도, 5종 manifest·dist·API/적용/검증 문서·회귀 테스트·스크린샷을 포함한다. 신규 migration 없음. 주문·재고·회계·인센티브 원장 데이터 변환 없음. 코어·타 확장·공개 Golfif 메인 변경 없음.
+
+[집계/흐름과 배포 대상](BROADCAST_070.md) · [검증과 전후 화면](VERIFICATION_070.md)
+
+---
+
+아래는 이전 작업 당시의 기록이다.
+
 # 0.6.0 최종 변경 범위
 
 시작/종료 HEAD `783906c3fd531c350102baba5c701198c7bdad73`, branch main. 기존 미커밋 0.5 작업을 보존했다. 변경은 `plugins/_bundled/yutiv-live_commerce/` 내부에 한정되며 commit/push 없음.

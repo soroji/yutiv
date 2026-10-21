@@ -22,18 +22,19 @@ use Plugins\Yutiv\LiveCommerce\Support\TeeWidePresenter;
 
 class LiveOfficeController
 {
-    public const MENU = ['dashboard' => ['운영 현황', 'orders'], 'broadcasts' => ['방송 관리', 'broadcast'], 'channels' => ['유튜브 채널', 'broadcast'], 'showhosts' => ['쇼호스트', 'broadcast'],
-        'products' => ['상품 관리', 'catalog'], 'options' => ['상품 옵션', 'catalog'], 'broadcast-items' => ['방송 판매 상품', 'broadcast'], 'sale-links' => ['판매 링크', 'broadcast'],
+    public const MENU = ['dashboard' => ['운영 현황', 'orders'], 'broadcasts' => ['방송관리', 'broadcast'],
+        'products' => ['상품 관리', 'catalog'], 'options' => ['상품 옵션', 'catalog'], 'sale-links' => ['판매 링크', 'broadcast'],
         'accounting' => ['회계관리', 'statistics'], 'orders' => ['주문·입금 확인', 'orders'], 'banks' => ['입금계좌', 'banks'], 'receive' => ['입고', 'inventory'], 'ship' => ['출고', 'shipping'],
         'inventory' => ['재고·실사·조정', 'inventory'], 'returns' => ['반품·A/S', 'inventory'], 'statistics' => ['매출 통계', 'statistics'], 'incentives' => ['인센티브·정산', 'settlement'],
         'labels' => ['상품 관리 · QR 라벨', 'labels'], 'receipts' => ['입고 내역', 'inventory'], 'product-receive' => ['상품 등록·입고', 'inventory'], 'ledger' => ['매출정산', 'settlement'], 'brand' => ['브랜드·상담 링크', 'brand'], 'staff' => ['직원·권한', 'staff'], 'audit' => ['작업 이력', 'audit']];
 
     public function __construct(private readonly LiveOfficeService $office, private readonly LiveCatalogService $catalog, private readonly LiveStatisticsService $statistics) {}
 
-    public function index(LiveOfficeRequest $request, string $section = 'dashboard'): View
+    public function index(LiveOfficeRequest $request, string $section = 'dashboard'): View|\Illuminate\Http\RedirectResponse
     {
-        $ability = self::MENU[$section][1] ?? abort(404);
+        $ability = in_array($section,['channels','showhosts'],true) ? 'broadcast' : (self::MENU[$section][1] ?? abort(404));
         $user = LiveContext::authorize($ability);
+        if (in_array($section,['channels','showhosts'],true) && !str_contains($request->path(),'broadcasts/')) return redirect('/seller/broadcasts/'.$section.($request->getQueryString() ? '?'.$request->getQueryString() : ''));
         $tenant = LiveContext::requireTenant();
         $staff = $this->office->query(LiveEntity::Staff, $tenant->id)->where('user_id', $user->id)->firstOrFail();
         $role = StaffRole::from($staff->role);
@@ -65,7 +66,7 @@ class LiveOfficeController
         $data['summary'] = in_array($section, ['dashboard', 'statistics'], true) ? $this->statistics->summary($tenant->id, $request->input('from', now()->subMonth()->format('Y-m-d')), $request->input('to', now()->format('Y-m-d')),
             $request->input('basis', 'created_at'), $request->input('period', 'day'), $request->only(['broadcast_id', 'channel_id', 'showhost_id', 'product_id', 'option_id'])) : null;
 
-        return view('teewide::seller.office', array_merge($data, ['tenant' => $tenant, 'menu' => $menu, 'menuTitle' => self::MENU[$section][0], 'role' => $role,
+        return view('teewide::seller.office', array_merge($data, ['tenant' => $tenant, 'menu' => $menu, 'menuTitle' => ['channels'=>'유튜브 채널','showhosts'=>'쇼호스트'][$section] ?? self::MENU[$section][0], 'role' => $role,
             'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl(), 'teeWideUser' => $user]));
     }
 
@@ -75,7 +76,15 @@ class LiveOfficeController
         $user = LiveContext::user();
         $record = $this->catalog->save(LiveForms::entity($request->route('entity')), $tenant->id, $user->id, $this->office->catalogData($request), ((int) $request->route('record')) ?: null);
 
-        return ResponseHelper::success('common.success', ['saved' => true, 'record_id' => $record->id]);
+        $result=['saved' => true, 'record_id' => $record->id];
+        if ($request->boolean('broadcast_workspace')) {
+            $workspace=app(\Plugins\Yutiv\LiveCommerce\Services\LiveBroadcastWorkspace::class);
+            $broadcast=$request->route('entity')==='broadcasts' ? $record->id : $record->broadcast_id;
+            parse_str($request->input('detail_query') ?? '',$query);
+            $query=array_filter(array_intersect_key($query,array_flip(['product_search','category_id','stock','items_page','candidates_page'])),fn($v)=>is_scalar($v));
+            $result['return_url']='/seller/broadcasts/'.$broadcast.'?'.http_build_query(['list'=>$workspace->context($request->input('list') ?? '')]+$query);
+        }
+        return ResponseHelper::success('common.success', $result);
     }
 
     public function receive(LiveReceiptRequest $request): JsonResponse
@@ -131,7 +140,7 @@ class LiveOfficeController
             'portalUrl' => TeeWidePresenter::portalUrl(), 'liveUrl' => TeeWidePresenter::liveUrl()]);
     }
 
-    private function menu(StaffRole $role): array
+    public function menu(StaffRole $role): array
     {
         $menu = array_filter(self::MENU, fn ($item) => $role->allows($item[1]));
         unset($menu['banks'],$menu['statistics'],$menu['ledger'],$menu['inventory'],$menu['labels'], $menu['options'], $menu['receive'], $menu['product-receive'], $menu['receipts']);
